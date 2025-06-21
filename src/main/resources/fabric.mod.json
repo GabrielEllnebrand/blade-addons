@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "id": "blade-addons",
+  "version": "${version}",
+  "name": "Blade Addons",
+  "description": "Just some mod to port over/add features missing in 1.21 skyblock mods",
+  "authors": [
+    "BladeMasterGabe"
+  ],
+  "contact": {
+    "homepage": "https://fabricmc.net/",
+    "sources": "https://github.com/FabricMC/fabric-example-mod"
+  },
+  "license": "CC0-1.0",
+  "icon": "assets/blade-addons/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "blade.addon.BladeAddons"
+    ],
+    "client": [
+      "blade.addon.BladeAddonsClient"
+    ],
+    "modmenu": [
+      "blade.addon.config.ModMenuIntegration"
+    ]
+  },
+  "mixins": [
+    "blade-addons.mixins.json",
+    {
+      "config": "blade-addons.client.mixins.json",
+      "environment": "client"
+    }
+  ],
+  "depends": {
+    "fabricloader": ">=0.16.14",
+    "minecraft": "~1.21.5",
+    "java": ">=21",
+    "fabric-api": "*",
+    "yet_another_config_lib_v3": ">=3.6.6+1.21.5",
+    "hypixel-mod-api": ">=1.0.1"
+  },
+  "suggests": {
+    "another-mod": "*"
+  }
+}

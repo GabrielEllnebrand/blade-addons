@@ -1,0 +1,13 @@
+{
+	"required": true,
+	"package": "blade.addon.mixin.client",
+	"compatibilityLevel": "JAVA_21",
+	"client": [
+		"ChatHudMixin",
+		"HighlightMixin",
+		"MessageMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	}
+}
