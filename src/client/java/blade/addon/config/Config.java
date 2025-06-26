@@ -113,12 +113,20 @@ public class Config {
                         .group(OptionGroup.createBuilder()
                                 .name(Text.literal("Invisbug guesser"))
                                 .option(Option.<Boolean>createBuilder()
-                                        .name(Text.literal("Toggle bug render"))
+                                        .name(Text.literal("Toggle bug render NOTE: not 100%"))
                                         .description(OptionDescription.createBuilder()
                                                 .text(Text.literal("This uses predetermined positions with some guess distance. Will probably not be 100% accurate."))
                                                 .build())
                                         .binding(HANDLER.instance().enableBug, () -> HANDLER.instance().enableBug, val -> HANDLER.instance().enableBug = val)
                                         .controller(TickBoxControllerBuilder::create)
+                                        .build())
+                                .option(Option.<Double>createBuilder()
+                                        .name(Text.literal("Distance to scan for bugs around fixed points"))
+                                        .binding(HANDLER.instance().bugDistance, () -> HANDLER.instance().bugDistance, val -> HANDLER.instance().bugDistance = val)
+                                        .controller(opt -> DoubleSliderControllerBuilder.create(opt)
+                                                .range(1.0, 20.0)
+                                                .step(1.0)
+                                                .formatValue(val -> Text.literal("Blocks: " + val)))
                                         .build())
                                 .option(Option.<Color>createBuilder()
                                         .name(Text.literal("Bug highlight color"))
@@ -183,6 +191,9 @@ public class Config {
 
     @SerialEntry
     public boolean enableBug = false;
+
+    @SerialEntry
+    public  double bugDistance = 7;
 
     @SerialEntry
     public Color bugColor = new Color(0, 1f, 1f, 0.5f);

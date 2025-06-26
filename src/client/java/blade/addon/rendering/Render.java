@@ -21,6 +21,7 @@ import net.minecraft.client.render.VertexRendering;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.NotNull;
 
@@ -104,8 +105,9 @@ public class Render {
 
         float[] rgba = new float[4];
         Config.configInstance.bugColor.getComponents(rgba);
-        for(BlockPos pos : BugScan.getPossibleBugs()){
-            VertexRendering.drawFilledBox(matrixStack, buffer, pos.getX(), pos.getY(), pos.getZ(), pos.getX() + 0.4, pos.getY() + 0.4, pos.getZ() + 0.4, rgba[0], rgba[1], rgba[2], rgba[3]);
+        for(Box box : BugScan.getPossibleBugs()){
+            //VertexRendering.drawFilledBox(matrixStack, buffer, pos.getX(), pos.getY(), pos.getZ(), pos.getX() + 0.4, pos.getY() + 0.4, pos.getZ() + 0.4, rgba[0], rgba[1], rgba[2], rgba[3]);
+            VertexRendering.drawFilledBox(matrixStack, buffer, box.minX, box.minY, box.minZ, box.minX + 0.4, box.minY + 0.4, box.minZ + 0.4, rgba[0], rgba[1], rgba[2], rgba[3]);
         }
 
         matrixStack.pop();
