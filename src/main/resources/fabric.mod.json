@@ -17,6 +17,9 @@
 	"entrypoints": {
 		"main": [
 			"blade.addon.Bladeaddons"
+		],
+		"modmenu": [
+			"blade.addon.utils.config.ModMenu"
 		]
 	},
 	"mixins": [

@@ -1,24 +1,33 @@
 package blade.addon;
 
+import blade.addon.features.dungeon.GoldorTickTimer;
+import blade.addon.features.dungeon.StormTickTimer;
+import blade.addon.utils.Keybinds;
+import blade.addon.utils.Location;
+import blade.addon.utils.config.Config;
 import net.fabricmc.api.ModInitializer;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 
 public class Bladeaddons implements ModInitializer {
-	public static final String MOD_ID = "blade-addons";
-
-	// This logger is used to write text to the console and the log file.
-	// It is considered best practice to use your mod id as the logger's name.
-	// That way, it's clear which mod wrote info, warnings, and errors.
-	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
-
 	@Override
 	public void onInitialize() {
-		// This code runs as soon as Minecraft is in a mod-load-ready state.
-		// However, some things (like resources) may still be uninitialized.
-		// Proceed with mild caution.
+		Config.manager.load();
+		Keybinds.register();
+		Location.init();
 
-		LOGGER.info("Hello Fabric world!");
+		ClientTickEvents.END_CLIENT_TICK.register((client) -> {
+			Keybinds.checkInputs(client);
+			StormTickTimer.tick(client);
+			GoldorTickTimer.tick(client);
+		});
+
+		ClientReceiveMessageEvents.GAME.register((message, overlay) -> {
+			if (Location.inDungeon()) {
+				StormTickTimer.parseString(message);
+				GoldorTickTimer.parseString(message);
+			}
+		});
 	}
 }
