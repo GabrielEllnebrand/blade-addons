@@ -1,6 +1,7 @@
 package blade.addon;
 
 import blade.addon.features.dungeon.GoldorTickTimer;
+import blade.addon.features.dungeon.LeapMessage;
 import blade.addon.utils.dungeon.Phase;
 import blade.addon.features.dungeon.StormTickTimer;
 import blade.addon.utils.Keybinds;
@@ -29,6 +30,7 @@ public class Bladeaddons implements ModInitializer {
 		ClientReceiveMessageEvents.GAME.register((message, overlay) -> {
 			if (Location.inDungeon()) {
 				Phase.parseMessage(message);
+				LeapMessage.parseMessage(message);
 			}
 		});
 	}
