@@ -13,7 +13,6 @@ public class Keybinds {
 
     private static KeyBinding openConfig;
 
-
     public static void register() {
 
         openConfig = KeyBindingHelper.registerKeyBinding(new KeyBinding(

@@ -1,0 +1,306 @@
+{
+  "F1": [
+    {
+      "name": "Blood Open",
+      "dialogue": "§e[NPC] §bMort§f: Here, I found this map when I first entered the dungeon."
+    },
+    {
+      "name": "Blood Clear",
+      "dialogue": "[BOSS] The Watcher: Ah, you've finally arrived."
+    },
+    {
+      "name": "Portal",
+      "dialogue": "[BOSS] The Watcher: You have proven yourself. You may pass."
+    },
+    {
+      "name": "Bonzo",
+      "dialogue": "[BOSS] Bonzo: Gratz for making it this far, but I'm basically unbeatable."
+    }
+  ],
+  "M1": [
+    {
+      "name": "Blood Open",
+      "dialogue": "§e[NPC] §bMort§f: Here, I found this map when I first entered the dungeon."
+    },
+    {
+      "name": "Blood Clear",
+      "dialogue": "[BOSS] The Watcher: Ah, you've finally arrived."
+    },
+    {
+      "name": "Portal",
+      "dialogue": "[BOSS] The Watcher: You have proven yourself. You may pass."
+    },
+    {
+      "name": "Bonzo",
+      "dialogue": "[BOSS] Bonzo: Gratz for making it this far, but I'm basically unbeatable."
+    }
+  ],
+  "F2": [
+    {
+      "name": "Blood Open",
+      "dialogue": "§e[NPC] §bMort§f: Here, I found this map when I first entered the dungeon."
+    },
+    {
+      "name": "Blood Clear",
+      "dialogue": "[BOSS] The Watcher: Ah, we meet again..."
+    },
+    {
+      "name": "Portal",
+      "dialogue": "[BOSS] The Watcher: You have proven yourself. You may pass."
+    },
+    {
+      "name": "Scarf",
+      "dialogue": "[BOSS] Scarf: This is where the journey ends for you, Adventurers."
+    }
+  ],
+  "M2": [
+    {
+      "name": "Blood Open",
+      "dialogue": "§e[NPC] §bMort§f: Here, I found this map when I first entered the dungeon."
+    },
+    {
+      "name": "Blood Clear",
+      "dialogue": "[BOSS] The Watcher: Ah, we meet again..."
+    },
+    {
+      "name": "Portal",
+      "dialogue": "[BOSS] The Watcher: You have proven yourself. You may pass."
+    },
+    {
+      "name": "Scarf",
+      "dialogue": "[BOSS] Scarf: This is where the journey ends for you, Adventurers."
+    }
+  ],
+  "F3": [
+    {
+      "name": "Blood Open",
+      "dialogue": "§e[NPC] §bMort§f: Here, I found this map when I first entered the dungeon."
+    },
+    {
+      "name": "Blood Clear",
+      "dialogue": "[BOSS] The Watcher: So you made it this far... interesting."
+    },
+    {
+      "name": "Portal",
+      "dialogue": "[BOSS] The Watcher: You have proven yourself. You may pass."
+    },
+    {
+      "name": "Professor",
+      "dialogue": "[BOSS] The Professor: I was burdened with terrible news recently..."
+    }
+  ],
+  "M3": [
+    {
+      "name": "Blood Open",
+      "dialogue": "§e[NPC] §bMort§f: Here, I found this map when I first entered the dungeon."
+    },
+    {
+      "name": "Blood Clear",
+      "dialogue": "[BOSS] The Watcher: So you made it this far... interesting."
+    },
+    {
+      "name": "Portal",
+      "dialogue": "[BOSS] The Watcher: You have proven yourself. You may pass."
+    },
+    {
+      "name": "Professor",
+      "dialogue": "[BOSS] The Professor: I was burdened with terrible news recently..."
+    }
+  ],
+  "F4": [
+    {
+      "name": "Blood Open",
+      "dialogue": "§e[NPC] §bMort§f: Here, I found this map when I first entered the dungeon."
+    },
+    {
+      "name": "Blood Clear",
+      "dialogue": "[BOSS] The Watcher: You've managed to scratch and claw your way here, eh?"
+    },
+    {
+      "name": "Portal",
+      "dialogue": "[BOSS] The Watcher: You have proven yourself. You may pass."
+    },
+    {
+      "name": "Thorn",
+      "dialogue": "[BOSS] Thorn: Welcome Adventurers! I am Thorn, the Spirit! And host of the Vegan Trials!"
+    }
+  ],
+  "M4": [
+    {
+      "name": "Blood Open",
+      "dialogue": "§e[NPC] §bMort§f: Here, I found this map when I first entered the dungeon."
+    },
+    {
+      "name": "Blood Clear",
+      "dialogue": "[BOSS] The Watcher: You've managed to scratch and claw your way here, eh?"
+    },
+    {
+      "name": "Portal",
+      "dialogue": "[BOSS] The Watcher: You have proven yourself. You may pass."
+    },
+    {
+      "name": "Thorn",
+      "dialogue": "[BOSS] Thorn: Welcome Adventurers! I am Thorn, the Spirit! And host of the Vegan Trials!"
+    }
+  ],
+  "F5": [
+    {
+      "name": "Blood Open",
+      "dialogue": "§e[NPC] §bMort§f: Here, I found this map when I first entered the dungeon."
+    },
+    {
+      "name": "Blood Clear",
+      "dialogue": "[BOSS] The Watcher: I'm starting to get tired of seeing you around here..."
+    },
+    {
+      "name": "Portal",
+      "dialogue": "[BOSS] The Watcher: You have proven yourself. You may pass."
+    },
+    {
+      "name": "Livid",
+      "dialogue": "[BOSS] Livid: Welcome, you've arrived right on time. I am Livid, the Master of Shadows."
+    }
+  ],
+  "M5": [
+    {
+      "name": "Blood Open",
+      "dialogue": "§e[NPC] §bMort§f: Here, I found this map when I first entered the dungeon."
+    },
+    {
+      "name": "Blood Clear",
+      "dialogue": "[BOSS] The Watcher: I'm starting to get tired of seeing you around here..."
+    },
+    {
+      "name": "Portal",
+      "dialogue": "[BOSS] The Watcher: You have proven yourself. You may pass."
+    },
+    {
+      "name": "Livid",
+      "dialogue": "[BOSS] Livid: Welcome, you've arrived right on time. I am Livid, the Master of Shadows."
+    }
+  ],
+  "F6": [
+    {
+      "name": "Blood Open",
+      "dialogue": "§e[NPC] §bMort§f: Here, I found this map when I first entered the dungeon."
+    },
+    {
+      "name": "Blood Clear",
+      "dialogue": "[BOSS] The Watcher: Oh.. hello?"
+    },
+    {
+      "name": "Portal",
+      "dialogue": "[BOSS] The Watcher: You have proven yourself. You may pass."
+    },
+    {
+      "name": "Terracottas",
+      "dialogue": "[BOSS] Sadan: So you made it all the way here... Now you wish to defy me? Sadan?!"
+    },
+    {
+      "name": "Giants",
+      "dialogue": "[BOSS] Sadan: ENOUGH!"
+    },
+    {
+      "name": "Sadan",
+      "dialogue": "[BOSS] Sadan: You did it. I understand now, you have earned my respect."
+    }
+  ],
+  "M6": [
+    {
+      "name": "Blood Open",
+      "dialogue": "§e[NPC] §bMort§f: Here, I found this map when I first entered the dungeon."
+    },
+    {
+      "name": "Blood Clear",
+      "dialogue": "[BOSS] The Watcher: Oh.. hello?"
+    },
+    {
+      "name": "Portal",
+      "dialogue": "[BOSS] The Watcher: You have proven yourself. You may pass."
+    },
+    {
+      "name": "Terracottas",
+      "dialogue": "[BOSS] Sadan: So you made it all the way here... Now you wish to defy me? Sadan?!"
+    },
+    {
+      "name": "Giants",
+      "dialogue": "[BOSS] Sadan: ENOUGH!"
+    },
+    {
+      "name": "Sadan",
+      "dialogue": "[BOSS] Sadan: You did it. I understand now, you have earned my respect."
+    }
+  ],
+  "F7": [
+    {
+      "name": "Blood Open",
+      "dialogue": "§e[NPC] §bMort§f: Here, I found this map when I first entered the dungeon."
+    },
+    {
+      "name": "Blood Clear",
+      "dialogue": "[BOSS] The Watcher: Things feel a little more roomy now, eh?"
+    },
+    {
+      "name": "Portal",
+      "dialogue": "[BOSS] The Watcher: You have proven yourself. You may pass."
+    },
+    {
+      "name": "Maxor",
+      "dialogue": "[BOSS] Maxor: WELL! WELL! WELL! LOOK WHO'S HERE!"
+    },
+    {
+      "name": "Storm",
+      "dialogue": "[BOSS] Storm: Pathetic Maxor, just like expected."
+    },
+    {
+      "name": "Terminals",
+      "dialogue": "[BOSS] Goldor: Who dares trespass into my domain?"
+    },
+    {
+      "name": "Goldor",
+      "dialogue": "The Core entrance is opening!"
+    },
+    {
+      "name": "Necron",
+      "dialogue": "[BOSS] Necron: You went further than any human before, congratulations."
+    }
+  ],
+  "M7": [
+    {
+      "name": "Blood Open",
+      "dialogue": "§e[NPC] §bMort§f: Here, I found this map when I first entered the dungeon."
+    },
+    {
+      "name": "Blood Clear",
+      "dialogue": "[BOSS] The Watcher: Things feel a little more roomy now, eh?"
+    },
+    {
+      "name": "Portal",
+      "dialogue": "[BOSS] The Watcher: You have proven yourself. You may pass."
+    },
+    {
+      "name": "Maxor",
+      "dialogue": "[BOSS] Maxor: WELL! WELL! WELL! LOOK WHO'S HERE!"
+    },
+    {
+      "name": "Storm",
+      "dialogue": "[BOSS] Storm: Pathetic Maxor, just like expected."
+    },
+    {
+      "name": "Terminals",
+      "dialogue": "[BOSS] Goldor: Who dares trespass into my domain?"
+    },
+    {
+      "name": "Goldor",
+      "dialogue": "The Core entrance is opening!"
+    },
+    {
+      "name": "Necron",
+      "dialogue": "[BOSS] Necron: You went further than any human before, congratulations."
+    },
+    {
+      "name": "Dragons",
+      "dialogue": "[BOSS] Necron: All this, for nothing..."
+    }
+  ]
+}

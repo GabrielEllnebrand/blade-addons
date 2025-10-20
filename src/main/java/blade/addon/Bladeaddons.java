@@ -1,6 +1,7 @@
 package blade.addon;
 
 import blade.addon.features.dungeon.GoldorTickTimer;
+import blade.addon.utils.dungeon.Phase;
 import blade.addon.features.dungeon.StormTickTimer;
 import blade.addon.utils.Keybinds;
 import blade.addon.utils.Location;
@@ -9,6 +10,7 @@ import net.fabricmc.api.ModInitializer;
 
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
 
 public class Bladeaddons implements ModInitializer {
 	@Override
@@ -21,12 +23,12 @@ public class Bladeaddons implements ModInitializer {
 			Keybinds.checkInputs(client);
 			StormTickTimer.tick(client);
 			GoldorTickTimer.tick(client);
+			Phase.tick(client);
 		});
 
 		ClientReceiveMessageEvents.GAME.register((message, overlay) -> {
 			if (Location.inDungeon()) {
-				StormTickTimer.parseString(message);
-				GoldorTickTimer.parseString(message);
+				Phase.parseMessage(message);
 			}
 		});
 	}

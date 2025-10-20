@@ -1,5 +1,6 @@
 package blade.addon.utils;
 
+import blade.addon.utils.dungeon.Phase;
 import net.hypixel.modapi.HypixelModAPI;
 import net.hypixel.modapi.packet.impl.clientbound.event.ClientboundLocationPacket;
 
@@ -31,6 +32,8 @@ public class Location {
             } catch (IllegalArgumentException ignored) {
                 currentLocation = Locations.NONE;
             }
+            System.out.println("reseting");
+            Phase.reset();
         }));
     }
 
