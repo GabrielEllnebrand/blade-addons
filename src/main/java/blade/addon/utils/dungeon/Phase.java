@@ -23,6 +23,7 @@ public class Phase {
 
     private static final int TEXT_HEIGHT = 10;
     private static final int LOOKUP_RATE = 10;
+    private static final int DUMMY_SIZE = 9;
 
     private static ArrayList<Split> currentSplits;
     private static int currentPhase = -1;
@@ -88,7 +89,9 @@ public class Phase {
                 tick = 0;
                 updateFloor(client.player.getScoreboard());
                 currentSplits = FLOOR_SPLITS.get(floor);
-                if (floor.contains("7")) inFloor7 = true;
+                if (floor != null) {
+                    if (floor.contains("7")) inFloor7 = true;
+                }
             } else {
                 tick++;
             }
@@ -101,8 +104,8 @@ public class Phase {
     }
 
     @ConfigValue
-    public static HUDComponent splitTimer = new HUDComponent(0, 0, 70, 90, 1,
-            Location::inDungeon,
+    public static HUDComponent splitTimer = new HUDComponent(0, 0, 80, 90, 1,
+            () -> Location.inDungeon(),
             ((hudComponent, drawContext) -> {
                 int x = hudComponent.getScaledX();
                 int y = hudComponent.getScaledY();
@@ -112,6 +115,10 @@ public class Phase {
                 if (currentSplits != null) {
                     for (int i = 0; i < currentSplits.size(); i++) {
                         drawContext.drawText(MinecraftClient.getInstance().textRenderer, currentSplits.get(i).formatString(), x, y + TEXT_HEIGHT * i, color, true);
+                    }
+                } else {
+                    for (int i = 0; i < DUMMY_SIZE; i++) {
+                        drawContext.drawText(MinecraftClient.getInstance().textRenderer, "dummy : 00,00s", x, y + TEXT_HEIGHT * i, color, true);
                     }
                 }
             })
