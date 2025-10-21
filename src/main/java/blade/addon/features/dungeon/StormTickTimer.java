@@ -16,6 +16,8 @@ public class StormTickTimer {
         if (Location.inDungeon() && Phase.inP2()) tick++;
     }
 
+    public static void reset() {tick = 0;}
+
     @ConfigValue
     public static HUDComponent stormTickTimer = new HUDComponent(0, 0, 30, 10, 1,
             () -> enableStormTickTimer && Location.inDungeon() && Phase.inP2(),

@@ -24,6 +24,8 @@ public class GoldorTickTimer {
         if (Location.inDungeon() && Phase.inP3()) tick++;
     }
 
+    public static void reset() {tick = 0;}
+
     @ConfigValue
     public static HUDComponent goldorTickTimer = new HUDComponent(0, 0, 30, 10, 1,
             () -> enableGoldorTickTimer && Location.inDungeon() && Phase.inP3(),
@@ -34,16 +36,16 @@ public class GoldorTickTimer {
                 int color = 0xffffffff;
                 double num = tick * Constants.TICK_DURATION;
 
-                if (inDeathTicks) {
-                    num = num % 3;
-                    if (num < 1) {
-                        color = GREEN_COLOR;
-                    } else if (num < 2) {
-                        color = ORANGE_COLOR;
-                    } else {
-                        color = RED_COLOR;
-                    }
+                double mod = num % 3;
+                if (mod < 1) {
+                    color = GREEN_COLOR;
+                } else if (mod < 2) {
+                    color = ORANGE_COLOR;
+                } else {
+                    color = RED_COLOR;
                 }
+
+                if (inDeathTicks) num = mod;
 
                 drawContext.drawText(MinecraftClient.getInstance().textRenderer, Constants.DECIMAL_FORMAT.format(num), x, y, color, true);
 

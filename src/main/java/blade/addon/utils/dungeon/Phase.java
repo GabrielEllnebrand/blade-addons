@@ -1,5 +1,7 @@
 package blade.addon.utils.dungeon;
 
+import blade.addon.features.dungeon.GoldorTickTimer;
+import blade.addon.features.dungeon.StormTickTimer;
 import blade.addon.utils.Constants;
 import blade.addon.utils.Location;
 import config.practical.hud.HUDComponent;
@@ -70,6 +72,8 @@ public class Phase {
         floor = null;
         currentPhase = -1;
         inFloor7 = false;
+        StormTickTimer.reset();
+        GoldorTickTimer.reset();
     }
 
     public static boolean inP2() {
@@ -89,6 +93,11 @@ public class Phase {
                 tick = 0;
                 updateFloor(client.player.getScoreboard());
                 currentSplits = FLOOR_SPLITS.get(floor);
+                if (currentSplits != null) {
+                    for (Split split: currentSplits) {
+                        split.reset();
+                    }
+                }
                 if (floor != null) {
                     if (floor.contains("7")) inFloor7 = true;
                 }
