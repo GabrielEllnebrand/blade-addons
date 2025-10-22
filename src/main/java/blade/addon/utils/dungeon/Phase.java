@@ -8,6 +8,8 @@ import blade.addon.utils.Location;
 import config.practical.hud.HUDComponent;
 import config.practical.manager.ConfigValue;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.network.ClientPlayNetworkHandler;
+import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.scoreboard.Team;
 import net.minecraft.text.Text;
@@ -21,6 +23,8 @@ public class Phase {
 
     private static final Pattern END_PATTERN = Pattern.compile("^\\s*☠ Defeated (.+) in 0?([\\dhms ]+)\\s*(\\(NEW RECORD!\\))?$");
     private static final Pattern SEARCH_PATTERN = Pattern.compile("^ ⏣ The Catacombs .*$");
+
+    private static final Split DUMMY_SPLIT = new Split("test split", "if this is called idk");
 
     private static final HashMap<String, ArrayList<Split>> FLOOR_SPLITS = JsonUtility.readSplits("/data/splits.json");
 
@@ -37,6 +41,9 @@ public class Phase {
     @ConfigValue
     public static boolean enableSplits = false;
 
+    @ConfigValue
+    public static boolean autoReque = false;
+
     public static void parseMessage(Text message) {
         if (!Location.inDungeon()) return;
         String string = message.getString();
@@ -46,11 +53,24 @@ public class Phase {
         for (int i = currentPhase + 1; i < currentSplits.size(); i++) {
             if (currentSplits.get(i).matches(string)) {
                 currentPhase = i;
+                if (i - 1 >= 0) {
+                    currentSplits.get(i - 1).end();
+                }
             }
         }
 
         Matcher matcher = END_PATTERN.matcher(string);
-        if (matcher.find()) currentPhase = currentSplits.size();
+        if (matcher.find()) {
+            currentPhase = currentSplits.size();
+            if (currentPhase - 1 >= 0) {
+                currentSplits.get(currentPhase - 1).end();
+            }
+            if (autoReque) {
+                ClientPlayNetworkHandler networkHandler = MinecraftClient.getInstance().getNetworkHandler();
+                if (networkHandler == null) return;
+                networkHandler.sendChatCommand("instancerequeue");
+            }
+        }
     }
 
 
@@ -96,7 +116,7 @@ public class Phase {
                 updateFloor(client.player.getScoreboard());
                 currentSplits = FLOOR_SPLITS.get(floor);
                 if (currentSplits != null) {
-                    for (Split split: currentSplits) {
+                    for (Split split : currentSplits) {
                         split.reset();
                     }
                 }
@@ -124,13 +144,15 @@ public class Phase {
 
                 int color = 0xffffffff;
 
+                long currentTime = System.currentTimeMillis();
+
                 if (currentSplits != null) {
                     for (int i = 0; i < currentSplits.size(); i++) {
-                        drawContext.drawText(MinecraftClient.getInstance().textRenderer, currentSplits.get(i).formatString(), x, y + TEXT_HEIGHT * i, color, true);
+                        drawContext.drawText(MinecraftClient.getInstance().textRenderer, currentSplits.get(i).makeSplitString(currentTime), x, y + TEXT_HEIGHT * i, color, true);
                     }
                 } else {
                     for (int i = 0; i < DUMMY_SIZE; i++) {
-                        drawContext.drawText(MinecraftClient.getInstance().textRenderer, "dummy : 00,00s", x, y + TEXT_HEIGHT * i, color, true);
+                        drawContext.drawText(MinecraftClient.getInstance().textRenderer, DUMMY_SPLIT.makeSplitString(0), x, y + TEXT_HEIGHT * i, color, true);
                     }
                 }
             })

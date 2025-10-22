@@ -35,4 +35,11 @@ public class Bladeaddons implements ModInitializer {
 			}
 		});
 	}
+
+    /**
+     * TODO:
+     * - bloodcamp dialogue kill time
+     * - better splits
+     * - storm death tick down time for to like term
+     */
 }

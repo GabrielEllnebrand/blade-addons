@@ -3,7 +3,7 @@ package blade.addon.features.dungeon;
 import blade.addon.utils.Location;
 import config.practical.manager.ConfigValue;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.text.Text;
 
 import java.util.regex.Matcher;
@@ -23,9 +23,9 @@ public class LeapMessage {
 
         Matcher matcher = SEARCH_PATTERN.matcher(string);
         if (matcher.find()) {
-            ClientPlayerEntity player = MinecraftClient.getInstance().player;
-            if (player == null) return;
-            player.networkHandler.sendChatCommand("pc " + string.substring(INDEX_REMOVAL));
+            ClientPlayNetworkHandler networkHandler = MinecraftClient.getInstance().getNetworkHandler();
+            if (networkHandler == null) return;
+            networkHandler.sendChatCommand("pc " + string.substring(INDEX_REMOVAL));
         }
     }
 
