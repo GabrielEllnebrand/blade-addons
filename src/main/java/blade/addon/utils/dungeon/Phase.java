@@ -1,8 +1,9 @@
 package blade.addon.utils.dungeon;
 
 import blade.addon.features.dungeon.GoldorTickTimer;
+import blade.addon.features.dungeon.PositionMessages;
 import blade.addon.features.dungeon.StormTickTimer;
-import blade.addon.utils.Constants;
+import blade.addon.utils.JsonUtility;
 import blade.addon.utils.Location;
 import config.practical.hud.HUDComponent;
 import config.practical.manager.ConfigValue;
@@ -21,7 +22,7 @@ public class Phase {
     private static final Pattern END_PATTERN = Pattern.compile("^\\s*☠ Defeated (.+) in 0?([\\dhms ]+)\\s*(\\(NEW RECORD!\\))?$");
     private static final Pattern SEARCH_PATTERN = Pattern.compile("^ ⏣ The Catacombs .*$");
 
-    private static final HashMap<String, ArrayList<Split>> FLOOR_SPLITS = Split.readSplits("/data/splits.json");
+    private static final HashMap<String, ArrayList<Split>> FLOOR_SPLITS = JsonUtility.readSplits("/data/splits.json");
 
     private static final int TEXT_HEIGHT = 10;
     private static final int LOOKUP_RATE = 10;
@@ -74,6 +75,7 @@ public class Phase {
         inFloor7 = false;
         StormTickTimer.reset();
         GoldorTickTimer.reset();
+        PositionMessages.reset();
     }
 
     public static boolean inP2() {
@@ -106,6 +108,7 @@ public class Phase {
             }
         }
 
+        if (currentSplits == null) return;
         if (currentPhase > -1 && currentPhase < currentSplits.size()) {
             currentSplits.get(currentPhase).tick();
         }
@@ -114,7 +117,7 @@ public class Phase {
 
     @ConfigValue
     public static HUDComponent splitTimer = new HUDComponent(0, 0, 80, 90, 1,
-            () -> Location.inDungeon(),
+            Location::inDungeon,
             ((hudComponent, drawContext) -> {
                 int x = hudComponent.getScaledX();
                 int y = hudComponent.getScaledY();

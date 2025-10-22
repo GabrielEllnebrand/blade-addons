@@ -1,0 +1,65 @@
+[
+  {
+    "min_x": 57,
+    "max_x": 59,
+    "min_y": 109,
+    "max_y": 110,
+    "min_z": 130,
+    "max_z": 132,
+    "message": "At EE2!"
+  },
+  {
+    "min_x": 59,
+    "max_x": 62,
+    "min_y": 132,
+    "max_y": 133,
+    "min_z": 138,
+    "max_z": 140,
+    "message": "At High EE2!"
+  },
+  {
+    "min_x": 1,
+    "max_x": 3,
+    "min_y": 109,
+    "max_y": 110,
+    "min_z": 103,
+    "max_z": 106,
+    "message": "At EE3!"
+  },
+  {
+    "min_x": 53,
+    "max_x": 56,
+    "min_y": 114,
+    "max_y": 115,
+    "min_z": 51,
+    "max_z": 54,
+    "message": "At Core!"
+  },
+  {
+    "min_x": 52,
+    "max_x": 57,
+    "min_y": 113,
+    "max_y": 115,
+    "min_z": 55,
+    "max_z": 58,
+    "message": "Inside Goldor Tunnel!"
+  },
+  {
+    "min_x": 46,
+    "max_x": 49,
+    "min_y": 109,
+    "max_y": 110,
+    "min_z": 121.987,
+    "max_z": 121.988,
+    "message": "At 2 Safespot!"
+  },
+  {
+    "min_x": 18,
+    "max_x": 19,
+    "min_y": 121,
+    "max_y": 126,
+    "min_z": 91,
+    "max_z": 99,
+    "message": "At 3 Safespot!"
+  }
+]

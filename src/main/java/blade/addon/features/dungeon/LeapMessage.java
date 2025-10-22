@@ -11,6 +11,7 @@ import java.util.regex.Pattern;
 
 public class LeapMessage {
 
+    private static final int INDEX_REMOVAL = 9;
     private static final Pattern SEARCH_PATTERN = Pattern.compile("^You have teleported to .*!$");
 
     @ConfigValue
@@ -24,7 +25,7 @@ public class LeapMessage {
         if (matcher.find()) {
             ClientPlayerEntity player = MinecraftClient.getInstance().player;
             if (player == null) return;
-            player.networkHandler.sendChatMessage(string);
+            player.networkHandler.sendChatCommand("pc " + string.substring(INDEX_REMOVAL));
         }
     }
 
