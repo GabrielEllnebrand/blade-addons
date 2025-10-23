@@ -1,9 +1,11 @@
 package blade.addon;
 
+import blade.addon.features.dungeon.BloodCamp;
 import blade.addon.features.dungeon.GoldorTickTimer;
 import blade.addon.features.dungeon.LeapMessage;
 import blade.addon.features.dungeon.PositionMessages;
 import blade.addon.features.dungeon.StormTickTimer;
+import blade.addon.features.dungeon.TermStartTimer;
 import blade.addon.utils.Keybinds;
 import blade.addon.utils.Location;
 import blade.addon.utils.config.Config;
@@ -22,6 +24,8 @@ public class Bladeaddons implements ModInitializer {
         Phase.init();
         StormTickTimer.init();
         GoldorTickTimer.init();
+        BloodCamp.init();
+        TermStartTimer.init();
 
 		ClientTickEvents.END_CLIENT_TICK.register((client) -> {
 			Keybinds.checkInputs(client);
@@ -33,6 +37,7 @@ public class Bladeaddons implements ModInitializer {
 			if (Location.inDungeon()) {
 				Phase.parseMessage(message);
 				LeapMessage.parseMessage(message);
+                BloodCamp.parseMessage(message);
 			}
 		});
 	}
@@ -40,8 +45,6 @@ public class Bladeaddons implements ModInitializer {
     /**
      * TODO:
      * - bloodcamp dialogue kill time
-     * - better splits
-     * - storm death tick down time for to like term
      * - add !dt and !undt support
      * - add boss waypoints or smth
      * - block highlights or smth for like levers, idk ask vortie again

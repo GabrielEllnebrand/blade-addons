@@ -1,8 +1,10 @@
 package blade.addon.utils.dungeon;
 
+import blade.addon.features.dungeon.BloodCamp;
 import blade.addon.features.dungeon.GoldorTickTimer;
 import blade.addon.features.dungeon.PositionMessages;
 import blade.addon.features.dungeon.StormTickTimer;
+import blade.addon.features.dungeon.TermStartTimer;
 import blade.addon.utils.JsonUtility;
 import blade.addon.utils.Location;
 import blade.addon.utils.events.Events;
@@ -14,7 +16,6 @@ import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.scoreboard.Team;
 import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,6 +26,7 @@ public class Phase {
 
     private static final Pattern END_PATTERN = Pattern.compile("^\\s*☠ Defeated (.+) in 0?([\\dhms ]+)\\s*(\\(NEW RECORD!\\))?$");
     private static final Pattern SEARCH_PATTERN = Pattern.compile("^ ⏣ The Catacombs .*$");
+    private static final Pattern STORM_KILL_PATTERN = Pattern.compile("^\\[BOSS] Storm: I should have known that I stood no chance\\.$");
 
     private static final Split DUMMY_SPLIT = new Split("test split", "if this is called idk", 43690);
 
@@ -38,7 +40,9 @@ public class Phase {
     private static int currentPhase = -1;
     private static String floor = "";
     private static int tick = 0;
+
     private static boolean inFloor7 = false;
+    private static boolean stormDead = false;
 
     @ConfigValue
     public static boolean enableSplits = false;
@@ -82,6 +86,13 @@ public class Phase {
                 networkHandler.sendChatCommand("instancerequeue");
             }
         }
+
+        if (inP2()) {
+            matcher = STORM_KILL_PATTERN.matcher(string);
+            if (matcher.find()) {
+                stormDead = true;
+            }
+        }
     }
 
 
@@ -104,13 +115,28 @@ public class Phase {
         floor = null;
         currentPhase = -1;
         inFloor7 = false;
+        stormDead = false;
         StormTickTimer.reset();
         GoldorTickTimer.reset();
         PositionMessages.reset();
+        TermStartTimer.reset();
+        BloodCamp.reset();
+    }
+
+    public static boolean inClear() {
+        return currentPhase > -1 && currentPhase < 3;
+    }
+
+    public static boolean rushDone() {
+        return currentPhase > 0;
     }
 
     public static boolean inP2() {
         return currentPhase == 4 && inFloor7;
+    }
+
+    public static boolean stormDead() {
+        return stormDead;
     }
 
     public static boolean inP3() {

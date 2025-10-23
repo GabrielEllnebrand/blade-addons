@@ -8,29 +8,32 @@ import config.practical.hud.HUDComponent;
 import config.practical.manager.ConfigValue;
 import net.minecraft.client.MinecraftClient;
 
-public class StormTickTimer {
+public class TermStartTimer {
+
+    private static final int TOTAL_TICKS = 100;
+
     @ConfigValue
-    public static boolean enableStormTickTimer = false;
-    private static int tick = 0;
+    public static boolean enableTermStartTimer = false;
+    private static int tick = 100;
 
     public static void init() {
         Events.ON_SERVER_TICK.register(() -> {
-            if (Location.inDungeon() && Phase.inP2() && !Phase.stormDead()) tick++;
+            if (Location.inDungeon() && Phase.inP2() && Phase.stormDead()) tick--;
         });
     }
 
-    public static void reset() {tick = 0;}
+    public static void reset() {tick = TOTAL_TICKS;}
 
     @ConfigValue
-    public static HUDComponent stormTickTimer = new HUDComponent(0, 0, 30, 10, 1,
-            () -> enableStormTickTimer && Location.inDungeon() && Phase.inP2() && !Phase.stormDead(),
+    public static HUDComponent termStartTimer = new HUDComponent(0, 0, 30, 10, 1,
+            () -> enableTermStartTimer && Location.inDungeon() && Phase.inP2() && Phase.stormDead(),
             ((hudComponent, drawContext) -> {
                 int x = hudComponent.getScaledX();
                 int y = hudComponent.getScaledY();
 
                 double num = tick * Constants.TICK_DURATION;
 
-                drawContext.drawText(MinecraftClient.getInstance().textRenderer, Constants.DECIMAL_FORMAT.format(num), x, y, 0xffffffff, true);
+                drawContext.drawText(MinecraftClient.getInstance().textRenderer, Constants.DECIMAL_FORMAT.format(num), x, y, 0x00FFFF55, true);
             })
     );
 }
