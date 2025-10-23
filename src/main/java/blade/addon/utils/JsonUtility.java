@@ -7,7 +7,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.NotNull;
 
@@ -55,8 +54,9 @@ public class JsonUtility {
 
                 String name = dialogueObj.get("name").getAsString();
                 String dialogue = dialogueObj.get("dialogue").getAsString();
+                int color = dialogueObj.get("color").getAsInt();
 
-                splits.add(new Split(name, dialogue));
+                splits.add(new Split(name, dialogue, color));
             }
 
             floors.put(floorName, splits);

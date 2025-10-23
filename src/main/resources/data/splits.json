@@ -2,305 +2,374 @@
   "F1": [
     {
       "name": "Blood Open",
-      "dialogue": "§e[NPC] §bMort§f: Here, I found this map when I first entered the dungeon."
+      "dialogue": "§e[NPC] §bMort§f: Here, I found this map when I first entered the dungeon.",
+      "color": 11141120
     },
     {
       "name": "Blood Clear",
-      "dialogue": "[BOSS] The Watcher: Ah, you've finally arrived."
+      "dialogue": "[BOSS] The Watcher: Ah, you've finally arrived.",
+      "color": 16733525
     },
     {
       "name": "Portal",
-      "dialogue": "[BOSS] The Watcher: You have proven yourself. You may pass."
+      "dialogue": "[BOSS] The Watcher: You have proven yourself. You may pass.",
+      "color": 16733695
     },
     {
       "name": "Bonzo",
-      "dialogue": "[BOSS] Bonzo: Gratz for making it this far, but I'm basically unbeatable."
+      "dialogue": "[BOSS] Bonzo: Gratz for making it this far, but I'm basically unbeatable.",
+      "color": 43690
     }
   ],
   "M1": [
     {
       "name": "Blood Open",
-      "dialogue": "§e[NPC] §bMort§f: Here, I found this map when I first entered the dungeon."
+      "dialogue": "§e[NPC] §bMort§f: Here, I found this map when I first entered the dungeon.",
+      "color": 11141120
     },
     {
       "name": "Blood Clear",
-      "dialogue": "[BOSS] The Watcher: Ah, you've finally arrived."
+      "dialogue": "[BOSS] The Watcher: Ah, you've finally arrived.",
+      "color": 16733525
     },
     {
       "name": "Portal",
-      "dialogue": "[BOSS] The Watcher: You have proven yourself. You may pass."
+      "dialogue": "[BOSS] The Watcher: You have proven yourself. You may pass.",
+      "color": 16733695
     },
     {
       "name": "Bonzo",
-      "dialogue": "[BOSS] Bonzo: Gratz for making it this far, but I'm basically unbeatable."
+      "dialogue": "[BOSS] Bonzo: Gratz for making it this far, but I'm basically unbeatable.",
+      "color": 43690
     }
   ],
   "F2": [
     {
       "name": "Blood Open",
-      "dialogue": "§e[NPC] §bMort§f: Here, I found this map when I first entered the dungeon."
+      "dialogue": "§e[NPC] §bMort§f: Here, I found this map when I first entered the dungeon.",
+      "color": 11141120
     },
     {
       "name": "Blood Clear",
-      "dialogue": "[BOSS] The Watcher: Ah, we meet again..."
+      "dialogue": "[BOSS] The Watcher: Ah, we meet again...",
+      "color": 16733525
     },
     {
       "name": "Portal",
-      "dialogue": "[BOSS] The Watcher: You have proven yourself. You may pass."
+      "dialogue": "[BOSS] The Watcher: You have proven yourself. You may pass.",
+      "color": 16733695
     },
     {
       "name": "Scarf",
-      "dialogue": "[BOSS] Scarf: This is where the journey ends for you, Adventurers."
+      "dialogue": "[BOSS] Scarf: This is where the journey ends for you, Adventurers.",
+      "color": 43690
     }
   ],
   "M2": [
     {
       "name": "Blood Open",
-      "dialogue": "§e[NPC] §bMort§f: Here, I found this map when I first entered the dungeon."
+      "dialogue": "§e[NPC] §bMort§f: Here, I found this map when I first entered the dungeon.",
+      "color": 11141120
     },
     {
       "name": "Blood Clear",
-      "dialogue": "[BOSS] The Watcher: Ah, we meet again..."
+      "dialogue": "[BOSS] The Watcher: Ah, we meet again...",
+      "color": 16733525
     },
     {
       "name": "Portal",
-      "dialogue": "[BOSS] The Watcher: You have proven yourself. You may pass."
+      "dialogue": "[BOSS] The Watcher: You have proven yourself. You may pass.",
+      "color": 16733695
     },
     {
       "name": "Scarf",
-      "dialogue": "[BOSS] Scarf: This is where the journey ends for you, Adventurers."
+      "dialogue": "[BOSS] Scarf: This is where the journey ends for you, Adventurers.",
+      "color": 43690
     }
   ],
   "F3": [
     {
       "name": "Blood Open",
-      "dialogue": "§e[NPC] §bMort§f: Here, I found this map when I first entered the dungeon."
+      "dialogue": "§e[NPC] §bMort§f: Here, I found this map when I first entered the dungeon.",
+      "color": 11141120
     },
     {
       "name": "Blood Clear",
-      "dialogue": "[BOSS] The Watcher: So you made it this far... interesting."
+      "dialogue": "[BOSS] The Watcher: So you made it this far... interesting.",
+      "color": 16733525
     },
     {
       "name": "Portal",
-      "dialogue": "[BOSS] The Watcher: You have proven yourself. You may pass."
+      "dialogue": "[BOSS] The Watcher: You have proven yourself. You may pass.",
+      "color": 16733695
     },
     {
       "name": "Professor",
-      "dialogue": "[BOSS] The Professor: I was burdened with terrible news recently..."
+      "dialogue": "[BOSS] The Professor: I was burdened with terrible news recently...",
+      "color": 43690
     }
   ],
   "M3": [
     {
       "name": "Blood Open",
-      "dialogue": "§e[NPC] §bMort§f: Here, I found this map when I first entered the dungeon."
+      "dialogue": "§e[NPC] §bMort§f: Here, I found this map when I first entered the dungeon.",
+      "color": 11141120
     },
     {
       "name": "Blood Clear",
-      "dialogue": "[BOSS] The Watcher: So you made it this far... interesting."
+      "dialogue": "[BOSS] The Watcher: So you made it this far... interesting.",
+      "color": 16733525
     },
     {
       "name": "Portal",
-      "dialogue": "[BOSS] The Watcher: You have proven yourself. You may pass."
+      "dialogue": "[BOSS] The Watcher: You have proven yourself. You may pass.",
+      "color": 16733695
     },
     {
       "name": "Professor",
-      "dialogue": "[BOSS] The Professor: I was burdened with terrible news recently..."
+      "dialogue": "[BOSS] The Professor: I was burdened with terrible news recently...",
+      "color": 43690
     }
   ],
   "F4": [
     {
       "name": "Blood Open",
-      "dialogue": "§e[NPC] §bMort§f: Here, I found this map when I first entered the dungeon."
+      "dialogue": "§e[NPC] §bMort§f: Here, I found this map when I first entered the dungeon.",
+      "color": 11141120
     },
     {
       "name": "Blood Clear",
-      "dialogue": "[BOSS] The Watcher: You've managed to scratch and claw your way here, eh?"
+      "dialogue": "[BOSS] The Watcher: You've managed to scratch and claw your way here, eh?",
+      "color": 16733525
     },
     {
       "name": "Portal",
-      "dialogue": "[BOSS] The Watcher: You have proven yourself. You may pass."
+      "dialogue": "[BOSS] The Watcher: You have proven yourself. You may pass.",
+      "color": 16733695
     },
     {
       "name": "Thorn",
-      "dialogue": "[BOSS] Thorn: Welcome Adventurers! I am Thorn, the Spirit! And host of the Vegan Trials!"
+      "dialogue": "[BOSS] Thorn: Welcome Adventurers! I am Thorn, the Spirit! And host of the Vegan Trials!",
+      "color": 43690
     }
   ],
   "M4": [
     {
       "name": "Blood Open",
-      "dialogue": "§e[NPC] §bMort§f: Here, I found this map when I first entered the dungeon."
+      "dialogue": "§e[NPC] §bMort§f: Here, I found this map when I first entered the dungeon.",
+      "color": 11141120
     },
     {
       "name": "Blood Clear",
-      "dialogue": "[BOSS] The Watcher: You've managed to scratch and claw your way here, eh?"
+      "dialogue": "[BOSS] The Watcher: You've managed to scratch and claw your way here, eh?",
+      "color": 16733525
     },
     {
       "name": "Portal",
-      "dialogue": "[BOSS] The Watcher: You have proven yourself. You may pass."
+      "dialogue": "[BOSS] The Watcher: You have proven yourself. You may pass.",
+      "color": 16733695
     },
     {
       "name": "Thorn",
-      "dialogue": "[BOSS] Thorn: Welcome Adventurers! I am Thorn, the Spirit! And host of the Vegan Trials!"
+      "dialogue": "[BOSS] Thorn: Welcome Adventurers! I am Thorn, the Spirit! And host of the Vegan Trials!",
+      "color": 43690
     }
   ],
   "F5": [
     {
       "name": "Blood Open",
-      "dialogue": "§e[NPC] §bMort§f: Here, I found this map when I first entered the dungeon."
+      "dialogue": "§e[NPC] §bMort§f: Here, I found this map when I first entered the dungeon.",
+      "color": 11141120
     },
     {
       "name": "Blood Clear",
-      "dialogue": "[BOSS] The Watcher: I'm starting to get tired of seeing you around here..."
+      "dialogue": "[BOSS] The Watcher: I'm starting to get tired of seeing you around here...",
+      "color": 16733525
     },
     {
       "name": "Portal",
-      "dialogue": "[BOSS] The Watcher: You have proven yourself. You may pass."
+      "dialogue": "[BOSS] The Watcher: You have proven yourself. You may pass.",
+      "color": 16733695
     },
     {
       "name": "Livid",
-      "dialogue": "[BOSS] Livid: Welcome, you've arrived right on time. I am Livid, the Master of Shadows."
+      "dialogue": "[BOSS] Livid: Welcome, you've arrived right on time. I am Livid, the Master of Shadows.",
+      "color": 43690
     }
   ],
   "M5": [
     {
       "name": "Blood Open",
-      "dialogue": "§e[NPC] §bMort§f: Here, I found this map when I first entered the dungeon."
+      "dialogue": "§e[NPC] §bMort§f: Here, I found this map when I first entered the dungeon.",
+      "color": 11141120
     },
     {
       "name": "Blood Clear",
-      "dialogue": "[BOSS] The Watcher: I'm starting to get tired of seeing you around here..."
+      "dialogue": "[BOSS] The Watcher: I'm starting to get tired of seeing you around here...",
+      "color": 16733525
     },
     {
       "name": "Portal",
-      "dialogue": "[BOSS] The Watcher: You have proven yourself. You may pass."
+      "dialogue": "[BOSS] The Watcher: You have proven yourself. You may pass.",
+      "color": 16733695
     },
     {
       "name": "Livid",
-      "dialogue": "[BOSS] Livid: Welcome, you've arrived right on time. I am Livid, the Master of Shadows."
+      "dialogue": "[BOSS] Livid: Welcome, you've arrived right on time. I am Livid, the Master of Shadows.",
+      "color": 43690
     }
   ],
   "F6": [
     {
       "name": "Blood Open",
-      "dialogue": "§e[NPC] §bMort§f: Here, I found this map when I first entered the dungeon."
+      "dialogue": "§e[NPC] §bMort§f: Here, I found this map when I first entered the dungeon.",
+      "color": 11141120
     },
     {
       "name": "Blood Clear",
-      "dialogue": "[BOSS] The Watcher: Oh.. hello?"
+      "dialogue": "[BOSS] The Watcher: Oh.. hello?",
+      "color": 16733525
     },
     {
       "name": "Portal",
-      "dialogue": "[BOSS] The Watcher: You have proven yourself. You may pass."
+      "dialogue": "[BOSS] The Watcher: You have proven yourself. You may pass.",
+      "color": 16733695
     },
     {
       "name": "Terracottas",
-      "dialogue": "[BOSS] Sadan: So you made it all the way here... Now you wish to defy me? Sadan?!"
+      "dialogue": "[BOSS] Sadan: So you made it all the way here... Now you wish to defy me? Sadan?!",
+      "color": 16777045
     },
     {
       "name": "Giants",
-      "dialogue": "[BOSS] Sadan: ENOUGH!"
+      "dialogue": "[BOSS] Sadan: ENOUGH!",
+      "color": 16755200
     },
     {
       "name": "Sadan",
-      "dialogue": "[BOSS] Sadan: You did it. I understand now, you have earned my respect."
+      "dialogue": "[BOSS] Sadan: You did it. I understand now, you have earned my respect.",
+      "color": 43690
     }
   ],
   "M6": [
     {
       "name": "Blood Open",
-      "dialogue": "§e[NPC] §bMort§f: Here, I found this map when I first entered the dungeon."
+      "dialogue": "§e[NPC] §bMort§f: Here, I found this map when I first entered the dungeon.",
+      "color": 11141120
     },
     {
       "name": "Blood Clear",
-      "dialogue": "[BOSS] The Watcher: Oh.. hello?"
+      "dialogue": "[BOSS] The Watcher: Oh.. hello?",
+      "color": 16733525
     },
     {
       "name": "Portal",
-      "dialogue": "[BOSS] The Watcher: You have proven yourself. You may pass."
+      "dialogue": "[BOSS] The Watcher: You have proven yourself. You may pass.",
+      "color": 16733695
     },
     {
       "name": "Terracottas",
-      "dialogue": "[BOSS] Sadan: So you made it all the way here... Now you wish to defy me? Sadan?!"
+      "dialogue": "[BOSS] Sadan: So you made it all the way here... Now you wish to defy me? Sadan?!",
+      "color": 16777045
     },
     {
       "name": "Giants",
-      "dialogue": "[BOSS] Sadan: ENOUGH!"
+      "dialogue": "[BOSS] Sadan: ENOUGH!",
+      "color": 16755200
     },
     {
       "name": "Sadan",
-      "dialogue": "[BOSS] Sadan: You did it. I understand now, you have earned my respect."
+      "dialogue": "[BOSS] Sadan: You did it. I understand now, you have earned my respect.",
+      "color": 43690
     }
   ],
   "F7": [
     {
       "name": "Blood Open",
-      "dialogue": "§e[NPC] §bMort§f: Here, I found this map when I first entered the dungeon."
+      "dialogue": "§e[NPC] §bMort§f: Here, I found this map when I first entered the dungeon.",
+      "color": 11141120
     },
     {
       "name": "Blood Clear",
-      "dialogue": "[BOSS] The Watcher: Things feel a little more roomy now, eh?"
+      "dialogue": "[BOSS] The Watcher: Things feel a little more roomy now, eh?",
+      "color": 16733525
     },
     {
       "name": "Portal",
-      "dialogue": "[BOSS] The Watcher: You have proven yourself. You may pass."
+      "dialogue": "[BOSS] The Watcher: You have proven yourself. You may pass.",
+      "color": 16733695
     },
     {
       "name": "Maxor",
-      "dialogue": "[BOSS] Maxor: WELL! WELL! WELL! LOOK WHO'S HERE!"
+      "dialogue": "[BOSS] Maxor: WELL! WELL! WELL! LOOK WHO'S HERE!",
+      "color": 11141290
     },
     {
       "name": "Storm",
-      "dialogue": "[BOSS] Storm: Pathetic Maxor, just like expected."
+      "dialogue": "[BOSS] Storm: Pathetic Maxor, just like expected.",
+      "color": 43690
     },
     {
       "name": "Terminals",
-      "dialogue": "[BOSS] Goldor: Who dares trespass into my domain?"
+      "dialogue": "[BOSS] Goldor: Who dares trespass into my domain?",
+      "color": 16777045
     },
     {
       "name": "Goldor",
-      "dialogue": "The Core entrance is opening!"
+      "dialogue": "The Core entrance is opening!",
+      "color": 16755200
     },
     {
       "name": "Necron",
-      "dialogue": "[BOSS] Necron: You went further than any human before, congratulations."
+      "dialogue": "[BOSS] Necron: You went further than any human before, congratulations.",
+      "color": 16733525
     }
   ],
   "M7": [
     {
       "name": "Blood Open",
-      "dialogue": "§e[NPC] §bMort§f: Here, I found this map when I first entered the dungeon."
+      "dialogue": "§e[NPC] §bMort§f: Here, I found this map when I first entered the dungeon.",
+      "color": 11141120
     },
     {
       "name": "Blood Clear",
-      "dialogue": "[BOSS] The Watcher: Things feel a little more roomy now, eh?"
+      "dialogue": "[BOSS] The Watcher: Things feel a little more roomy now, eh?",
+      "color": 16733525
     },
     {
       "name": "Portal",
-      "dialogue": "[BOSS] The Watcher: You have proven yourself. You may pass."
+      "dialogue": "[BOSS] The Watcher: You have proven yourself. You may pass.",
+      "color": 16733695
     },
     {
       "name": "Maxor",
-      "dialogue": "[BOSS] Maxor: WELL! WELL! WELL! LOOK WHO'S HERE!"
+      "dialogue": "[BOSS] Maxor: WELL! WELL! WELL! LOOK WHO'S HERE!",
+      "color": 11141290
     },
     {
       "name": "Storm",
-      "dialogue": "[BOSS] Storm: Pathetic Maxor, just like expected."
+      "dialogue": "[BOSS] Storm: Pathetic Maxor, just like expected.",
+      "color": 43690
     },
     {
       "name": "Terminals",
-      "dialogue": "[BOSS] Goldor: Who dares trespass into my domain?"
+      "dialogue": "[BOSS] Goldor: Who dares trespass into my domain?",
+      "color": 16777045
     },
     {
       "name": "Goldor",
-      "dialogue": "The Core entrance is opening!"
+      "dialogue": "The Core entrance is opening!",
+      "color": 16755200
     },
     {
       "name": "Necron",
-      "dialogue": "[BOSS] Necron: You went further than any human before, congratulations."
+      "dialogue": "[BOSS] Necron: You went further than any human before, congratulations.",
+      "color": 16733525
     },
     {
       "name": "Dragons",
-      "dialogue": "[BOSS] Necron: All this, for nothing..."
+      "dialogue": "[BOSS] Necron: All this, for nothing...",
+      "color": 11141120
     }
   ]
 }

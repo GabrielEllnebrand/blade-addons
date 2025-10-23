@@ -32,7 +32,6 @@ public class Location {
             } catch (IllegalArgumentException ignored) {
                 currentLocation = Locations.NONE;
             }
-            System.out.println("reseting");
             Phase.reset();
         }));
     }

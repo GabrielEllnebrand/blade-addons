@@ -5,14 +5,16 @@ import blade.addon.features.dungeon.PositionMessages;
 import blade.addon.features.dungeon.StormTickTimer;
 import blade.addon.utils.JsonUtility;
 import blade.addon.utils.Location;
+import blade.addon.utils.events.Events;
 import config.practical.hud.HUDComponent;
 import config.practical.manager.ConfigValue;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.scoreboard.Team;
 import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,7 +26,7 @@ public class Phase {
     private static final Pattern END_PATTERN = Pattern.compile("^\\s*☠ Defeated (.+) in 0?([\\dhms ]+)\\s*(\\(NEW RECORD!\\))?$");
     private static final Pattern SEARCH_PATTERN = Pattern.compile("^ ⏣ The Catacombs .*$");
 
-    private static final Split DUMMY_SPLIT = new Split("test split", "if this is called idk");
+    private static final Split DUMMY_SPLIT = new Split("test split", "if this is called idk", 43690);
 
     private static final HashMap<String, ArrayList<Split>> FLOOR_SPLITS = JsonUtility.readSplits("/data/splits.json");
 
@@ -44,10 +46,19 @@ public class Phase {
     @ConfigValue
     public static boolean autoReque = false;
 
+    public static void init() {
+        Events.ON_SERVER_TICK.register(() -> {
+            if (currentSplits == null) return;
+            if (currentPhase > -1 && currentPhase < currentSplits.size()) {
+                currentSplits.get(currentPhase).tick();
+            }
+        });
+    }
+
+
     public static void parseMessage(Text message) {
         if (!Location.inDungeon()) return;
         String string = message.getString();
-
         if (currentSplits == null) return;
 
         for (int i = currentPhase + 1; i < currentSplits.size(); i++) {
@@ -127,32 +138,26 @@ public class Phase {
                 tick++;
             }
         }
-
-        if (currentSplits == null) return;
-        if (currentPhase > -1 && currentPhase < currentSplits.size()) {
-            currentSplits.get(currentPhase).tick();
-        }
-
     }
 
     @ConfigValue
-    public static HUDComponent splitTimer = new HUDComponent(0, 0, 80, 90, 1,
+    public static HUDComponent splitTimer = new HUDComponent(0, 0, Split.SPLIT_LENGTH, 90, 1,
             Location::inDungeon,
             ((hudComponent, drawContext) -> {
                 int x = hudComponent.getScaledX();
                 int y = hudComponent.getScaledY();
 
-                int color = 0xffffffff;
-
                 long currentTime = System.currentTimeMillis();
+                TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
 
                 if (currentSplits != null) {
                     for (int i = 0; i < currentSplits.size(); i++) {
-                        drawContext.drawText(MinecraftClient.getInstance().textRenderer, currentSplits.get(i).makeSplitString(currentTime), x, y + TEXT_HEIGHT * i, color, true);
+                        currentSplits.get(i).drawSplit(drawContext, textRenderer, currentTime, x, y + TEXT_HEIGHT * i);
+
                     }
                 } else {
                     for (int i = 0; i < DUMMY_SIZE; i++) {
-                        drawContext.drawText(MinecraftClient.getInstance().textRenderer, DUMMY_SPLIT.makeSplitString(0), x, y + TEXT_HEIGHT * i, color, true);
+                        DUMMY_SPLIT.drawSplit(drawContext, textRenderer, currentTime, x, y + TEXT_HEIGHT * i);
                     }
                 }
             })

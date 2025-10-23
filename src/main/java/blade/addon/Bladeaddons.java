@@ -3,13 +3,12 @@ package blade.addon;
 import blade.addon.features.dungeon.GoldorTickTimer;
 import blade.addon.features.dungeon.LeapMessage;
 import blade.addon.features.dungeon.PositionMessages;
-import blade.addon.utils.dungeon.Phase;
 import blade.addon.features.dungeon.StormTickTimer;
 import blade.addon.utils.Keybinds;
 import blade.addon.utils.Location;
 import blade.addon.utils.config.Config;
+import blade.addon.utils.dungeon.Phase;
 import net.fabricmc.api.ModInitializer;
-
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 
@@ -20,10 +19,12 @@ public class Bladeaddons implements ModInitializer {
 		Keybinds.register();
 		Location.init();
 
+        Phase.init();
+        StormTickTimer.init();
+        GoldorTickTimer.init();
+
 		ClientTickEvents.END_CLIENT_TICK.register((client) -> {
 			Keybinds.checkInputs(client);
-			StormTickTimer.tick(client);
-			GoldorTickTimer.tick(client);
             PositionMessages.tick(client);
 			Phase.tick(client);
 		});
@@ -41,5 +42,12 @@ public class Bladeaddons implements ModInitializer {
      * - bloodcamp dialogue kill time
      * - better splits
      * - storm death tick down time for to like term
+     * - add !dt and !undt support
+     * - add boss waypoints or smth
+     * - block highlights or smth for like levers, idk ask vortie again
+     * - add gfs thingy
+     * - croesus counter
+     * - score calc?
+     *
      */
 }

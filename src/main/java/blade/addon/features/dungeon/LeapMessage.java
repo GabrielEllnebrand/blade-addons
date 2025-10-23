@@ -18,6 +18,7 @@ public class LeapMessage {
     public static boolean enableLeapMessages = false;
 
     public static void parseMessage(Text message) {
+        if (!enableLeapMessages) return;
         if (!Location.inDungeon()) return;
         String string = message.getString();
 

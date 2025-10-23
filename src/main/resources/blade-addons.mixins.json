@@ -1,14 +1,18 @@
 {
-	"required": true,
-	"package": "blade.addon.mixin",
-	"compatibilityLevel": "JAVA_21",
-	"mixins": [
-		"ExampleMixin"
-	],
-	"injectors": {
-		"defaultRequire": 1
-	},
-	"overwrites": {
-		"requireAnnotations": true
-	}
+  "required": true,
+  "package": "blade.addon.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "ServerTickMixin",
+    "NetworkMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "overwrites": {
+    "requireAnnotations": true
+  },
+  "client": [
+    "NetworkMixin"
+  ]
 }

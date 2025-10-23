@@ -3,6 +3,7 @@ package blade.addon.features.dungeon;
 import blade.addon.utils.Constants;
 import blade.addon.utils.Location;
 import blade.addon.utils.dungeon.Phase;
+import blade.addon.utils.events.Events;
 import config.practical.hud.HUDComponent;
 import config.practical.manager.ConfigValue;
 import net.minecraft.client.MinecraftClient;
@@ -20,8 +21,10 @@ public class GoldorTickTimer {
     public static boolean inDeathTicks = true;
     private static int tick = 0;
 
-    public static void tick(MinecraftClient client) {
-        if (Location.inDungeon() && Phase.inP3()) tick++;
+    public static void init() {
+        Events.ON_SERVER_TICK.register(() -> {
+            if (Location.inDungeon() && Phase.inP3()) tick++;
+        });
     }
 
     public static void reset() {tick = 0;}
@@ -33,7 +36,7 @@ public class GoldorTickTimer {
                 int x = hudComponent.getScaledX();
                 int y = hudComponent.getScaledY();
 
-                int color = 0xffffffff;
+                int color;
                 double num = tick * Constants.TICK_DURATION;
 
                 double mod = num % 3;
