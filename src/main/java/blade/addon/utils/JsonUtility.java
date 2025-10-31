@@ -52,11 +52,13 @@ public class JsonUtility {
             for (JsonElement dialogueElement : dialoguesArray) {
                 JsonObject dialogueObj = dialogueElement.getAsJsonObject();
 
-                String name = dialogueObj.get("name").getAsString();
-                String dialogue = dialogueObj.get("dialogue").getAsString();
                 int color = dialogueObj.get("color").getAsInt();
+                String name = dialogueObj.get("name").getAsString();
+                String start = dialogueObj.get("start").getAsString();
+                String end = dialogueObj.get("end").getAsString();
 
-                splits.add(new Split(name, dialogue, color));
+
+                splits.add(new Split(name, start, end, color));
             }
 
             floors.put(floorName, splits);

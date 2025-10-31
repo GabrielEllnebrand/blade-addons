@@ -1,48 +1,98 @@
 package blade.addon.utils.dungeon;
 
 import blade.addon.utils.Constants;
+import config.practical.manager.ConfigValue;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.text.Style;
 import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Split {
 
+    public enum TimerType {
+        TICK_TIME("Tick time"), DIFFRENCE("difference");
+
+        private final String label;
+
+        TimerType(String label) {
+            this.label = label;
+        }
+
+        @Override
+        public String toString() {
+            return label;
+        }
+    }
+
     public static final int SPLIT_LENGTH = 150;
 
+    public static final int GREEN = 5635925;
+    public static final int GRAY = 11184810;
+    public static final int DARK_GRAY = 5592405;
+
+    @ConfigValue
+    public static int realTimeColorInactive = GREEN;
+    @ConfigValue
+    public static int realTimeColorOngoing = GREEN;
+    @ConfigValue
+    public static int realTimeColorComplete = GREEN;
+
+    @ConfigValue
+    public static int serverTimeColorInactive = GRAY;
+    @ConfigValue
+    public static int serverTimeColorOngoing = GRAY;
+    @ConfigValue
+    public static int serverTimeColorComplete = GRAY;
+
+    @ConfigValue
+    public static int parenthesesColorInactive = DARK_GRAY;
+    @ConfigValue
+    public static int parenthesesColorOngoing = DARK_GRAY;
+    @ConfigValue
+    public static int parenthesesColorComplete = DARK_GRAY;
+
+    @ConfigValue
+    public static TimerType timerType = TimerType.TICK_TIME;
+
     private final String name;
-    private final Pattern pattern;
+    private final Pattern startPattern, endPattern;
     private final int color;
     private int tick;
     private long startTime, endTime;
     private boolean started, ended;
 
-    public Split(String name, String dialogue, int color) {
+    public Split(String name, String start, String end, int color) {
         this.name = name;
         //json removes regex so gotta add them manually after
-        String regex = "^".concat(dialogue.replaceAll("\\.", "\\\\.").replaceAll("\\?", "\\\\?").replaceAll("\\[", "\\\\[").concat("$"));
-        this.pattern = Pattern.compile(regex);
+        String startRegex = "^".concat(start.replaceAll("\\.", "\\\\.").replaceAll("\\?", "\\\\?").replaceAll("\\[", "\\\\[").concat("$"));
+        String endRegex = "^".concat(end.replaceAll("\\.", "\\\\.").replaceAll("\\?", "\\\\?").replaceAll("\\[", "\\\\[").concat("$"));
+        this.startPattern = Pattern.compile(startRegex);
+        this.endPattern = Pattern.compile(endRegex);
         this.color = color;
         this.tick = 0;
         this.ended = false;
     }
 
-    public boolean matches(String string) {
-        Matcher matcher = pattern.matcher(string);
-        if (matcher.matches()) {
-            startTime = System.currentTimeMillis();
-            started = true;
-            return true;
+    public void parseMessage(String string) {
+        if (!started) {
+            Matcher matcher = startPattern.matcher(string);
+            if (matcher.matches()) {
+                start();
+            }
+        } else if (!ended) {
+            Matcher matcher = endPattern.matcher(string);
+            if (matcher.matches()) {
+                end();
+            }
         }
-        return false;
     }
 
     public void tick() {
-        this.tick++;
+        if (started && !ended) {
+            this.tick++;
+        }
     }
 
     public void reset() {
@@ -52,9 +102,61 @@ public class Split {
     }
 
     public void end() {
+        if (ended) return;
         endTime = System.currentTimeMillis();
         started = false;
         ended = true;
+    }
+
+    public void start() {
+        startTime = System.currentTimeMillis();
+        started = true;
+    }
+
+    public boolean started() {
+        return started;
+    }
+
+    public boolean ended() {
+        return ended;
+    }
+
+    private Text createText(double realTime, double tickTime) {
+        int realTimeColor, serverTimeColor, parenthesesColor;
+
+        if (!started) {
+            realTimeColor = realTimeColorInactive;
+            serverTimeColor = serverTimeColorInactive;
+            parenthesesColor = parenthesesColorInactive;
+        } else if (!ended) {
+            realTimeColor = realTimeColorOngoing;
+            serverTimeColor = serverTimeColorOngoing;
+            parenthesesColor = parenthesesColorOngoing;
+        } else {
+            realTimeColor = realTimeColorComplete;
+            serverTimeColor = serverTimeColorComplete;
+            parenthesesColor = parenthesesColorComplete;
+        }
+
+        String serverTime;
+        if (timerType == TimerType.DIFFRENCE) {
+            double diff = realTime - tickTime;
+            if (diff > 0) {
+                serverTime = "+" + Constants.DECIMAL_FORMAT.format(diff) + "s ";
+            } else {
+                serverTime = Constants.DECIMAL_FORMAT.format(diff) + "s ";
+            }
+        } else {
+            //default to tick timer
+            serverTime = Constants.DECIMAL_FORMAT.format(tickTime) + "s";
+        }
+
+
+        return Text.literal(Constants.DECIMAL_FORMAT.format(realTime) + "s ").withColor(realTimeColor)
+                .append(Text.literal("(").withColor(parenthesesColor)
+                        .append(Text.literal(serverTime).withColor(serverTimeColor))
+                        .append(Text.literal(")").withColor(parenthesesColor)
+                        ));
     }
 
     public void drawSplit(DrawContext context, TextRenderer textRenderer, long currentTime, int x, int y) {
@@ -69,12 +171,8 @@ public class Split {
             realTime = 0;
         }
 
-        Text nameText = Text.literal(name + " ").setStyle(Style.EMPTY.withColor(color));
-        Text timerText = Text.literal(Constants.DECIMAL_FORMAT.format(realTime) + "s ").setStyle(Style.EMPTY.withColor(Formatting.GREEN))
-                        .append(Text.literal("(").setStyle(Style.EMPTY.withColor(Formatting.DARK_GRAY))
-                                .append(Text.literal(Constants.DECIMAL_FORMAT.format(tickTime) + "s").setStyle(Style.EMPTY.withColor(Formatting.GRAY))
-                                        .append(Text.literal(")").setStyle(Style.EMPTY.withColor(Formatting.DARK_GRAY))
-                                        )));
+        Text nameText = Text.literal(name + " ").withColor(color);
+        Text timerText = createText(realTime, tickTime);
 
         int timerWidth = textRenderer.getWidth(timerText);
         context.drawText(textRenderer, nameText, x, y, 0xffffffff, true);

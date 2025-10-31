@@ -30,7 +30,7 @@ public class GoldorTickTimer {
     public static void reset() {tick = 0;}
 
     @ConfigValue
-    public static HUDComponent goldorTickTimer = new HUDComponent(0, 0, 30, 10, 1,
+    public static HUDComponent goldorTickTimer = new HUDComponent(0, 0, 30, 10, 1, "Goldor Tick Timer",
             () -> enableGoldorTickTimer && Location.inDungeon() && Phase.inP3(),
             ((hudComponent, drawContext) -> {
                 int x = hudComponent.getScaledX();

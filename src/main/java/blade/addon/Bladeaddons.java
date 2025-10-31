@@ -1,6 +1,6 @@
 package blade.addon;
 
-import blade.addon.features.dungeon.BloodCamp;
+import blade.addon.features.dungeon.DeathTickTimer;
 import blade.addon.features.dungeon.GoldorTickTimer;
 import blade.addon.features.dungeon.LeapMessage;
 import blade.addon.features.dungeon.PositionMessages;
@@ -24,8 +24,8 @@ public class Bladeaddons implements ModInitializer {
         Phase.init();
         StormTickTimer.init();
         GoldorTickTimer.init();
-        BloodCamp.init();
         TermStartTimer.init();
+        DeathTickTimer.init();
 
 		ClientTickEvents.END_CLIENT_TICK.register((client) -> {
 			Keybinds.checkInputs(client);
@@ -37,7 +37,6 @@ public class Bladeaddons implements ModInitializer {
 			if (Location.inDungeon()) {
 				Phase.parseMessage(message);
 				LeapMessage.parseMessage(message);
-                BloodCamp.parseMessage(message);
 			}
 		});
 	}
@@ -51,6 +50,11 @@ public class Bladeaddons implements ModInitializer {
      * - add gfs thingy
      * - croesus counter
      * - score calc?
+     * - timer for crystals in p1 or smth
      *
+     * - add boss enter <-- prob prio?
+     * - add split ee2 posmsg
+     *
+     * - add deathtimer
      */
 }

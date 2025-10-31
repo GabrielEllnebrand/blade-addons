@@ -25,14 +25,13 @@ public class TermStartTimer {
     public static void reset() {tick = TOTAL_TICKS;}
 
     @ConfigValue
-    public static HUDComponent termStartTimer = new HUDComponent(0, 0, 30, 10, 1,
+    public static HUDComponent termStartTimer = new HUDComponent(0, 0, 30, 10, 1, "Term Start Timer",
             () -> enableTermStartTimer && Location.inDungeon() && Phase.inP2() && Phase.stormDead(),
             ((hudComponent, drawContext) -> {
                 int x = hudComponent.getScaledX();
                 int y = hudComponent.getScaledY();
 
                 double num = tick * Constants.TICK_DURATION;
-
                 drawContext.drawText(MinecraftClient.getInstance().textRenderer, Constants.DECIMAL_FORMAT.format(num), x, y, 0x00FFFF55, true);
             })
     );

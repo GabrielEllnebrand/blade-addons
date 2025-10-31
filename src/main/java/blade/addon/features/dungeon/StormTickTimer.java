@@ -22,7 +22,7 @@ public class StormTickTimer {
     public static void reset() {tick = 0;}
 
     @ConfigValue
-    public static HUDComponent stormTickTimer = new HUDComponent(0, 0, 30, 10, 1,
+    public static HUDComponent stormTickTimer = new HUDComponent(0, 0, 30, 10, 1, "Storm Tick Timer",
             () -> enableStormTickTimer && Location.inDungeon() && Phase.inP2() && !Phase.stormDead(),
             ((hudComponent, drawContext) -> {
                 int x = hudComponent.getScaledX();

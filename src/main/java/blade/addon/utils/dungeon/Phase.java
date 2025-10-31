@@ -1,6 +1,6 @@
 package blade.addon.utils.dungeon;
 
-import blade.addon.features.dungeon.BloodCamp;
+import blade.addon.features.dungeon.DeathTickTimer;
 import blade.addon.features.dungeon.GoldorTickTimer;
 import blade.addon.features.dungeon.PositionMessages;
 import blade.addon.features.dungeon.StormTickTimer;
@@ -28,7 +28,7 @@ public class Phase {
     private static final Pattern SEARCH_PATTERN = Pattern.compile("^ ⏣ The Catacombs .*$");
     private static final Pattern STORM_KILL_PATTERN = Pattern.compile("^\\[BOSS] Storm: I should have known that I stood no chance\\.$");
 
-    private static final Split DUMMY_SPLIT = new Split("test split", "if this is called idk", 43690);
+    private static final Split DUMMY_SPLIT = new Split("test split", "if this is called idk","if this is called idk", 43690);
 
     private static final HashMap<String, ArrayList<Split>> FLOOR_SPLITS = JsonUtility.readSplits("/data/splits.json");
 
@@ -43,6 +43,7 @@ public class Phase {
 
     private static boolean inFloor7 = false;
     private static boolean stormDead = false;
+    private static boolean runOver = false;
 
     @ConfigValue
     public static boolean enableSplits = false;
@@ -52,9 +53,9 @@ public class Phase {
 
     public static void init() {
         Events.ON_SERVER_TICK.register(() -> {
-            if (currentSplits == null) return;
-            if (currentPhase > -1 && currentPhase < currentSplits.size()) {
-                currentSplits.get(currentPhase).tick();
+            if (currentSplits == null || runOver) return;
+            for (Split split: currentSplits) {
+                split.tick();
             }
         });
     }
@@ -64,22 +65,37 @@ public class Phase {
         if (!Location.inDungeon()) return;
         String string = message.getString();
         if (currentSplits == null) return;
+        if (runOver) return;
 
-        for (int i = currentPhase + 1; i < currentSplits.size(); i++) {
-            if (currentSplits.get(i).matches(string)) {
-                currentPhase = i;
-                if (i - 1 >= 0) {
-                    currentSplits.get(i - 1).end();
-                }
+        for (int i = 0; i < currentSplits.size(); i++) {
+
+            Split currentSplit = currentSplits.get(i);
+            if (currentSplit.ended()) continue;
+
+            currentSplit.parseMessage(string);
+
+            if (currentSplit.ended()) {
+                currentPhase = i + 1;
             }
+
+            //just for starting the run
+            if (currentSplit.started() && currentPhase == -1) {
+                currentPhase = i;
+            }
+
+
+
         }
 
         Matcher matcher = END_PATTERN.matcher(string);
         if (matcher.find()) {
+            runOver = true;
             currentPhase = currentSplits.size();
-            if (currentPhase - 1 >= 0) {
-                currentSplits.get(currentPhase - 1).end();
+
+            for (Split split: currentSplits) {
+                split.end();
             }
+
             if (autoReque) {
                 ClientPlayNetworkHandler networkHandler = MinecraftClient.getInstance().getNetworkHandler();
                 if (networkHandler == null) return;
@@ -116,23 +132,16 @@ public class Phase {
         currentPhase = -1;
         inFloor7 = false;
         stormDead = false;
+        runOver = false;
         StormTickTimer.reset();
         GoldorTickTimer.reset();
         PositionMessages.reset();
         TermStartTimer.reset();
-        BloodCamp.reset();
-    }
-
-    public static boolean inClear() {
-        return currentPhase > -1 && currentPhase < 3;
-    }
-
-    public static boolean rushDone() {
-        return currentPhase > 0;
+        DeathTickTimer.reset();
     }
 
     public static boolean inP2() {
-        return currentPhase == 4 && inFloor7;
+        return currentPhase == 5 && inFloor7;
     }
 
     public static boolean stormDead() {
@@ -140,7 +149,7 @@ public class Phase {
     }
 
     public static boolean inP3() {
-        return currentPhase == 5 && inFloor7;
+        return currentPhase == 6 && inFloor7;
     }
 
     public static void tick(MinecraftClient client) {
