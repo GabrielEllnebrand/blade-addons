@@ -3,6 +3,7 @@ package blade.addon.utils.config;
 import blade.addon.features.dungeon.DeathTickTimer;
 import blade.addon.features.dungeon.ExplosiveShot;
 import blade.addon.features.dungeon.GoldorTickTimer;
+import blade.addon.features.dungeon.InvincibilityTimer;
 import blade.addon.features.dungeon.LeapMessage;
 import blade.addon.features.dungeon.PositionMessages;
 import blade.addon.features.dungeon.StormTickTimer;
@@ -26,7 +27,7 @@ public class Config {
 
     private static final Text TITLE = Text.literal("Blade Addons");
     public static final ConfigManager manager = new ConfigManager("./config/" + Constants.NAMESPACE + ".json",
-            List.of(StormTickTimer.class, GoldorTickTimer.class, Phase.class, LeapMessage.class, PositionMessages.class, TermStartTimer.class, Split.class, DeathTickTimer.class, ExplosiveShot.class));
+            List.of(StormTickTimer.class, GoldorTickTimer.class, Phase.class, LeapMessage.class, PositionMessages.class, TermStartTimer.class, Split.class, DeathTickTimer.class, ExplosiveShot.class, InvincibilityTimer.class));
 
     public static Screen createScreen(Screen parent) {
         ConfigurableScreen screen = new ConfigurableScreen(TITLE, parent, manager);
@@ -40,10 +41,16 @@ public class Config {
         dungeons.add(new ConfigBool(Text.literal("Death tick timer"), () -> DeathTickTimer.enableDeathTickTimer, bool ->  DeathTickTimer.enableDeathTickTimer = bool));
         dungeons.add(new ConfigBool(Text.literal("calculate explosive shot"), () -> ExplosiveShot.calculateCriticalHit, bool ->  ExplosiveShot.calculateCriticalHit = bool));
 
-        config.practical.screenwidgets.ConfigSection goldor = new ConfigSection(Text.literal("Goldor tick timer"));
+        ConfigSection goldor = new ConfigSection(Text.literal("Goldor tick timer"));
         goldor.add(new ConfigBool(Text.literal("Enable tick timer"), () -> GoldorTickTimer.enableGoldorTickTimer, bool -> GoldorTickTimer.enableGoldorTickTimer = bool));
         goldor.add(new ConfigBool(Text.literal("death ticks intervals"), () -> GoldorTickTimer.inDeathTicks, bool -> GoldorTickTimer.inDeathTicks = bool));
         dungeons.add(goldor);
+
+        ConfigSection invincibility = new ConfigSection(Text.literal("Invincibility stuff"));
+        invincibility.add(new ConfigBool(Text.literal("Enable invincibility display"),() -> InvincibilityTimer.displayInvincibilityTimer, bool -> InvincibilityTimer.displayInvincibilityTimer = bool));
+        invincibility.add(new ConfigOptions<>(Text.literal("Display when"), InvincibilityTimer.DisplayWhen.values(), () -> InvincibilityTimer.displayWhen, when -> InvincibilityTimer.displayWhen = when));
+        dungeons.add(invincibility);
+
 
         screen.addCategory(dungeons);
 

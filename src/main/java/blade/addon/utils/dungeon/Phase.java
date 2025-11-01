@@ -2,6 +2,7 @@ package blade.addon.utils.dungeon;
 
 import blade.addon.features.dungeon.DeathTickTimer;
 import blade.addon.features.dungeon.GoldorTickTimer;
+import blade.addon.features.dungeon.InvincibilityTimer;
 import blade.addon.features.dungeon.PositionMessages;
 import blade.addon.features.dungeon.StormTickTimer;
 import blade.addon.features.dungeon.TermStartTimer;
@@ -138,8 +139,12 @@ public class Phase {
         PositionMessages.reset();
         TermStartTimer.reset();
         DeathTickTimer.reset();
+        InvincibilityTimer.reset();
     }
 
+    public static boolean inBoss() {
+        return currentPhase > 3;
+    }
     public static boolean inP2() {
         return currentPhase == 5 && inFloor7;
     }
@@ -176,7 +181,7 @@ public class Phase {
     }
 
     @ConfigValue
-    public static HUDComponent splitTimer = new HUDComponent(0, 0, Split.SPLIT_LENGTH, 90, 1,
+    public static HUDComponent splitTimer = new HUDComponent(0, 0, Split.SPLIT_LENGTH, 90, 1, "Splits",
             Location::inDungeon,
             ((hudComponent, drawContext) -> {
                 int x = hudComponent.getScaledX();

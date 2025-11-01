@@ -3,6 +3,7 @@ package blade.addon;
 import blade.addon.features.dungeon.DeathTickTimer;
 import blade.addon.features.dungeon.ExplosiveShot;
 import blade.addon.features.dungeon.GoldorTickTimer;
+import blade.addon.features.dungeon.InvincibilityTimer;
 import blade.addon.features.dungeon.LeapMessage;
 import blade.addon.features.dungeon.PositionMessages;
 import blade.addon.features.dungeon.StormTickTimer;
@@ -29,6 +30,7 @@ public class Bladeaddons implements ModInitializer {
         GoldorTickTimer.init();
         TermStartTimer.init();
         DeathTickTimer.init();
+        InvincibilityTimer.init();
 
 		ClientTickEvents.END_CLIENT_TICK.register((client) -> {
 			Keybinds.checkInputs(client);
@@ -41,6 +43,7 @@ public class Bladeaddons implements ModInitializer {
 				Phase.parseMessage(message);
 				LeapMessage.parseMessage(message);
                 ExplosiveShot.parseMessage(message);
+                InvincibilityTimer.parseMessage(message);
 			}
 		});
 	}
