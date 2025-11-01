@@ -15,4 +15,7 @@ public class PositionMixin {
     private void channelRead0(PlayerPositionLookS2CPacket packet, CallbackInfo ci) {
         DeathTickTimer.onTeleport(packet.change().position());
     }
+
+
+
 }

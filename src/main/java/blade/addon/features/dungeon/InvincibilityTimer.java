@@ -6,6 +6,7 @@ import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.events.Events;
 import config.practical.hud.HUDComponent;
 import config.practical.manager.ConfigValue;
+import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
@@ -16,10 +17,17 @@ import java.util.regex.Pattern;
 public class InvincibilityTimer {
 
     private static final int TEXT_HEIGHT = 9;
+    private static final int HEAD_SLOT = 39;
 
     private static final Pattern BONZO_PATTERN = Pattern.compile("^Your (?:\\S+ )?Bonzo's Mask saved your life!$");
     private static final Pattern SPIRIT_PATTERN = Pattern.compile("^Second Wind Activated! Your Spirit Mask saved your life!$");
     private static final Pattern PHOENIX_PATTERN = Pattern.compile("^Your Phoenix Pet saved you from certain death!$");
+
+    private static final Pattern BONZO_ON_HEAD_PATTERN = Pattern.compile("Bonzo's Mask");
+    private static final Pattern SPIRIT_ON_HEAD_PATTERN = Pattern.compile("Spirit Mask");
+
+    private static final Pattern MANUAL_EQUIP_PET_PATTERN = Pattern.compile("^You summoned your (\\D+)!$");
+    private static final Pattern RULE_EQUIP_PET_PATTERN = Pattern.compile("^Autopet equipped your \\[Lvl [0-9]+] (\\D+)( ✦)?! VIEW RULE$");
 
     //in ticks
     private static final int BONZO_MASK_COOLDOWN = 180 * 20;
@@ -29,6 +37,10 @@ public class InvincibilityTimer {
     private static int bonzoMaskTicks = 0;
     private static int spiritMaskTicks = 0;
     private static int phoenixTicks = 0;
+
+    private static boolean bonzoMaskOn = false;
+    private static boolean spiritMaskOn = false;
+    private static boolean phoenixOn = false;
 
     public enum DisplayWhen {
         ALWAYS("Always"), BOSS_ONLY("Only in Boss"), P3_ONLY("Only in P3");
@@ -58,6 +70,38 @@ public class InvincibilityTimer {
             spiritMaskTicks = Math.max(0, spiritMaskTicks - 1);
             phoenixTicks = Math.max(0, phoenixTicks - 1);
         });
+
+        Events.ON_SLOT_CHANGE.register(((slot, item) -> {
+            if (slot == HEAD_SLOT && Location.inDungeon()) {
+                Text text = item.getCustomName();
+                if (text == null) return;
+                String string = text.getString();
+
+                Matcher matcher = BONZO_ON_HEAD_PATTERN.matcher(string);
+                bonzoMaskOn = matcher.find();
+
+                matcher = SPIRIT_ON_HEAD_PATTERN.matcher(string);
+                spiritMaskOn = matcher.find();
+
+
+            }
+        }));
+        ClientReceiveMessageEvents.GAME.register((message, overlay) -> {
+            if (!Location.inDungeon()) return;
+            String string = message.getString().replaceAll("§.", "");
+            Matcher matcher = MANUAL_EQUIP_PET_PATTERN.matcher(string);
+            if (matcher.find()) {
+                String petName = matcher.group(1);
+                phoenixOn = petName.equals("Phoenix");
+            }
+
+            matcher = RULE_EQUIP_PET_PATTERN.matcher(string);
+            if (matcher.find()) {
+                String petName = matcher.group(1);
+                phoenixOn = petName.equals("Phoenix");
+            }
+
+        });
     }
 
     public static void reset() {
@@ -84,7 +128,6 @@ public class InvincibilityTimer {
     }
 
 
-
     private static Text getBonzoText() {
         if (bonzoMaskTicks > 0) {
             return Text.literal("Bonzo's Mask ").formatted(Formatting.RED)
@@ -92,7 +135,8 @@ public class InvincibilityTimer {
                     .append(Text.literal(Constants.DECIMAL_FORMAT.format(bonzoMaskTicks * Constants.TICK_DURATION)).formatted(Formatting.GRAY))
                     .append(Text.literal(")").formatted(Formatting.DARK_GRAY));
         } else {
-            return Text.literal("Bonzo's Mask ").formatted(Formatting.GREEN);
+            Formatting format = bonzoMaskOn ? Formatting.YELLOW : Formatting.GREEN;
+            return Text.literal("Bonzo's Mask ").formatted(format);
         }
     }
 
@@ -103,7 +147,8 @@ public class InvincibilityTimer {
                     .append(Text.literal(Constants.DECIMAL_FORMAT.format(spiritMaskTicks * Constants.TICK_DURATION)).formatted(Formatting.GRAY))
                     .append(Text.literal(")").formatted(Formatting.DARK_GRAY));
         } else {
-            return Text.literal("Spirit Mask ").formatted(Formatting.GREEN);
+            Formatting format = spiritMaskOn ? Formatting.YELLOW : Formatting.GREEN;
+            return Text.literal("Spirit Mask ").formatted(format);
         }
     }
 
@@ -114,7 +159,8 @@ public class InvincibilityTimer {
                     .append(Text.literal(Constants.DECIMAL_FORMAT.format(phoenixTicks * Constants.TICK_DURATION)).formatted(Formatting.GRAY))
                     .append(Text.literal(")").formatted(Formatting.DARK_GRAY));
         } else {
-            return Text.literal("Phoenix ").formatted(Formatting.GREEN);
+            Formatting format = phoenixOn ? Formatting.YELLOW : Formatting.GREEN;
+            return Text.literal("Phoenix ").formatted(format);
         }
     }
 
