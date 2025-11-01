@@ -1,6 +1,7 @@
 package blade.addon.utils.config;
 
 import blade.addon.features.dungeon.DeathTickTimer;
+import blade.addon.features.dungeon.ExplosiveShot;
 import blade.addon.features.dungeon.GoldorTickTimer;
 import blade.addon.features.dungeon.LeapMessage;
 import blade.addon.features.dungeon.PositionMessages;
@@ -25,7 +26,7 @@ public class Config {
 
     private static final Text TITLE = Text.literal("Blade Addons");
     public static final ConfigManager manager = new ConfigManager("./config/" + Constants.NAMESPACE + ".json",
-            List.of(StormTickTimer.class, GoldorTickTimer.class, Phase.class, LeapMessage.class, PositionMessages.class, TermStartTimer.class, Split.class, DeathTickTimer.class));
+            List.of(StormTickTimer.class, GoldorTickTimer.class, Phase.class, LeapMessage.class, PositionMessages.class, TermStartTimer.class, Split.class, DeathTickTimer.class, ExplosiveShot.class));
 
     public static Screen createScreen(Screen parent) {
         ConfigurableScreen screen = new ConfigurableScreen(TITLE, parent, manager);
@@ -37,6 +38,7 @@ public class Config {
         dungeons.add(new ConfigBool(Text.literal("Auto reque"), () -> Phase.autoReque, bool ->  Phase.autoReque = bool));
         dungeons.add(new ConfigBool(Text.literal("Term start time"), () -> TermStartTimer.enableTermStartTimer, bool ->  TermStartTimer.enableTermStartTimer = bool));
         dungeons.add(new ConfigBool(Text.literal("Death tick timer"), () -> DeathTickTimer.enableDeathTickTimer, bool ->  DeathTickTimer.enableDeathTickTimer = bool));
+        dungeons.add(new ConfigBool(Text.literal("calculate explosive shot"), () -> ExplosiveShot.calculateCriticalHit, bool ->  ExplosiveShot.calculateCriticalHit = bool));
 
         config.practical.screenwidgets.ConfigSection goldor = new ConfigSection(Text.literal("Goldor tick timer"));
         goldor.add(new ConfigBool(Text.literal("Enable tick timer"), () -> GoldorTickTimer.enableGoldorTickTimer, bool -> GoldorTickTimer.enableGoldorTickTimer = bool));

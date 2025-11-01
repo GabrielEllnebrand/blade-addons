@@ -1,11 +1,13 @@
 package blade.addon;
 
 import blade.addon.features.dungeon.DeathTickTimer;
+import blade.addon.features.dungeon.ExplosiveShot;
 import blade.addon.features.dungeon.GoldorTickTimer;
 import blade.addon.features.dungeon.LeapMessage;
 import blade.addon.features.dungeon.PositionMessages;
 import blade.addon.features.dungeon.StormTickTimer;
 import blade.addon.features.dungeon.TermStartTimer;
+import blade.addon.utils.Commands;
 import blade.addon.utils.Keybinds;
 import blade.addon.utils.Location;
 import blade.addon.utils.config.Config;
@@ -19,6 +21,7 @@ public class Bladeaddons implements ModInitializer {
 	public void onInitialize() {
 		Config.manager.load();
 		Keybinds.register();
+        Commands.register();
 		Location.init();
 
         Phase.init();
@@ -37,6 +40,7 @@ public class Bladeaddons implements ModInitializer {
 			if (Location.inDungeon()) {
 				Phase.parseMessage(message);
 				LeapMessage.parseMessage(message);
+                ExplosiveShot.parseMessage(message);
 			}
 		});
 	}
@@ -46,15 +50,11 @@ public class Bladeaddons implements ModInitializer {
      * - bloodcamp dialogue kill time
      * - add !dt and !undt support
      * - add boss waypoints or smth
-     * - block highlights or smth for like levers, idk ask vortie again
      * - add gfs thingy
      * - croesus counter
      * - score calc?
      * - timer for crystals in p1 or smth
-     *
-     * - add boss enter <-- prob prio?
      * - add split ee2 posmsg
      *
-     * - add deathtimer
      */
 }
