@@ -4,6 +4,7 @@ import blade.addon.features.dungeon.DeathTickTimer;
 import blade.addon.features.dungeon.DupeClassChecker;
 import blade.addon.features.dungeon.ExplosiveShot;
 import blade.addon.features.dungeon.GoldorTickTimer;
+import blade.addon.features.dungeon.HidePlayersAfterLeap;
 import blade.addon.features.dungeon.InvincibilityTimer;
 import blade.addon.features.dungeon.LeapMessage;
 import blade.addon.features.dungeon.PositionMessages;
@@ -30,7 +31,7 @@ public class Config {
     private static final Text TITLE = Text.literal("Blade Addons");
     public static final ConfigManager manager = new ConfigManager("./config/" + Constants.NAMESPACE + ".json",
             List.of(StormTickTimer.class, GoldorTickTimer.class, Phase.class, LeapMessage.class, PositionMessages.class, TermStartTimer.class, Split.class, DeathTickTimer.class, ExplosiveShot.class,
-                    InvincibilityTimer.class, WarpCooldown.class, DupeClassChecker.class));
+                    InvincibilityTimer.class, WarpCooldown.class, DupeClassChecker.class, HidePlayersAfterLeap.class));
 
     public static Screen createScreen(Screen parent) {
         ConfigurableScreen screen = new ConfigurableScreen(TITLE, parent, manager);
@@ -46,15 +47,21 @@ public class Config {
         dungeons.add(new ConfigBool(Text.literal("Warp cooldown"), () -> WarpCooldown.enableWarpCooldown, bool -> WarpCooldown.enableWarpCooldown = bool));
         dungeons.add(new ConfigBool(Text.literal("Dupe class warning"), () -> DupeClassChecker.detectDuplicateClass, bool -> DupeClassChecker.detectDuplicateClass = bool));
 
+        ConfigSection invincibility = new ConfigSection(Text.literal("Invincibility stuff"));
+        invincibility.add(new ConfigBool(Text.literal("Enable invincibility display"),() -> InvincibilityTimer.displayInvincibilityTimer, bool -> InvincibilityTimer.displayInvincibilityTimer = bool));
+        invincibility.add(new ConfigOptions<>(Text.literal("Display when"), InvincibilityTimer.DisplayWhen.values(), () -> InvincibilityTimer.displayWhen, when -> InvincibilityTimer.displayWhen = when));
+        dungeons.add(invincibility);
+
+        ConfigSection hideAfterLeap = new ConfigSection(Text.literal("Hide players after leap"));
+        hideAfterLeap.add(new ConfigBool(Text.literal("Enable setting"), () -> HidePlayersAfterLeap.hideAfterLeap, bool -> HidePlayersAfterLeap.hideAfterLeap = bool));
+        hideAfterLeap.add(new ConfigBool(Text.literal("Hide only in boss"), () -> HidePlayersAfterLeap.hideOnlyInBoss, bool -> HidePlayersAfterLeap.hideOnlyInBoss = bool));
+        dungeons.add(hideAfterLeap);
+
         ConfigSection goldor = new ConfigSection(Text.literal("Goldor tick timer"));
         goldor.add(new ConfigBool(Text.literal("Enable tick timer"), () -> GoldorTickTimer.enableGoldorTickTimer, bool -> GoldorTickTimer.enableGoldorTickTimer = bool));
         goldor.add(new ConfigBool(Text.literal("death ticks intervals"), () -> GoldorTickTimer.inDeathTicks, bool -> GoldorTickTimer.inDeathTicks = bool));
         dungeons.add(goldor);
 
-        ConfigSection invincibility = new ConfigSection(Text.literal("Invincibility stuff"));
-        invincibility.add(new ConfigBool(Text.literal("Enable invincibility display"),() -> InvincibilityTimer.displayInvincibilityTimer, bool -> InvincibilityTimer.displayInvincibilityTimer = bool));
-        invincibility.add(new ConfigOptions<>(Text.literal("Display when"), InvincibilityTimer.DisplayWhen.values(), () -> InvincibilityTimer.displayWhen, when -> InvincibilityTimer.displayWhen = when));
-        dungeons.add(invincibility);
 
 
         screen.addCategory(dungeons);

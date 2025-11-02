@@ -1,6 +1,7 @@
 package blade.addon.features.dungeon;
 
 import blade.addon.utils.Location;
+import blade.addon.utils.events.Events;
 import config.practical.manager.ConfigValue;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 import net.minecraft.client.MinecraftClient;
@@ -20,16 +21,23 @@ public class LeapMessage {
     public static void init() {
         ClientReceiveMessageEvents.GAME.register((message, overlay) -> {
             if (Location.inDungeon()) {
-                if (!enableLeapMessages) return;
                 String string = message.getString();
 
                 Matcher matcher = SEARCH_PATTERN.matcher(string);
-                if (matcher.find()) {
-                    ClientPlayNetworkHandler networkHandler = MinecraftClient.getInstance().getNetworkHandler();
-                    if (networkHandler == null) return;
-                    networkHandler.sendChatCommand("pc " + string.substring(INDEX_REMOVAL));
+                if (!matcher.find()) return;
+
+                if (Events.ON_LEAP.hasListeners()) {
+                    Events.ON_LEAP.listeners.forEach(leapEvent -> leapEvent.onLeap(message));
                 }
             }
+        });
+
+        Events.ON_LEAP.register(message -> {
+            if (!enableLeapMessages) return;
+
+            ClientPlayNetworkHandler networkHandler = MinecraftClient.getInstance().getNetworkHandler();
+            if (networkHandler == null) return;
+            networkHandler.sendChatCommand("pc " + message.getString().substring(INDEX_REMOVAL));
         });
     }
 

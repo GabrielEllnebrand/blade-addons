@@ -4,6 +4,7 @@ import blade.addon.features.dungeon.DeathTickTimer;
 import blade.addon.features.dungeon.DupeClassChecker;
 import blade.addon.features.dungeon.ExplosiveShot;
 import blade.addon.features.dungeon.GoldorTickTimer;
+import blade.addon.features.dungeon.HidePlayersAfterLeap;
 import blade.addon.features.dungeon.InvincibilityTimer;
 import blade.addon.features.dungeon.LeapMessage;
 import blade.addon.features.dungeon.PositionMessages;
@@ -37,6 +38,7 @@ public class Bladeaddons implements ModInitializer {
         LeapMessage.init();
         ExplosiveShot.init();
         DupeClassChecker.init();
+        HidePlayersAfterLeap.init();
 
 		ClientTickEvents.END_CLIENT_TICK.register((client) -> {
 			Keybinds.checkInputs(client);
