@@ -20,10 +20,14 @@ public class TermStartTimer {
         Events.ON_SERVER_TICK.register(() -> {
             if (Location.inDungeon() && Phase.inP2() && Phase.stormDead()) tick--;
         });
+
+        Events.ON_LOCATION_CHANGE.register(newLocation -> {
+            if (newLocation.inDungeon()) {
+                tick = TOTAL_TICKS;
+            }
+        });
     }
-
-    public static void reset() {tick = TOTAL_TICKS;}
-
+    
     @ConfigValue
     public static HUDComponent termStartTimer = new HUDComponent(0, 0, 30, 10, 1, "Term Start Timer",
             () -> enableTermStartTimer && Location.inDungeon() && Phase.inP2() && Phase.stormDead(),

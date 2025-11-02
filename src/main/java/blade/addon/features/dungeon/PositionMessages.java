@@ -4,6 +4,7 @@ import blade.addon.utils.JsonUtility;
 import blade.addon.utils.Location;
 import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.dungeon.PositionMessage;
+import blade.addon.utils.events.Events;
 import config.practical.manager.ConfigValue;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
@@ -17,6 +18,16 @@ public class PositionMessages {
 
     private static final ArrayList<PositionMessage> positionMessages = JsonUtility.readPositionalMessages("/data/positions.json");
 
+    public static void init() {
+        Events.ON_LOCATION_CHANGE.register(newLocation -> {
+            if (newLocation.inDungeon()) {
+                for (PositionMessage message: positionMessages) {
+                    message.reset();
+                }
+            }
+        });
+    }
+
     public static void tick(MinecraftClient client) {
         if (!Location.inDungeon()) return;
         if (!Phase.inP3()) return;
@@ -25,12 +36,6 @@ public class PositionMessages {
 
         for (PositionMessage message: positionMessages) {
             message.tick(player);
-        }
-    }
-
-    public static void reset() {
-        for (PositionMessage message: positionMessages) {
-            message.reset();
         }
     }
 }

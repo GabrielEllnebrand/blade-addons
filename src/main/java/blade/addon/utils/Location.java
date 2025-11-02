@@ -1,6 +1,6 @@
 package blade.addon.utils;
 
-import blade.addon.utils.dungeon.Phase;
+import blade.addon.utils.events.Events;
 import net.hypixel.modapi.HypixelModAPI;
 import net.hypixel.modapi.packet.impl.clientbound.event.ClientboundLocationPacket;
 
@@ -32,7 +32,10 @@ public class Location {
             } catch (IllegalArgumentException ignored) {
                 currentLocation = Locations.NONE;
             }
-            Phase.reset();
+
+            if (Events.ON_LOCATION_CHANGE.hasListeners()) {
+                Events.ON_LOCATION_CHANGE.listeners.forEach(locationChangeEvent -> locationChangeEvent.onLocationChange(currentLocation));
+            }
         }));
     }
 

@@ -2,5 +2,9 @@ package blade.addon.utils;
 
 public enum Locations {
     NONE,
-    DUNGEON
+    DUNGEON;
+
+    public boolean inDungeon() {
+        return this == Locations.DUNGEON;
+    }
 }

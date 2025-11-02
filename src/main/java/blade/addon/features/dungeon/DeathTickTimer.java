@@ -24,6 +24,13 @@ public class DeathTickTimer {
                 if (tick <= 0) tick = TOTAL_DEATH_TICKS;
             }
         });
+
+        Events.ON_LOCATION_CHANGE.register(newLocation -> {
+            if (newLocation.inDungeon()) {
+                tick = 0;
+                firstPosition = null;
+            }
+        });
     }
 
     public static void onTeleport(Vec3d position) {
@@ -36,11 +43,6 @@ public class DeathTickTimer {
                 tick = TOTAL_DEATH_TICKS;
             }
         }
-    }
-
-    public static void reset() {
-        tick = 0;
-        firstPosition = null;
     }
 
     @ConfigValue

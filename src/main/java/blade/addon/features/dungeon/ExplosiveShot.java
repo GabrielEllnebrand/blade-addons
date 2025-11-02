@@ -1,6 +1,8 @@
 package blade.addon.features.dungeon;
 
+import blade.addon.utils.Location;
 import config.practical.manager.ConfigValue;
+import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.text.Text;
@@ -18,32 +20,37 @@ public class ExplosiveShot {
     @ConfigValue
     public static boolean calculateCriticalHit = false;
 
-    public static void parseMessage(Text message) {
-        if (!calculateCriticalHit) return;
+    public static void init() {
+        ClientReceiveMessageEvents.GAME.register((message, overlay) -> {
+            if (!Location.inDungeon()) return;
+            if (!calculateCriticalHit) return;
 
-        String string = message.getString();
+            String string = message.getString();
 
-        Matcher matcher = PATTERN.matcher(string);
+            Matcher matcher = PATTERN.matcher(string);
 
-        if (matcher.matches()) {
-            String count = matcher.group(1);
-            String amount = matcher.group(2);
+            if (matcher.matches()) {
+                String count = matcher.group(1);
+                String amount = matcher.group(2);
 
-            try {
-                int countNum = Integer.parseInt(count);
-                double amountNum = Double.parseDouble(amount.replace(",", ""));
+                try {
+                    int countNum = Integer.parseInt(count);
+                    double amountNum = Double.parseDouble(amount.replace(",", ""));
 
-                double damagePerEntity = amountNum / countNum;
+                    double damagePerEntity = amountNum / countNum;
 
-                InGameHud gameHud = MinecraftClient.getInstance().inGameHud;
-                gameHud.getChatHud().addMessage(
-                        Text.literal("Explosive shot did ").formatted(Formatting.GREEN)
-                                .append(Text.literal(FORMAT.format(damagePerEntity)).formatted(Formatting.YELLOW))
-                                .append(Text.literal(" damage per enemy.").formatted(Formatting.GREEN))
-                );
+                    InGameHud gameHud = MinecraftClient.getInstance().inGameHud;
+                    gameHud.getChatHud().addMessage(
+                            Text.literal("Explosive shot did ").formatted(Formatting.GREEN)
+                                    .append(Text.literal(FORMAT.format(damagePerEntity)).formatted(Formatting.YELLOW))
+                                    .append(Text.literal(" damage per enemy.").formatted(Formatting.GREEN))
+                    );
 
-            } catch (NumberFormatException ignored) {
+                } catch (NumberFormatException ignored) {
+                }
             }
-        }
+
+        });
     }
+
 }

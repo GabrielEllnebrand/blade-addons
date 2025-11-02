@@ -1,16 +1,11 @@
 package blade.addon.utils.dungeon;
 
-import blade.addon.features.dungeon.DeathTickTimer;
-import blade.addon.features.dungeon.GoldorTickTimer;
-import blade.addon.features.dungeon.InvincibilityTimer;
-import blade.addon.features.dungeon.PositionMessages;
-import blade.addon.features.dungeon.StormTickTimer;
-import blade.addon.features.dungeon.TermStartTimer;
 import blade.addon.utils.JsonUtility;
 import blade.addon.utils.Location;
 import blade.addon.utils.events.Events;
 import config.practical.hud.HUDComponent;
 import config.practical.manager.ConfigValue;
+import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
@@ -57,6 +52,23 @@ public class Phase {
             if (currentSplits == null || runOver) return;
             for (Split split: currentSplits) {
                 split.tick();
+            }
+        });
+
+        Events.ON_LOCATION_CHANGE.register(newLocation -> {
+            if (newLocation.inDungeon()) {
+                currentSplits = null;
+                floor = null;
+                currentPhase = -1;
+                inFloor7 = false;
+                stormDead = false;
+                runOver = false;
+            }
+        });
+
+        ClientReceiveMessageEvents.GAME.register((message, overlay) -> {
+            if (Location.inDungeon()) {
+                Phase.parseMessage(message);
             }
         });
     }
@@ -127,19 +139,8 @@ public class Phase {
         floor = null;
     }
 
-    public static void reset() {
-        currentSplits = null;
-        floor = null;
-        currentPhase = -1;
-        inFloor7 = false;
-        stormDead = false;
-        runOver = false;
-        StormTickTimer.reset();
-        GoldorTickTimer.reset();
-        PositionMessages.reset();
-        TermStartTimer.reset();
-        DeathTickTimer.reset();
-        InvincibilityTimer.reset();
+    public static boolean runStarted() {
+        return currentPhase >= 0;
     }
 
     public static boolean inBoss() {

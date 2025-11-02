@@ -102,12 +102,20 @@ public class InvincibilityTimer {
             }
 
         });
-    }
 
-    public static void reset() {
-        bonzoMaskTicks = 0;
-        spiritMaskTicks = 0;
-        phoenixTicks = 0;
+        Events.ON_LOCATION_CHANGE.register(newLocation -> {
+            if (newLocation.inDungeon()) {
+                bonzoMaskTicks = 0;
+                spiritMaskTicks = 0;
+                phoenixTicks = 0;
+            }
+        });
+
+        ClientReceiveMessageEvents.GAME.register((message, overlay) -> {
+            if (Location.inDungeon()) {
+                parseMessage(message);
+            }
+        });
     }
 
     public static void parseMessage(Text message) {
