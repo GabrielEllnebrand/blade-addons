@@ -23,7 +23,7 @@ public class GoldorTickTimer {
 
     public static void init() {
         Events.ON_SERVER_TICK.register(() -> {
-            if (Location.inDungeon() && Phase.inP3()) tick++;
+            if (Location.inDungeon() && Phase.inTerminals()) tick++;
         });
 
         Events.ON_LOCATION_CHANGE.register(newLocation -> {
@@ -35,7 +35,7 @@ public class GoldorTickTimer {
 
     @ConfigValue
     public static HUDComponent goldorTickTimer = new HUDComponent(0, 0, 30, 10, 1, "Goldor Tick Timer",
-            () -> enableGoldorTickTimer && Location.inDungeon() && Phase.inP3(),
+            () -> enableGoldorTickTimer && Location.inDungeon() && Phase.inTerminals(),
             ((hudComponent, drawContext) -> {
                 int x = hudComponent.getScaledX();
                 int y = hudComponent.getScaledY();

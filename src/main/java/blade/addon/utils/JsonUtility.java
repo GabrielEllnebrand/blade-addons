@@ -104,7 +104,18 @@ public class JsonUtility {
             double maxZ = obj.get("max_z").getAsDouble();
             String message = obj.get("message").getAsString();
 
-            positionalMessages.add(new PositionMessage(message, new Vec3d(minX, minY, minZ), new Vec3d(maxX, maxY, maxZ)));
+            JsonElement sectionsElement = obj.get("sections");
+            JsonArray sectionsArray = sectionsElement.getAsJsonArray();
+
+            int[] sections = new int[sectionsArray.size()];
+            int index = 0;
+            for (JsonElement jsonSection: sectionsArray) {
+                sections[index] = jsonSection.getAsInt();
+                index++;
+            }
+
+
+            positionalMessages.add(new PositionMessage(message, new Vec3d(minX, minY, minZ), new Vec3d(maxX, maxY, maxZ), sections));
         }
 
         return positionalMessages;

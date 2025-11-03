@@ -23,6 +23,11 @@ public class Phase {
     private static final Pattern END_PATTERN = Pattern.compile("^\\s*☠ Defeated (.+) in 0?([\\dhms ]+)\\s*(\\(NEW RECORD!\\))?$");
     private static final Pattern SEARCH_PATTERN = Pattern.compile("^ ⏣ The Catacombs .*$");
     private static final Pattern STORM_KILL_PATTERN = Pattern.compile("^\\[BOSS] Storm: I should have known that I stood no chance\\.$");
+    private static final Pattern GATE_BLOWN_PATTERN = Pattern.compile("^The gate has been destroyed!$");
+    private static final Pattern TERMINALS_DONE_PATTERN = Pattern.compile("(activated|completed) (a terminal|a device|a lever)! \\((\\d)/(\\d)\\)$");
+    private static final Pattern CORE_OPENING_PATTERN = Pattern.compile("^The Core entrance is opening!$");
+
+
 
     private static final Split DUMMY_SPLIT = new Split("test split", "if this is called idk", "if this is called idk", 43690);
 
@@ -36,6 +41,10 @@ public class Phase {
     private static int currentPhase = -1;
     private static String floor = "";
     private static int tick = 0;
+
+    private static int currentSection = 0;
+    private static boolean termsDone = false;
+    private static boolean gateBlownUp = false;
 
     private static boolean inFloor7 = false;
     private static boolean stormDead = false;
@@ -63,6 +72,9 @@ public class Phase {
                 inFloor7 = false;
                 stormDead = false;
                 runOver = false;
+                currentSection = 0;
+                termsDone = false;
+                gateBlownUp = false;
             }
         });
 
@@ -119,6 +131,39 @@ public class Phase {
             matcher = STORM_KILL_PATTERN.matcher(string);
             if (matcher.find()) {
                 stormDead = true;
+                currentSection = 1;
+            }
+        }
+
+        if (inP3()) {
+            if (!termsDone) {
+                matcher = TERMINALS_DONE_PATTERN.matcher(string);
+                if (matcher.find()) {
+                    String num1 = matcher.group(3);
+                    String num2 = matcher.group(4);
+                    if (num1.equals(num2)) {
+                        termsDone = true;
+                    }
+                }
+            }
+
+            if (!gateBlownUp) {
+                matcher = GATE_BLOWN_PATTERN.matcher(string);
+                if (matcher.find()) {
+                    gateBlownUp = true;
+                }
+            }
+
+            if (gateBlownUp && termsDone) {
+                currentSection++;
+                gateBlownUp = false;
+                termsDone = false;
+            }
+
+            matcher = CORE_OPENING_PATTERN.matcher(string);
+            if (matcher.find()) {
+                //so in "goldor tunnel" can be shown after terms are done
+               currentSection = 5;
             }
         }
     }
@@ -158,8 +203,16 @@ public class Phase {
         return stormDead;
     }
 
-    public static boolean inP3() {
+    public static boolean inTerminals() {
         return currentPhase == 6 && inFloor7;
+    }
+
+    public static boolean inP3() {
+        return (currentPhase == 6 || currentPhase == 7) && inFloor7;
+    }
+
+    public static boolean inSection(int section) {
+        return currentSection == section && inP3();
     }
 
     public static void tick(MinecraftClient client) {

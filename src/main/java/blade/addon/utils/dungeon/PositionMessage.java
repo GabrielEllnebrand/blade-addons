@@ -8,12 +8,14 @@ public class PositionMessage {
     private final String message;
     private final Vec3d min, max;
     private boolean visited;
+    private final int[] sections;
 
-    public PositionMessage(String message, Vec3d min, Vec3d max) {
+    public PositionMessage(String message, Vec3d min, Vec3d max, int[] sections) {
         this.message = message;
         this.min = min;
         this.max = max;
         this.visited = false;
+        this.sections = sections;
     }
 
     private boolean inRange(Vec3d pos) {
@@ -22,8 +24,16 @@ public class PositionMessage {
                 && pos.z >= min.z && pos.z <= max.z;
     }
 
+    private boolean inAValidSection() {
+        for (int section: sections) {
+            if (Phase.inSection(section)) return true;
+        }
+        return false;
+    }
+
     public void tick(ClientPlayerEntity player) {
         if (visited) return;
+        if (!inAValidSection()) return;
         if (inRange(player.getPos())) {
             visited = true;
             player.networkHandler.sendChatCommand("pc " + message);
