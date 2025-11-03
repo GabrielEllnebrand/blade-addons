@@ -1,5 +1,6 @@
 package blade.addon.utils.config;
 
+import blade.addon.features.dungeon.CrystalSpawn;
 import blade.addon.features.dungeon.DeathTickTimer;
 import blade.addon.features.dungeon.DupeClassChecker;
 import blade.addon.features.dungeon.ExplosiveShot;
@@ -31,21 +32,27 @@ public class Config {
     private static final Text TITLE = Text.literal("Blade Addons");
     public static final ConfigManager manager = new ConfigManager("./config/" + Constants.NAMESPACE + ".json",
             List.of(StormTickTimer.class, GoldorTickTimer.class, Phase.class, LeapMessage.class, PositionMessages.class, TermStartTimer.class, Split.class, DeathTickTimer.class, ExplosiveShot.class,
-                    InvincibilityTimer.class, WarpCooldown.class, DupeClassChecker.class, HidePlayersAfterLeap.class));
+                    InvincibilityTimer.class, WarpCooldown.class, DupeClassChecker.class, HidePlayersAfterLeap.class, CrystalSpawn.class));
 
     public static Screen createScreen(Screen parent) {
         ConfigurableScreen screen = new ConfigurableScreen(TITLE, parent, manager);
 
         ConfigCategory dungeons = new ConfigCategory("Dungeons");
-        dungeons.add(new ConfigBool(Text.literal("Storm tick timer"), () -> StormTickTimer.enableStormTickTimer, bool -> StormTickTimer.enableStormTickTimer = bool));
+
+        ConfigSection storm = new ConfigSection(Text.literal("Storm"));
+        storm.add(new ConfigBool(Text.literal("Tick timer"), () -> StormTickTimer.enableStormTickTimer, bool -> StormTickTimer.enableStormTickTimer = bool));
+        storm.add(new ConfigBool(Text.literal("First Death time"), () -> StormTickTimer.enableStormDeathTime, bool -> StormTickTimer.enableStormDeathTime = bool));
+        dungeons.add(storm);
+
         dungeons.add(new ConfigBool(Text.literal("Leap message"), () -> LeapMessage.enableLeapMessages, bool -> LeapMessage.enableLeapMessages = bool));
         dungeons.add(new ConfigBool(Text.literal("Positional messages"), () -> PositionMessages.enablePositionalMessages, bool ->  PositionMessages.enablePositionalMessages = bool));
-        dungeons.add(new ConfigBool(Text.literal("Auto reque"), () -> Phase.autoReque, bool ->  Phase.autoReque = bool));
+        dungeons.add(new ConfigBool(Text.literal("Auto requeue"), () -> Phase.autoReque, bool ->  Phase.autoReque = bool));
         dungeons.add(new ConfigBool(Text.literal("Term start time"), () -> TermStartTimer.enableTermStartTimer, bool ->  TermStartTimer.enableTermStartTimer = bool));
         dungeons.add(new ConfigBool(Text.literal("Death tick timer"), () -> DeathTickTimer.enableDeathTickTimer, bool ->  DeathTickTimer.enableDeathTickTimer = bool));
         dungeons.add(new ConfigBool(Text.literal("calculate explosive shot"), () -> ExplosiveShot.calculateCriticalHit, bool ->  ExplosiveShot.calculateCriticalHit = bool));
         dungeons.add(new ConfigBool(Text.literal("Warp cooldown"), () -> WarpCooldown.enableWarpCooldown, bool -> WarpCooldown.enableWarpCooldown = bool));
         dungeons.add(new ConfigBool(Text.literal("Dupe class warning"), () -> DupeClassChecker.detectDuplicateClass, bool -> DupeClassChecker.detectDuplicateClass = bool));
+        dungeons.add(new ConfigBool(Text.literal("Crystal Spawn Time"), () -> CrystalSpawn.enableCrystalSpawnTime, bool -> CrystalSpawn.enableCrystalSpawnTime = bool));
 
         ConfigSection invincibility = new ConfigSection(Text.literal("Invincibility stuff"));
         invincibility.add(new ConfigBool(Text.literal("Enable invincibility display"),() -> InvincibilityTimer.displayInvincibilityTimer, bool -> InvincibilityTimer.displayInvincibilityTimer = bool));
@@ -68,6 +75,8 @@ public class Config {
 
         ConfigCategory splits = new ConfigCategory("Splits");
         splits.add(new ConfigBool(Text.literal("Splits"), () -> Phase.enableSplits, bool -> Phase.enableSplits = bool));
+        splits.add(new ConfigOptions<>(Text.literal("Tick timer type"), Split.TimerType.values(), () -> Split.timerType, type -> Split.timerType = type));
+
         splits.add(new ConfigColor(Text.literal("Real time color (Inactive)"), () -> Split.realTimeColorInactive, color -> Split.realTimeColorInactive = color, "real-time-inactive", false));
         splits.add(new ConfigColor(Text.literal("Real time color (Ongoing)"), () -> Split.realTimeColorOngoing, color -> Split.realTimeColorOngoing = color, "real-time-ongoing", false));
         splits.add(new ConfigColor(Text.literal("Real time color (Complete)"), () -> Split.realTimeColorComplete, color -> Split.realTimeColorComplete = color, "real-time-complete", false));
@@ -80,7 +89,6 @@ public class Config {
         splits.add(new ConfigColor(Text.literal("Parentheses color (Ongoing)"), () -> Split.parenthesesColorOngoing, color -> Split.parenthesesColorOngoing = color, "parentheses-ongoing", false));
         splits.add(new ConfigColor(Text.literal("Parentheses color (Complete)"), () -> Split.parenthesesColorComplete, color -> Split.parenthesesColorComplete = color, "parentheses-complete", false));
 
-        splits.add(new ConfigOptions<>(Text.literal("Tick timer type"), Split.TimerType.values(), () -> Split.timerType, type -> Split.timerType = type));
 
         screen.addCategory(splits);
 

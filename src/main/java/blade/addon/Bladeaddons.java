@@ -1,5 +1,6 @@
 package blade.addon;
 
+import blade.addon.features.dungeon.CrystalSpawn;
 import blade.addon.features.dungeon.DeathTickTimer;
 import blade.addon.features.dungeon.DupeClassChecker;
 import blade.addon.features.dungeon.ExplosiveShot;
@@ -39,6 +40,7 @@ public class Bladeaddons implements ModInitializer {
         ExplosiveShot.init();
         DupeClassChecker.init();
         HidePlayersAfterLeap.init();
+        CrystalSpawn.init();
 
 		ClientTickEvents.END_CLIENT_TICK.register((client) -> {
 			Keybinds.checkInputs(client);

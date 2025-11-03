@@ -24,7 +24,7 @@ public class Phase {
     private static final Pattern SEARCH_PATTERN = Pattern.compile("^ ⏣ The Catacombs .*$");
     private static final Pattern STORM_KILL_PATTERN = Pattern.compile("^\\[BOSS] Storm: I should have known that I stood no chance\\.$");
 
-    private static final Split DUMMY_SPLIT = new Split("test split", "if this is called idk","if this is called idk", 43690);
+    private static final Split DUMMY_SPLIT = new Split("test split", "if this is called idk", "if this is called idk", 43690);
 
     private static final HashMap<String, ArrayList<Split>> FLOOR_SPLITS = JsonUtility.readSplits("/data/splits.json");
 
@@ -50,7 +50,7 @@ public class Phase {
     public static void init() {
         Events.ON_SERVER_TICK.register(() -> {
             if (currentSplits == null || runOver) return;
-            for (Split split: currentSplits) {
+            for (Split split : currentSplits) {
                 split.tick();
             }
         });
@@ -97,7 +97,6 @@ public class Phase {
             }
 
 
-
         }
 
         Matcher matcher = END_PATTERN.matcher(string);
@@ -105,7 +104,7 @@ public class Phase {
             runOver = true;
             currentPhase = currentSplits.size();
 
-            for (Split split: currentSplits) {
+            for (Split split : currentSplits) {
                 split.end();
             }
 
@@ -146,6 +145,11 @@ public class Phase {
     public static boolean inBoss() {
         return currentPhase > 3;
     }
+
+    public static boolean inP1() {
+        return currentPhase == 4 && inFloor7;
+    }
+
     public static boolean inP2() {
         return currentPhase == 5 && inFloor7;
     }
