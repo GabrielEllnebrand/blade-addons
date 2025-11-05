@@ -151,8 +151,8 @@ public class Split {
             serverTime = Constants.DECIMAL_FORMAT.format(tickTime) + "s";
         }
 
-
-        return Text.literal(Constants.DECIMAL_FORMAT.format(realTime) + "s ").withColor(realTimeColor)
+        String realTimeString = (realTime >= 60? (int)(realTime / 60) + "m ": "") + Constants.DECIMAL_FORMAT.format(realTime % 60) + "s";
+        return Text.literal(realTimeString).withColor(realTimeColor)
                 .append(Text.literal("(").withColor(parenthesesColor)
                         .append(Text.literal(serverTime).withColor(serverTimeColor))
                         .append(Text.literal(")").withColor(parenthesesColor)

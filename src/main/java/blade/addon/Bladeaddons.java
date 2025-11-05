@@ -7,6 +7,7 @@ import blade.addon.features.dungeon.ExplosiveShot;
 import blade.addon.features.dungeon.GoldorTickTimer;
 import blade.addon.features.dungeon.HidePlayersAfterLeap;
 import blade.addon.features.dungeon.InvincibilityTimer;
+import blade.addon.features.dungeon.KeyNotifier;
 import blade.addon.features.dungeon.LeapMessage;
 import blade.addon.features.dungeon.PositionMessages;
 import blade.addon.features.dungeon.StormTickTimer;
@@ -16,6 +17,7 @@ import blade.addon.utils.Commands;
 import blade.addon.utils.Keybinds;
 import blade.addon.utils.Location;
 import blade.addon.utils.config.Config;
+import blade.addon.utils.dungeon.DungeonClass;
 import blade.addon.utils.dungeon.Phase;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -29,6 +31,8 @@ public class Bladeaddons implements ModInitializer {
 		Location.init();
 
         Phase.init();
+        DungeonClass.init();
+
         StormTickTimer.init();
         GoldorTickTimer.init();
         TermStartTimer.init();
@@ -41,6 +45,7 @@ public class Bladeaddons implements ModInitializer {
         DupeClassChecker.init();
         HidePlayersAfterLeap.init();
         CrystalSpawn.init();
+        KeyNotifier.init();
 
 		ClientTickEvents.END_CLIENT_TICK.register((client) -> {
 			Keybinds.checkInputs(client);

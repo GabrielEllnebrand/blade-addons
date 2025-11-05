@@ -19,6 +19,8 @@ public class StormTickTimer {
 
     private static final Pattern PATTERN = Pattern.compile("^⚠ Storm is enraged! ⚠$");
 
+    private static final long DEATH_DISPLAY_DURATION = 2000;
+
     @ConfigValue
     public static boolean enableStormTickTimer = false;
 
@@ -27,6 +29,7 @@ public class StormTickTimer {
 
     private static int tick = 0;
     private static double deathTime = 0;
+    private static long deathStartDisplayTime = 0;
 
     public static void init() {
         Events.ON_SERVER_TICK.register(() -> {
@@ -37,6 +40,7 @@ public class StormTickTimer {
             if (newLocation.inDungeon()) {
                 tick = 0;
                 deathTime = 0;
+                deathStartDisplayTime = 0;
             }
         });
 
@@ -47,6 +51,7 @@ public class StormTickTimer {
 
             if (matcher.find()) {
                 deathTime = (tick * Constants.TICK_DURATION);
+                deathStartDisplayTime = System.currentTimeMillis();
                 InGameHud gameHud = MinecraftClient.getInstance().inGameHud;
                 gameHud.getChatHud().addMessage(
                         Text.literal("Storm died at: ").formatted(Formatting.GREEN)
@@ -73,7 +78,7 @@ public class StormTickTimer {
 
     @ConfigValue
     public static HUDComponent stormDeathTime = new HUDComponent(0, 0, 30, 10, 1, "Storm Death Time",
-            () -> enableStormTickTimer && Location.inDungeon() && Phase.inP2() && !Phase.stormDead() && deathTime > 0,
+            () -> enableStormTickTimer && Location.inDungeon() && Phase.inP2() && !Phase.stormDead() && deathTime > 0 && deathStartDisplayTime > System.currentTimeMillis() - DEATH_DISPLAY_DURATION,
             ((hudComponent, drawContext) -> {
                 int x = hudComponent.getScaledX();
                 int y = hudComponent.getScaledY();
