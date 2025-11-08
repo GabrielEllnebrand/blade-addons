@@ -1,0 +1,14 @@
+package blade.addon.utils.rendering;
+
+import blade.addon.utils.Constants;
+import com.mojang.blaze3d.pipeline.RenderPipeline;
+import com.mojang.blaze3d.vertex.VertexFormat;
+import net.minecraft.client.render.VertexFormats;
+import net.minecraft.util.Identifier;
+
+public class RenderPipelines {
+    public static final RenderPipeline FILLED_PIPELINE = net.minecraft.client.gl.RenderPipelines.register(RenderPipeline.builder(net.minecraft.client.gl.RenderPipelines.POSITION_COLOR_SNIPPET)
+            .withLocation(Identifier.of(Constants.NAMESPACE, "filled"))
+            .withVertexFormat(VertexFormats.POSITION_COLOR, VertexFormat.DrawMode.TRIANGLE_STRIP)
+            .build());
+}

@@ -215,6 +215,10 @@ public class Phase {
         return currentSection == section && inP3();
     }
 
+    public static boolean inP5() {
+        return currentPhase == 9 && inFloor7;
+    }
+
     public static void tick(MinecraftClient client) {
         if (!Location.inDungeon() || client.player == null) return;
 

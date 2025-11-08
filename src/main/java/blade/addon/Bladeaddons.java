@@ -10,6 +10,7 @@ import blade.addon.features.dungeon.InvincibilityTimer;
 import blade.addon.features.dungeon.KeyNotifier;
 import blade.addon.features.dungeon.LeapMessage;
 import blade.addon.features.dungeon.PositionMessages;
+import blade.addon.features.dungeon.RelicTimer;
 import blade.addon.features.dungeon.StormTickTimer;
 import blade.addon.features.dungeon.TermStartTimer;
 import blade.addon.features.dungeon.WarpCooldown;
@@ -46,6 +47,7 @@ public class Bladeaddons implements ModInitializer {
         HidePlayersAfterLeap.init();
         CrystalSpawn.init();
         KeyNotifier.init();
+        RelicTimer.init();
 
 		ClientTickEvents.END_CLIENT_TICK.register((client) -> {
 			Keybinds.checkInputs(client);

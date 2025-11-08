@@ -26,6 +26,7 @@ public class NetworkMixin {
 
     @Inject(method = "onEntityTrackerUpdate", at = @At("HEAD"))
     private void onTracking(EntityTrackerUpdateS2CPacket packet, CallbackInfo ci) {
+        if (world == null) return;
         Entity entity = this.world.getEntityById(packet.id());
         if (entity == null) return;
 
