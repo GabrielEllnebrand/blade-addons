@@ -41,12 +41,10 @@ public class CrystalSpawn {
         });
 
 
-        Events.ON_SERVER_TICK.register(() -> {
-            tick = Math.max(tick - 1, 0);
-        });
+        Events.ON_SERVER_TICK.register(() -> tick = Math.max(tick - 1, 0));
 
         Events.ON_LOCATION_CHANGE.register(newLocation -> {
-            if (newLocation.inDungeon()) {
+            if (Location.inDungeon()) {
                 tick = 0;
             }
         });

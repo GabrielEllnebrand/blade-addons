@@ -80,7 +80,7 @@ public class RelicTimer {
         });
 
         Events.ON_LOCATION_CHANGE.register(newLocation -> {
-            if (newLocation.inDungeon()) {
+            if (Location.inDungeon()) {
                 tick = relicSpawnTicks;
                 pickedupRelic = null;
             }

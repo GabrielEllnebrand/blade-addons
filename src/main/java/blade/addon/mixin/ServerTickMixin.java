@@ -17,15 +17,23 @@ public class ServerTickMixin {
 
     @Inject(method = "channelRead0(Lio/netty/channel/ChannelHandlerContext;Lnet/minecraft/network/packet/Packet;)V", at = @At("HEAD"))
     private void channelRead0(ChannelHandlerContext channelHandlerContext, Packet<?> packet, CallbackInfo ci) {
-        if (packet instanceof CommonPingS2CPacket && Events.ON_SERVER_TICK.hasListeners()) {
+        if (packet instanceof CommonPingS2CPacket common && Events.ON_SERVER_TICK.hasListeners()) {
+            //admins send these packets too for inventory changes
+            //thankfully they all have the param 0 for some reason
+            if (common.getParameter() == 0) return;
             Events.ON_SERVER_TICK.invoke(ServerTickEvent::onServerTick);
         }
+
+
     }
 
     @Inject(method = "sendImmediately", at = @At("HEAD"))
     private void sendImmediately(Packet<?> packet, PacketCallbacks callbacks, boolean flush, CallbackInfo ci) {
-        if (packet instanceof CommonPingS2CPacket && Events.ON_SERVER_TICK.hasListeners()) {
+        if (packet instanceof CommonPingS2CPacket common && Events.ON_SERVER_TICK.hasListeners()) {
+            if (common.getParameter() == 0) return;
             Events.ON_SERVER_TICK.invoke(ServerTickEvent::onServerTick);
         }
+
+
     }
 }

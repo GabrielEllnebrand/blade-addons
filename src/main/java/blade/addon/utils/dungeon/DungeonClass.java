@@ -1,5 +1,6 @@
 package blade.addon.utils.dungeon;
 
+import blade.addon.utils.Location;
 import blade.addon.utils.events.Events;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 
@@ -16,7 +17,7 @@ public enum DungeonClass {
     public static void init() {
 
         Events.ON_LOCATION_CHANGE.register(newLocation -> {
-            if (newLocation.inDungeon()) {
+            if (Location.inDungeon()) {
                 currentClass = null;
             }
         });

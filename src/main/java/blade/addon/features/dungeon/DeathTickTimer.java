@@ -26,7 +26,7 @@ public class DeathTickTimer {
         });
 
         Events.ON_LOCATION_CHANGE.register(newLocation -> {
-            if (newLocation.inDungeon()) {
+            if (Location.inDungeon()) {
                 tick = 0;
                 firstPosition = null;
             }

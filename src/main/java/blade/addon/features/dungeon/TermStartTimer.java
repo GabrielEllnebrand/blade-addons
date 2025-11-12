@@ -22,7 +22,7 @@ public class TermStartTimer {
         });
 
         Events.ON_LOCATION_CHANGE.register(newLocation -> {
-            if (newLocation.inDungeon()) {
+            if (Location.inDungeon()) {
                 tick = TOTAL_TICKS;
             }
         });

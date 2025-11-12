@@ -104,7 +104,7 @@ public class InvincibilityTimer {
         });
 
         Events.ON_LOCATION_CHANGE.register(newLocation -> {
-            if (newLocation.inDungeon()) {
+            if (Location.inDungeon()) {
                 bonzoMaskTicks = 0;
                 spiritMaskTicks = 0;
                 phoenixTicks = 0;

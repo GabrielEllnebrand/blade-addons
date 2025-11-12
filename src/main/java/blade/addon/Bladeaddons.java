@@ -67,5 +67,6 @@ public class Bladeaddons implements ModInitializer {
      * - add split ee2 posmsg
      *
      * - fix death tick timer
+     * add a hide player near ss
      */
 }

@@ -75,7 +75,7 @@ public class KeyNotifier {
         });
 
         Events.ON_LOCATION_CHANGE.register(locations -> {
-            if (locations.inDungeon()) {
+            if (Location.inDungeon()) {
                 isBloodKey = false;
                 hasKey = false;
                 sentSound = false;

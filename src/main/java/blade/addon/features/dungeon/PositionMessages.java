@@ -20,7 +20,7 @@ public class PositionMessages {
 
     public static void init() {
         Events.ON_LOCATION_CHANGE.register(newLocation -> {
-            if (newLocation.inDungeon()) {
+            if (Location.inDungeon()) {
                 for (PositionMessage message: positionMessages) {
                     message.reset();
                 }

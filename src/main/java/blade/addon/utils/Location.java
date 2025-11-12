@@ -4,9 +4,11 @@ import blade.addon.utils.events.Events;
 import net.hypixel.modapi.HypixelModAPI;
 import net.hypixel.modapi.packet.impl.clientbound.event.ClientboundLocationPacket;
 
-public class Location {
+public enum Location {
+    NONE,
+    DUNGEON;
 
-    private static Locations currentLocation = Locations.NONE;
+    private static Location currentLocation = Location.NONE;
 
     public static void init() {
 
@@ -28,9 +30,9 @@ public class Location {
 
         HypixelModAPI.getInstance().createHandler(ClientboundLocationPacket.class, packet -> packet.getMap().ifPresent(map -> {
             try {
-                currentLocation = Locations.valueOf(map.toUpperCase().replace(" ", "_"));
+                currentLocation = Location.valueOf(map.toUpperCase().replace(" ", "_"));
             } catch (IllegalArgumentException ignored) {
-                currentLocation = Locations.NONE;
+                currentLocation = Location.NONE;
             }
 
             if (Events.ON_LOCATION_CHANGE.hasListeners()) {
@@ -39,11 +41,11 @@ public class Location {
         }));
     }
 
-    public static boolean in(Locations location) {
+    public static boolean in(Location location) {
         return currentLocation == location;
     }
 
     public static boolean inDungeon() {
-        return currentLocation == Locations.DUNGEON;
+        return currentLocation == Location.DUNGEON;
     }
 }

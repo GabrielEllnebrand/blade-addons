@@ -65,7 +65,7 @@ public class Phase {
         });
 
         Events.ON_LOCATION_CHANGE.register(newLocation -> {
-            if (newLocation.inDungeon()) {
+            if (Location.inDungeon()) {
                 currentSplits = null;
                 floor = null;
                 currentPhase = -1;

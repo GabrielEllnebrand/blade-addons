@@ -34,7 +34,4 @@ public class NetworkMixin {
             Events.ON_ENTITY_TRACKED.listeners.forEach(entityTrackEvent -> entityTrackEvent.onEntityTracked(entity));
         }
     }
-
-
-
 }
