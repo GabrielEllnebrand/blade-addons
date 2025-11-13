@@ -1,5 +1,6 @@
 package blade.addon;
 
+import blade.addon.features.dungeon.AutoRequeue;
 import blade.addon.features.dungeon.CrystalSpawn;
 import blade.addon.features.dungeon.DeathTickTimer;
 import blade.addon.features.dungeon.DupeClassChecker;
@@ -21,7 +22,6 @@ import blade.addon.utils.config.Config;
 import blade.addon.utils.dungeon.DungeonClass;
 import blade.addon.utils.dungeon.Phase;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 
 public class Bladeaddons implements ModInitializer {
 	@Override
@@ -30,10 +30,8 @@ public class Bladeaddons implements ModInitializer {
 		Keybinds.register();
         Commands.register();
 		Location.init();
-
         Phase.init();
         DungeonClass.init();
-
         StormTickTimer.init();
         GoldorTickTimer.init();
         TermStartTimer.init();
@@ -48,18 +46,12 @@ public class Bladeaddons implements ModInitializer {
         CrystalSpawn.init();
         KeyNotifier.init();
         RelicTimer.init();
-
-		ClientTickEvents.END_CLIENT_TICK.register((client) -> {
-			Keybinds.checkInputs(client);
-            PositionMessages.tick(client);
-			Phase.tick(client);
-		});
+        AutoRequeue.init();
 	}
 
     /**
      * TODO:
      * - bloodcamp dialogue kill time
-     * - add !dt and !undt support
      * - add boss waypoints or smth
      * - croesus counter
      * - score calc?

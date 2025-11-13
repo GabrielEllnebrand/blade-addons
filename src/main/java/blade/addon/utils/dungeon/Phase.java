@@ -3,12 +3,13 @@ package blade.addon.utils.dungeon;
 import blade.addon.utils.JsonUtility;
 import blade.addon.utils.Location;
 import blade.addon.utils.events.Events;
+import blade.addon.utils.events.interfaces.RunEndEvent;
 import config.practical.hud.HUDComponent;
 import config.practical.manager.ConfigValue;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.scoreboard.Team;
 import net.minecraft.text.Text;
@@ -53,9 +54,6 @@ public class Phase {
     @ConfigValue
     public static boolean enableSplits = false;
 
-    @ConfigValue
-    public static boolean autoReque = false;
-
     public static void init() {
         Events.ON_SERVER_TICK.register(() -> {
             if (currentSplits == null || runOver) return;
@@ -83,6 +81,8 @@ public class Phase {
                 Phase.parseMessage(message);
             }
         });
+
+        ClientTickEvents.END_CLIENT_TICK.register(Phase::tick);
     }
 
 
@@ -120,10 +120,8 @@ public class Phase {
                 split.end();
             }
 
-            if (autoReque) {
-                ClientPlayNetworkHandler networkHandler = MinecraftClient.getInstance().getNetworkHandler();
-                if (networkHandler == null) return;
-                networkHandler.sendChatCommand("instancerequeue");
+            if (Events.ON_RUN_END.hasListeners()) {
+                Events.ON_RUN_END.listeners.forEach(RunEndEvent::onRunEnd);
             }
         }
 
