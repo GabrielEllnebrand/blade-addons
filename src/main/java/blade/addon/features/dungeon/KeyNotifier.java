@@ -34,7 +34,7 @@ public class KeyNotifier {
     public static boolean enableKeyNotifier = false;
 
     public static void init() {
-        Events.ON_ENTITY_TRACKED.register(entity -> {
+        Events.ON_ENTITY_TRACKED.register((entity, world) -> {
             if (!Location.inDungeon() || hasKey || !enableKeyNotifier) return;
             if (!DungeonClass.isClass(DungeonClass.ARCHER) && !DungeonClass.isClass(DungeonClass.MAGE)) return;
 

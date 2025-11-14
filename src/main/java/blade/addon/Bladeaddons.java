@@ -10,6 +10,7 @@ import blade.addon.features.dungeon.HidePlayersAfterLeap;
 import blade.addon.features.dungeon.InvincibilityTimer;
 import blade.addon.features.dungeon.KeyNotifier;
 import blade.addon.features.dungeon.LeapMessage;
+import blade.addon.features.dungeon.MobHighlight;
 import blade.addon.features.dungeon.PositionMessages;
 import blade.addon.features.dungeon.RelicTimer;
 import blade.addon.features.dungeon.StormTickTimer;
@@ -47,6 +48,7 @@ public class Bladeaddons implements ModInitializer {
         KeyNotifier.init();
         RelicTimer.init();
         AutoRequeue.init();
+        MobHighlight.init();
 	}
 
     /**

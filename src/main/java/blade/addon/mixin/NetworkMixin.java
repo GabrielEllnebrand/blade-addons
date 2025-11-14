@@ -31,7 +31,7 @@ public class NetworkMixin {
         if (entity == null) return;
 
         if (Events.ON_ENTITY_TRACKED.hasListeners()) {
-            Events.ON_ENTITY_TRACKED.listeners.forEach(entityTrackEvent -> entityTrackEvent.onEntityTracked(entity));
+            Events.ON_ENTITY_TRACKED.listeners.forEach(entityTrackEvent -> entityTrackEvent.onEntityTracked(entity, world));
         }
     }
 }

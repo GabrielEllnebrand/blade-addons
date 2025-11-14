@@ -1,7 +1,8 @@
 package blade.addon.utils.events.interfaces;
 
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
 
 public interface EntityTrackEvent {
-    void onEntityTracked(Entity entity);
+    void onEntityTracked(Entity entity, ClientWorld world);
 }

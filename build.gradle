@@ -41,7 +41,7 @@ dependencies {
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 	modImplementation("com.terraformersmc:modmenu:${project.modmenu_version}")
 	include modImplementation("net.hypixel:mod-api:${project.hypixel_api_version}")
-	include modImplementation("com.github.GabrielEllnebrand:practical-config:${project.practical_config}")
+	include modImplementation("com.github.BladeMasterGabe:practical-config:${project.practical_config}")
 
 
 }
