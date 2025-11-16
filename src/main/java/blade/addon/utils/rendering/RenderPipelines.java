@@ -11,4 +11,17 @@ public class RenderPipelines {
             .withLocation(Identifier.of(Constants.NAMESPACE, "filled"))
             .withVertexFormat(VertexFormats.POSITION_COLOR, VertexFormat.DrawMode.TRIANGLE_STRIP)
             .build());
+
+    public static final RenderPipeline FILLED_ENTITY_PIPELINE = net.minecraft.client.gl.RenderPipelines.register(RenderPipeline.builder(net.minecraft.client.gl.RenderPipelines.POSITION_COLOR_SNIPPET)
+            .withLocation(Identifier.of(Constants.NAMESPACE, "filled-entity"))
+            .withVertexFormat(VertexFormats.POSITION_COLOR, VertexFormat.DrawMode.TRIANGLE_STRIP)
+            .withDepthWrite(true)
+            .build());
+
+    public static final RenderPipeline OUTLINE_ENTITY_PIPELINE = net.minecraft.client.gl.RenderPipelines.register(RenderPipeline.builder(net.minecraft.client.gl.RenderPipelines.RENDERTYPE_LINES_SNIPPET)
+            .withLocation(Identifier.of(Constants.NAMESPACE, "filled-entity"))
+            .withVertexFormat(VertexFormats.POSITION_COLOR, VertexFormat.DrawMode.LINES)
+            .withDepthWrite(true)
+            .build());
+
 }

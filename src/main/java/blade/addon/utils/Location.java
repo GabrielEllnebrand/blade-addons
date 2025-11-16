@@ -28,7 +28,10 @@ public enum Location {
                 [STDOUT]: Optional[SKYBLOCK]
             */
 
-        HypixelModAPI.getInstance().createHandler(ClientboundLocationPacket.class, packet -> packet.getMap().ifPresent(map -> {
+        HypixelModAPI instance = HypixelModAPI.getInstance();
+
+
+        instance.createHandler(ClientboundLocationPacket.class, packet -> packet.getMap().ifPresent(map -> {
             try {
                 currentLocation = Location.valueOf(map.toUpperCase().replace(" ", "_"));
             } catch (IllegalArgumentException ignored) {
@@ -39,6 +42,10 @@ public enum Location {
                 Events.ON_LOCATION_CHANGE.listeners.forEach(locationChangeEvent -> locationChangeEvent.onLocationChange(currentLocation));
             }
         }));
+
+        instance.subscribeToEventPacket(ClientboundLocationPacket.class);
+
+
     }
 
     public static boolean in(Location location) {

@@ -36,7 +36,7 @@ public class TermStartTimer {
                 int y = hudComponent.getScaledY();
 
                 double num = tick * Constants.TICK_DURATION;
-                drawContext.drawText(MinecraftClient.getInstance().textRenderer, Constants.DECIMAL_FORMAT.format(num), x, y, 0x00FFFF55, true);
+                drawContext.drawText(MinecraftClient.getInstance().textRenderer, Constants.DECIMAL_FORMAT.format(num), x, y, 0xFFFFFF55, true);
             })
     );
 }
