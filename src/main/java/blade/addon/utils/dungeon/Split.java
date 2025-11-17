@@ -26,7 +26,7 @@ public class Split {
         }
     }
 
-    public static final int SPLIT_LENGTH = 150;
+    public static final int SPLIT_LENGTH = 160;
 
     public static final int GREEN = 5635925;
     public static final int GRAY = 11184810;

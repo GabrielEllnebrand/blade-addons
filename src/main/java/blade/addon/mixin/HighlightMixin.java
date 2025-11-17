@@ -26,6 +26,7 @@ public class HighlightMixin {
 
     @Inject(method = "render(Lnet/minecraft/entity/Entity;DDDFLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V", at = @At("TAIL"))
     private <E extends Entity> void render(E entity, double x, double y, double z, float tickProgress, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, CallbackInfo ci) {
+        if (MobHighlight.dontRender()) return;
         if (!MobHighlight.hasEntity(entity)) return;
 
         //hides shadow assassins
@@ -35,8 +36,10 @@ public class HighlightMixin {
         Box box = dimension.getBoxAt(x, y, z);
 
         if (entity instanceof WitherEntity) {
-            box = box.expand(1, 0, 1);
+            box = box.expand(MobHighlight.witherExtraWidth, 0, MobHighlight.witherExtraWidth);
         }
+
+
 
         //only shows the head
         if (entity instanceof EndermanEntity && entity.isInvisible() && MobHighlight.dontShowInvisibleMobs) {

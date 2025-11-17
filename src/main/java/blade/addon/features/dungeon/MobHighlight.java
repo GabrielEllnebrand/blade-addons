@@ -7,11 +7,13 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientEntityEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
+import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.network.PlayerListEntry;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.boss.WitherEntity;
 import net.minecraft.entity.decoration.ArmorStandEntity;
+import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.EndermanEntity;
 import net.minecraft.entity.mob.SkeletonEntity;
 import net.minecraft.entity.mob.WitherSkeletonEntity;
@@ -53,6 +55,7 @@ public class MobHighlight {
 
     private static final Pattern STAR_PATTERN = Pattern.compile("✯");
     private static final Pattern KING_PATTERN = Pattern.compile("King Midas");
+    private static final Pattern MIMIC_PATTERN = Pattern.compile("Mimic");
     private static final Pattern WEAPON_PATTERN = Pattern.compile("^Silent Death$");
     private static final Pattern BOOTS_PATTERN = Pattern.compile("^Leather Boots$");
     private static final Pattern FEL_PATTERN = Pattern.compile("Fel");
@@ -60,16 +63,20 @@ public class MobHighlight {
     private static final float[] BAT_HEALTHS = {100.0f, 200.0f, 400.0f, 800.0f};
     private static final String[] TANK_MOBS = {"Zombie Commander", "Zombie Lord", "Skeleton Lord", "Withermancer", "Super Archer"};
     private static final String[] MINI_BOSSES = {"Lost Adventurer", "Angry Archaeologist", "Frozen Adventurer"};
+    private static final String[] WITHER_BOSSES = {"Maxor", "Storm", "Goldor", "Necron"};
 
     private static final ConcurrentHashMap<Entity, TrackedData> trackedMobs = new ConcurrentHashMap<>();
     private static final ConcurrentHashMap<Entity, Integer> trackedArmourStands = new ConcurrentHashMap<>();
 
+    private static boolean dontRenderHighlight = false;
     @ConfigValue
     public static boolean mobHighlight = false;
     @ConfigValue
     public static boolean dontShowInvisibleMobs = true;
     @ConfigValue
     public static HighlightType currentHighlight = HighlightType.FILLED;
+    @ConfigValue
+    public static double witherExtraWidth = 0;
 
     @ConfigValue
     public static int starFilledColor = 0xff00ff00;
@@ -102,7 +109,6 @@ public class MobHighlight {
     public static int batOutlineColor = 0xff2244ff;
     @ConfigValue
     public static int witherOutlineColor = 0x88222222;
-
     @ConfigValue
     public static int mimicOutlineColor = 0xffffffff;
 
@@ -111,12 +117,16 @@ public class MobHighlight {
         ClientTickEvents.END_CLIENT_TICK.register(minecraftClient -> {
             if (!Location.inDungeon() || !mobHighlight) return;
             ClientWorld world = minecraftClient.world;
-            if (world == null) return;
+            ClientPlayerEntity player = minecraftClient.player;
+
+            if (world == null || player == null) return;
 
             ArrayList<Entity> entities = new ArrayList<>();
             world.getEntities().forEach(entities::add);
 
             scanEntities(entities);
+
+            dontRenderHighlight = player.hasStatusEffect(StatusEffects.BLINDNESS);
         });
 
 
@@ -147,13 +157,6 @@ public class MobHighlight {
                 armorStands.add(armorStand);
             }
 
-            if (entity instanceof ZombieEntity zombie) {
-                if (zombie.isBaby()) {
-                    trackedMobs.put(zombie, new TrackedData(MobType.MIMIC, null));
-                    continue;
-                }
-            }
-
             if (entity instanceof BatEntity bat) {
                 for (float health : BAT_HEALTHS) {
                     if (health == bat.getHealth()) {
@@ -169,9 +172,8 @@ public class MobHighlight {
                 }
             }
 
-            if (entity instanceof WitherEntity wither) {
-                if (wither.getInvulnerableTimer() == 800) continue;
-                trackedMobs.put(wither, new TrackedData(MobType.WITHER, null));
+            if (entity instanceof WitherEntity) {
+                usefulMobs.add(entity);
             }
 
 
@@ -192,7 +194,7 @@ public class MobHighlight {
 
             matcher = FEL_PATTERN.matcher(string);
             if (matcher.find()) {
-                Entity closet = getClosest(armorStand, entities, entity -> entity instanceof EndermanEntity);
+                Entity closet = getClosest(armorStand, entities, entity -> entity instanceof EndermanEntity, 4);
 
                 if (closet == null) {
                     return;
@@ -204,7 +206,7 @@ public class MobHighlight {
             }
 
 
-            Entity closet = getClosest(armorStand, entities, MobHighlight::isAPossibleStaredMob);
+            Entity closet = getClosest(armorStand, entities, MobHighlight::isAPossibleStaredMob, 3.5);
 
             if (closet == null) {
                 return;
@@ -224,12 +226,35 @@ public class MobHighlight {
 
         matcher = KING_PATTERN.matcher(string);
         if (matcher.find()) {
-            Entity closet = getClosest(armorStand, entities, entity -> !isARealPlayer(entity));
+            Entity closet = getClosest(armorStand, entities, entity -> !isARealPlayer(entity), 3.5);
 
             if (closet == null) {
                 return;
             }
             trackedMobs.put(closet, new TrackedData(MobType.MINI, armorStand));
+            trackedArmourStands.put(armorStand, 0);
+            return;
+        }
+
+        matcher = MIMIC_PATTERN.matcher(string);
+        if (matcher.find()) {
+            Entity closet = getClosest(armorStand, entities, MobHighlight::isAPossibleMimic, 3.5);
+
+            if (closet == null) {
+                return;
+            }
+            trackedMobs.put(closet, new TrackedData(MobType.MIMIC, armorStand));
+            trackedArmourStands.put(armorStand, 0);
+            return;
+        }
+
+        if (isAWitherBoss(string)) {
+            Entity closet = getClosest(armorStand, entities, entity -> entity instanceof WitherEntity, 10);
+
+            if (closet == null) {
+                return;
+            }
+            trackedMobs.put(closet, new TrackedData(MobType.WITHER, null));
             trackedArmourStands.put(armorStand, 0);
         }
     }
@@ -250,9 +275,17 @@ public class MobHighlight {
         return false;
     }
 
-    private static Entity getClosest(ArmorStandEntity armorStand, ArrayList<Entity> entities, Predicate<Entity> requirements) {
+    public static boolean isAWitherBoss(String string) {
+        for (String wither : WITHER_BOSSES) {
+            if (string.contains(wither)) return true;
+        }
+
+        return false;
+    }
+
+    private static Entity getClosest(ArmorStandEntity armorStand, ArrayList<Entity> entities, Predicate<Entity> requirements, double maxDistance) {
         Entity closest = null;
-        double smallestDistance = 3.5;
+        double smallestDistance = maxDistance;
         double maxY = armorStand.getY();
 
         for (Entity current : entities) {
@@ -291,6 +324,13 @@ public class MobHighlight {
             case PlayerEntity playerEntity -> !isARealPlayer(playerEntity);
             default -> false;
         };
+    }
+
+    private static boolean isAPossibleMimic(Entity entity) {
+        if (entity instanceof ZombieEntity zombie) {
+            return zombie.isBaby();
+        }
+        return false;
     }
 
     private static boolean isShadowAssassin(PlayerEntity player) {
@@ -338,6 +378,10 @@ public class MobHighlight {
             case WITHER -> witherOutlineColor;
             case MIMIC -> mimicOutlineColor;
         };
+    }
+
+    public static boolean dontRender() {
+        return dontRenderHighlight;
     }
 
     public static int getFilledColor(Entity entity) {

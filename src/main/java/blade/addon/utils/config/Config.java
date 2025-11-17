@@ -26,6 +26,7 @@ import config.practical.screenwidgets.ConfigSection;
 import config.practical.widgets.ConfigBool;
 import config.practical.widgets.color.ConfigColor;
 import config.practical.widgets.options.ConfigOptions;
+import config.practical.widgets.sliders.ConfigDouble;
 import config.practical.widgets.sliders.ConfigInt;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
@@ -95,7 +96,8 @@ public class Config {
         screen.addCategory(dungeons);
 
         ConfigCategory splits = new ConfigCategory("Splits");
-        splits.add(new ConfigBool(Text.literal("Splits"), () -> Phase.enableSplits, bool -> Phase.enableSplits = bool));
+        splits.add(new ConfigBool(Text.literal("Enable Splits"), () -> Phase.enableSplits, bool -> Phase.enableSplits = bool));
+        splits.add(new ConfigBool(Text.literal("Include total time"), () -> Phase.includeTotalTime, bool -> Phase.includeTotalTime = bool));
         splits.add(new ConfigOptions<>(Text.literal("Tick timer type"), Split.TimerType.values(), () -> Split.timerType, type -> Split.timerType = type));
 
         splits.add(new ConfigColor(Text.literal("Real time color (Inactive)"), () -> Split.realTimeColorInactive, color -> Split.realTimeColorInactive = color, "real-time-inactive", false));
@@ -113,7 +115,8 @@ public class Config {
 
         ConfigCategory highlight = new ConfigCategory("Mob Highlight");
         highlight.add(new ConfigBool(Text.literal("Enable mob highlight"), () -> MobHighlight.mobHighlight, bool -> MobHighlight.mobHighlight = bool));
-        highlight.add(new ConfigBool(Text.literal("Dont show invisible mobs"), () -> MobHighlight.dontShowInvisibleMobs, bool -> MobHighlight.dontShowInvisibleMobs = bool));
+        highlight.add(new ConfigBool(Text.literal("Dont highlight invisible mobs"), () -> MobHighlight.dontShowInvisibleMobs, bool -> MobHighlight.dontShowInvisibleMobs = bool));
+        highlight.add(new ConfigDouble(Text.literal("Extra Wither Width"), () -> MobHighlight.witherExtraWidth, num -> MobHighlight.witherExtraWidth = num, 0.1, 0, 1.5));
         highlight.add(new ConfigOptions<>(Text.literal("Highlight mode"), MobHighlight.HighlightType.values(), () -> MobHighlight.currentHighlight, type -> MobHighlight.currentHighlight = type));
         highlight.add(new ConfigColor(Text.literal("Star mob filled color"), () -> MobHighlight.starFilledColor, color -> MobHighlight.starFilledColor = color, "star-filled", true));
         highlight.add(new ConfigColor(Text.literal("Star mob outline color"), () -> MobHighlight.starOutlineColor, color -> MobHighlight.starOutlineColor = color, "star-outline", true));

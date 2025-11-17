@@ -50,17 +50,4 @@ public class Bladeaddons implements ModInitializer {
         AutoRequeue.init();
         MobHighlight.init();
 	}
-
-    /**
-     * TODO:
-     * - bloodcamp dialogue kill time
-     * - add boss waypoints or smth
-     * - croesus counter
-     * - score calc?
-     * - timer for crystals in p1 or smth
-     * - add split ee2 posmsg
-     *
-     * - fix death tick timer
-     * add a hide player near ss
-     */
 }

@@ -29,8 +29,8 @@ public class Phase {
     private static final Pattern CORE_OPENING_PATTERN = Pattern.compile("^The Core entrance is opening!$");
 
 
-
     private static final Split DUMMY_SPLIT = new Split("test split", "if this is called idk", "if this is called idk", 43690);
+    private static final Split totalRunTime = new Split("Total time", "§e[NPC] §bMort§f: Here, I found this map when I first entered the dungeon.", "some dummy string", 0xffffffff);
 
     private static final HashMap<String, ArrayList<Split>> FLOOR_SPLITS = JsonUtility.readSplits("/data/splits.json");
 
@@ -53,6 +53,9 @@ public class Phase {
 
     @ConfigValue
     public static boolean enableSplits = false;
+
+    @ConfigValue
+    public static boolean includeTotalTime = false;
 
     public static void init() {
         Events.ON_SERVER_TICK.register(() -> {
@@ -161,7 +164,7 @@ public class Phase {
             matcher = CORE_OPENING_PATTERN.matcher(string);
             if (matcher.find()) {
                 //so in "goldor tunnel" can be shown after terms are done
-               currentSection = 5;
+                currentSection = 5;
             }
         }
     }
@@ -225,8 +228,13 @@ public class Phase {
             if (tick >= LOOKUP_RATE) {
                 tick = 0;
                 updateFloor(client.player.getScoreboard());
-                currentSplits = FLOOR_SPLITS.get(floor);
-                if (currentSplits != null) {
+                ArrayList<Split> grabbedSplits = FLOOR_SPLITS.get(floor);
+                if (grabbedSplits != null) {
+                    currentSplits = new ArrayList<>(grabbedSplits);
+                    if (includeTotalTime) {
+                        currentSplits.add(totalRunTime);
+                    }
+
                     for (Split split : currentSplits) {
                         split.reset();
                     }
