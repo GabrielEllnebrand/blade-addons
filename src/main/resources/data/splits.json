@@ -29,6 +29,12 @@
       "start": "[BOSS] Bonzo: Gratz for making it this far, but I'm basically unbeatable.",
       "end": "some dummy string",
       "color": 43690
+    },
+    {
+      "name": "Run Time",
+      "start": "§e[NPC] §bMort§f: Here, I found this map when I first entered the dungeon.",
+      "end": "some dummy string",
+      "color": 4279733527
     }
   ],
   "M1": [
@@ -61,6 +67,12 @@
       "start": "[BOSS] Bonzo: Gratz for making it this far, but I'm basically unbeatable.",
       "end": "some dummy string",
       "color": 43690
+    },
+    {
+      "name": "Run Time",
+      "start": "§e[NPC] §bMort§f: Here, I found this map when I first entered the dungeon.",
+      "end": "some dummy string",
+      "color": 4279733527
     }
   ],
   "F2": [
@@ -93,6 +105,12 @@
       "start": "[BOSS] Scarf: This is where the journey ends for you, Adventurers.",
       "end": "some dummy string",
       "color": 43690
+    },
+    {
+      "name": "Run Time",
+      "start": "§e[NPC] §bMort§f: Here, I found this map when I first entered the dungeon.",
+      "end": "some dummy string",
+      "color": 4279733527
     }
   ],
   "M2": [
@@ -125,6 +143,12 @@
       "start": "[BOSS] Scarf: This is where the journey ends for you, Adventurers.",
       "end": "some dummy string",
       "color": 43690
+    },
+    {
+      "name": "Run Time",
+      "start": "§e[NPC] §bMort§f: Here, I found this map when I first entered the dungeon.",
+      "end": "some dummy string",
+      "color": 4279733527
     }
   ],
   "F3": [
@@ -157,6 +181,12 @@
       "start": "[BOSS] The Professor: I was burdened with terrible news recently...",
       "end": "some dummy string",
       "color": 43690
+    },
+    {
+      "name": "Run Time",
+      "start": "§e[NPC] §bMort§f: Here, I found this map when I first entered the dungeon.",
+      "end": "some dummy string",
+      "color": 4279733527
     }
   ],
   "M3": [
@@ -189,6 +219,12 @@
       "start": "[BOSS] The Professor: I was burdened with terrible news recently...",
       "end": "some dummy string",
       "color": 43690
+    },
+    {
+      "name": "Run Time",
+      "start": "§e[NPC] §bMort§f: Here, I found this map when I first entered the dungeon.",
+      "end": "some dummy string",
+      "color": 4279733527
     }
   ],
   "F4": [
@@ -221,6 +257,12 @@
       "start": "[BOSS] Thorn: Welcome Adventurers! I am Thorn, the Spirit! And host of the Vegan Trials!",
       "end": "some dummy string",
       "color": 43690
+    },
+    {
+      "name": "Run Time",
+      "start": "§e[NPC] §bMort§f: Here, I found this map when I first entered the dungeon.",
+      "end": "some dummy string",
+      "color": 4279733527
     }
   ],
   "M4": [
@@ -253,6 +295,12 @@
       "start": "[BOSS] Thorn: Welcome Adventurers! I am Thorn, the Spirit! And host of the Vegan Trials!",
       "end": "some dummy string",
       "color": 43690
+    },
+    {
+      "name": "Run Time",
+      "start": "§e[NPC] §bMort§f: Here, I found this map when I first entered the dungeon.",
+      "end": "some dummy string",
+      "color": 4279733527
     }
   ],
   "F5": [
@@ -285,6 +333,12 @@
       "start": "[BOSS] Livid: Welcome, you've arrived right on time. I am Livid, the Master of Shadows.",
       "end": "some dummy string",
       "color": 43690
+    },
+    {
+      "name": "Run Time",
+      "start": "§e[NPC] §bMort§f: Here, I found this map when I first entered the dungeon.",
+      "end": "some dummy string",
+      "color": 4279733527
     }
   ],
   "M5": [
@@ -317,6 +371,12 @@
       "start": "[BOSS] Livid: Welcome, you've arrived right on time. I am Livid, the Master of Shadows.",
       "end": "some dummy string",
       "color": 43690
+    },
+    {
+      "name": "Run Time",
+      "start": "§e[NPC] §bMort§f: Here, I found this map when I first entered the dungeon.",
+      "end": "some dummy string",
+      "color": 4279733527
     }
   ],
   "F6": [
@@ -361,6 +421,12 @@
       "start": "[BOSS] Sadan: You did it. I understand now, you have earned my respect.",
       "end": "some dummy string",
       "color": 43690
+    },
+    {
+      "name": "Run Time",
+      "start": "§e[NPC] §bMort§f: Here, I found this map when I first entered the dungeon.",
+      "end": "some dummy string",
+      "color": 4279733527
     }
   ],
   "M6": [
@@ -405,6 +471,12 @@
       "start": "[BOSS] Sadan: You did it. I understand now, you have earned my respect.",
       "end": "some dummy string",
       "color": 43690
+    },
+    {
+      "name": "Run Time",
+      "start": "§e[NPC] §bMort§f: Here, I found this map when I first entered the dungeon.",
+      "end": "some dummy string",
+      "color": 4279733527
     }
   ],
   "F7": [
@@ -461,6 +533,12 @@
       "start": "[BOSS] Necron: You went further than any human before, congratulations.",
       "end": "some dummy string",
       "color": 16733525
+    },
+    {
+      "name": "Run Time",
+      "start": "§e[NPC] §bMort§f: Here, I found this map when I first entered the dungeon.",
+      "end": "some dummy string",
+      "color": 4279733527
     }
   ],
   "M7": [
@@ -523,6 +601,12 @@
       "start": "[BOSS] Necron: All this, for nothing...",
       "end": "some dummy string",
       "color": 11141120
+    },
+    {
+      "name": "Run Time",
+      "start": "§e[NPC] §bMort§f: Here, I found this map when I first entered the dungeon.",
+      "end": "some dummy string",
+      "color": 4279733527
     }
   ]
 }

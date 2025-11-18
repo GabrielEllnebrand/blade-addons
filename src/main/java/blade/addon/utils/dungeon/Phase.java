@@ -30,13 +30,12 @@ public class Phase {
 
 
     private static final Split DUMMY_SPLIT = new Split("test split", "if this is called idk", "if this is called idk", 43690);
-    private static final Split totalRunTime = new Split("Total time", "§e[NPC] §bMort§f: Here, I found this map when I first entered the dungeon.", "some dummy string", 0xffffffff);
 
     private static final HashMap<String, ArrayList<Split>> FLOOR_SPLITS = JsonUtility.readSplits("/data/splits.json");
 
     private static final int TEXT_HEIGHT = 10;
     private static final int LOOKUP_RATE = 10;
-    private static final int DUMMY_SIZE = 9;
+    private static final int DUMMY_SIZE = 10;
 
     private static ArrayList<Split> currentSplits;
     private static int currentPhase = -1;
@@ -228,13 +227,8 @@ public class Phase {
             if (tick >= LOOKUP_RATE) {
                 tick = 0;
                 updateFloor(client.player.getScoreboard());
-                ArrayList<Split> grabbedSplits = FLOOR_SPLITS.get(floor);
-                if (grabbedSplits != null) {
-                    currentSplits = new ArrayList<>(grabbedSplits);
-                    if (includeTotalTime) {
-                        currentSplits.add(totalRunTime);
-                    }
-
+                currentSplits = FLOOR_SPLITS.get(floor);
+                if (currentSplits!= null) {
                     for (Split split : currentSplits) {
                         split.reset();
                     }
@@ -249,7 +243,7 @@ public class Phase {
     }
 
     @ConfigValue
-    public static HUDComponent splitTimer = new HUDComponent(0, 0, Split.SPLIT_LENGTH, 90, 1, "Splits",
+    public static HUDComponent splitTimer = new HUDComponent(0, 0, Split.SPLIT_LENGTH, 100, 1, "Splits",
             Location::inDungeon,
             ((hudComponent, drawContext) -> {
                 int x = hudComponent.getScaledX();
@@ -259,7 +253,10 @@ public class Phase {
                 TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
 
                 if (currentSplits != null) {
-                    for (int i = 0; i < currentSplits.size(); i++) {
+                    int splitCount = currentSplits.size();
+                    if (!includeTotalTime) splitCount--;
+
+                    for (int i = 0; i < splitCount; i++) {
                         currentSplits.get(i).drawSplit(drawContext, textRenderer, currentTime, x, y + TEXT_HEIGHT * i);
 
                     }

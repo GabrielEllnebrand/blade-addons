@@ -6,13 +6,12 @@ import net.hypixel.modapi.packet.impl.clientbound.event.ClientboundLocationPacke
 
 public enum Location {
     NONE,
-    DUNGEON;
+    DUNGEON,
+    DUNGEON_HUB;
 
     private static Location currentLocation = Location.NONE;
 
     public static void init() {
-
-
 
            /*
             System.out.println(packet.getMap().toString());

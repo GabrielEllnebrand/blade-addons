@@ -1,6 +1,7 @@
 package blade.addon;
 
 import blade.addon.features.dungeon.AutoRequeue;
+import blade.addon.features.dungeon.ChestCounter;
 import blade.addon.features.dungeon.CrystalSpawn;
 import blade.addon.features.dungeon.DeathTickTimer;
 import blade.addon.features.dungeon.DupeClassChecker;
@@ -49,5 +50,6 @@ public class Bladeaddons implements ModInitializer {
         RelicTimer.init();
         AutoRequeue.init();
         MobHighlight.init();
+        ChestCounter.init();
 	}
 }

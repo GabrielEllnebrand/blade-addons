@@ -1,6 +1,7 @@
 package blade.addon.utils.config;
 
 import blade.addon.features.dungeon.AutoRequeue;
+import blade.addon.features.dungeon.ChestCounter;
 import blade.addon.features.dungeon.CrystalSpawn;
 import blade.addon.features.dungeon.DeathTickTimer;
 import blade.addon.features.dungeon.DupeClassChecker;
@@ -38,7 +39,7 @@ public class Config {
     private static final Text TITLE = Text.literal("Blade Addons");
     public static final ConfigManager manager = new ConfigManager("./config/" + Constants.NAMESPACE + ".json",
             List.of(StormTickTimer.class, GoldorTickTimer.class, Phase.class, LeapMessage.class, PositionMessages.class, TermStartTimer.class, Split.class, DeathTickTimer.class, ExplosiveShot.class,
-                    InvincibilityTimer.class, WarpCooldown.class, DupeClassChecker.class, HidePlayersAfterLeap.class, CrystalSpawn.class, KeyNotifier.class, RelicTimer.class, AutoRequeue.class, MobHighlight.class));
+                    InvincibilityTimer.class, WarpCooldown.class, DupeClassChecker.class, HidePlayersAfterLeap.class, CrystalSpawn.class, KeyNotifier.class, RelicTimer.class, AutoRequeue.class, MobHighlight.class, ChestCounter.class));
 
     public static Screen createScreen(Screen parent) {
         ConfigurableScreen screen = new ConfigurableScreen(TITLE, parent, manager);
@@ -83,8 +84,14 @@ public class Config {
         relic.add(new ConfigInt(Text.literal("Relic start timer ticks"), () -> RelicTimer.relicSpawnTicks, num -> RelicTimer.relicSpawnTicks = num, 1, 30, 50));
         relic.add(new ConfigBool(Text.literal("Enable relic placed time"), () -> RelicTimer.enableRelicPlaceTime, bool -> RelicTimer.enableRelicPlaceTime = bool));
         relic.add(new ConfigBool(Text.literal("Highlight picked up relic"), () -> RelicTimer.renderRelicHighlight, bool -> RelicTimer.renderRelicHighlight = bool));
-
         dungeons.add(relic);
+
+        ConfigSection chests = new ConfigSection(Text.literal("Croesus"));
+        chests.add(new ConfigBool(Text.literal("Display current chest count"), () -> ChestCounter.displayChestCount, bool -> ChestCounter.displayChestCount = bool));
+        chests.add(new ConfigBool(Text.literal("Send chest count warning"), () -> ChestCounter.sendChestWarning, bool -> ChestCounter.sendChestWarning = bool));
+        chests.add(new ConfigInt(Text.literal("Warning at chest"), () -> ChestCounter.chestWarningCount, num -> ChestCounter.chestWarningCount = num, 1, 1, 60));
+
+        dungeons.add(chests);
 
         dungeons.add(new ConfigBool(Text.literal("Leap message"), () -> LeapMessage.enableLeapMessages, bool -> LeapMessage.enableLeapMessages = bool));
         dungeons.add(new ConfigBool(Text.literal("Positional messages"), () -> PositionMessages.enablePositionalMessages, bool ->  PositionMessages.enablePositionalMessages = bool));
@@ -92,7 +99,6 @@ public class Config {
         dungeons.add(new ConfigBool(Text.literal("Death tick timer"), () -> DeathTickTimer.enableDeathTickTimer, bool ->  DeathTickTimer.enableDeathTickTimer = bool));
         dungeons.add(new ConfigBool(Text.literal("calculate explosive shot"), () -> ExplosiveShot.calculateCriticalHit, bool ->  ExplosiveShot.calculateCriticalHit = bool));
         dungeons.add(new ConfigBool(Text.literal("Notification on key spawn"), () -> KeyNotifier.enableKeyNotifier, bool ->  KeyNotifier.enableKeyNotifier = bool));
-
         screen.addCategory(dungeons);
 
         ConfigCategory splits = new ConfigCategory("Splits");
