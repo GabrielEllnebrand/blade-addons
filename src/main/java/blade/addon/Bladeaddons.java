@@ -20,6 +20,7 @@ import blade.addon.features.dungeon.WarpCooldown;
 import blade.addon.utils.Commands;
 import blade.addon.utils.Keybinds;
 import blade.addon.utils.Location;
+import blade.addon.utils.Scheduler;
 import blade.addon.utils.config.Config;
 import blade.addon.utils.dungeon.DungeonClass;
 import blade.addon.utils.dungeon.Phase;
@@ -51,5 +52,6 @@ public class Bladeaddons implements ModInitializer {
         AutoRequeue.init();
         MobHighlight.init();
         ChestCounter.init();
+        Scheduler.init();
 	}
 }

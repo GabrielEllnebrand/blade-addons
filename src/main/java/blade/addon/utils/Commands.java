@@ -1,5 +1,6 @@
 package blade.addon.utils;
 
+import blade.addon.utils.config.Config;
 import blade.addon.utils.dungeon.FillHelper;
 import com.mojang.brigadier.CommandDispatcher;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
@@ -19,13 +20,13 @@ public class Commands {
                                         CommandRegistryAccess registryAccess) {
         dispatcher.register(
                 ClientCommandManager.literal("ba")
-
                         .then(ClientCommandManager.literal("ep").executes(context -> FillHelper.fillItem(MinecraftClient.getInstance(), FillHelper.ENDER_PEARL, 16, 16)))
 
                         .then(ClientCommandManager.literal("sb").executes(context -> FillHelper.fillItem(MinecraftClient.getInstance(), FillHelper.SUPERBOOM_TNT, 64, 64)))
 
                         .then(ClientCommandManager.literal("ij").executes(context -> FillHelper.fillItem(MinecraftClient.getInstance(), FillHelper.INFLATABLE_JERRY, 64, 64)))
 
+                        .executes(commandContext -> Scheduler.scheduleScreen(Config.createScreen(null)))
         );
     }
 }
