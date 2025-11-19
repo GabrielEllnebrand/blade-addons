@@ -15,7 +15,6 @@ import net.minecraft.entity.mob.EndermanEntity;
 import net.minecraft.entity.mob.ZombieEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.Box;
-import net.minecraft.util.shape.VoxelShapes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -63,7 +62,8 @@ public class HighlightMixin {
         if (MobHighlight.renderOutline()) {
             int outlineColor = MobHighlight.getOutlineColor(entity);
             VertexConsumer buffer = vertexConsumers.getBuffer(RenderLayers.OUTLINE_ENTITY_LAYER);
-            VertexRendering.drawOutline(matrices, buffer, VoxelShapes.cuboid(box), 0, 0, 0, outlineColor);
+            float[] rgba = RenderUtils.toFloats(outlineColor);
+            VertexRendering.drawBox(matrices, buffer, box, rgba[0], rgba[1], rgba[2], rgba[3]);
         }
     }
 

@@ -63,7 +63,6 @@ public class MobHighlight {
     private static final float[] BAT_HEALTHS = {100.0f, 200.0f, 400.0f, 800.0f};
     private static final String[] TANK_MOBS = {"Zombie Commander", "Zombie Lord", "Skeleton Lord", "Withermancer", "Super Archer"};
     private static final String[] MINI_BOSSES = {"Lost Adventurer", "Angry Archaeologist", "Frozen Adventurer"};
-    private static final String[] WITHER_BOSSES = {"Maxor", "Storm", "Goldor", "Necron"};
 
     private static final ConcurrentHashMap<Entity, TrackedData> trackedMobs = new ConcurrentHashMap<>();
     private static final ConcurrentHashMap<Entity, Integer> trackedArmourStands = new ConcurrentHashMap<>();
@@ -172,8 +171,11 @@ public class MobHighlight {
                 }
             }
 
-            if (entity instanceof WitherEntity) {
-                usefulMobs.add(entity);
+            if (entity instanceof WitherEntity wither) {
+                if (wither.getScale() == 1) {
+                    trackedMobs.put(entity, new TrackedData(MobType.WITHER, null));
+                }
+                continue;
             }
 
 
@@ -245,17 +247,6 @@ public class MobHighlight {
             }
             trackedMobs.put(closet, new TrackedData(MobType.MIMIC, armorStand));
             trackedArmourStands.put(armorStand, 0);
-            return;
-        }
-
-        if (isAWitherBoss(string)) {
-            Entity closet = getClosest(armorStand, entities, entity -> entity instanceof WitherEntity, 10);
-
-            if (closet == null) {
-                return;
-            }
-            trackedMobs.put(closet, new TrackedData(MobType.WITHER, null));
-            trackedArmourStands.put(armorStand, 0);
         }
     }
 
@@ -270,14 +261,6 @@ public class MobHighlight {
     public static boolean isMiniBoss(String string) {
         for (String mini : MINI_BOSSES) {
             if (string.contains(mini)) return true;
-        }
-
-        return false;
-    }
-
-    public static boolean isAWitherBoss(String string) {
-        for (String wither : WITHER_BOSSES) {
-            if (string.contains(wither)) return true;
         }
 
         return false;
