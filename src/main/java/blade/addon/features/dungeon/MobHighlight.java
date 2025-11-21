@@ -1,6 +1,7 @@
 package blade.addon.features.dungeon;
 
 import blade.addon.utils.Location;
+import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.events.Events;
 import config.practical.manager.ConfigValue;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientEntityEvents;
@@ -9,7 +10,6 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.network.PlayerListEntry;
-import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.boss.WitherEntity;
 import net.minecraft.entity.decoration.ArmorStandEntity;
@@ -20,8 +20,11 @@ import net.minecraft.entity.mob.WitherSkeletonEntity;
 import net.minecraft.entity.mob.ZombieEntity;
 import net.minecraft.entity.passive.BatEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.text.Text;
+import net.minecraft.util.math.Box;
 
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
@@ -30,9 +33,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class MobHighlight {
-
-    record TrackedData(MobType mob, ArmorStandEntity nametag) {
-    }
 
     enum MobType {
         STAR, TANK, MINI, FEL, ASSASSIN, BAT, WITHER, MIMIC
@@ -53,20 +53,22 @@ public class MobHighlight {
         }
     }
 
+    private static final int DIAMOND_LEGGINGS_ID = Item.getRawId(Items.DIAMOND_LEGGINGS);
+    private static final int LEATHER_LEGGINGS_ID = Item.getRawId(Items.LEATHER_LEGGINGS);
+    private static final int LEATHER_BOOTS_ID = Item.getRawId(Items.LEATHER_BOOTS);
+
     private static final Pattern STAR_PATTERN = Pattern.compile("✯");
-    private static final Pattern KING_PATTERN = Pattern.compile("King Midas");
     private static final Pattern MIMIC_PATTERN = Pattern.compile("Mimic");
     private static final Pattern WEAPON_PATTERN = Pattern.compile("^Silent Death$");
-    private static final Pattern BOOTS_PATTERN = Pattern.compile("^Leather Boots$");
     private static final Pattern FEL_PATTERN = Pattern.compile("Fel");
 
+    private static final float WITHER_BORN_HEALTH = 300f;
     private static final float[] BAT_HEALTHS = {100.0f, 200.0f, 400.0f, 800.0f};
     private static final String[] TANK_MOBS = {"Zombie Commander", "Zombie Lord", "Skeleton Lord", "Withermancer", "Super Archer"};
     private static final String[] MINI_BOSSES = {"Lost Adventurer", "Angry Archaeologist", "Frozen Adventurer"};
-    private static final String[] WITHER_BOSSES = {"Maxor", "Storm", "Goldor", "Necron"};
 
-    private static final ConcurrentHashMap<Entity, TrackedData> trackedMobs = new ConcurrentHashMap<>();
-    private static final ConcurrentHashMap<Entity, Integer> trackedArmourStands = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<Entity, MobType> trackedMobs = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<Entity, Integer> possibleEntities = new ConcurrentHashMap<>();
 
     private static boolean dontRenderHighlight = false;
     @ConfigValue
@@ -114,148 +116,87 @@ public class MobHighlight {
 
 
     public static void init() {
-        ClientTickEvents.END_CLIENT_TICK.register(minecraftClient -> {
+        Events.ON_ENTITY_TRACKED.register((entity, world) -> {
             if (!Location.inDungeon() || !mobHighlight) return;
-            ClientWorld world = minecraftClient.world;
+
+            if (Phase.inBoss()) {
+                if (entity instanceof WitherEntity wither) {
+                    if (wither.getHealth() != WITHER_BORN_HEALTH) {
+                        trackedMobs.put(wither, MobType.WITHER);
+                    }
+                }
+            } else {
+                if (entity instanceof ArmorStandEntity armorStand) {
+                    testArmourStand(armorStand);
+                }
+
+                if (entity instanceof BatEntity bat) {
+                    for (float health : BAT_HEALTHS) {
+                        if (health == bat.getHealth()) {
+                            trackedMobs.put(bat, MobType.BAT);
+                        }
+                    }
+                }
+
+                if (entity instanceof PlayerEntity player) {
+                    if (isShadowAssassin(player)) {
+                        trackedMobs.put(player, MobType.ASSASSIN);
+                    }
+                }
+            }
+        });
+
+        ClientTickEvents.END_CLIENT_TICK.register(minecraftClient -> {
             ClientPlayerEntity player = minecraftClient.player;
-
-            if (world == null || player == null) return;
-
-            ArrayList<Entity> entities = new ArrayList<>();
-            world.getEntities().forEach(entities::add);
-
-            scanEntities(entities);
-
+            if (player == null) return;
             dontRenderHighlight = player.hasStatusEffect(StatusEffects.BLINDNESS);
         });
 
+        ClientEntityEvents.ENTITY_LOAD.register(((entity, world) -> {
+            if (entity instanceof PlayerEntity player) {
+                if (isARealPlayer(player)) return;
+            }
+
+            if (isAPossibleStaredMob(entity) || entity instanceof EndermanEntity) {
+                possibleEntities.put(entity, 0);
+            }
+        }));
 
         ClientEntityEvents.ENTITY_UNLOAD.register((entity, world) -> {
             if (entity == null) return;
-            TrackedData data = trackedMobs.get(entity);
             trackedMobs.remove(entity);
-            if (data == null) return;
-            if (data.nametag == null) return;
-            trackedArmourStands.remove(data.nametag);
+            possibleEntities.remove(entity);
         });
 
         Events.ON_LOCATION_CHANGE.register(newLocation -> {
             trackedMobs.clear();
-            trackedArmourStands.clear();
+            possibleEntities.clear();
         });
     }
 
-    private static void scanEntities(ArrayList<Entity> entities) {
-        ArrayList<Entity> usefulMobs = new ArrayList<>();
-        ArrayList<ArmorStandEntity> armorStands = new ArrayList<>();
-
-        for (Entity entity : entities) {
-            if (entity == null) continue;
-            if (trackedMobs.containsKey(entity) || trackedArmourStands.containsKey(entity)) continue;
-
-            if (entity instanceof ArmorStandEntity armorStand) {
-                armorStands.add(armorStand);
-            }
-
-            if (entity instanceof BatEntity bat) {
-                for (float health : BAT_HEALTHS) {
-                    if (health == bat.getHealth()) {
-                        trackedMobs.put(bat, new TrackedData(MobType.BAT, null));
-                    }
-                }
-            }
-
-            if (entity instanceof PlayerEntity player) {
-                if (isShadowAssassin(player)) {
-                    trackedMobs.put(player, new TrackedData(MobType.ASSASSIN, null));
-                    continue;
-                }
-            }
-
-            if (entity instanceof WitherEntity) {
-                usefulMobs.add(entity);
-            }
-
-
-            if (isAPossibleStaredMob(entity) || entity instanceof EndermanEntity) {
-                usefulMobs.add(entity);
-            }
-        }
-
-        armorStands.forEach(armorStand -> testArmourStand(armorStand, usefulMobs));
-    }
-
-    private static void testArmourStand(ArmorStandEntity armorStand, ArrayList<Entity> entities) {
+    private static void testArmourStand(ArmorStandEntity armorStand) {
         Text text = armorStand.getCustomName();
         if (text == null) return;
         String string = text.getString();
-        Matcher matcher = STAR_PATTERN.matcher(string);
-        if (matcher.find()) {
 
+        Matcher matcher = MIMIC_PATTERN.matcher(string);
+        if (matcher.find()) {
+            attemptAddMob(armorStand, MobHighlight::isAPossibleMimic, 3.5, MobType.MIMIC);
+            return;
+        }
+
+        matcher = STAR_PATTERN.matcher(string);
+        if (matcher.find()) {
             matcher = FEL_PATTERN.matcher(string);
             if (matcher.find()) {
-                Entity closet = getClosest(armorStand, entities, entity -> entity instanceof EndermanEntity, 4);
-
-                if (closet == null) {
-                    return;
-                }
-
-                trackedMobs.put(closet, new TrackedData(MobType.FEL, armorStand));
-                trackedArmourStands.put(armorStand, 0);
-                return;
-            }
-
-
-            Entity closet = getClosest(armorStand, entities, MobHighlight::isAPossibleStaredMob, 3.5);
-
-            if (closet == null) {
-                return;
-            }
-
-
-            if (isMiniBoss(string)) {
-                trackedMobs.put(closet, new TrackedData(MobType.MINI, armorStand));
+                attemptAddMob(armorStand, entity -> entity instanceof EndermanEntity, 4, MobType.FEL);
+            } else if (isMiniBoss(string)) {
+                attemptAddMob(armorStand, MobHighlight::isMiniBoss, 4, MobType.MINI);
             } else if (isTankMob(string)) {
-                trackedMobs.put(closet, new TrackedData(MobType.TANK, armorStand));
+                attemptAddMob(armorStand, MobHighlight::isAPossibleStaredMob, 3, MobType.TANK);
             } else {
-                trackedMobs.put(closet, new TrackedData(MobType.STAR, armorStand));
+                attemptAddMob(armorStand, MobHighlight::isAPossibleStaredMob, 3, MobType.STAR);
             }
-            trackedArmourStands.put(armorStand, 0);
-            return;
-        }
-
-        matcher = KING_PATTERN.matcher(string);
-        if (matcher.find()) {
-            Entity closet = getClosest(armorStand, entities, entity -> !isARealPlayer(entity), 3.5);
-
-            if (closet == null) {
-                return;
-            }
-            trackedMobs.put(closet, new TrackedData(MobType.MINI, armorStand));
-            trackedArmourStands.put(armorStand, 0);
-            return;
-        }
-
-        matcher = MIMIC_PATTERN.matcher(string);
-        if (matcher.find()) {
-            Entity closet = getClosest(armorStand, entities, MobHighlight::isAPossibleMimic, 3.5);
-
-            if (closet == null) {
-                return;
-            }
-            trackedMobs.put(closet, new TrackedData(MobType.MIMIC, armorStand));
-            trackedArmourStands.put(armorStand, 0);
-            return;
-        }
-
-        if (isAWitherBoss(string)) {
-            Entity closet = getClosest(armorStand, entities, entity -> entity instanceof WitherEntity, 10);
-
-            if (closet == null) {
-                return;
-            }
-            trackedMobs.put(closet, new TrackedData(MobType.WITHER, null));
-            trackedArmourStands.put(armorStand, 0);
         }
     }
 
@@ -275,21 +216,26 @@ public class MobHighlight {
         return false;
     }
 
-    public static boolean isAWitherBoss(String string) {
-        for (String wither : WITHER_BOSSES) {
-            if (string.contains(wither)) return true;
-        }
-
-        return false;
-    }
-
-    private static Entity getClosest(ArmorStandEntity armorStand, ArrayList<Entity> entities, Predicate<Entity> requirements, double maxDistance) {
+    private static void attemptAddMob(ArmorStandEntity armorStand, Predicate<Entity> requirements, double maxDistance, MobType mobType) {
         Entity closest = null;
         double smallestDistance = maxDistance;
         double maxY = armorStand.getY();
+        Box boundingBox = Box.of(armorStand.getPos().subtract(0, 0.5, 0), 2, 3, 2);
 
-        for (Entity current : entities) {
+
+        ArrayList<Entity> meetsRequirements = new ArrayList<>();
+
+        possibleEntities.forEach((entity, integer) -> {
+            if (!entity.getBoundingBox().intersects(boundingBox)) return;
+            if (!requirements.test(entity)) return;
+            if (entity.getY() > maxY) return;
+
+            meetsRequirements.add(entity);
+        });
+
+        for (Entity current : meetsRequirements) {
             if (trackedMobs.containsKey(current)) continue;
+            if (!current.getBoundingBox().intersects(boundingBox)) continue;
             if (!requirements.test(current)) continue;
             if (current.getY() > maxY) continue;
 
@@ -301,36 +247,12 @@ public class MobHighlight {
 
         }
 
-        return closest;
-    }
-
-    private static boolean isARealPlayer(Entity entity) {
-        if (entity instanceof PlayerEntity player) {
-
-            ClientPlayNetworkHandler networkHandler = MinecraftClient.getInstance().getNetworkHandler();
-            if (networkHandler == null) return false;
-
-            PlayerListEntry entry = networkHandler.getPlayerListEntry(player.getUuid());
-            return entry != null;
+        if (closest == null) {
+            return;
         }
-        return false;
-    }
 
-    private static boolean isAPossibleStaredMob(Entity entity) {
-        return switch (entity) {
-            case ZombieEntity ignored -> true;
-            case SkeletonEntity ignored -> true;
-            case WitherSkeletonEntity ignored -> true;
-            case PlayerEntity playerEntity -> !isARealPlayer(playerEntity);
-            default -> false;
-        };
-    }
-
-    private static boolean isAPossibleMimic(Entity entity) {
-        if (entity instanceof ZombieEntity zombie) {
-            return zombie.isBaby();
-        }
-        return false;
+        possibleEntities.remove(closest);
+        trackedMobs.put(closest, mobType);
     }
 
     private static boolean isShadowAssassin(PlayerEntity player) {
@@ -343,10 +265,51 @@ public class MobHighlight {
         Matcher matcher = WEAPON_PATTERN.matcher(text.getString());
         if (!matcher.find()) return false;
 
-        text = boots.getCustomName();
-        if (text == null) return false;
-        matcher = BOOTS_PATTERN.matcher(text.getString());
-        return matcher.find();
+        return Item.getRawId(boots.getItem()) == LEATHER_BOOTS_ID;
+    }
+
+    private static boolean isARealPlayer(Entity entity) {
+        if (entity instanceof PlayerEntity player) {
+
+            ClientPlayNetworkHandler networkHandler = MinecraftClient.getInstance().getNetworkHandler();
+            if (networkHandler == null) return false;
+
+            PlayerListEntry entry = networkHandler.getPlayerListEntry(player.getUuid());
+
+            //this is a hack which will fail if someone has a really old bugged ign that includes a space
+            if (entry != null) {
+                String name = entry.getProfile().getName();
+                return !name.isEmpty() && !name.contains(" ");
+            }
+        }
+        return false;
+    }
+
+    private static boolean isAPossibleStaredMob(Entity entity) {
+        return switch (entity) {
+            case ZombieEntity ignored -> true;
+            case SkeletonEntity ignored -> true;
+            case WitherSkeletonEntity ignored -> true;
+            case PlayerEntity ignored -> true;
+            default -> false;
+        };
+    }
+
+    private static boolean isAPossibleMimic(Entity entity) {
+        if (entity instanceof ZombieEntity zombie) {
+            return zombie.isBaby();
+        }
+        return false;
+    }
+
+    private static boolean isMiniBoss(Entity entity) {
+        if (entity instanceof PlayerEntity player) {
+            ItemStack leggings = player.getInventory().getStack(37);
+            int id = Item.getRawId(leggings.getItem());
+            return id == DIAMOND_LEGGINGS_ID || id == LEATHER_LEGGINGS_ID;
+        }
+
+        return false;
     }
 
     public static boolean hasEntity(Entity entity) {
@@ -385,11 +348,11 @@ public class MobHighlight {
     }
 
     public static int getFilledColor(Entity entity) {
-        return getFilledColor(trackedMobs.get(entity).mob);
+        return getFilledColor(trackedMobs.get(entity));
     }
 
     public static int getOutlineColor(Entity entity) {
-        return getOutLineColor(trackedMobs.get(entity).mob);
+        return getOutLineColor(trackedMobs.get(entity));
     }
 
     public static boolean renderFilled() {

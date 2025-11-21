@@ -19,6 +19,6 @@ public class RenderLayers {
     public static final RenderLayer.MultiPhase OUTLINE_ENTITY_LAYER =
             RenderLayer.of("outline-entity", RenderLayer.DEFAULT_BUFFER_SIZE, false, true, RenderPipelines.OUTLINE_ENTITY_PIPELINE, RenderLayer.MultiPhaseParameters.builder()
                     .layering(RenderPhase.VIEW_OFFSET_Z_LAYERING)
-                    .lineWidth(new RenderPhase.LineWidth(OptionalDouble.of(10)))
+                    .lineWidth(new RenderPhase.LineWidth(OptionalDouble.of(4)))
                     .build(false));
 }

@@ -5,7 +5,6 @@ import blade.addon.utils.events.interfaces.ServerTickEvent;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.network.ClientConnection;
-import net.minecraft.network.PacketCallbacks;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.common.CommonPingS2CPacket;
 import org.spongepowered.asm.mixin.Mixin;
@@ -24,7 +23,6 @@ public class ServerTickMixin {
             if (common.getParameter() == 0) return;
             Events.ON_SERVER_TICK.invoke(ServerTickEvent::onServerTick);
         }
-
 
     }
 

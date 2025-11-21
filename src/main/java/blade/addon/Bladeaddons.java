@@ -14,6 +14,7 @@ import blade.addon.features.dungeon.LeapMessage;
 import blade.addon.features.dungeon.MobHighlight;
 import blade.addon.features.dungeon.PositionMessages;
 import blade.addon.features.dungeon.RelicTimer;
+import blade.addon.features.dungeon.SecretSpawnTimer;
 import blade.addon.features.dungeon.StormTickTimer;
 import blade.addon.features.dungeon.TermStartTimer;
 import blade.addon.features.dungeon.WarpCooldown;
@@ -53,5 +54,6 @@ public class Bladeaddons implements ModInitializer {
         MobHighlight.init();
         ChestCounter.init();
         Scheduler.init();
+        SecretSpawnTimer.init();
 	}
 }

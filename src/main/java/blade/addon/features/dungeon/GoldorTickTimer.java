@@ -10,10 +10,6 @@ import net.minecraft.client.MinecraftClient;
 
 public class GoldorTickTimer {
 
-    private static final int GREEN_COLOR = 0xff00ff00;
-    private static final int ORANGE_COLOR = 0xffDAA06D;
-    private static final int RED_COLOR = 0xffff0000;
-
     @ConfigValue
     public static boolean enableGoldorTickTimer = false;
 
@@ -45,11 +41,11 @@ public class GoldorTickTimer {
 
                 double mod = num % 3;
                 if (mod < 1) {
-                    color = GREEN_COLOR;
+                    color = Constants.GREEN_COLOR;
                 } else if (mod < 2) {
-                    color = ORANGE_COLOR;
+                    color = Constants.ORANGE_COLOR;
                 } else {
-                    color = RED_COLOR;
+                    color = Constants.RED_COLOR;
                 }
 
                 if (inDeathTicks) num = mod;

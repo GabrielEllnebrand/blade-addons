@@ -14,6 +14,7 @@ import blade.addon.features.dungeon.LeapMessage;
 import blade.addon.features.dungeon.MobHighlight;
 import blade.addon.features.dungeon.PositionMessages;
 import blade.addon.features.dungeon.RelicTimer;
+import blade.addon.features.dungeon.SecretSpawnTimer;
 import blade.addon.features.dungeon.StormTickTimer;
 import blade.addon.features.dungeon.TermStartTimer;
 import blade.addon.features.dungeon.WarpCooldown;
@@ -39,7 +40,7 @@ public class Config {
     private static final Text TITLE = Text.literal("Blade Addons");
     public static final ConfigManager manager = new ConfigManager("./config/" + Constants.NAMESPACE + ".json",
             List.of(StormTickTimer.class, GoldorTickTimer.class, Phase.class, LeapMessage.class, PositionMessages.class, TermStartTimer.class, Split.class, DeathTickTimer.class, ExplosiveShot.class,
-                    InvincibilityTimer.class, WarpCooldown.class, DupeClassChecker.class, HidePlayersAfterLeap.class, CrystalSpawn.class, KeyNotifier.class, RelicTimer.class, AutoRequeue.class, MobHighlight.class, ChestCounter.class));
+                    InvincibilityTimer.class, WarpCooldown.class, DupeClassChecker.class, HidePlayersAfterLeap.class, CrystalSpawn.class, KeyNotifier.class, RelicTimer.class, AutoRequeue.class, MobHighlight.class, ChestCounter.class, SecretSpawnTimer.class));
 
     public static Screen createScreen(Screen parent) {
         ConfigurableScreen screen = new ConfigurableScreen(TITLE, parent, manager);
@@ -99,6 +100,7 @@ public class Config {
         dungeons.add(new ConfigBool(Text.literal("Death tick timer"), () -> DeathTickTimer.enableDeathTickTimer, bool ->  DeathTickTimer.enableDeathTickTimer = bool));
         dungeons.add(new ConfigBool(Text.literal("calculate explosive shot"), () -> ExplosiveShot.calculateCriticalHit, bool ->  ExplosiveShot.calculateCriticalHit = bool));
         dungeons.add(new ConfigBool(Text.literal("Notification on key spawn"), () -> KeyNotifier.enableKeyNotifier, bool ->  KeyNotifier.enableKeyNotifier = bool));
+        dungeons.add(new ConfigBool(Text.literal("Secret spawn timer"), () -> SecretSpawnTimer.enableSecretSpawnTimer, bool ->  SecretSpawnTimer.enableSecretSpawnTimer = bool));
         screen.addCategory(dungeons);
 
         ConfigCategory splits = new ConfigCategory("Splits");

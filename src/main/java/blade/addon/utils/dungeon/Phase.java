@@ -6,7 +6,6 @@ import blade.addon.utils.events.Events;
 import blade.addon.utils.events.interfaces.RunEndEvent;
 import config.practical.hud.HUDComponent;
 import config.practical.manager.ConfigValue;
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
@@ -34,13 +33,11 @@ public class Phase {
     private static final HashMap<String, ArrayList<Split>> FLOOR_SPLITS = JsonUtility.readSplits("/data/splits.json");
 
     private static final int TEXT_HEIGHT = 10;
-    private static final int LOOKUP_RATE = 10;
     private static final int DUMMY_SIZE = 10;
 
     private static ArrayList<Split> currentSplits;
     private static int currentPhase = -1;
     private static String floor = "";
-    private static int tick = 0;
 
     private static int currentSection = 0;
     private static boolean termsDone = false;
@@ -84,7 +81,25 @@ public class Phase {
             }
         });
 
-        ClientTickEvents.END_CLIENT_TICK.register(Phase::tick);
+        Events.ON_TEAM.register(text -> {
+            if (!Location.inDungeon() || floor != null) return;
+
+            Matcher matcher = SEARCH_PATTERN.matcher(text);
+            if (!matcher.find()) return;
+            int start = text.indexOf("(");
+            int end = text.indexOf(")");
+            floor = text.substring(start + 1, end);
+
+            currentSplits = FLOOR_SPLITS.get(floor);
+            if (currentSplits!= null) {
+                for (Split split : currentSplits) {
+                    split.reset();
+                }
+            }
+            if (floor != null) {
+                if (floor.contains("7")) inFloor7 = true;
+            }
+        });
     }
 
 
@@ -168,21 +183,6 @@ public class Phase {
         }
     }
 
-
-    public static void updateFloor(Scoreboard scoreboard) {
-        for (Team team : scoreboard.getTeams()) {
-            String teamStr = team.getPrefix().getString() + team.getSuffix().getString();
-            Matcher matcher = SEARCH_PATTERN.matcher(teamStr);
-            if (matcher.find()) {
-                int start = teamStr.indexOf("(");
-                int end = teamStr.indexOf(")");
-                floor = teamStr.substring(start + 1, end);
-                return;
-            }
-        }
-        floor = null;
-    }
-
     public static boolean runStarted() {
         return currentPhase >= 0;
     }
@@ -219,32 +219,9 @@ public class Phase {
         return currentPhase == 9 && inFloor7;
     }
 
-    public static void tick(MinecraftClient client) {
-        if (!Location.inDungeon() || client.player == null) return;
-
-        if (floor == null) {
-
-            if (tick >= LOOKUP_RATE) {
-                tick = 0;
-                updateFloor(client.player.getScoreboard());
-                currentSplits = FLOOR_SPLITS.get(floor);
-                if (currentSplits!= null) {
-                    for (Split split : currentSplits) {
-                        split.reset();
-                    }
-                }
-                if (floor != null) {
-                    if (floor.contains("7")) inFloor7 = true;
-                }
-            } else {
-                tick++;
-            }
-        }
-    }
-
     @ConfigValue
     public static HUDComponent splitTimer = new HUDComponent(0, 0, Split.SPLIT_LENGTH, 100, 1, "Splits",
-            Location::inDungeon,
+            () -> Location.inDungeon() && enableSplits && Phase.runStarted(),
             ((hudComponent, drawContext) -> {
                 int x = hudComponent.getScaledX();
                 int y = hudComponent.getScaledY();
