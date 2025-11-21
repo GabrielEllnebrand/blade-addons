@@ -1,4 +1,24 @@
 {
+  "E": [
+    {
+      "name": "Blood Open",
+      "start": "§e[NPC] §bMort§f: Here, I found this map when I first entered the dungeon.",
+      "end": "[BOSS] The Watcher: Congratulations, you made it through the Entrance.",
+      "color": 11141120
+    },
+    {
+      "name": "Blood Clear",
+      "start": "[BOSS] The Watcher: Congratulations, you made it through the Entrance.",
+      "end": "[BOSS] The Watcher: You have proven yourself. You may pass.",
+      "color": 16733525
+    },
+    {
+      "name": "Run Time",
+      "start": "§e[NPC] §bMort§f: Here, I found this map when I first entered the dungeon.",
+      "end": "some dummy string",
+      "color": 4279733527
+    }
+  ],
   "F1": [
     {
       "name": "Blood Open",
