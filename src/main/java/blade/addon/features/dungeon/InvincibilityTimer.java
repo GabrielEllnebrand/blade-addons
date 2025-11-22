@@ -8,8 +8,11 @@ import config.practical.hud.HUDComponent;
 import config.practical.manager.ConfigValue;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gl.RenderPipelines;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.Identifier;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -18,6 +21,16 @@ public class InvincibilityTimer {
 
     private static final int TEXT_HEIGHT = 9;
     private static final int HEAD_SLOT = 39;
+
+    private static final Identifier BONZO_SPRITE = Identifier.of(Constants.NAMESPACE, "bonzo-mask");
+    private static final Identifier SPIRIT_SPRITE = Identifier.of(Constants.NAMESPACE, "spirit-mask");
+    private static final Identifier PHOENIX_SPRITE = Identifier.of(Constants.NAMESPACE, "phoenix");
+
+    private static final int GREEN_COLOR = 0x8800FF00;
+    private static final int YELLOW_COLOR = 0x88FFFF00;
+    private static final int RED_COLOR = 0x88FF0000;
+
+    private static final int SPRITE_SIZE = TEXT_HEIGHT;
 
     private static final Pattern BONZO_PATTERN = Pattern.compile("^Your (?:\\S+ )?Bonzo's Mask saved your life!$");
     private static final Pattern SPIRIT_PATTERN = Pattern.compile("^Second Wind Activated! Your Spirit Mask saved your life!$");
@@ -43,7 +56,7 @@ public class InvincibilityTimer {
     private static boolean phoenixOn = false;
 
     public enum DisplayWhen {
-        ALWAYS("Always"), BOSS_ONLY("Only in Boss"), P3_ONLY("Only in P3");
+        ALWAYS("Always"), BOSS_ONLY("Only in Boss"), P3_ONLY("Only in P3"), USEFUL_PHASES("In p2 and p3");
 
         private final String label;
 
@@ -63,6 +76,8 @@ public class InvincibilityTimer {
     @ConfigValue
     public static DisplayWhen displayWhen = DisplayWhen.ALWAYS;
 
+    @ConfigValue
+    public static boolean useSprites = false;
 
     public static void init() {
         Events.ON_SERVER_TICK.register(() -> {
@@ -135,13 +150,16 @@ public class InvincibilityTimer {
         }
     }
 
+    private static Text formatTimer(int ticks) {
+        return Text.literal("(").formatted(Formatting.DARK_GRAY)
+                .append(Text.literal(Constants.DECIMAL_FORMAT.format(ticks * Constants.TICK_DURATION)).formatted(Formatting.GRAY))
+                .append(Text.literal(")").formatted(Formatting.DARK_GRAY));
+    }
+
 
     private static Text getBonzoText() {
         if (bonzoMaskTicks > 0) {
-            return Text.literal("Bonzo's Mask ").formatted(Formatting.RED)
-                    .append(Text.literal("(").formatted(Formatting.DARK_GRAY))
-                    .append(Text.literal(Constants.DECIMAL_FORMAT.format(bonzoMaskTicks * Constants.TICK_DURATION)).formatted(Formatting.GRAY))
-                    .append(Text.literal(")").formatted(Formatting.DARK_GRAY));
+            return Text.literal("Bonzo's Mask ").formatted(Formatting.RED).append(formatTimer(bonzoMaskTicks));
         } else {
             Formatting format = bonzoMaskOn ? Formatting.YELLOW : Formatting.GREEN;
             return Text.literal("Bonzo's Mask ").formatted(format);
@@ -150,10 +168,8 @@ public class InvincibilityTimer {
 
     private static Text getSpiritText() {
         if (spiritMaskTicks > 0) {
-            return Text.literal("Spirit Mask ").formatted(Formatting.RED)
-                    .append(Text.literal("(").formatted(Formatting.DARK_GRAY))
-                    .append(Text.literal(Constants.DECIMAL_FORMAT.format(spiritMaskTicks * Constants.TICK_DURATION)).formatted(Formatting.GRAY))
-                    .append(Text.literal(")").formatted(Formatting.DARK_GRAY));
+            return Text.literal("Spirit Mask ").formatted(Formatting.RED).append(formatTimer(spiritMaskTicks));
+
         } else {
             Formatting format = spiritMaskOn ? Formatting.YELLOW : Formatting.GREEN;
             return Text.literal("Spirit Mask ").formatted(format);
@@ -162,14 +178,34 @@ public class InvincibilityTimer {
 
     private static Text getPhoenixText() {
         if (phoenixTicks > 0) {
-            return Text.literal("Phoenix ").formatted(Formatting.RED)
-                    .append(Text.literal("(").formatted(Formatting.DARK_GRAY))
-                    .append(Text.literal(Constants.DECIMAL_FORMAT.format(phoenixTicks * Constants.TICK_DURATION)).formatted(Formatting.GRAY))
-                    .append(Text.literal(")").formatted(Formatting.DARK_GRAY));
+            return Text.literal("Phoenix ").formatted(Formatting.RED).append(formatTimer(phoenixTicks));
         } else {
             Formatting format = phoenixOn ? Formatting.YELLOW : Formatting.GREEN;
             return Text.literal("Phoenix ").formatted(format);
         }
+    }
+
+    private static void drawSprite(DrawContext context, Identifier identifier, int x, int y, boolean isOn, int ticks, Text timerText) {
+
+        int color;
+
+        if (ticks > 0) {
+            color = RED_COLOR;
+        } else if (isOn) {
+            color = YELLOW_COLOR;
+        } else {
+            color = GREEN_COLOR;
+        }
+
+
+        context.fill(x, y, x + SPRITE_SIZE, y + SPRITE_SIZE, color);
+
+        context.drawGuiTexture(RenderPipelines.GUI_TEXTURED, identifier, x, y, SPRITE_SIZE, SPRITE_SIZE, 0xffffffff);
+
+        if (ticks > 0) {
+            context.drawText(MinecraftClient.getInstance().textRenderer, timerText, x + TEXT_HEIGHT * 2, y, 0xffffffff, true);
+        }
+
     }
 
     @ConfigValue
@@ -189,6 +225,9 @@ public class InvincibilityTimer {
                     case ALWAYS -> {
                         return true;
                     }
+                    case USEFUL_PHASES -> {
+                        return Phase.inP3() || Phase.inP2();
+                    }
                     case null, default -> {
                         return false;
                     }
@@ -198,10 +237,16 @@ public class InvincibilityTimer {
                 int x = hudComponent.getScaledX();
                 int y = hudComponent.getScaledY();
 
-                drawContext.drawText(MinecraftClient.getInstance().textRenderer, getBonzoText(), x, y, 0xffffffff, true);
-                drawContext.drawText(MinecraftClient.getInstance().textRenderer, getSpiritText(), x, y + TEXT_HEIGHT, 0xffffffff, true);
-                drawContext.drawText(MinecraftClient.getInstance().textRenderer, getPhoenixText(), x, y + TEXT_HEIGHT * 2, 0xffffffff, true);
+                if (useSprites) {
+                    drawSprite(drawContext, BONZO_SPRITE, x, y, bonzoMaskOn, bonzoMaskTicks, formatTimer(bonzoMaskTicks));
+                    drawSprite(drawContext, SPIRIT_SPRITE, x, y + SPRITE_SIZE + 1, spiritMaskOn, spiritMaskTicks, formatTimer(spiritMaskTicks));
+                    drawSprite(drawContext, PHOENIX_SPRITE, x, y + (SPRITE_SIZE + 1) * 2, phoenixOn, phoenixTicks, formatTimer(phoenixTicks));
 
-            })
+                } else {
+                    drawContext.drawText(MinecraftClient.getInstance().textRenderer, getBonzoText(), x, y, 0xffffffff, true);
+                    drawContext.drawText(MinecraftClient.getInstance().textRenderer, getSpiritText(), x, y + TEXT_HEIGHT, 0xffffffff, true);
+                    drawContext.drawText(MinecraftClient.getInstance().textRenderer, getPhoenixText(), x, y + TEXT_HEIGHT * 2, 0xffffffff, true);
+                }
+            }), () -> displayInvincibilityTimer
     );
 }

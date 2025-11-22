@@ -55,6 +55,6 @@ public class WarpCooldown {
                 Text text = Text.literal("Warp Cooldown: ").formatted(Formatting.DARK_PURPLE).append(Text.literal(Constants.DECIMAL_FORMAT.format(timeRemaining)).formatted(Formatting.WHITE));
 
                 drawContext.drawText(MinecraftClient.getInstance().textRenderer, text, x, y, 0xffffffff, true);
-            })
+            }), () ->enableWarpCooldown
     );
 }

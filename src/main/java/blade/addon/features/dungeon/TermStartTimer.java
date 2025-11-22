@@ -37,6 +37,6 @@ public class TermStartTimer {
 
                 double num = tick * Constants.TICK_DURATION;
                 drawContext.drawText(MinecraftClient.getInstance().textRenderer, Constants.DECIMAL_FORMAT.format(num), x, y, 0xFFFFFF55, true);
-            })
+            }), () -> enableTermStartTimer
     );
 }

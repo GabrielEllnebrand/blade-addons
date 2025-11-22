@@ -3,14 +3,12 @@ package blade.addon.utils.dungeon;
 import blade.addon.utils.JsonUtility;
 import blade.addon.utils.Location;
 import blade.addon.utils.events.Events;
+import blade.addon.utils.events.interfaces.PhaseEvent;
 import blade.addon.utils.events.interfaces.RunEndEvent;
 import config.practical.hud.HUDComponent;
 import config.practical.manager.ConfigValue;
-import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
-import net.minecraft.scoreboard.Scoreboard;
-import net.minecraft.scoreboard.Team;
 import net.minecraft.text.Text;
 
 import java.util.ArrayList;
@@ -75,9 +73,9 @@ public class Phase {
             }
         });
 
-        ClientReceiveMessageEvents.GAME.register((message, overlay) -> {
+        Events.ON_GAME_MESSAGE.register(text ->  {
             if (Location.inDungeon()) {
-                Phase.parseMessage(message);
+                Phase.parseMessage(text);
             }
         });
 
@@ -118,6 +116,9 @@ public class Phase {
 
             if (currentSplit.ended()) {
                 currentPhase = i + 1;
+                if (Events.ON_PHASE_CHANGE.hasListeners()) {
+                    Events.ON_PHASE_CHANGE.invoke(PhaseEvent::onPhaseChange);
+                }
             }
 
             //just for starting the run
@@ -242,6 +243,6 @@ public class Phase {
                         DUMMY_SPLIT.drawSplit(drawContext, textRenderer, currentTime, x, y + TEXT_HEIGHT * i);
                     }
                 }
-            })
+            }), () -> enableSplits
     );
 }

@@ -94,7 +94,7 @@ public class KeyNotifier {
     }
 
     @ConfigValue
-    public static HUDComponent keyNotifierDisplay = new HUDComponent(0, 0, 120, 10, 1,
+    public static HUDComponent keyNotifierDisplay = new HUDComponent(0, 0, 120, 10, 1, "",
             () -> Location.inDungeon() && hasKey,
             ((hudComponent, drawContext) -> {
                 int x = hudComponent.getScaledX();
@@ -106,6 +106,6 @@ public class KeyNotifier {
                     drawContext.drawText(MinecraftClient.getInstance().textRenderer, WITHER_KEY, x, y, 0xffffffff, true);
                 }
 
-            })
+            }), () -> enableKeyNotifier
     );
 }

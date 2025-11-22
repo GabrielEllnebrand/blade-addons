@@ -84,6 +84,6 @@ public class StormTickTimer {
                 int y = hudComponent.getScaledY();
 
                 drawContext.drawText(MinecraftClient.getInstance().textRenderer, Text.literal(Constants.DECIMAL_FORMAT.format(deathTime)).formatted(Formatting.DARK_PURPLE), x, y, 0xffffffff, true);
-            })
+            }), () -> enableStormTickTimer
     );
 }

@@ -10,12 +10,38 @@ base {
 	archivesName = project.archives_base_name
 }
 
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(21)
+    // Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
+    // if it is present.
+    // If you remove this line, sources will not be generated.
+    withSourcesJar()
+}
+
+loom {
+    runConfigs.named("client") {
+        setIdeConfigGenerated(true)
+        vmArgs.add("-Dmixin.debug.export=true")
+        vmArgs.add("-Ddevauth.enabled=true")
+        vmArgs.add("-Ddevauth.account=main")
+        vmArgs.add("-XX:+AllowEnhancedClassRedefinition")
+    }
+
+    runConfigs.named("server") {
+        setIdeConfigGenerated(false)
+    }
+}
+
+
+
 repositories {
 	// Add repositories to retrieve artifacts from in here.
 	// You should only use this when depending on other mods because
 	// Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
 	// See https://docs.gradle.org/current/userguide/declaring_repositories.html
 	// for more information about repositories.
+    maven  {url = "https://pkgs.dev.azure.com/djtheredstoner/DevAuth/_packaging/public/maven/v1" }
+
 	repositories {
 		mavenCentral()
 		maven { url 'https://jitpack.io' }
@@ -42,6 +68,8 @@ dependencies {
 	modImplementation("com.terraformersmc:modmenu:${project.modmenu_version}")
 	include modImplementation("net.hypixel:mod-api:${project.hypixel_api_version}")
 	include modImplementation("com.github.BladeMasterGabe:practical-config:${project.practical_config}")
+
+    modRuntimeOnly("me.djtheredstoner:DevAuth-fabric:1.2.1")
 
 
 }
@@ -93,3 +121,4 @@ publishing {
 		// retrieving dependencies.
 	}
 }
+

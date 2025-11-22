@@ -1,6 +1,6 @@
 package blade.addon.mixin;
 
-import blade.addon.features.dungeon.HidePlayersAfterLeap;
+import blade.addon.features.dungeon.HideEntities;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.render.Frustum;
@@ -22,8 +22,12 @@ public class RenderMixin {
             if (clientPlayer != null) {
                 if (player.getId() == clientPlayer.getId()) return;
             }
-            cir.setReturnValue(!HidePlayersAfterLeap.shouldHidePlayers());
+            cir.setReturnValue(!HideEntities.shouldHidePlayers(player));
 
+        }
+
+        if (!entity.isAlive() && HideEntities.hideDeadEntities) {
+            cir.setReturnValue(false);
         }
     }
 }

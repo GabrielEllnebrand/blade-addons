@@ -24,6 +24,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.text.Text;
+import net.minecraft.text.TextColor;
 import net.minecraft.util.math.Box;
 
 import java.util.ArrayList;
@@ -57,7 +58,6 @@ public class MobHighlight {
     private static final int LEATHER_LEGGINGS_ID = Item.getRawId(Items.LEATHER_LEGGINGS);
     private static final int LEATHER_BOOTS_ID = Item.getRawId(Items.LEATHER_BOOTS);
 
-    private static final Pattern STAR_PATTERN = Pattern.compile("✯");
     private static final Pattern MIMIC_PATTERN = Pattern.compile("Mimic");
     private static final Pattern WEAPON_PATTERN = Pattern.compile("^Silent Death$");
     private static final Pattern FEL_PATTERN = Pattern.compile("Fel");
@@ -137,11 +137,11 @@ public class MobHighlight {
                         }
                     }
                 }
+            }
 
-                if (entity instanceof PlayerEntity player) {
-                    if (isShadowAssassin(player)) {
-                        trackedMobs.put(player, MobType.ASSASSIN);
-                    }
+            if (entity instanceof PlayerEntity player) {
+                if (isShadowAssassin(player)) {
+                    trackedMobs.put(player, MobType.ASSASSIN);
                 }
             }
         });
@@ -185,8 +185,7 @@ public class MobHighlight {
             return;
         }
 
-        matcher = STAR_PATTERN.matcher(string);
-        if (matcher.find()) {
+        if (containsStarText(text)) {
             matcher = FEL_PATTERN.matcher(string);
             if (matcher.find()) {
                 attemptAddMob(armorStand, entity -> entity instanceof EndermanEntity, 4, MobType.FEL);
@@ -198,6 +197,20 @@ public class MobHighlight {
                 attemptAddMob(armorStand, MobHighlight::isAPossibleStaredMob, 3, MobType.STAR);
             }
         }
+    }
+
+    public static boolean containsStarText(Text text) {
+        for (Text sib : text.getSiblings()) {
+            TextColor color = sib.getStyle().getColor();
+            if (color == null) continue;
+
+            if (color.getRgb() == 0xFFAA00 && sib.getString().equals("✯ ")) {
+                return true;
+            }
+
+        }
+
+        return false;
     }
 
     public static boolean isTankMob(String string) {
@@ -290,7 +303,7 @@ public class MobHighlight {
             case ZombieEntity ignored -> true;
             case SkeletonEntity ignored -> true;
             case WitherSkeletonEntity ignored -> true;
-            case PlayerEntity ignored -> true;
+            case PlayerEntity ignored -> !isMiniBoss(entity);
             default -> false;
         };
     }

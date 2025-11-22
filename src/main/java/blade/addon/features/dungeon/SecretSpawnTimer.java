@@ -57,6 +57,6 @@ public class SecretSpawnTimer {
                 String string = tick + "";
 
                 drawContext.drawText(textRenderer, string, x + (WIDTH - textRenderer.getWidth(string)) / 2, y, color, true);
-            })
+            }), () -> enableSecretSpawnTimer
     );
 }

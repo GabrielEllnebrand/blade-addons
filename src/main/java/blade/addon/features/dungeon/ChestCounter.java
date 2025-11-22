@@ -83,7 +83,7 @@ public class ChestCounter {
                     drawContext.drawText(MinecraftClient.getInstance().textRenderer, Text.literal("go to the dungeon hub"), x, y, 0xffff0000, true);
 
                 }
-            })
+            }), () -> displayChestCount
     );
 
 

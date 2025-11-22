@@ -7,7 +7,7 @@ import blade.addon.features.dungeon.DeathTickTimer;
 import blade.addon.features.dungeon.DupeClassChecker;
 import blade.addon.features.dungeon.ExplosiveShot;
 import blade.addon.features.dungeon.GoldorTickTimer;
-import blade.addon.features.dungeon.HidePlayersAfterLeap;
+import blade.addon.features.dungeon.HideEntities;
 import blade.addon.features.dungeon.InvincibilityTimer;
 import blade.addon.features.dungeon.KeyNotifier;
 import blade.addon.features.dungeon.LeapMessage;
@@ -30,7 +30,7 @@ import net.fabricmc.api.ModInitializer;
 public class Bladeaddons implements ModInitializer {
 	@Override
 	public void onInitialize() {
-		Config.manager.load();
+        Config.manager.load();
 		Keybinds.register();
         Commands.register();
 		Location.init();
@@ -46,7 +46,7 @@ public class Bladeaddons implements ModInitializer {
         LeapMessage.init();
         ExplosiveShot.init();
         DupeClassChecker.init();
-        HidePlayersAfterLeap.init();
+        HideEntities.init();
         CrystalSpawn.init();
         KeyNotifier.init();
         RelicTimer.init();
@@ -55,5 +55,5 @@ public class Bladeaddons implements ModInitializer {
         ChestCounter.init();
         Scheduler.init();
         SecretSpawnTimer.init();
-	}
+    }
 }

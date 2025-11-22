@@ -1,8 +1,10 @@
 package blade.addon.utils.events;
 
 import blade.addon.utils.events.interfaces.EntityTrackEvent;
+import blade.addon.utils.events.interfaces.GameMessageEvent;
 import blade.addon.utils.events.interfaces.LeapEvent;
 import blade.addon.utils.events.interfaces.LocationChangeEvent;
+import blade.addon.utils.events.interfaces.PhaseEvent;
 import blade.addon.utils.events.interfaces.PlayerListEvent;
 import blade.addon.utils.events.interfaces.RunEndEvent;
 import blade.addon.utils.events.interfaces.ScoreBoardEvent;
@@ -18,4 +20,6 @@ public class Events {
     public static final EventHandler<RunEndEvent> ON_RUN_END = new EventHandler<>();
     public static final EventHandler<PlayerListEvent> ON_PLAYER_ENTRY = new EventHandler<>();
     public static final EventHandler<ScoreBoardEvent> ON_TEAM = new EventHandler<>();
+    public static final EventHandler<GameMessageEvent> ON_GAME_MESSAGE = new EventHandler<>();
+    public static final EventHandler<PhaseEvent> ON_PHASE_CHANGE = new EventHandler<>();
 }

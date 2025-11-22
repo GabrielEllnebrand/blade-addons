@@ -7,7 +7,7 @@ import blade.addon.features.dungeon.DeathTickTimer;
 import blade.addon.features.dungeon.DupeClassChecker;
 import blade.addon.features.dungeon.ExplosiveShot;
 import blade.addon.features.dungeon.GoldorTickTimer;
-import blade.addon.features.dungeon.HidePlayersAfterLeap;
+import blade.addon.features.dungeon.HideEntities;
 import blade.addon.features.dungeon.InvincibilityTimer;
 import blade.addon.features.dungeon.KeyNotifier;
 import blade.addon.features.dungeon.LeapMessage;
@@ -40,7 +40,7 @@ public class Config {
     private static final Text TITLE = Text.literal("Blade Addons");
     public static final ConfigManager manager = new ConfigManager("./config/" + Constants.NAMESPACE + ".json",
             List.of(StormTickTimer.class, GoldorTickTimer.class, Phase.class, LeapMessage.class, PositionMessages.class, TermStartTimer.class, Split.class, DeathTickTimer.class, ExplosiveShot.class,
-                    InvincibilityTimer.class, WarpCooldown.class, DupeClassChecker.class, HidePlayersAfterLeap.class, CrystalSpawn.class, KeyNotifier.class, RelicTimer.class, AutoRequeue.class, MobHighlight.class, ChestCounter.class, SecretSpawnTimer.class));
+                    InvincibilityTimer.class, WarpCooldown.class, DupeClassChecker.class, HideEntities.class, CrystalSpawn.class, KeyNotifier.class, RelicTimer.class, AutoRequeue.class, MobHighlight.class, ChestCounter.class, SecretSpawnTimer.class));
 
     public static Screen createScreen(Screen parent) {
         ConfigurableScreen screen = new ConfigurableScreen(TITLE, parent, manager);
@@ -55,11 +55,17 @@ public class Config {
         ConfigSection invincibility = new ConfigSection(Text.literal("Invincibility stuff"));
         invincibility.add(new ConfigBool(Text.literal("Enable invincibility display"),() -> InvincibilityTimer.displayInvincibilityTimer, bool -> InvincibilityTimer.displayInvincibilityTimer = bool));
         invincibility.add(new ConfigOptions<>(Text.literal("Display when"), InvincibilityTimer.DisplayWhen.values(), () -> InvincibilityTimer.displayWhen, when -> InvincibilityTimer.displayWhen = when));
+        invincibility.add(new ConfigBool(Text.literal("Use sprites"),() -> InvincibilityTimer.useSprites, bool -> InvincibilityTimer.useSprites = bool));
+
         dungeons.add(invincibility);
 
-        ConfigSection hideAfterLeap = new ConfigSection(Text.literal("Hide players after leap"));
-        hideAfterLeap.add(new ConfigBool(Text.literal("Enable setting"), () -> HidePlayersAfterLeap.hideAfterLeap, bool -> HidePlayersAfterLeap.hideAfterLeap = bool));
-        hideAfterLeap.add(new ConfigBool(Text.literal("Hide only in boss"), () -> HidePlayersAfterLeap.hideOnlyInBoss, bool -> HidePlayersAfterLeap.hideOnlyInBoss = bool));
+        ConfigSection hideAfterLeap = new ConfigSection(Text.literal("Hide Entities"));
+        hideAfterLeap.add(new ConfigBool(Text.literal("Hide on leap"), () -> HideEntities.hideAfterLeap, bool -> HideEntities.hideAfterLeap = bool));
+        hideAfterLeap.add(new ConfigBool(Text.literal("Hide only in boss"), () -> HideEntities.hideOnlyInBoss, bool -> HideEntities.hideOnlyInBoss = bool));
+        hideAfterLeap.add(new ConfigBool(Text.literal("Hide at SS"), () -> HideEntities.hideAtSS, bool -> HideEntities.hideAtSS = bool));
+        hideAfterLeap.add(new ConfigBool(Text.literal("SS only hides before terms"), () -> HideEntities.hideBeforeTermsOnly, bool -> HideEntities.hideBeforeTermsOnly = bool));
+        hideAfterLeap.add(new ConfigBool(Text.literal("Hide dead entities"), () -> HideEntities.hideDeadEntities, bool -> HideEntities.hideDeadEntities = bool));
+
         dungeons.add(hideAfterLeap);
 
         ConfigSection maxor = new ConfigSection(Text.literal("Maxor"));
@@ -97,7 +103,7 @@ public class Config {
         dungeons.add(new ConfigBool(Text.literal("Leap message"), () -> LeapMessage.enableLeapMessages, bool -> LeapMessage.enableLeapMessages = bool));
         dungeons.add(new ConfigBool(Text.literal("Positional messages"), () -> PositionMessages.enablePositionalMessages, bool ->  PositionMessages.enablePositionalMessages = bool));
         dungeons.add(new ConfigBool(Text.literal("Auto requeue"), () -> AutoRequeue.enableAutoRequeue, bool ->  AutoRequeue.enableAutoRequeue = bool));
-        dungeons.add(new ConfigBool(Text.literal("Death tick timer"), () -> DeathTickTimer.enableDeathTickTimer, bool ->  DeathTickTimer.enableDeathTickTimer = bool));
+        dungeons.add(new ConfigBool(Text.literal("Death tick timer (not accurate currently)"), () -> DeathTickTimer.enableDeathTickTimer, bool ->  DeathTickTimer.enableDeathTickTimer = bool));
         dungeons.add(new ConfigBool(Text.literal("calculate explosive shot"), () -> ExplosiveShot.calculateCriticalHit, bool ->  ExplosiveShot.calculateCriticalHit = bool));
         dungeons.add(new ConfigBool(Text.literal("Notification on key spawn"), () -> KeyNotifier.enableKeyNotifier, bool ->  KeyNotifier.enableKeyNotifier = bool));
         dungeons.add(new ConfigBool(Text.literal("Secret spawn timer"), () -> SecretSpawnTimer.enableSecretSpawnTimer, bool ->  SecretSpawnTimer.enableSecretSpawnTimer = bool));

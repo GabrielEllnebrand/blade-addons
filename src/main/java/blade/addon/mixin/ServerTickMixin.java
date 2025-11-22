@@ -7,6 +7,7 @@ import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.common.CommonPingS2CPacket;
+import net.minecraft.network.packet.s2c.play.GameMessageS2CPacket;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -15,13 +16,19 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(ClientConnection.class)
 public class ServerTickMixin {
 
-    @Inject(method = "channelRead0(Lio/netty/channel/ChannelHandlerContext;Lnet/minecraft/network/packet/Packet;)V", at = @At("HEAD"))
+    @Inject(method = "channelRead0(Lio/netty/channel/ChannelHandlerContext;Lnet/minecraft/network/packet/Packet;)V", at = @At("HEAD"), order=0)
     private void channelRead0(ChannelHandlerContext channelHandlerContext, Packet<?> packet, CallbackInfo ci) {
         if (packet instanceof CommonPingS2CPacket common && Events.ON_SERVER_TICK.hasListeners()) {
             //admins send these packets too for inventory changes
             //thankfully they all have the param 0 for some reason
             if (common.getParameter() == 0) return;
             Events.ON_SERVER_TICK.invoke(ServerTickEvent::onServerTick);
+        }
+
+        if (packet instanceof GameMessageS2CPacket message) {
+            if (Events.ON_GAME_MESSAGE.hasListeners()) {
+                Events.ON_GAME_MESSAGE.invoke(gameMessageEvent -> gameMessageEvent.onGameMessage(message.content()));
+            }
         }
 
     }

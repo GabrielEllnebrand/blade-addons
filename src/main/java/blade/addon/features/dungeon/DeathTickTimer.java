@@ -55,6 +55,6 @@ public class DeathTickTimer {
                 double num = tick * Constants.TICK_DURATION;
 
                 drawContext.drawText(MinecraftClient.getInstance().textRenderer, Constants.DECIMAL_FORMAT.format(num), x, y, 0xffffffff, true);
-            })
+            }), () -> enableDeathTickTimer
     );
 }

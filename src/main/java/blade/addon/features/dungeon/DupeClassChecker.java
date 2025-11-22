@@ -68,13 +68,13 @@ public class DupeClassChecker {
     }
 
     @ConfigValue
-    public static HUDComponent duplicateClassDisplay = new HUDComponent(0, 0, 130, 10, 1,
+    public static HUDComponent duplicateClassDisplay = new HUDComponent(0, 0, 130, 10, 1, "",
             () -> Location.inDungeon() && hasDuplicateClass && !Phase.runStarted(),
             ((hudComponent, drawContext) -> {
                 int x = hudComponent.getScaledX();
                 int y = hudComponent.getScaledY();
 
                 drawContext.drawText(MinecraftClient.getInstance().textRenderer, DISPLAY_TEXT, x, y, 0xffffffff, true);
-            })
+            }), () -> detectDuplicateClass
     );
 }

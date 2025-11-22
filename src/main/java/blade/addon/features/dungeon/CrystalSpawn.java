@@ -61,6 +61,6 @@ public class CrystalSpawn {
                 double num = tick * Constants.TICK_DURATION;
 
                 drawContext.drawText(MinecraftClient.getInstance().textRenderer, Text.literal(Constants.DECIMAL_FORMAT.format(num)).formatted(Formatting.LIGHT_PURPLE), x, y, 0xffffffff, true);
-            })
+            }), () -> enableCrystalSpawnTime
     );
 }

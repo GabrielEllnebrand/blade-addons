@@ -86,6 +86,12 @@ public class RelicTimer {
             }
         });
 
+        Events.ON_PHASE_CHANGE.register(() -> {
+            if (Phase.inP5()) {
+                pickupTime = System.currentTimeMillis();
+            }
+        });
+
         ClientReceiveMessageEvents.GAME.register((message, overlay) -> {
             if (!Location.inDungeon() || !Phase.inP5() || !enableRelicPlaceTime) return;
 
@@ -99,7 +105,6 @@ public class RelicTimer {
                 if (player == null) return;
                 if (name.equals(player.getName().getString())) {
                     pickedupRelic = Relic.valueOf(relicString.toUpperCase());
-                    pickupTime = System.currentTimeMillis();
                 }
             }
         });
@@ -176,7 +181,7 @@ public class RelicTimer {
                 double num = tick * Constants.TICK_DURATION;
 
                 drawContext.drawText(MinecraftClient.getInstance().textRenderer, Constants.DECIMAL_FORMAT.format(num), x, y, color, true);
-            })
+            }), () -> enableRelicStartTimer
     );
 
 }
