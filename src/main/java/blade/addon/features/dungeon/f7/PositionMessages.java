@@ -1,4 +1,4 @@
-package blade.addon.features.dungeon;
+package blade.addon.features.dungeon.f7;
 
 import blade.addon.utils.JsonUtility;
 import blade.addon.utils.Location;

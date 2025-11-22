@@ -54,8 +54,8 @@ public class MobHighlight {
         }
     }
 
-    private static final int DIAMOND_LEGGINGS_ID = Item.getRawId(Items.DIAMOND_LEGGINGS);
-    private static final int LEATHER_LEGGINGS_ID = Item.getRawId(Items.LEATHER_LEGGINGS);
+    private static final int DIAMOND_HELMET_ID = Item.getRawId(Items.DIAMOND_HELMET);
+    private static final int PLAYER_HEAD_ID = Item.getRawId(Items.PLAYER_HEAD);
     private static final int LEATHER_BOOTS_ID = Item.getRawId(Items.LEATHER_BOOTS);
 
     private static final Pattern MIMIC_PATTERN = Pattern.compile("Mimic");
@@ -317,9 +317,9 @@ public class MobHighlight {
 
     private static boolean isMiniBoss(Entity entity) {
         if (entity instanceof PlayerEntity player) {
-            ItemStack leggings = player.getInventory().getStack(37);
+            ItemStack leggings = player.getInventory().getStack(39);
             int id = Item.getRawId(leggings.getItem());
-            return id == DIAMOND_LEGGINGS_ID || id == LEATHER_LEGGINGS_ID;
+            return id == DIAMOND_HELMET_ID || id == PLAYER_HEAD_ID;
         }
 
         return false;
@@ -356,8 +356,8 @@ public class MobHighlight {
         };
     }
 
-    public static boolean dontRender() {
-        return dontRenderHighlight;
+    public static boolean render() {
+        return !dontRenderHighlight && mobHighlight;
     }
 
     public static int getFilledColor(Entity entity) {

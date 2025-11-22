@@ -2,21 +2,23 @@ package blade.addon;
 
 import blade.addon.features.dungeon.AutoRequeue;
 import blade.addon.features.dungeon.ChestCounter;
-import blade.addon.features.dungeon.CrystalSpawn;
+import blade.addon.features.dungeon.f7.CrystalSpawn;
 import blade.addon.features.dungeon.DeathTickTimer;
 import blade.addon.features.dungeon.DupeClassChecker;
 import blade.addon.features.dungeon.ExplosiveShot;
-import blade.addon.features.dungeon.GoldorTickTimer;
+import blade.addon.features.dungeon.f7.DistanceToLedge;
+import blade.addon.features.dungeon.f7.GoldorTickTimer;
 import blade.addon.features.dungeon.HideEntities;
-import blade.addon.features.dungeon.InvincibilityTimer;
+import blade.addon.features.dungeon.f7.InvincibilityTimer;
 import blade.addon.features.dungeon.KeyNotifier;
 import blade.addon.features.dungeon.LeapMessage;
 import blade.addon.features.dungeon.MobHighlight;
-import blade.addon.features.dungeon.PositionMessages;
+import blade.addon.features.dungeon.ItemHighlight;
+import blade.addon.features.dungeon.f7.PositionMessages;
 import blade.addon.features.dungeon.RelicTimer;
 import blade.addon.features.dungeon.SecretSpawnTimer;
-import blade.addon.features.dungeon.StormTickTimer;
-import blade.addon.features.dungeon.TermStartTimer;
+import blade.addon.features.dungeon.f7.StormTickTimer;
+import blade.addon.features.dungeon.f7.TermStartTimer;
 import blade.addon.features.dungeon.WarpCooldown;
 import blade.addon.utils.Commands;
 import blade.addon.utils.Keybinds;
@@ -55,5 +57,7 @@ public class Bladeaddons implements ModInitializer {
         ChestCounter.init();
         Scheduler.init();
         SecretSpawnTimer.init();
+        DistanceToLedge.init();
+        ItemHighlight.init();
     }
 }
