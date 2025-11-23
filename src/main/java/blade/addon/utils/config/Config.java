@@ -17,6 +17,7 @@ import blade.addon.features.dungeon.MobHighlight;
 import blade.addon.features.dungeon.f7.PositionMessages;
 import blade.addon.features.dungeon.RelicTimer;
 import blade.addon.features.dungeon.SecretSpawnTimer;
+import blade.addon.features.dungeon.f7.RenderOptions;
 import blade.addon.features.dungeon.f7.StormTickTimer;
 import blade.addon.features.dungeon.f7.TermStartTimer;
 import blade.addon.features.dungeon.WarpCooldown;
@@ -43,7 +44,7 @@ public class Config {
     public static final ConfigManager manager = new ConfigManager("./config/" + Constants.NAMESPACE + ".json",
             List.of(StormTickTimer.class, GoldorTickTimer.class, Phase.class, LeapMessage.class, PositionMessages.class, TermStartTimer.class, Split.class, DeathTickTimer.class, ExplosiveShot.class,
                     InvincibilityTimer.class, WarpCooldown.class, DupeClassChecker.class, HideEntities.class, CrystalSpawn.class,
-                    KeyNotifier.class, RelicTimer.class, AutoRequeue.class, MobHighlight.class, ChestCounter.class, SecretSpawnTimer.class, DistanceToLedge.class, ItemHighlight.class));
+                    KeyNotifier.class, RelicTimer.class, AutoRequeue.class, MobHighlight.class, ChestCounter.class, SecretSpawnTimer.class, DistanceToLedge.class, ItemHighlight.class, RenderOptions.class));
 
     public static Screen createScreen(Screen parent) {
         ConfigurableScreen screen = new ConfigurableScreen(TITLE, parent, manager);
@@ -154,6 +155,10 @@ public class Config {
         highlight.add(new ConfigColor(Text.literal("Wither color"), () -> MobHighlight.witherFilledColor, color -> MobHighlight.witherFilledColor = color, "wither-filled", true));
         highlight.add(new ConfigColor(Text.literal("Wither outline"), () -> MobHighlight.witherOutlineColor, color -> MobHighlight.witherOutlineColor = color, "wither-outline", true));
         screen.addCategory(highlight);
+
+        ConfigCategory renderStuff = new ConfigCategory("Render options");
+        renderStuff.add(new ConfigBool(Text.literal("Disable fire in f5"), () -> RenderOptions.hideFireInf5, bool -> RenderOptions.hideFireInf5 = bool));
+        screen.addCategory(renderStuff);
 
 
         return screen;

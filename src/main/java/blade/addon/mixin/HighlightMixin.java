@@ -69,10 +69,9 @@ public class HighlightMixin {
         if (entity instanceof ItemEntity item && ItemHighlight.highlightItem(item)) {
             int color = ItemHighlight.getColor(item);
             EntityDimensions dimension = entity.getDimensions(entity.getPose());
-            Box box = dimension.getBoxAt(x, y, z);
-            box.expand(0.2, 0.2, 0.2);
+            Box box = dimension.getBoxAt(x, y, z).expand(0.2).offset(0, 0.1, 0);
 
-            VertexConsumer buffer = vertexConsumers.getBuffer(RenderLayers.THROUGH_WALL_FILLED_LAYER);
+            VertexConsumer buffer = vertexConsumers.getBuffer(RenderLayers.FILLED_LAYER);
             float[] rgba = RenderUtils.toFloats(color);
             VertexRendering.drawFilledBox(matrices, buffer, box.minX, box.minY, box.minZ, box.maxX, box.maxY, box.maxZ, rgba[0], rgba[1], rgba[2], rgba[3]);
         }

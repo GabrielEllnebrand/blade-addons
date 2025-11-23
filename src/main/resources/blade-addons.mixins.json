@@ -14,6 +14,7 @@
     "requireAnnotations": true
   },
   "client": [
+    "FireMixin",
     "HighlightMixin",
     "NetworkMixin",
     "PositionMixin",

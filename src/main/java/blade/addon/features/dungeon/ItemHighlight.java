@@ -28,7 +28,6 @@ public class ItemHighlight {
         Text itemText = item.getStack().getName();
         if (itemText == null) return false;
         String itemName = itemText.getString();
-        System.out.println(item);
 
         return ITEMS.contains(itemName);
     }
