@@ -7,7 +7,7 @@ import config.practical.manager.ConfigValue;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.Vec3d;
 
-public class HideEntities {
+public class HidePlayers {
 
     private static final int HIDE_DURATION = 3 * 1000;
     private static final double DISTANCE = 3;
@@ -16,9 +16,6 @@ public class HideEntities {
 
     private static long startTime;
     private static boolean justLeapt = false;
-
-    @ConfigValue
-    public static boolean hideDeadEntities = false;
 
     @ConfigValue
     public static boolean hideAfterLeap = false;
@@ -41,6 +38,7 @@ public class HideEntities {
 
     public static boolean testHideAtLeap() {
         if (!hideAfterLeap || !justLeapt) return false;
+        if (!Phase.inBoss() && hideOnlyInBoss) return false;
 
         if (System.currentTimeMillis() - startTime >= HIDE_DURATION) {
             justLeapt = false;

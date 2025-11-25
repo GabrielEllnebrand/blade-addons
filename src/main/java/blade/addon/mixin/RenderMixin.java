@@ -1,6 +1,7 @@
 package blade.addon.mixin;
 
-import blade.addon.features.dungeon.HideEntities;
+import blade.addon.features.ExtraOptions;
+import blade.addon.features.dungeon.HidePlayers;
 import blade.addon.features.dungeon.ItemHighlight;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
@@ -24,11 +25,11 @@ public class RenderMixin {
             if (clientPlayer != null) {
                 if (player.getId() == clientPlayer.getId()) return;
             }
-            cir.setReturnValue(!HideEntities.shouldHidePlayers(player));
+            cir.setReturnValue(!HidePlayers.shouldHidePlayers(player));
 
         }
 
-        if (!entity.isAlive() && HideEntities.hideDeadEntities) {
+        if (!entity.isAlive() && ExtraOptions.hideDeadEntities) {
             cir.setReturnValue(false);
         }
 

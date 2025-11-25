@@ -8,7 +8,7 @@ import blade.addon.features.dungeon.DupeClassChecker;
 import blade.addon.features.dungeon.ExplosiveShot;
 import blade.addon.features.dungeon.f7.DistanceToLedge;
 import blade.addon.features.dungeon.f7.GoldorTickTimer;
-import blade.addon.features.dungeon.HideEntities;
+import blade.addon.features.dungeon.HidePlayers;
 import blade.addon.features.dungeon.f7.InvincibilityTimer;
 import blade.addon.features.dungeon.KeyNotifier;
 import blade.addon.features.dungeon.LeapMessage;
@@ -48,7 +48,7 @@ public class Bladeaddons implements ModInitializer {
         LeapMessage.init();
         ExplosiveShot.init();
         DupeClassChecker.init();
-        HideEntities.init();
+        HidePlayers.init();
         CrystalSpawn.init();
         KeyNotifier.init();
         RelicTimer.init();

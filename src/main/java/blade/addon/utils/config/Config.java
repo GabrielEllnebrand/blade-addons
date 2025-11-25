@@ -9,7 +9,7 @@ import blade.addon.features.dungeon.DupeClassChecker;
 import blade.addon.features.dungeon.ExplosiveShot;
 import blade.addon.features.dungeon.f7.DistanceToLedge;
 import blade.addon.features.dungeon.f7.GoldorTickTimer;
-import blade.addon.features.dungeon.HideEntities;
+import blade.addon.features.dungeon.HidePlayers;
 import blade.addon.features.dungeon.f7.InvincibilityTimer;
 import blade.addon.features.dungeon.KeyNotifier;
 import blade.addon.features.dungeon.LeapMessage;
@@ -43,7 +43,7 @@ public class Config {
     private static final Text TITLE = Text.literal("Blade Addons");
     public static final ConfigManager manager = new ConfigManager("./config/" + Constants.NAMESPACE + ".json",
             List.of(StormTickTimer.class, GoldorTickTimer.class, Phase.class, LeapMessage.class, PositionMessages.class, TermStartTimer.class, Split.class, DeathTickTimer.class, ExplosiveShot.class,
-                    InvincibilityTimer.class, WarpCooldown.class, DupeClassChecker.class, HideEntities.class, CrystalSpawn.class,
+                    InvincibilityTimer.class, WarpCooldown.class, DupeClassChecker.class, HidePlayers.class, CrystalSpawn.class,
                     KeyNotifier.class, RelicTimer.class, AutoRequeue.class, MobHighlight.class, ChestCounter.class, SecretSpawnTimer.class, DistanceToLedge.class, ItemHighlight.class, ExtraOptions.class));
 
     public static Screen createScreen(Screen parent) {
@@ -63,14 +63,12 @@ public class Config {
 
         dungeons.add(invincibility);
 
-        ConfigSection hideAfterLeap = new ConfigSection(Text.literal("Hide Entities"));
-        hideAfterLeap.add(new ConfigBool(Text.literal("Hide on leap"), () -> HideEntities.hideAfterLeap, bool -> HideEntities.hideAfterLeap = bool));
-        hideAfterLeap.add(new ConfigBool(Text.literal("Hide only in boss"), () -> HideEntities.hideOnlyInBoss, bool -> HideEntities.hideOnlyInBoss = bool));
-        hideAfterLeap.add(new ConfigBool(Text.literal("Hide at SS"), () -> HideEntities.hideAtSS, bool -> HideEntities.hideAtSS = bool));
-        hideAfterLeap.add(new ConfigBool(Text.literal("SS only hides before terms"), () -> HideEntities.hideBeforeTermsOnly, bool -> HideEntities.hideBeforeTermsOnly = bool));
-        hideAfterLeap.add(new ConfigBool(Text.literal("Hide dead entities"), () -> HideEntities.hideDeadEntities, bool -> HideEntities.hideDeadEntities = bool));
-
-        dungeons.add(hideAfterLeap);
+        ConfigSection hidePlayers = new ConfigSection(Text.literal("Hide Players"));
+        hidePlayers.add(new ConfigBool(Text.literal("Hide on leap"), () -> HidePlayers.hideAfterLeap, bool -> HidePlayers.hideAfterLeap = bool));
+        hidePlayers.add(new ConfigBool(Text.literal("Hide only in boss"), () -> HidePlayers.hideOnlyInBoss, bool -> HidePlayers.hideOnlyInBoss = bool));
+        hidePlayers.add(new ConfigBool(Text.literal("Hide at SS"), () -> HidePlayers.hideAtSS, bool -> HidePlayers.hideAtSS = bool));
+        hidePlayers.add(new ConfigBool(Text.literal("SS only hides before terms"), () -> HidePlayers.hideBeforeTermsOnly, bool -> HidePlayers.hideBeforeTermsOnly = bool));
+        dungeons.add(hidePlayers);
 
         ConfigSection chests = new ConfigSection(Text.literal("Croesus"));
         chests.add(new ConfigBool(Text.literal("Display current chest count"), () -> ChestCounter.displayChestCount, bool -> ChestCounter.displayChestCount = bool));
@@ -163,6 +161,8 @@ public class Config {
         extra.add(new ConfigBool(Text.literal("Disable fire in f5"), () -> ExtraOptions.hideFireInf5, bool -> ExtraOptions.hideFireInf5 = bool));
         extra.add(new ConfigBool(Text.literal("Hide arrows stuck to entities"), () -> ExtraOptions.hideStuckArrows, bool -> ExtraOptions.hideStuckArrows = bool));
         extra.add(new ConfigBool(Text.literal("Disable ability on cooldown sound"), () -> ExtraOptions.disableAbilityCooldownSound, bool -> ExtraOptions.disableAbilityCooldownSound = bool));
+        extra.add(new ConfigBool(Text.literal("Hide dead entities"), () -> ExtraOptions.hideDeadEntities, bool -> ExtraOptions.hideDeadEntities = bool));
+
         screen.addCategory(extra);
 
 

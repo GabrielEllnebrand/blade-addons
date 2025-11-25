@@ -13,6 +13,9 @@ public class ExtraOptions {
     @ConfigValue
     public static boolean disableAbilityCooldownSound = true;
 
+    @ConfigValue
+    public static boolean hideDeadEntities = false;
+
     public static void init() {
 
     }
