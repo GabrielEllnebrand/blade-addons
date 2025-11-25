@@ -4,6 +4,7 @@ import blade.addon.utils.Constants;
 import blade.addon.utils.Location;
 import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.events.Events;
+import blade.addon.utils.rendering.RenderUtils;
 import config.practical.hud.HUDComponent;
 import config.practical.manager.ConfigValue;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
@@ -21,6 +22,8 @@ public class CrystalSpawn {
 
     @ConfigValue
     public static boolean enableCrystalSpawnTime = false;
+
+    private static final int WIDTH = 30;
 
     private static final int TICK_SPAWN = 34;
     private static int tick = 0;
@@ -52,7 +55,7 @@ public class CrystalSpawn {
     }
 
     @ConfigValue
-    public static HUDComponent crystalSpawnTime = new HUDComponent(0, 0, 30, 10, 1, "Crystal Spawn Time",
+    public static HUDComponent crystalSpawnTime = new HUDComponent(0, 0, WIDTH, 10, 1, "Crystal Spawn Time",
             () -> tick > 0 && Location.inDungeon(),
             ((hudComponent, drawContext) -> {
                 int x = hudComponent.getScaledX();
@@ -60,7 +63,8 @@ public class CrystalSpawn {
 
                 double num = tick * Constants.TICK_DURATION;
 
-                drawContext.drawText(MinecraftClient.getInstance().textRenderer, Text.literal(Constants.DECIMAL_FORMAT.format(num)).formatted(Formatting.LIGHT_PURPLE), x, y, 0xffffffff, true);
+                RenderUtils.drawCenteredText(drawContext, MinecraftClient.getInstance().textRenderer, Text.literal(Constants.DECIMAL_FORMAT.format(num)).formatted(Formatting.LIGHT_PURPLE), x, y, WIDTH);
+
             }), () -> enableCrystalSpawnTime
     );
 }

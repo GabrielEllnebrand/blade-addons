@@ -1,4 +1,4 @@
-package blade.addon.features.dungeon;
+package blade.addon.features.dungeon.f7;
 
 import blade.addon.utils.Constants;
 import blade.addon.utils.Location;
@@ -52,6 +52,8 @@ public class RelicTimer {
 
     private static final int GREEN_COLOR = 0xff00ff00;
     private static final int RED_COLOR = 0xffff0000;
+
+    private static final int WIDTH = 30;
 
     private static final Pattern PATTERN = Pattern.compile("^(.+) picked the Corrupted (Red|Purple|Orange|Green|Blue) Relic!$");
 
@@ -170,7 +172,7 @@ public class RelicTimer {
     }
 
     @ConfigValue
-    public static HUDComponent relicSpawnTimer = new HUDComponent(0, 0, 30, 10, 1, "Relic Spawn Timer",
+    public static HUDComponent relicSpawnTimer = new HUDComponent(0, 0, WIDTH, 10, 1, "Relic Spawn Timer",
             () -> enableRelicStartTimer && Location.inDungeon() && Phase.inP5() && tick > 0,
             ((hudComponent, drawContext) -> {
                 int x = hudComponent.getScaledX();
@@ -180,7 +182,8 @@ public class RelicTimer {
 
                 double num = tick * Constants.TICK_DURATION;
 
-                drawContext.drawText(MinecraftClient.getInstance().textRenderer, Constants.DECIMAL_FORMAT.format(num), x, y, color, true);
+                RenderUtils.drawCenteredText(drawContext, MinecraftClient.getInstance().textRenderer, Text.literal(Constants.DECIMAL_FORMAT.format(num)), x, y, WIDTH, color);
+
             }), () -> enableRelicStartTimer
     );
 

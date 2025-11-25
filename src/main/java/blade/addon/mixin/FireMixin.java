@@ -1,6 +1,6 @@
 package blade.addon.mixin;
 
-import blade.addon.features.dungeon.f7.RenderOptions;
+import blade.addon.features.ExtraOptions;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.render.entity.EntityRenderer;
@@ -19,7 +19,7 @@ public class FireMixin<T extends Entity, S extends EntityRenderState> {
 
         ClientPlayerEntity clientPlayer = MinecraftClient.getInstance().player;
         if (clientPlayer != null) {
-            if (clientPlayer == entity && RenderOptions.hideFireInf5) {
+            if (clientPlayer == entity && ExtraOptions.hideFireInf5) {
                 state.onFire = false;
             }
         }

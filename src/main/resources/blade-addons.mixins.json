@@ -3,6 +3,7 @@
   "package": "blade.addon.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "ArrowMixin",
     "InventoryMixin",
     "NetworkMixin",
     "ServerTickMixin"
@@ -14,8 +15,8 @@
     "requireAnnotations": true
   },
   "client": [
+    "BlockEntityRenderMixin",
     "FireMixin",
-    "HighlightMixin",
     "NetworkMixin",
     "PositionMixin",
     "RenderMixin"

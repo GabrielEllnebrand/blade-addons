@@ -4,10 +4,11 @@ import blade.addon.utils.Constants;
 import blade.addon.utils.Location;
 import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.events.Events;
+import blade.addon.utils.rendering.RenderUtils;
 import config.practical.hud.HUDComponent;
 import config.practical.manager.ConfigValue;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
+import net.minecraft.text.Text;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -53,10 +54,8 @@ public class SecretSpawnTimer {
                     color = Constants.RED_COLOR;
                 }
 
-                TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
-                String string = tick + "";
+                RenderUtils.drawCenteredText(drawContext, MinecraftClient.getInstance().textRenderer, Text.literal(tick + ""), x, y, WIDTH, color);
 
-                drawContext.drawText(textRenderer, string, x + (WIDTH - textRenderer.getWidth(string)) / 2, y, color, true);
             }), () -> enableSecretSpawnTimer
     );
 }

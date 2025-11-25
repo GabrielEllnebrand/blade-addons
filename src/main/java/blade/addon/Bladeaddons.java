@@ -15,7 +15,7 @@ import blade.addon.features.dungeon.LeapMessage;
 import blade.addon.features.dungeon.MobHighlight;
 import blade.addon.features.dungeon.ItemHighlight;
 import blade.addon.features.dungeon.f7.PositionMessages;
-import blade.addon.features.dungeon.RelicTimer;
+import blade.addon.features.dungeon.f7.RelicTimer;
 import blade.addon.features.dungeon.SecretSpawnTimer;
 import blade.addon.features.dungeon.f7.StormTickTimer;
 import blade.addon.features.dungeon.f7.TermStartTimer;

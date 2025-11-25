@@ -4,6 +4,7 @@ import blade.addon.utils.Constants;
 import blade.addon.utils.Location;
 import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.events.Events;
+import blade.addon.utils.rendering.RenderUtils;
 import config.practical.hud.HUDComponent;
 import config.practical.manager.ConfigValue;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
@@ -20,6 +21,7 @@ public class StormTickTimer {
     private static final Pattern PATTERN = Pattern.compile("^⚠ Storm is enraged! ⚠$");
 
     private static final long DEATH_DISPLAY_DURATION = 2000;
+    private static final int WIDTH = 30;
 
     @ConfigValue
     public static boolean enableStormTickTimer = false;
@@ -64,7 +66,7 @@ public class StormTickTimer {
     }
     
     @ConfigValue
-    public static HUDComponent stormTickTimer = new HUDComponent(0, 0, 30, 10, 1, "Storm Tick Timer",
+    public static HUDComponent stormTickTimer = new HUDComponent(0, 0, WIDTH, 10, 1, "Storm Tick Timer",
             () -> enableStormTickTimer && Location.inDungeon() && Phase.inP2() && !Phase.stormDead(),
             ((hudComponent, drawContext) -> {
                 int x = hudComponent.getScaledX();
@@ -72,18 +74,20 @@ public class StormTickTimer {
 
                 double num = tick * Constants.TICK_DURATION;
 
-                drawContext.drawText(MinecraftClient.getInstance().textRenderer, Constants.DECIMAL_FORMAT.format(num), x, y, 0xffffffff, true);
+                RenderUtils.drawCenteredText(drawContext, MinecraftClient.getInstance().textRenderer, Constants.DECIMAL_FORMAT.format(num), x, y, WIDTH);
+
             })
     );
 
     @ConfigValue
-    public static HUDComponent stormDeathTime = new HUDComponent(0, 0, 30, 10, 1, "Storm Death Time",
+    public static HUDComponent stormDeathTime = new HUDComponent(0, 0, WIDTH, 10, 1, "Storm Death Time",
             () -> enableStormTickTimer && Location.inDungeon() && Phase.inP2() && !Phase.stormDead() && deathTime > 0 && deathStartDisplayTime > System.currentTimeMillis() - DEATH_DISPLAY_DURATION,
             ((hudComponent, drawContext) -> {
                 int x = hudComponent.getScaledX();
                 int y = hudComponent.getScaledY();
 
-                drawContext.drawText(MinecraftClient.getInstance().textRenderer, Text.literal(Constants.DECIMAL_FORMAT.format(deathTime)).formatted(Formatting.DARK_PURPLE), x, y, 0xffffffff, true);
+                RenderUtils.drawCenteredText(drawContext, MinecraftClient.getInstance().textRenderer, Text.literal(Constants.DECIMAL_FORMAT.format(deathTime)).formatted(Formatting.DARK_PURPLE), x, y, WIDTH);
+
             }), () -> enableStormTickTimer
     );
 }

@@ -3,14 +3,24 @@ package blade.addon.features.dungeon;
 import blade.addon.utils.Location;
 import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.events.Events;
+import blade.addon.utils.rendering.RenderLayers;
+import blade.addon.utils.rendering.RenderUtils;
 import config.practical.manager.ConfigValue;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientEntityEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
+import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.network.PlayerListEntry;
+import net.minecraft.client.render.Camera;
+import net.minecraft.client.render.VertexConsumer;
+import net.minecraft.client.render.VertexConsumerProvider;
+import net.minecraft.client.render.VertexRendering;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.boss.WitherEntity;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.entity.effect.StatusEffects;
@@ -26,6 +36,8 @@ import net.minecraft.item.Items;
 import net.minecraft.text.Text;
 import net.minecraft.text.TextColor;
 import net.minecraft.util.math.Box;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
@@ -79,6 +91,8 @@ public class MobHighlight {
     public static HighlightType currentHighlight = HighlightType.FILLED;
     @ConfigValue
     public static double witherExtraWidth = 0;
+    @ConfigValue
+    public static boolean highlightMimicChests = true;
 
     @ConfigValue
     public static int starFilledColor = 0xff00ff00;
@@ -172,6 +186,8 @@ public class MobHighlight {
             trackedMobs.clear();
             possibleEntities.clear();
         });
+
+        WorldRenderEvents.AFTER_ENTITIES.register(MobHighlight::Render);
     }
 
     private static void testArmourStand(ArmorStandEntity armorStand) {
@@ -325,11 +341,6 @@ public class MobHighlight {
         return false;
     }
 
-    public static boolean hasEntity(Entity entity) {
-        if (entity == null) return false;
-        return trackedMobs.containsKey(entity);
-    }
-
     private static int getFilledColor(MobType mob) {
         return switch (mob) {
             case STAR -> starFilledColor;
@@ -356,10 +367,6 @@ public class MobHighlight {
         };
     }
 
-    public static boolean render() {
-        return !dontRenderHighlight && mobHighlight;
-    }
-
     public static int getFilledColor(Entity entity) {
         return getFilledColor(trackedMobs.get(entity));
     }
@@ -374,5 +381,71 @@ public class MobHighlight {
 
     public static boolean renderOutline() {
         return currentHighlight == HighlightType.BOTH || currentHighlight == HighlightType.OUTLINE;
+    }
+
+    private static Box getBox(Entity entity, double x, double y, double z) {
+        EntityDimensions dimension = entity.getDimensions(entity.getPose());
+        Box box = dimension.getBoxAt(x, y, z);
+
+        if (entity instanceof WitherEntity) {
+            box = box.expand(MobHighlight.witherExtraWidth, 0, MobHighlight.witherExtraWidth);
+        }
+
+        //only shows the head
+        if (entity instanceof EndermanEntity && entity.isInvisible() && MobHighlight.dontShowInvisibleMobs) {
+            box = box.expand(0, -1.8, 0).offset(0, -1.2, 0);
+        }
+
+        //bigger mimic highlight
+        if (entity instanceof ZombieEntity zombie) {
+            if (zombie.isBaby()) {
+                box = box.expand(0.15, 0.2, 0.15);
+            }
+        }
+
+        return box;
+    }
+
+    private static void Render(WorldRenderContext worldRenderContext) {
+        if (!mobHighlight || dontRenderHighlight) return;
+        Camera camera = worldRenderContext.camera();
+        Vec3d cameraPos = camera.getPos();
+        MatrixStack matrixStack = worldRenderContext.matrixStack();
+        if (matrixStack == null) return;
+        matrixStack.push();
+        matrixStack.translate(-cameraPos.x, -cameraPos.y, -cameraPos.z);
+
+        VertexConsumerProvider consumers = worldRenderContext.consumers();
+        if (consumers == null) return;
+        VertexConsumer filledBuffer = consumers.getBuffer(RenderLayers.FILLED_ENTITY_LAYER);
+        VertexConsumer outlineBuffer = consumers.getBuffer(RenderLayers.OUTLINE_ENTITY_LAYER);
+
+
+        trackedMobs.forEach((entity, mobType) -> {
+
+            if (entity.isInvisible() && MobHighlight.dontShowInvisibleMobs && entity instanceof PlayerEntity) return;
+
+            double tickProgress = worldRenderContext.tickCounter().getTickProgress(false);
+            double x = MathHelper.lerp(tickProgress, entity.lastRenderX, entity.getX());
+            double y = MathHelper.lerp(tickProgress, entity.lastRenderY, entity.getY());
+            double z = MathHelper.lerp(tickProgress, entity.lastRenderZ, entity.getZ());
+
+            Box box = getBox(entity, x, y, z);
+
+            if (MobHighlight.renderFilled()) {
+                int filledColor = MobHighlight.getFilledColor(entity);
+                float[] rgba = RenderUtils.toFloats(filledColor);
+                VertexRendering.drawFilledBox(matrixStack, filledBuffer, box.minX, box.minY, box.minZ, box.maxX, box.maxY, box.maxZ, rgba[0], rgba[1], rgba[2], rgba[3]);
+            }
+            if (MobHighlight.renderOutline()) {
+                int outlineColor = MobHighlight.getOutlineColor(entity);
+                float[] rgba = RenderUtils.toFloats(outlineColor);
+                VertexRendering.drawBox(matrixStack, outlineBuffer, box, rgba[0], rgba[1], rgba[2], rgba[3]);
+            }
+        });
+
+
+        matrixStack.pop();
+
     }
 }

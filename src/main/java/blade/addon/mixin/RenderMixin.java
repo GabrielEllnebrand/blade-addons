@@ -1,11 +1,13 @@
 package blade.addon.mixin;
 
 import blade.addon.features.dungeon.HideEntities;
+import blade.addon.features.dungeon.ItemHighlight;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.render.Frustum;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -28,6 +30,12 @@ public class RenderMixin {
 
         if (!entity.isAlive() && HideEntities.hideDeadEntities) {
             cir.setReturnValue(false);
+        }
+
+        if (entity instanceof ItemEntity item && ItemHighlight.highlightItems) {
+            if (ItemHighlight.hideItem(item)) {
+                cir.setReturnValue(false);
+            }
         }
     }
 }

@@ -15,9 +15,9 @@ import blade.addon.features.dungeon.KeyNotifier;
 import blade.addon.features.dungeon.LeapMessage;
 import blade.addon.features.dungeon.MobHighlight;
 import blade.addon.features.dungeon.f7.PositionMessages;
-import blade.addon.features.dungeon.RelicTimer;
+import blade.addon.features.dungeon.f7.RelicTimer;
 import blade.addon.features.dungeon.SecretSpawnTimer;
-import blade.addon.features.dungeon.f7.RenderOptions;
+import blade.addon.features.ExtraOptions;
 import blade.addon.features.dungeon.f7.StormTickTimer;
 import blade.addon.features.dungeon.f7.TermStartTimer;
 import blade.addon.features.dungeon.WarpCooldown;
@@ -44,7 +44,7 @@ public class Config {
     public static final ConfigManager manager = new ConfigManager("./config/" + Constants.NAMESPACE + ".json",
             List.of(StormTickTimer.class, GoldorTickTimer.class, Phase.class, LeapMessage.class, PositionMessages.class, TermStartTimer.class, Split.class, DeathTickTimer.class, ExplosiveShot.class,
                     InvincibilityTimer.class, WarpCooldown.class, DupeClassChecker.class, HideEntities.class, CrystalSpawn.class,
-                    KeyNotifier.class, RelicTimer.class, AutoRequeue.class, MobHighlight.class, ChestCounter.class, SecretSpawnTimer.class, DistanceToLedge.class, ItemHighlight.class, RenderOptions.class));
+                    KeyNotifier.class, RelicTimer.class, AutoRequeue.class, MobHighlight.class, ChestCounter.class, SecretSpawnTimer.class, DistanceToLedge.class, ItemHighlight.class, ExtraOptions.class));
 
     public static Screen createScreen(Screen parent) {
         ConfigurableScreen screen = new ConfigurableScreen(TITLE, parent, manager);
@@ -95,13 +95,13 @@ public class Config {
         floor7.add(maxor);
 
         ConfigSection storm = new ConfigSection(Text.literal("Storm"));
-        storm.add(new ConfigBool(Text.literal("Tick timer"), () -> StormTickTimer.enableStormTickTimer, bool -> StormTickTimer.enableStormTickTimer = bool));
+        storm.add(new ConfigBool(Text.literal("Storm Tick timer"), () -> StormTickTimer.enableStormTickTimer, bool -> StormTickTimer.enableStormTickTimer = bool));
         storm.add(new ConfigBool(Text.literal("First Death time"), () -> StormTickTimer.enableStormDeathTime, bool -> StormTickTimer.enableStormDeathTime = bool));
         storm.add(new ConfigBool(Text.literal("Distance to ledge"), () -> DistanceToLedge.displayDistanceToLedge, bool -> DistanceToLedge.displayDistanceToLedge = bool));
         floor7.add(storm);
 
         ConfigSection goldor = new ConfigSection(Text.literal("Goldor"));
-        goldor.add(new ConfigBool(Text.literal("Enable tick timer"), () -> GoldorTickTimer.enableGoldorTickTimer, bool -> GoldorTickTimer.enableGoldorTickTimer = bool));
+        goldor.add(new ConfigBool(Text.literal("Goldor tick timer"), () -> GoldorTickTimer.enableGoldorTickTimer, bool -> GoldorTickTimer.enableGoldorTickTimer = bool));
         goldor.add(new ConfigBool(Text.literal("Term start time"), () -> TermStartTimer.enableTermStartTimer, bool -> TermStartTimer.enableTermStartTimer = bool));
         goldor.add(new ConfigBool(Text.literal("death ticks intervals"), () -> GoldorTickTimer.inDeathTicks, bool -> GoldorTickTimer.inDeathTicks = bool));
         goldor.add(new ConfigBool(Text.literal("Positional messages"), () -> PositionMessages.enablePositionalMessages, bool -> PositionMessages.enablePositionalMessages = bool));
@@ -140,6 +140,7 @@ public class Config {
         highlight.add(new ConfigBool(Text.literal("Dont highlight invisible mobs"), () -> MobHighlight.dontShowInvisibleMobs, bool -> MobHighlight.dontShowInvisibleMobs = bool));
         highlight.add(new ConfigDouble(Text.literal("Extra Wither Width"), () -> MobHighlight.witherExtraWidth, num -> MobHighlight.witherExtraWidth = num, 0.1, 0, 1.5));
         highlight.add(new ConfigOptions<>(Text.literal("Highlight mode"), MobHighlight.HighlightType.values(), () -> MobHighlight.currentHighlight, type -> MobHighlight.currentHighlight = type));
+        highlight.add(new ConfigBool(Text.literal("Highlight mimic chests"), () -> MobHighlight.highlightMimicChests, bool -> MobHighlight.highlightMimicChests = bool));
         highlight.add(new ConfigColor(Text.literal("Star mob filled color"), () -> MobHighlight.starFilledColor, color -> MobHighlight.starFilledColor = color, "star-filled", true));
         highlight.add(new ConfigColor(Text.literal("Star mob outline color"), () -> MobHighlight.starOutlineColor, color -> MobHighlight.starOutlineColor = color, "star-outline", true));
         highlight.add(new ConfigColor(Text.literal("Tank mob filled color"), () -> MobHighlight.tankFilledColor, color -> MobHighlight.tankFilledColor = color, "tank-filled", true));
@@ -154,11 +155,15 @@ public class Config {
         highlight.add(new ConfigColor(Text.literal("Bat outline color"), () -> MobHighlight.batOutlineColor, color -> MobHighlight.batOutlineColor = color, "bat-outline", true));
         highlight.add(new ConfigColor(Text.literal("Wither color"), () -> MobHighlight.witherFilledColor, color -> MobHighlight.witherFilledColor = color, "wither-filled", true));
         highlight.add(new ConfigColor(Text.literal("Wither outline"), () -> MobHighlight.witherOutlineColor, color -> MobHighlight.witherOutlineColor = color, "wither-outline", true));
+        highlight.add(new ConfigColor(Text.literal("Mimic color"), () -> MobHighlight.mimicFilledColor, color -> MobHighlight.mimicFilledColor = color, "mimic-filled", true));
+        highlight.add(new ConfigColor(Text.literal("Mimic outline"), () -> MobHighlight.mimicOutlineColor, color -> MobHighlight.mimicOutlineColor = color, "mimic-outline", true));
         screen.addCategory(highlight);
 
-        ConfigCategory renderStuff = new ConfigCategory("Render options");
-        renderStuff.add(new ConfigBool(Text.literal("Disable fire in f5"), () -> RenderOptions.hideFireInf5, bool -> RenderOptions.hideFireInf5 = bool));
-        screen.addCategory(renderStuff);
+        ConfigCategory extra = new ConfigCategory("Extra options");
+        extra.add(new ConfigBool(Text.literal("Disable fire in f5"), () -> ExtraOptions.hideFireInf5, bool -> ExtraOptions.hideFireInf5 = bool));
+        extra.add(new ConfigBool(Text.literal("Hide arrows stuck to entities"), () -> ExtraOptions.hideStuckArrows, bool -> ExtraOptions.hideStuckArrows = bool));
+        extra.add(new ConfigBool(Text.literal("Disable ability on cooldown sound"), () -> ExtraOptions.disableAbilityCooldownSound, bool -> ExtraOptions.disableAbilityCooldownSound = bool));
+        screen.addCategory(extra);
 
 
         return screen;

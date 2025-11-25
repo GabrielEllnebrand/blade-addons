@@ -3,13 +3,16 @@ package blade.addon.features.dungeon;
 import blade.addon.utils.Constants;
 import blade.addon.utils.Location;
 import blade.addon.utils.events.Events;
+import blade.addon.utils.rendering.RenderUtils;
 import config.practical.hud.HUDComponent;
 import config.practical.manager.ConfigValue;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.text.Text;
 import net.minecraft.util.math.Vec3d;
 
 public class DeathTickTimer {
 
+    private static final int WIDTH = 30;
     private static final int TOTAL_DEATH_TICKS = 40;
     private static Vec3d firstPosition;
 
@@ -46,7 +49,7 @@ public class DeathTickTimer {
     }
 
     @ConfigValue
-    public static HUDComponent deathTickTimer = new HUDComponent(0, 0, 30, 10, 1, "Death Tick Timer",
+    public static HUDComponent deathTickTimer = new HUDComponent(0, 0, WIDTH, 10, 1, "Death Tick Timer",
             () -> enableDeathTickTimer && Location.inDungeon(),
             ((hudComponent, drawContext) -> {
                 int x = hudComponent.getScaledX();
@@ -54,7 +57,8 @@ public class DeathTickTimer {
 
                 double num = tick * Constants.TICK_DURATION;
 
-                drawContext.drawText(MinecraftClient.getInstance().textRenderer, Constants.DECIMAL_FORMAT.format(num), x, y, 0xffffffff, true);
+                RenderUtils.drawCenteredText(drawContext, MinecraftClient.getInstance().textRenderer, Text.literal(Constants.DECIMAL_FORMAT.format(num)), x, y, WIDTH);
+
             }), () -> enableDeathTickTimer
     );
 }

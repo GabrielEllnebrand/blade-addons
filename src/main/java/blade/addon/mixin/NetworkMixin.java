@@ -1,5 +1,6 @@
 package blade.addon.mixin;
 
+import blade.addon.features.ExtraOptions;
 import blade.addon.utils.events.Events;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;
@@ -8,9 +9,12 @@ import net.minecraft.client.network.PlayerListEntry;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.network.packet.s2c.play.EntityTrackerUpdateS2CPacket;
+import net.minecraft.network.packet.s2c.play.PlaySoundS2CPacket;
 import net.minecraft.network.packet.s2c.play.PlayerListS2CPacket;
 import net.minecraft.network.packet.s2c.play.TeamS2CPacket;
 import net.minecraft.scoreboard.Team;
+import net.minecraft.sound.SoundEvent;
+import net.minecraft.sound.SoundEvents;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -52,6 +56,19 @@ public class NetworkMixin {
 
         if (!Events.ON_TEAM.hasListeners()) return;
         Events.ON_TEAM.invoke(scoreBoardEvent -> scoreBoardEvent.onTeam(teamStr));
+    }
+
+    @Inject(method = "onPlaySound", at = @At(value = "HEAD"), cancellable = true)
+    private void onTeam(PlaySoundS2CPacket packet, CallbackInfo ci) {
+        if (!ExtraOptions.disableAbilityCooldownSound) return;
+
+        float pitch = packet.getPitch();
+        float volume = packet.getVolume();
+        SoundEvent event = packet.getSound().value();
+
+        if (pitch == 0.0 && volume == 8.0 && event == SoundEvents.ENTITY_ENDERMAN_TELEPORT) {
+            ci.cancel();
+        }
     }
 
 }
