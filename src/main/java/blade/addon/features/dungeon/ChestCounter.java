@@ -28,19 +28,16 @@ public class ChestCounter {
     private static int chestDisplayCount = 0;
     private static int countedChests = 0;
     private static boolean hasUpdatedData = false;
-    private static boolean readPlayerEntryEvents = false;
 
     public static void init() {
         Events.ON_LOCATION_CHANGE.register(newLocation -> {
             if (Location.in(Location.DUNGEON_HUB)) {
-                readPlayerEntryEvents = true;
                 hasUpdatedData = false;
             }
         });
 
         Events.ON_PLAYER_ENTRY.register(receivedEntry -> {
-            if (!readPlayerEntryEvents || hasUpdatedData) return;
-            if (receivedEntry == null) return;
+            if (receivedEntry == null || !Location.in(Location.DUNGEON_HUB)) return;
             Text text = receivedEntry.displayName();
             if (text == null) return;
 
@@ -77,8 +74,6 @@ public class ChestCounter {
 
                 if (hasUpdatedData) {
                     drawContext.drawText(MinecraftClient.getInstance().textRenderer, Text.literal("Chests: " + Math.min(chestDisplayCount + countedChests, 60)), x, y, 0xffffffff, true);
-                } else if(readPlayerEntryEvents) {
-                    drawContext.drawText(MinecraftClient.getInstance().textRenderer, Text.literal("Updating"), x, y, 0xffffd700, true);
                 } else {
                     drawContext.drawText(MinecraftClient.getInstance().textRenderer, Text.literal("go to the dungeon hub"), x, y, 0xffff0000, true);
 

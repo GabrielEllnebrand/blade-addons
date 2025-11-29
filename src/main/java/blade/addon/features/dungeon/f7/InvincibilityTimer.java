@@ -2,6 +2,7 @@ package blade.addon.features.dungeon.f7;
 
 import blade.addon.utils.Constants;
 import blade.addon.utils.Location;
+import blade.addon.utils.Misc;
 import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.events.Events;
 import config.practical.hud.HUDComponent;
@@ -10,6 +11,7 @@ import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
@@ -33,8 +35,6 @@ public class InvincibilityTimer {
     private static final int SPRITE_SIZE = TEXT_HEIGHT;
 
     private static final Pattern BONZO_PATTERN = Pattern.compile("^Your (?:\\S+ )?Bonzo's Mask saved your life!$");
-    private static final Pattern SPIRIT_PATTERN = Pattern.compile("^Second Wind Activated! Your Spirit Mask saved your life!$");
-    private static final Pattern PHOENIX_PATTERN = Pattern.compile("^Your Phoenix Pet saved you from certain death!$");
 
     private static final Pattern BONZO_ON_HEAD_PATTERN = Pattern.compile("Bonzo's Mask");
     private static final Pattern SPIRIT_ON_HEAD_PATTERN = Pattern.compile("Spirit Mask");
@@ -74,49 +74,18 @@ public class InvincibilityTimer {
     public static boolean displayInvincibilityTimer = false;
 
     @ConfigValue
+    public static boolean showProcTitle = false;
+
+    @ConfigValue
     public static DisplayWhen displayWhen = DisplayWhen.ALWAYS;
 
     @ConfigValue
     public static boolean useSprites = false;
 
     public static void init() {
-        Events.ON_SERVER_TICK.register(() -> {
-            bonzoMaskTicks = Math.max(0, bonzoMaskTicks - 1);
-            spiritMaskTicks = Math.max(0, spiritMaskTicks - 1);
-            phoenixTicks = Math.max(0, phoenixTicks - 1);
-        });
-
-        Events.ON_SLOT_CHANGE.register(((slot, item) -> {
-            if (slot == HEAD_SLOT && Location.inDungeon()) {
-                Text text = item.getCustomName();
-                if (text == null) return;
-                String string = text.getString();
-
-                Matcher matcher = BONZO_ON_HEAD_PATTERN.matcher(string);
-                bonzoMaskOn = matcher.find();
-
-                matcher = SPIRIT_ON_HEAD_PATTERN.matcher(string);
-                spiritMaskOn = matcher.find();
-
-
-            }
-        }));
-        ClientReceiveMessageEvents.GAME.register((message, overlay) -> {
-            if (!Location.inDungeon()) return;
-            String string = message.getString().replaceAll("§.", "");
-            Matcher matcher = MANUAL_EQUIP_PET_PATTERN.matcher(string);
-            if (matcher.find()) {
-                String petName = matcher.group(1);
-                phoenixOn = petName.equals("Phoenix");
-            }
-
-            matcher = RULE_EQUIP_PET_PATTERN.matcher(string);
-            if (matcher.find()) {
-                String petName = matcher.group(1);
-                phoenixOn = petName.equals("Phoenix");
-            }
-
-        });
+        Events.ON_SERVER_TICK.register(InvincibilityTimer::tick);
+        ClientReceiveMessageEvents.GAME.register(InvincibilityTimer::detectPet);
+        Events.ON_SLOT_CHANGE.register(InvincibilityTimer::detectHelmet);
 
         Events.ON_LOCATION_CHANGE.register(newLocation -> {
             if (Location.inDungeon()) {
@@ -133,20 +102,62 @@ public class InvincibilityTimer {
         });
     }
 
-    public static void parseMessage(Text message) {
+    private static void tick() {
+        bonzoMaskTicks = Math.max(0, bonzoMaskTicks - 1);
+        spiritMaskTicks = Math.max(0, spiritMaskTicks - 1);
+        phoenixTicks = Math.max(0, phoenixTicks - 1);
+    }
+
+    private static void detectPet(Text message, boolean overlay) {
+        if (!Location.inDungeon()) return;
+        String string = message.getString().replaceAll("§.", "");
+        Matcher matcher = MANUAL_EQUIP_PET_PATTERN.matcher(string);
+        if (matcher.find()) {
+            String petName = matcher.group(1);
+            phoenixOn = petName.equals("Phoenix");
+        }
+
+        matcher = RULE_EQUIP_PET_PATTERN.matcher(string);
+        if (matcher.find()) {
+            String petName = matcher.group(1);
+            phoenixOn = petName.equals("Phoenix");
+        }
+    }
+
+    private static void detectHelmet(int slot, ItemStack item) {
+        if (slot != HEAD_SLOT || !Location.inDungeon()) return;
+        Text text = item.getCustomName();
+        if (text == null) return;
+        String string = text.getString();
+
+        Matcher matcher = BONZO_ON_HEAD_PATTERN.matcher(string);
+        bonzoMaskOn = matcher.find();
+
+        matcher = SPIRIT_ON_HEAD_PATTERN.matcher(string);
+        spiritMaskOn = matcher.find();
+    }
+
+    private static void parseMessage(Text message) {
         String string = message.getString();
 
         Matcher matcher = BONZO_PATTERN.matcher(string);
         if (matcher.matches()) {
             bonzoMaskTicks = BONZO_MASK_COOLDOWN;
+            if (showProcTitle) {
+                Misc.setTitle(Text.literal("Bonzo"));
+            }
         }
-        matcher = SPIRIT_PATTERN.matcher(string);
-        if (matcher.matches()) {
+        if (string.equals("Second Wind Activated! Your Spirit Mask saved your life!")) {
             spiritMaskTicks = SPIRIT_MASK_COOLDOWN;
+            if (showProcTitle) {
+                Misc.setTitle(Text.literal("Spirit"));
+            }
         }
-        matcher = PHOENIX_PATTERN.matcher(string);
-        if (matcher.matches()) {
+        if (string.equals("Your Phoenix Pet saved you from certain death!")) {
             phoenixTicks = PHOENIX_COOLDOWN;
+            if (showProcTitle) {
+                Misc.setTitle(Text.literal("Phoenix"));
+            }
         }
     }
 
@@ -206,6 +217,10 @@ public class InvincibilityTimer {
             context.drawText(MinecraftClient.getInstance().textRenderer, timerText, x + TEXT_HEIGHT * 2, y, 0xffffffff, true);
         }
 
+    }
+
+    public static boolean spiritMaskUsed() {
+        return spiritMaskTicks > 0;
     }
 
     @ConfigValue

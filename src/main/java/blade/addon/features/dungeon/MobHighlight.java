@@ -1,6 +1,7 @@
 package blade.addon.features.dungeon;
 
 import blade.addon.utils.Location;
+import blade.addon.utils.Misc;
 import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.events.Events;
 import blade.addon.utils.rendering.RenderLayers;
@@ -187,7 +188,8 @@ public class MobHighlight {
             possibleEntities.clear();
         });
 
-        WorldRenderEvents.AFTER_ENTITIES.register(MobHighlight::Render);
+        WorldRenderEvents.AFTER_ENTITIES.register(MobHighlight::renderFilled);
+        WorldRenderEvents.AFTER_ENTITIES.register(MobHighlight::renderOutline);
     }
 
     private static void testArmourStand(ArmorStandEntity armorStand) {
@@ -300,6 +302,8 @@ public class MobHighlight {
     private static boolean isARealPlayer(Entity entity) {
         if (entity instanceof PlayerEntity player) {
 
+            if (Misc.isClientPlayer(player)) return true;
+
             ClientPlayNetworkHandler networkHandler = MinecraftClient.getInstance().getNetworkHandler();
             if (networkHandler == null) return false;
 
@@ -406,8 +410,9 @@ public class MobHighlight {
         return box;
     }
 
-    private static void Render(WorldRenderContext worldRenderContext) {
+    private static void renderFilled(WorldRenderContext worldRenderContext) {
         if (!mobHighlight || dontRenderHighlight) return;
+        if (!renderFilled()) return;
         Camera camera = worldRenderContext.camera();
         Vec3d cameraPos = camera.getPos();
         MatrixStack matrixStack = worldRenderContext.matrixStack();
@@ -417,8 +422,43 @@ public class MobHighlight {
 
         VertexConsumerProvider consumers = worldRenderContext.consumers();
         if (consumers == null) return;
-        VertexConsumer filledBuffer = consumers.getBuffer(RenderLayers.FILLED_ENTITY_LAYER);
-        VertexConsumer outlineBuffer = consumers.getBuffer(RenderLayers.OUTLINE_ENTITY_LAYER);
+        VertexConsumer filledConsumer = consumers.getBuffer(RenderLayers.FILLED_ENTITY_LAYER);
+
+        trackedMobs.forEach((entity, mobType) -> {
+
+            if (entity.isInvisible() && MobHighlight.dontShowInvisibleMobs && entity instanceof PlayerEntity) return;
+
+            double tickProgress = worldRenderContext.tickCounter().getTickProgress(false);
+            double x = MathHelper.lerp(tickProgress, entity.lastRenderX, entity.getX());
+            double y = MathHelper.lerp(tickProgress, entity.lastRenderY, entity.getY());
+            double z = MathHelper.lerp(tickProgress, entity.lastRenderZ, entity.getZ());
+
+            Box box = getBox(entity, x, y, z);
+
+
+            int filledColor = MobHighlight.getFilledColor(entity);
+            float[] rgba = RenderUtils.toFloats(filledColor);
+            VertexRendering.drawFilledBox(matrixStack, filledConsumer, box.minX, box.minY, box.minZ, box.maxX, box.maxY, box.maxZ, rgba[0], rgba[1], rgba[2], rgba[3]);
+        });
+
+
+        matrixStack.pop();
+
+    }
+
+    private static void renderOutline(WorldRenderContext worldRenderContext) {
+        if (!mobHighlight || dontRenderHighlight) return;
+        if (!renderOutline()) return;
+        Camera camera = worldRenderContext.camera();
+        Vec3d cameraPos = camera.getPos();
+        MatrixStack matrixStack = worldRenderContext.matrixStack();
+        if (matrixStack == null) return;
+        matrixStack.push();
+        matrixStack.translate(-cameraPos.x, -cameraPos.y, -cameraPos.z);
+
+        VertexConsumerProvider consumers = worldRenderContext.consumers();
+        if (consumers == null) return;
+        VertexConsumer outlineConsumer = consumers.getBuffer(RenderLayers.OUTLINE_ENTITY_LAYER);
 
 
         trackedMobs.forEach((entity, mobType) -> {
@@ -432,16 +472,10 @@ public class MobHighlight {
 
             Box box = getBox(entity, x, y, z);
 
-            if (MobHighlight.renderFilled()) {
-                int filledColor = MobHighlight.getFilledColor(entity);
-                float[] rgba = RenderUtils.toFloats(filledColor);
-                VertexRendering.drawFilledBox(matrixStack, filledBuffer, box.minX, box.minY, box.minZ, box.maxX, box.maxY, box.maxZ, rgba[0], rgba[1], rgba[2], rgba[3]);
-            }
-            if (MobHighlight.renderOutline()) {
-                int outlineColor = MobHighlight.getOutlineColor(entity);
-                float[] rgba = RenderUtils.toFloats(outlineColor);
-                VertexRendering.drawBox(matrixStack, outlineBuffer, box, rgba[0], rgba[1], rgba[2], rgba[3]);
-            }
+
+            int outlineColor = MobHighlight.getOutlineColor(entity);
+            float[] rgba = RenderUtils.toFloats(outlineColor);
+            VertexRendering.drawBox(matrixStack, outlineConsumer, box, rgba[0], rgba[1], rgba[2], rgba[3]);
         });
 
 

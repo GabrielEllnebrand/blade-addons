@@ -1,5 +1,6 @@
 package blade.addon.utils.dungeon;
 
+import blade.addon.utils.Constants;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.inventory.Inventory;
@@ -11,9 +12,6 @@ public class FillHelper {
     public static final String SUPERBOOM_TNT = "Superboom TNT";
     public static final String INFLATABLE_JERRY = "Inflatable Jerry";
 
-    private static final int FAIL = 0;
-    private static final int SUCCESS = 1;
-
     /**
      * @param client to get access to the player and networkHandler
      * @param itemName Name of item
@@ -24,7 +22,7 @@ public class FillHelper {
     public static int fillItem(MinecraftClient client, String itemName, int minThreshold, int maxCount) {
         ClientPlayerEntity player = client.player;
 
-        if (player == null) return FAIL;
+        if (player == null) return Constants.FAIL;
 
         Inventory inventory = player.getInventory();
 
@@ -41,16 +39,16 @@ public class FillHelper {
                 if (highestCount > currentCount) {
                     currentCount = highestCount;
 
-                    if (highestCount >= maxCount) return FAIL;
+                    if (highestCount >= maxCount) return Constants.FAIL;
                 }
             }
 
         }
 
-        if (minThreshold < currentCount) return FAIL;
+        if (minThreshold < currentCount) return Constants.FAIL;
 
         int itemsToGive = maxCount - currentCount;
         player.networkHandler.sendChatCommand("gfs " + itemName + " " + itemsToGive);
-        return SUCCESS;
+        return Constants.SUCCESS;
     }
 }

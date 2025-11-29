@@ -1,7 +1,9 @@
 package blade.addon.utils.dungeon;
 
+import blade.addon.utils.Constants;
 import blade.addon.utils.JsonUtility;
 import blade.addon.utils.Location;
+import blade.addon.utils.Misc;
 import blade.addon.utils.events.Events;
 import blade.addon.utils.events.interfaces.PhaseEvent;
 import blade.addon.utils.events.interfaces.RunEndEvent;
@@ -10,6 +12,7 @@ import config.practical.manager.ConfigValue;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,11 +23,7 @@ public class Phase {
 
     private static final Pattern END_PATTERN = Pattern.compile("^\\s*☠ Defeated (.+) in 0?([\\dhms ]+)\\s*(\\(NEW RECORD!\\))?$");
     private static final Pattern SEARCH_PATTERN = Pattern.compile("^ ⏣ The Catacombs .*$");
-    private static final Pattern STORM_KILL_PATTERN = Pattern.compile("^\\[BOSS] Storm: I should have known that I stood no chance\\.$");
-    private static final Pattern GATE_BLOWN_PATTERN = Pattern.compile("^The gate has been destroyed!$");
     private static final Pattern TERMINALS_DONE_PATTERN = Pattern.compile("(activated|completed) (a terminal|a device|a lever)! \\((\\d)/(\\d)\\)$");
-    private static final Pattern CORE_OPENING_PATTERN = Pattern.compile("^The Core entrance is opening!$");
-
 
     private static final Split DUMMY_SPLIT = new Split("test split", "if this is called idk", "if this is called idk", 43690);
 
@@ -61,47 +60,47 @@ public class Phase {
 
         Events.ON_LOCATION_CHANGE.register(newLocation -> {
             if (Location.inDungeon()) {
-                currentSplits = null;
-                floor = null;
-                currentPhase = -1;
-                inFloor7 = false;
-                stormDead = false;
-                runOver = false;
-                currentSection = 0;
-                termsDone = false;
-                gateBlownUp = false;
+                reset();
             }
         });
 
-        Events.ON_GAME_MESSAGE.register(text ->  {
-            if (Location.inDungeon()) {
-                Phase.parseMessage(text);
-            }
-        });
-
-        Events.ON_TEAM.register(text -> {
-            if (!Location.inDungeon() || floor != null) return;
-
-            Matcher matcher = SEARCH_PATTERN.matcher(text);
-            if (!matcher.find()) return;
-            int start = text.indexOf("(");
-            int end = text.indexOf(")");
-            floor = text.substring(start + 1, end);
-
-            currentSplits = FLOOR_SPLITS.get(floor);
-            if (currentSplits!= null) {
-                for (Split split : currentSplits) {
-                    split.reset();
-                }
-            }
-            if (floor != null) {
-                if (floor.contains("7")) inFloor7 = true;
-            }
-        });
+        Events.ON_GAME_MESSAGE.register(Phase::parseGameMessage);
+        Events.ON_TEAM.register(Phase::detectFloor);
     }
 
+    private static void detectFloor(String line) {
+        if (!Location.inDungeon() || floor != null) return;
 
-    public static void parseMessage(Text message) {
+        Matcher matcher = SEARCH_PATTERN.matcher(line);
+        if (!matcher.find()) return;
+        int start = line.indexOf("(");
+        int end = line.indexOf(")");
+        floor = line.substring(start + 1, end);
+
+        currentSplits = FLOOR_SPLITS.get(floor);
+        if (currentSplits!= null) {
+            for (Split split : currentSplits) {
+                split.reset();
+            }
+        }
+        if (floor != null) {
+            if (floor.contains("7")) inFloor7 = true;
+        }
+    }
+
+    private static void reset() {
+        currentSplits = null;
+        floor = null;
+        currentPhase = -1;
+        inFloor7 = false;
+        stormDead = false;
+        runOver = false;
+        currentSection = 0;
+        termsDone = false;
+        gateBlownUp = false;
+    }
+
+    public static void parseGameMessage(Text message) {
         if (!Location.inDungeon()) return;
         String string = message.getString();
         if (currentSplits == null) return;
@@ -131,57 +130,95 @@ public class Phase {
 
         Matcher matcher = END_PATTERN.matcher(string);
         if (matcher.find()) {
-            runOver = true;
-            currentPhase = currentSplits.size();
-
-            for (Split split : currentSplits) {
-                split.end();
-            }
-
-            if (Events.ON_RUN_END.hasListeners()) {
-                Events.ON_RUN_END.listeners.forEach(RunEndEvent::onRunEnd);
-            }
+           endRun();
         }
 
         if (inP2()) {
-            matcher = STORM_KILL_PATTERN.matcher(string);
-            if (matcher.find()) {
-                stormDead = true;
-                currentSection = 1;
-            }
+            parseP2(string);
         }
 
         if (inP3()) {
-            if (!termsDone) {
-                matcher = TERMINALS_DONE_PATTERN.matcher(string);
-                if (matcher.find()) {
-                    String num1 = matcher.group(3);
-                    String num2 = matcher.group(4);
-                    if (num1.equals(num2)) {
-                        termsDone = true;
-                    }
-                }
-            }
+            parseP3(string);
+        }
+    }
 
-            if (!gateBlownUp) {
-                matcher = GATE_BLOWN_PATTERN.matcher(string);
-                if (matcher.find()) {
-                    gateBlownUp = true;
-                }
-            }
+    private static void endRun() {
+        runOver = true;
+        currentPhase = currentSplits.size();
 
-            if (gateBlownUp && termsDone) {
-                currentSection++;
-                gateBlownUp = false;
-                termsDone = false;
-            }
+        Misc.addChatMessage(Text.literal("Splits: ").formatted(Formatting.GREEN));
+        for (Split split : currentSplits) {
+            split.end();
+            Misc.addChatMessage(split.createNameText().append(split.createTimeText()));
+        }
+        if (!currentSplits.isEmpty()) {
+            double time = currentSplits.getLast().getTimeDiffrence();
+            Text timeLost = Text.literal("Approximately ").formatted(Formatting.GREEN).append(net.minecraft.text.Text.literal(Constants.DECIMAL_FORMAT.format(time) + "s ").formatted(Formatting.YELLOW)).append(net.minecraft.text.Text.literal("lost to lag.").formatted(Formatting.GREEN));
+            Misc.addChatMessage(timeLost);
+        }
 
-            matcher = CORE_OPENING_PATTERN.matcher(string);
+
+        if (Events.ON_RUN_END.hasListeners()) {
+            Events.ON_RUN_END.listeners.forEach(RunEndEvent::onRunEnd);
+        }
+    }
+
+
+    private static void parseP2(String string) {
+        if (string.equals("[BOSS] Storm: I should have known that I stood no chance.")) {
+            stormDead = true;
+            currentSection = 1;
+        }
+    }
+
+    private static void parseP3(String string) {
+        if (!termsDone) {
+            Matcher matcher = TERMINALS_DONE_PATTERN.matcher(string);
             if (matcher.find()) {
-                //so in "goldor tunnel" can be shown after terms are done
-                currentSection = 5;
+                String num1 = matcher.group(3);
+                String num2 = matcher.group(4);
+                if (num1.equals(num2)) {
+                    termsDone = true;
+                }
             }
         }
+
+        if (!gateBlownUp) {
+            if (string.equals("The gate has been destroyed!")) {
+                gateBlownUp = true;
+            }
+        }
+
+        if (gateBlownUp && termsDone) {
+            currentSection++;
+            gateBlownUp = false;
+            termsDone = false;
+        }
+
+        if (string.equals("The Core entrance is opening!")) {
+            //so in "goldor tunnel" can be shown after terms are done
+            currentSection = 5;
+        }
+    }
+
+    public static double getPhase() {
+        return currentPhase;
+    }
+
+    public static double getSection() {
+        return currentSection;
+    }
+
+    public static boolean isInFloor7() {
+        return inFloor7;
+    }
+
+    public static boolean isGateBlownUp() {
+        return gateBlownUp;
+    }
+
+    public static boolean isTermsDone() {
+        return termsDone;
     }
 
     public static boolean runStarted() {
@@ -227,7 +264,6 @@ public class Phase {
                 int x = hudComponent.getScaledX();
                 int y = hudComponent.getScaledY();
 
-                long currentTime = System.currentTimeMillis();
                 TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
 
                 if (currentSplits != null) {
@@ -235,12 +271,12 @@ public class Phase {
                     if (!includeTotalTime) splitCount--;
 
                     for (int i = 0; i < splitCount; i++) {
-                        currentSplits.get(i).drawSplit(drawContext, textRenderer, currentTime, x, y + TEXT_HEIGHT * i);
+                        currentSplits.get(i).drawSplit(drawContext, textRenderer, x, y + TEXT_HEIGHT * i);
 
                     }
                 } else {
                     for (int i = 0; i < DUMMY_SIZE; i++) {
-                        DUMMY_SPLIT.drawSplit(drawContext, textRenderer, currentTime, x, y + TEXT_HEIGHT * i);
+                        DUMMY_SPLIT.drawSplit(drawContext, textRenderer, x, y + TEXT_HEIGHT * i);
                     }
                 }
             }), () -> enableSplits

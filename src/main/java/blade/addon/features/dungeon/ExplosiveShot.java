@@ -1,10 +1,9 @@
 package blade.addon.features.dungeon;
 
 import blade.addon.utils.Location;
+import blade.addon.utils.Misc;
 import config.practical.manager.ConfigValue;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
@@ -39,8 +38,7 @@ public class ExplosiveShot {
 
                     double damagePerEntity = amountNum / countNum;
 
-                    InGameHud gameHud = MinecraftClient.getInstance().inGameHud;
-                    gameHud.getChatHud().addMessage(
+                    Misc.addChatMessage(
                             Text.literal("Explosive shot did ").formatted(Formatting.GREEN)
                                     .append(Text.literal(FORMAT.format(damagePerEntity)).formatted(Formatting.YELLOW))
                                     .append(Text.literal(" damage per enemy.").formatted(Formatting.GREEN))

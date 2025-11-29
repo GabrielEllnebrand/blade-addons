@@ -4,10 +4,8 @@ import blade.addon.utils.Constants;
 import config.practical.manager.ConfigValue;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class Split {
 
@@ -56,20 +54,16 @@ public class Split {
     @ConfigValue
     public static TimerType timerType = TimerType.TICK_TIME;
 
-    private final String name;
-    private final Pattern startPattern, endPattern;
+    private final String name, startString, endString;
     private final int color;
     private int tick;
     private long startTime, endTime;
     private boolean started, ended;
 
-    public Split(String name, String start, String end, int color) {
+    public Split(String name, String startString, String endString, int color) {
         this.name = name;
-        //json removes regex so gotta add them manually after
-        String startRegex = "^".concat(start.replaceAll("\\.", "\\\\.").replaceAll("\\?", "\\\\?").replaceAll("\\[", "\\\\[").concat("$"));
-        String endRegex = "^".concat(end.replaceAll("\\.", "\\\\.").replaceAll("\\?", "\\\\?").replaceAll("\\[", "\\\\[").concat("$"));
-        this.startPattern = Pattern.compile(startRegex);
-        this.endPattern = Pattern.compile(endRegex);
+        this.startString = startString;
+        this.endString = endString;
         this.color = color;
         this.tick = 0;
         this.ended = false;
@@ -77,13 +71,11 @@ public class Split {
 
     public void parseMessage(String string) {
         if (!started) {
-            Matcher matcher = startPattern.matcher(string);
-            if (matcher.matches()) {
+            if (startString.equals(string)) {
                 start();
             }
         } else if (!ended) {
-            Matcher matcher = endPattern.matcher(string);
-            if (matcher.matches()) {
+            if (endString.equals(string)) {
                 end();
             }
         }
@@ -121,7 +113,31 @@ public class Split {
         return ended;
     }
 
-    private Text createText(double realTime, double tickTime) {
+    public double getTickTime() {
+        return tick * Constants.TICK_DURATION;
+    }
+
+    public double getRealTime() {
+        double realTime;
+        if (ended) {
+            realTime = (endTime - startTime) / 1000.0;
+        } else if (started) {
+            realTime = (System.currentTimeMillis() - startTime) / 1000.0;
+        } else {
+            realTime = 0;
+        }
+        return realTime;
+    }
+
+    public MutableText createNameText() {
+        return Text.literal(name + " ").withColor(color);
+    }
+
+    public double getTimeDiffrence() {
+        return getRealTime() - getTickTime();
+    }
+
+    public MutableText createTimeText() {
         int realTimeColor, serverTimeColor, parenthesesColor;
 
         if (!started) {
@@ -137,6 +153,9 @@ public class Split {
             serverTimeColor = serverTimeColorComplete;
             parenthesesColor = parenthesesColorComplete;
         }
+
+        double tickTime = getTickTime();
+        double realTime = getRealTime();
 
         String serverTime;
         if (timerType == TimerType.DIFFRENCE) {
@@ -159,20 +178,9 @@ public class Split {
                         ));
     }
 
-    public void drawSplit(DrawContext context, TextRenderer textRenderer, long currentTime, int x, int y) {
-        double tickTime = tick * Constants.TICK_DURATION;
-
-        double realTime;
-        if (ended) {
-            realTime = (endTime - startTime) / 1000.0;
-        } else if (started) {
-            realTime = (currentTime - startTime) / 1000.0;
-        } else {
-            realTime = 0;
-        }
-
-        Text nameText = Text.literal(name + " ").withColor(color);
-        Text timerText = createText(realTime, tickTime);
+    public void drawSplit(DrawContext context, TextRenderer textRenderer, int x, int y) {
+        Text nameText = createNameText();
+        Text timerText = createTimeText();
 
         int timerWidth = textRenderer.getWidth(timerText);
         context.drawText(textRenderer, nameText, x, y, 0xffffffff, true);

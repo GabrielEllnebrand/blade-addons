@@ -1,11 +1,11 @@
 package blade.addon.mixin;
 
 import blade.addon.features.ExtraOptions;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayerEntity;
+import blade.addon.utils.Misc;
 import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.render.entity.state.EntityRenderState;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.PlayerEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -17,12 +17,10 @@ public class FireMixin<T extends Entity, S extends EntityRenderState> {
     @Inject(method = "updateRenderState", at = @At("TAIL"))
     public void test(T entity, S state, float tickProgress, CallbackInfo ci) {
 
-        ClientPlayerEntity clientPlayer = MinecraftClient.getInstance().player;
-        if (clientPlayer != null) {
-            if (clientPlayer == entity && ExtraOptions.hideFireInf5) {
+        if (entity instanceof PlayerEntity player && ExtraOptions.hideFireInf5) {
+            if (Misc.isClientPlayer(player)) {
                 state.onFire = false;
             }
         }
-
     }
 }

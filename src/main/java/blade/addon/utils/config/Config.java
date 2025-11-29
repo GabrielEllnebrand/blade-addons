@@ -3,6 +3,7 @@ package blade.addon.utils.config;
 import blade.addon.features.dungeon.AutoRequeue;
 import blade.addon.features.dungeon.ChestCounter;
 import blade.addon.features.dungeon.ItemHighlight;
+import blade.addon.features.dungeon.f7.BossWaypoints;
 import blade.addon.features.dungeon.f7.CrystalSpawn;
 import blade.addon.features.dungeon.DeathTickTimer;
 import blade.addon.features.dungeon.DupeClassChecker;
@@ -44,7 +45,8 @@ public class Config {
     public static final ConfigManager manager = new ConfigManager("./config/" + Constants.NAMESPACE + ".json",
             List.of(StormTickTimer.class, GoldorTickTimer.class, Phase.class, LeapMessage.class, PositionMessages.class, TermStartTimer.class, Split.class, DeathTickTimer.class, ExplosiveShot.class,
                     InvincibilityTimer.class, WarpCooldown.class, DupeClassChecker.class, HidePlayers.class, CrystalSpawn.class,
-                    KeyNotifier.class, RelicTimer.class, AutoRequeue.class, MobHighlight.class, ChestCounter.class, SecretSpawnTimer.class, DistanceToLedge.class, ItemHighlight.class, ExtraOptions.class));
+                    KeyNotifier.class, RelicTimer.class, AutoRequeue.class, MobHighlight.class, ChestCounter.class, SecretSpawnTimer.class, DistanceToLedge.class, ItemHighlight.class, ExtraOptions.class,
+                    BossWaypoints.class));
 
     public static Screen createScreen(Screen parent) {
         ConfigurableScreen screen = new ConfigurableScreen(TITLE, parent, manager);
@@ -60,6 +62,7 @@ public class Config {
         invincibility.add(new ConfigBool(Text.literal("Enable invincibility display"), () -> InvincibilityTimer.displayInvincibilityTimer, bool -> InvincibilityTimer.displayInvincibilityTimer = bool));
         invincibility.add(new ConfigOptions<>(Text.literal("Display when"), InvincibilityTimer.DisplayWhen.values(), () -> InvincibilityTimer.displayWhen, when -> InvincibilityTimer.displayWhen = when));
         invincibility.add(new ConfigBool(Text.literal("Use sprites"), () -> InvincibilityTimer.useSprites, bool -> InvincibilityTimer.useSprites = bool));
+        invincibility.add(new ConfigBool(Text.literal("Show title on proc"), () -> InvincibilityTimer.showProcTitle, bool -> InvincibilityTimer.showProcTitle = bool));
 
         dungeons.add(invincibility);
 
@@ -87,6 +90,12 @@ public class Config {
         screen.addCategory(dungeons);
 
         ConfigCategory floor7 = new ConfigCategory("Floor 7");
+        ConfigSection waypoints = new ConfigSection(Text.literal("Waypoints"));
+        waypoints.add(new ConfigBool(Text.literal("Enable boss waypoints"), () -> BossWaypoints.enableBossWaypoints, bool -> BossWaypoints.enableBossWaypoints = bool));
+        waypoints.add(new ConfigBool(Text.literal("Enable placing waypoints"), BossWaypoints::getPlace, BossWaypoints::setPlace));
+        waypoints.add(new ConfigColor(Text.literal("Next waypoint color"), () -> BossWaypoints.nextWaypointColor, color -> BossWaypoints.nextWaypointColor = color, "next-waypoint-color", true));
+        waypoints.add(new ConfigBool(Text.literal("Next waypoint no depth check"), () -> BossWaypoints.nextWaypointThroughWall, bool -> BossWaypoints.nextWaypointThroughWall = bool));
+        floor7.add(waypoints);
 
         ConfigSection maxor = new ConfigSection(Text.literal("Maxor"));
         maxor.add(new ConfigBool(Text.literal("Crystal Spawn Time"), () -> CrystalSpawn.enableCrystalSpawnTime, bool -> CrystalSpawn.enableCrystalSpawnTime = bool));
@@ -96,6 +105,7 @@ public class Config {
         storm.add(new ConfigBool(Text.literal("Storm Tick timer"), () -> StormTickTimer.enableStormTickTimer, bool -> StormTickTimer.enableStormTickTimer = bool));
         storm.add(new ConfigBool(Text.literal("First Death time"), () -> StormTickTimer.enableStormDeathTime, bool -> StormTickTimer.enableStormDeathTime = bool));
         storm.add(new ConfigBool(Text.literal("Distance to ledge"), () -> DistanceToLedge.displayDistanceToLedge, bool -> DistanceToLedge.displayDistanceToLedge = bool));
+        storm.add(new ConfigBool(Text.literal("Warn if spirit mask is used"), () -> StormTickTimer.notifyUsedSpiritMask, bool -> StormTickTimer.notifyUsedSpiritMask = bool));
         floor7.add(storm);
 
         ConfigSection goldor = new ConfigSection(Text.literal("Goldor"));

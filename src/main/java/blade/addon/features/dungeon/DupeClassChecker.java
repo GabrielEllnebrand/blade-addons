@@ -2,6 +2,7 @@ package blade.addon.features.dungeon;
 
 import blade.addon.utils.Location;
 import blade.addon.utils.dungeon.Phase;
+import blade.addon.utils.events.Events;
 import config.practical.hud.HUDComponent;
 import config.practical.manager.ConfigValue;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
@@ -38,6 +39,12 @@ public class DupeClassChecker {
             if (!matcher.find()) return;
 
             hasDuplicateClass = hasDuplicateClasses();
+        });
+
+        Events.ON_LOCATION_CHANGE.register(location -> {
+            if (Location.inDungeon()) {
+                hasDuplicateClass = false;
+            }
         });
     }
 

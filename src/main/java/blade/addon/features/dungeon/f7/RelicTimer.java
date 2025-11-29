@@ -2,6 +2,7 @@ package blade.addon.features.dungeon.f7;
 
 import blade.addon.utils.Constants;
 import blade.addon.utils.Location;
+import blade.addon.utils.Misc;
 import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.events.Events;
 import blade.addon.utils.rendering.RenderLayers;
@@ -15,7 +16,6 @@ import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.VertexConsumer;
@@ -159,8 +159,7 @@ public class RelicTimer {
         if (distance <= 1) {
             if (enableRelicPlaceTime) {
             double diff = (System.currentTimeMillis() - pickupTime) / 1000.0;
-                InGameHud gameHud = MinecraftClient.getInstance().inGameHud;
-                gameHud.getChatHud().addMessage(Text.literal("The ").formatted(Formatting.GREEN)
+                Misc.addChatMessage(Text.literal("The ").formatted(Formatting.GREEN)
                         .append(Text.literal(pickedupRelic.name().toLowerCase()).withColor(pickedupRelic.color))
                         .append(" relic was placed in ").formatted(Formatting.GREEN)
                         .append(Text.literal(Constants.DECIMAL_FORMAT.format(diff) + "s.").formatted(Formatting.YELLOW)));
