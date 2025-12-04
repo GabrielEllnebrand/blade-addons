@@ -1,5 +1,6 @@
 package blade.addon.utils.config;
 
+import blade.addon.features.DianaNotifier;
 import blade.addon.features.dungeon.AutoRequeue;
 import blade.addon.features.dungeon.ChestCounter;
 import blade.addon.features.dungeon.ItemHighlight;
@@ -46,7 +47,7 @@ public class Config {
             List.of(StormTickTimer.class, GoldorTickTimer.class, Phase.class, LeapMessage.class, PositionMessages.class, TermStartTimer.class, Split.class, DeathTickTimer.class, ExplosiveShot.class,
                     InvincibilityTimer.class, WarpCooldown.class, DupeClassChecker.class, HidePlayers.class, CrystalSpawn.class,
                     KeyNotifier.class, RelicTimer.class, AutoRequeue.class, MobHighlight.class, ChestCounter.class, SecretSpawnTimer.class, DistanceToLedge.class, ItemHighlight.class, ExtraOptions.class,
-                    BossWaypoints.class));
+                    BossWaypoints.class, DianaNotifier.class));
 
     public static Screen createScreen(Screen parent) {
         ConfigurableScreen screen = new ConfigurableScreen(TITLE, parent, manager);
@@ -75,15 +76,20 @@ public class Config {
 
         ConfigSection chests = new ConfigSection(Text.literal("Croesus"));
         chests.add(new ConfigBool(Text.literal("Display current chest count"), () -> ChestCounter.displayChestCount, bool -> ChestCounter.displayChestCount = bool));
+        chests.add(new ConfigBool(Text.literal("Only display after run is over"), () -> ChestCounter.onlyAfterRunOver, bool -> ChestCounter.onlyAfterRunOver = bool));
         chests.add(new ConfigBool(Text.literal("Send chest count warning"), () -> ChestCounter.sendChestWarning, bool -> ChestCounter.sendChestWarning = bool));
         chests.add(new ConfigInt(Text.literal("Warning at chest"), () -> ChestCounter.chestWarningCount, num -> ChestCounter.chestWarningCount = num, 1, 1, 60));
 
         dungeons.add(chests);
-
         dungeons.add(new ConfigBool(Text.literal("Leap message"), () -> LeapMessage.enableLeapMessages, bool -> LeapMessage.enableLeapMessages = bool));
         dungeons.add(new ConfigBool(Text.literal("Auto requeue"), () -> AutoRequeue.enableAutoRequeue, bool -> AutoRequeue.enableAutoRequeue = bool));
         dungeons.add(new ConfigBool(Text.literal("Death tick timer (not accurate currently)"), () -> DeathTickTimer.enableDeathTickTimer, bool -> DeathTickTimer.enableDeathTickTimer = bool));
-        dungeons.add(new ConfigBool(Text.literal("calculate explosive shot"), () -> ExplosiveShot.calculateCriticalHit, bool -> ExplosiveShot.calculateCriticalHit = bool));
+
+        ConfigSection expo = new ConfigSection(Text.literal("Explosive shot"));
+        expo.add(new ConfigBool(Text.literal("calculate explosive shot"), () -> ExplosiveShot.calculateCriticalHit, bool -> ExplosiveShot.calculateCriticalHit = bool));
+        expo.add(new ConfigBool(Text.literal("Only in boss"), () -> ExplosiveShot.onlyInBoss, bool -> ExplosiveShot.onlyInBoss = bool));
+        dungeons.add(expo);
+
         dungeons.add(new ConfigBool(Text.literal("Notification on key spawn"), () -> KeyNotifier.enableKeyNotifier, bool -> KeyNotifier.enableKeyNotifier = bool));
         dungeons.add(new ConfigBool(Text.literal("Secret spawn timer"), () -> SecretSpawnTimer.enableSecretSpawnTimer, bool -> SecretSpawnTimer.enableSecretSpawnTimer = bool));
         dungeons.add(new ConfigBool(Text.literal("Item highlight"), () -> ItemHighlight.highlightItems, bool -> ItemHighlight.highlightItems = bool));
@@ -172,6 +178,15 @@ public class Config {
         extra.add(new ConfigBool(Text.literal("Hide arrows stuck to entities"), () -> ExtraOptions.hideStuckArrows, bool -> ExtraOptions.hideStuckArrows = bool));
         extra.add(new ConfigBool(Text.literal("Disable ability on cooldown sound"), () -> ExtraOptions.disableAbilityCooldownSound, bool -> ExtraOptions.disableAbilityCooldownSound = bool));
         extra.add(new ConfigBool(Text.literal("Hide dead entities"), () -> ExtraOptions.hideDeadEntities, bool -> ExtraOptions.hideDeadEntities = bool));
+
+        ConfigSection diana = new ConfigSection(Text.literal("Diana notifications"));
+        diana.add(new ConfigBool(Text.literal("Send Sound"), () -> DianaNotifier.sendSound, bool ->  DianaNotifier.sendSound = bool));
+        diana.add(new ConfigBool(Text.literal("Send Waypoint"), () ->  DianaNotifier.sendWaypoint, bool ->   DianaNotifier.sendWaypoint = bool));
+        diana.add(new ConfigBool(Text.literal("Check Harpy"), () -> DianaNotifier.checkHarpy, bool -> DianaNotifier.checkHarpy = bool));
+        diana.add(new ConfigBool(Text.literal("Check Bull"), () -> DianaNotifier.checkBull, bool -> DianaNotifier.checkBull = bool));
+        diana.add(new ConfigBool(Text.literal("Check Nymph"), () -> DianaNotifier.checkNymph, bool -> DianaNotifier.checkNymph = bool));
+
+        extra.add(diana);
 
         screen.addCategory(extra);
 

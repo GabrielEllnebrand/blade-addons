@@ -35,6 +35,18 @@ public class Commands {
 
                             .then(ClientCommandManager.literal("ij").executes(context -> FillHelper.fillItem(MinecraftClient.getInstance(), FillHelper.INFLATABLE_JERRY, 64, 64)))
 
+                            .then(ClientCommandManager.literal("refill")
+                                    .executes(
+                                            context -> {
+                                                FillHelper.fillItem(MinecraftClient.getInstance(), FillHelper.ENDER_PEARL, 16, 16);
+                                                Scheduler.scheduleTask(() -> FillHelper.fillItem(MinecraftClient.getInstance(), FillHelper.SUPERBOOM_TNT, 64, 64), 40);
+                                                Scheduler.scheduleTask(() -> FillHelper.fillItem(MinecraftClient.getInstance(), FillHelper.INFLATABLE_JERRY, 64, 64), 80);
+                                                return Constants.SUCCESS;
+                                            }
+
+                                    ))
+
+
                             .then(ClientCommandManager.literal("waypoint")
 
                                     .then(ClientCommandManager.literal("add")
@@ -140,6 +152,8 @@ public class Commands {
                                             })
                                     )
                             )
+
+
 
                             .executes(commandContext -> Scheduler.scheduleScreen(Config.createScreen(null)))
             );

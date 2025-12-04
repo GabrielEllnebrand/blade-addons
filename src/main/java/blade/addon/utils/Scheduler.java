@@ -3,11 +3,31 @@ package blade.addon.utils;
 import com.mojang.brigadier.Command;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.sound.SoundEvent;
+
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Scheduler {
 
     private static Screen scheduledScreen = null;
     private static int screenTicks = 0;
+    private static SoundEvent scheduledSound = null;
+    private static float scheduledVolume = 0;
+    private static float scheduledPitch = 0;
+    private static String scheduledCommand = null;
+
+    static class Task {
+        Runnable task;
+        int delay;
+
+        public Task(Runnable task, int delay) {
+            this.task = task;
+            this.delay = delay;
+        }
+    }
+
+    private static final CopyOnWriteArrayList<Task> tasks = new CopyOnWriteArrayList<>();
 
     public static void init() {
         ClientTickEvents.START_CLIENT_TICK.register(minecraftClient -> {
@@ -18,6 +38,32 @@ public class Scheduler {
                     scheduledScreen = null;
                 }
             }
+
+            if (scheduledSound != null) {
+                ClientPlayerEntity player = minecraftClient.player;
+                if (player != null) {
+                    player.playSound(scheduledSound, scheduledVolume, scheduledPitch);
+                    scheduledSound = null;
+                }
+            }
+
+            if (scheduledCommand != null) {
+                ClientPlayerEntity player = minecraftClient.player;
+                if (player != null && player.networkHandler != null) {
+                    player.networkHandler.sendChatCommand(scheduledCommand);
+                    scheduledCommand = null;
+                }
+            }
+
+            for (int i = tasks.size() - 1; i >= 0; i--) {
+                Task task = tasks.get(i);
+                task.delay--;
+                if (task.delay <= 0) {
+                    minecraftClient.execute(task.task);
+                    tasks.remove(i);
+                }
+            }
+
         });
     }
 
@@ -26,5 +72,19 @@ public class Scheduler {
         scheduledScreen = screen;
         screenTicks = 1;
         return Command.SINGLE_SUCCESS;
+    }
+
+    public static void scheduleSound(SoundEvent soundEvent, float volume, float pitch) {
+        scheduledSound = soundEvent;
+        scheduledVolume = volume;
+        scheduledPitch = pitch;
+    }
+
+    public static void scheduleCommand(String command) {
+        scheduledCommand = command;
+    }
+
+    public static void scheduleTask(Runnable runnable, int ticks) {
+        tasks.add(new Task(runnable, ticks));
     }
 }

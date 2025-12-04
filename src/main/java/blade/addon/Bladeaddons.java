@@ -1,26 +1,27 @@
 package blade.addon;
 
+import blade.addon.features.DianaNotifier;
 import blade.addon.features.dungeon.AutoRequeue;
 import blade.addon.features.dungeon.ChestCounter;
-import blade.addon.features.dungeon.f7.BossWaypoints;
-import blade.addon.features.dungeon.f7.CrystalSpawn;
 import blade.addon.features.dungeon.DeathTickTimer;
 import blade.addon.features.dungeon.DupeClassChecker;
 import blade.addon.features.dungeon.ExplosiveShot;
-import blade.addon.features.dungeon.f7.DistanceToLedge;
-import blade.addon.features.dungeon.f7.GoldorTickTimer;
 import blade.addon.features.dungeon.HidePlayers;
-import blade.addon.features.dungeon.f7.InvincibilityTimer;
+import blade.addon.features.dungeon.ItemHighlight;
 import blade.addon.features.dungeon.KeyNotifier;
 import blade.addon.features.dungeon.LeapMessage;
 import blade.addon.features.dungeon.MobHighlight;
-import blade.addon.features.dungeon.ItemHighlight;
+import blade.addon.features.dungeon.SecretSpawnTimer;
+import blade.addon.features.dungeon.WarpCooldown;
+import blade.addon.features.dungeon.f7.BossWaypoints;
+import blade.addon.features.dungeon.f7.CrystalSpawn;
+import blade.addon.features.dungeon.f7.DistanceToLedge;
+import blade.addon.features.dungeon.f7.GoldorTickTimer;
+import blade.addon.features.dungeon.f7.InvincibilityTimer;
 import blade.addon.features.dungeon.f7.PositionMessages;
 import blade.addon.features.dungeon.f7.RelicTimer;
-import blade.addon.features.dungeon.SecretSpawnTimer;
 import blade.addon.features.dungeon.f7.StormTickTimer;
 import blade.addon.features.dungeon.f7.TermStartTimer;
-import blade.addon.features.dungeon.WarpCooldown;
 import blade.addon.utils.Commands;
 import blade.addon.utils.Keybinds;
 import blade.addon.utils.Location;
@@ -61,5 +62,6 @@ public class Bladeaddons implements ModInitializer {
         DistanceToLedge.init();
         ItemHighlight.init();
         BossWaypoints.init();
+        DianaNotifier.init();
     }
 }

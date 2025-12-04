@@ -21,8 +21,6 @@ public class AutoRequeue {
     private static final Pattern LEFT_PATTERN = Pattern.compile("has left the party.$");
 
     private static final int MESSAGE_OFFSET = 2;
-    private static final int NO_RANK_OFFSET = 12;
-
 
     private static final HashMap<String, Text> playerHashMap = new HashMap<>();
 
@@ -46,16 +44,11 @@ public class AutoRequeue {
             if (!matcher.find()) return;
 
             int startOfMessage = string.indexOf(":");
-            int startOfUsername = string.indexOf("]");
 
             if (startOfMessage == -1 || startOfMessage + MESSAGE_OFFSET >= string.length()) return;
 
-            if (startOfUsername == -1) {
-                startOfUsername = NO_RANK_OFFSET;
-            }
-
             String realMessage = string.substring(startOfMessage + MESSAGE_OFFSET);
-            String username = string.substring(startOfUsername + MESSAGE_OFFSET, startOfMessage - MESSAGE_OFFSET);
+            String username = string.substring(0, startOfMessage - MESSAGE_OFFSET);
 
             if (playerHashMap.containsKey(username)) {
                 matcher = UNDT_PATTERN.matcher(realMessage);

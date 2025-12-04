@@ -1,36 +1,32 @@
 package blade.addon.utils;
 
 import blade.addon.utils.events.Events;
+import net.hypixel.data.type.ServerType;
 import net.hypixel.modapi.HypixelModAPI;
 import net.hypixel.modapi.packet.impl.clientbound.event.ClientboundLocationPacket;
 
 public enum Location {
     NONE,
     DUNGEON,
-    DUNGEON_HUB;
+    DUNGEON_HUB,
+    PRIVATE_ISLAND,
+    HUB;
 
     private static Location currentLocation = Location.NONE;
+    private static boolean inSkyblock = false;
 
     public static void init() {
 
-           /*
-            System.out.println(packet.getMap().toString());
-            System.out.println(packet.getLobbyName().toString());
-            System.out.println(packet.getMode().toString());
-            System.out.println(packet.getServerName());
-            System.out.println(packet.getServerType().toString());
-
-                [STDOUT]: Optional[Private Island]
-                [STDOUT]: Optional.empty
-                [STDOUT]: Optional[dynamic]
-                [STDOUT]: mini87DF
-                [STDOUT]: Optional[SKYBLOCK]
-            */
-
         HypixelModAPI instance = HypixelModAPI.getInstance();
-
-
         instance.createHandler(ClientboundLocationPacket.class, packet -> packet.getMap().ifPresent(map -> {
+
+            if (packet.getServerType().isPresent()) {
+                ServerType serverType = packet.getServerType().get();
+                inSkyblock = serverType.getName().equals("SkyBlock");
+            }
+
+            System.out.println(map.toUpperCase().replace(" ", "_"));
+
             try {
                 currentLocation = Location.valueOf(map.toUpperCase().replace(" ", "_"));
             } catch (IllegalArgumentException ignored) {
@@ -48,10 +44,16 @@ public enum Location {
     }
 
     public static boolean in(Location location) {
+        if (!inSkyblock) return false;
         return currentLocation == location;
     }
 
     public static boolean inDungeon() {
+        if (!inSkyblock) return false;
         return currentLocation == Location.DUNGEON;
+    }
+
+    public static boolean inSkyblock() {
+        return inSkyblock;
     }
 }

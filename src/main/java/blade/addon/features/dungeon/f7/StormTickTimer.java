@@ -23,7 +23,7 @@ public class StormTickTimer {
 
     private static final long DEATH_DISPLAY_DURATION = 2000;
     private static final int WIDTH = 30;
-    private static final int WARN_TICK = 23 * 20;
+    private static final int WARN_TICK = 20 * 20;
 
     @ConfigValue
     public static boolean enableStormTickTimer = false;

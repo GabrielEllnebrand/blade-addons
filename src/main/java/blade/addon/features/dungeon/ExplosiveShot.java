@@ -2,6 +2,7 @@ package blade.addon.features.dungeon;
 
 import blade.addon.utils.Location;
 import blade.addon.utils.Misc;
+import blade.addon.utils.dungeon.Phase;
 import config.practical.manager.ConfigValue;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 import net.minecraft.text.Text;
@@ -18,11 +19,13 @@ public class ExplosiveShot {
 
     @ConfigValue
     public static boolean calculateCriticalHit = false;
+    @ConfigValue
+    public static boolean onlyInBoss = false;
 
     public static void init() {
         ClientReceiveMessageEvents.GAME.register((message, overlay) -> {
-            if (!Location.inDungeon()) return;
-            if (!calculateCriticalHit) return;
+            if (!Location.inDungeon() || !calculateCriticalHit) return;
+            if (onlyInBoss && !Phase.inBoss()) return;
 
             String string = message.getString();
 

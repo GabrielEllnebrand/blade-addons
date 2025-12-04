@@ -1,6 +1,7 @@
 package blade.addon.features.dungeon;
 
 import blade.addon.utils.Location;
+import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.events.Events;
 import config.practical.hud.HUDComponent;
 import config.practical.manager.ConfigValue;
@@ -18,7 +19,8 @@ public class ChestCounter {
 
     @ConfigValue
     public static boolean displayChestCount = false;
-
+    @ConfigValue
+    public static boolean onlyAfterRunOver = false;
     @ConfigValue
     public static boolean sendChestWarning = false;
 
@@ -67,7 +69,11 @@ public class ChestCounter {
 
     @ConfigValue
     public static HUDComponent chestCounter = new HUDComponent(0, 0, 100, 10, 1, "Chest count",
-            () -> displayChestCount && Location.inDungeon(),
+            () ->
+            {
+                if ((onlyAfterRunOver && !Phase.runOver())) return false;
+                return displayChestCount && Location.inDungeon();
+            },
             ((hudComponent, drawContext) -> {
                 int x = hudComponent.getScaledX();
                 int y = hudComponent.getScaledY();

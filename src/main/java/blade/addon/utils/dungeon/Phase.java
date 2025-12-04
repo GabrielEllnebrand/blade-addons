@@ -257,6 +257,10 @@ public class Phase {
         return currentPhase == 9 && inFloor7;
     }
 
+    public static boolean runOver() {
+        return runOver;
+    }
+
     @ConfigValue
     public static HUDComponent splitTimer = new HUDComponent(0, 0, Split.SPLIT_LENGTH, 100, 1, "Splits",
             () -> Location.inDungeon() && enableSplits && Phase.runStarted(),
