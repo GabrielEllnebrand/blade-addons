@@ -1,29 +1,14 @@
 package blade.addon.utils.config;
 
 import blade.addon.features.DianaNotifier;
-import blade.addon.features.dungeon.AutoRequeue;
-import blade.addon.features.dungeon.ChestCounter;
-import blade.addon.features.dungeon.ItemHighlight;
-import blade.addon.features.dungeon.f7.BossWaypoints;
-import blade.addon.features.dungeon.f7.CrystalSpawn;
-import blade.addon.features.dungeon.DeathTickTimer;
-import blade.addon.features.dungeon.DupeClassChecker;
-import blade.addon.features.dungeon.ExplosiveShot;
-import blade.addon.features.dungeon.f7.DistanceToLedge;
-import blade.addon.features.dungeon.f7.GoldorTickTimer;
-import blade.addon.features.dungeon.HidePlayers;
-import blade.addon.features.dungeon.f7.InvincibilityTimer;
-import blade.addon.features.dungeon.KeyNotifier;
-import blade.addon.features.dungeon.LeapMessage;
 import blade.addon.features.dungeon.MobHighlight;
-import blade.addon.features.dungeon.f7.PositionMessages;
-import blade.addon.features.dungeon.f7.RelicTimer;
-import blade.addon.features.dungeon.SecretSpawnTimer;
-import blade.addon.features.ExtraOptions;
-import blade.addon.features.dungeon.f7.StormTickTimer;
-import blade.addon.features.dungeon.f7.TermStartTimer;
-import blade.addon.features.dungeon.WarpCooldown;
+import blade.addon.features.dungeon.f7.BossWaypoints;
+import blade.addon.features.dungeon.f7.InvincibilityTimer;
 import blade.addon.utils.Constants;
+import blade.addon.utils.config.components.Components;
+import blade.addon.utils.config.values.Dungeons;
+import blade.addon.utils.config.values.ExtraOptions;
+import blade.addon.utils.config.values.Floor7;
 import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.dungeon.Split;
 import config.practical.ConfigurableScreen;
@@ -44,10 +29,7 @@ public class Config {
 
     private static final Text TITLE = Text.literal("Blade Addons");
     public static final ConfigManager manager = new ConfigManager("./config/" + Constants.NAMESPACE + ".json",
-            List.of(StormTickTimer.class, GoldorTickTimer.class, Phase.class, LeapMessage.class, PositionMessages.class, TermStartTimer.class, Split.class, DeathTickTimer.class, ExplosiveShot.class,
-                    InvincibilityTimer.class, WarpCooldown.class, DupeClassChecker.class, HidePlayers.class, CrystalSpawn.class,
-                    KeyNotifier.class, RelicTimer.class, AutoRequeue.class, MobHighlight.class, ChestCounter.class, SecretSpawnTimer.class, DistanceToLedge.class, ItemHighlight.class, ExtraOptions.class,
-                    BossWaypoints.class, DianaNotifier.class));
+            List.of(Phase.class, Split.class, MobHighlight.class, ExtraOptions.class, DianaNotifier.class, Components.class, Dungeons.class, Floor7.class));
 
     public static Screen createScreen(Screen parent) {
         ConfigurableScreen screen = new ConfigurableScreen(TITLE, parent, manager);
@@ -55,78 +37,78 @@ public class Config {
         ConfigCategory dungeons = new ConfigCategory("Dungeons");
 
         ConfigSection start = new ConfigSection(Text.literal("Start of run"));
-        start.add(new ConfigBool(Text.literal("Warp cooldown"), () -> WarpCooldown.enableWarpCooldown, bool -> WarpCooldown.enableWarpCooldown = bool));
-        start.add(new ConfigBool(Text.literal("Dupe class warning"), () -> DupeClassChecker.detectDuplicateClass, bool -> DupeClassChecker.detectDuplicateClass = bool));
+        start.add(new ConfigBool(Text.literal("Warp cooldown"), () -> Dungeons.enableWarpCooldown, bool -> Dungeons.enableWarpCooldown = bool));
+        start.add(new ConfigBool(Text.literal("Dupe class warning"), () -> Dungeons.detectDuplicateClass, bool -> Dungeons.detectDuplicateClass = bool));
         dungeons.add(start);
 
         ConfigSection invincibility = new ConfigSection(Text.literal("Invincibility Timer"));
-        invincibility.add(new ConfigBool(Text.literal("Enable invincibility display"), () -> InvincibilityTimer.displayInvincibilityTimer, bool -> InvincibilityTimer.displayInvincibilityTimer = bool));
-        invincibility.add(new ConfigOptions<>(Text.literal("Display when"), InvincibilityTimer.DisplayWhen.values(), () -> InvincibilityTimer.displayWhen, when -> InvincibilityTimer.displayWhen = when));
-        invincibility.add(new ConfigBool(Text.literal("Use sprites"), () -> InvincibilityTimer.useSprites, bool -> InvincibilityTimer.useSprites = bool));
-        invincibility.add(new ConfigBool(Text.literal("Show title on proc"), () -> InvincibilityTimer.showProcTitle, bool -> InvincibilityTimer.showProcTitle = bool));
+        invincibility.add(new ConfigBool(Text.literal("Enable invincibility display"), () -> Dungeons.displayInvincibilityTimer, bool -> Dungeons.displayInvincibilityTimer = bool));
+        invincibility.add(new ConfigOptions<>(Text.literal("Display when"), InvincibilityTimer.DisplayWhen.values(), () -> Dungeons.displayWhen, when -> Dungeons.displayWhen = when));
+        invincibility.add(new ConfigBool(Text.literal("Use sprites"), () -> Dungeons.useSprites, bool -> Dungeons.useSprites = bool));
+        invincibility.add(new ConfigBool(Text.literal("Show title on proc"), () -> Dungeons.showProcTitle, bool -> Dungeons.showProcTitle = bool));
 
         dungeons.add(invincibility);
 
         ConfigSection hidePlayers = new ConfigSection(Text.literal("Hide Players"));
-        hidePlayers.add(new ConfigBool(Text.literal("Hide on leap"), () -> HidePlayers.hideAfterLeap, bool -> HidePlayers.hideAfterLeap = bool));
-        hidePlayers.add(new ConfigBool(Text.literal("Hide only in boss"), () -> HidePlayers.hideOnlyInBoss, bool -> HidePlayers.hideOnlyInBoss = bool));
-        hidePlayers.add(new ConfigBool(Text.literal("Hide at SS"), () -> HidePlayers.hideAtSS, bool -> HidePlayers.hideAtSS = bool));
-        hidePlayers.add(new ConfigBool(Text.literal("SS only hides before terms"), () -> HidePlayers.hideBeforeTermsOnly, bool -> HidePlayers.hideBeforeTermsOnly = bool));
+        hidePlayers.add(new ConfigBool(Text.literal("Hide on leap"), () -> Dungeons.hideAfterLeap, bool -> Dungeons.hideAfterLeap = bool));
+        hidePlayers.add(new ConfigBool(Text.literal("Hide only in boss"), () -> Dungeons.hideOnlyInBoss, bool -> Dungeons.hideOnlyInBoss = bool));
+        hidePlayers.add(new ConfigBool(Text.literal("Hide at SS"), () -> Dungeons.hideAtSS, bool -> Dungeons.hideAtSS = bool));
+        hidePlayers.add(new ConfigBool(Text.literal("SS only hides before terms"), () -> Dungeons.hideBeforeTermsOnly, bool -> Dungeons.hideBeforeTermsOnly = bool));
         dungeons.add(hidePlayers);
 
         ConfigSection chests = new ConfigSection(Text.literal("Croesus"));
-        chests.add(new ConfigBool(Text.literal("Display current chest count"), () -> ChestCounter.displayChestCount, bool -> ChestCounter.displayChestCount = bool));
-        chests.add(new ConfigBool(Text.literal("Only display after run is over"), () -> ChestCounter.onlyAfterRunOver, bool -> ChestCounter.onlyAfterRunOver = bool));
-        chests.add(new ConfigBool(Text.literal("Send chest count warning"), () -> ChestCounter.sendChestWarning, bool -> ChestCounter.sendChestWarning = bool));
-        chests.add(new ConfigInt(Text.literal("Warning at chest"), () -> ChestCounter.chestWarningCount, num -> ChestCounter.chestWarningCount = num, 1, 1, 60));
+        chests.add(new ConfigBool(Text.literal("Display current chest count"), () -> Dungeons.displayChestCount, bool -> Dungeons.displayChestCount = bool));
+        chests.add(new ConfigBool(Text.literal("Only display after run is over"), () -> Dungeons.onlyAfterRunOver, bool -> Dungeons.onlyAfterRunOver = bool));
+        chests.add(new ConfigBool(Text.literal("Send chest count warning"), () -> Dungeons.sendChestWarning, bool -> Dungeons.sendChestWarning = bool));
+        chests.add(new ConfigInt(Text.literal("Warning at chest"), () -> Dungeons.chestWarningCount, num -> Dungeons.chestWarningCount = num, 1, 1, 60));
 
         dungeons.add(chests);
-        dungeons.add(new ConfigBool(Text.literal("Leap message"), () -> LeapMessage.enableLeapMessages, bool -> LeapMessage.enableLeapMessages = bool));
-        dungeons.add(new ConfigBool(Text.literal("Auto requeue"), () -> AutoRequeue.enableAutoRequeue, bool -> AutoRequeue.enableAutoRequeue = bool));
-        dungeons.add(new ConfigBool(Text.literal("Death tick timer (not accurate currently)"), () -> DeathTickTimer.enableDeathTickTimer, bool -> DeathTickTimer.enableDeathTickTimer = bool));
+        dungeons.add(new ConfigBool(Text.literal("Leap message"), () -> Dungeons.enableLeapMessages, bool -> Dungeons.enableLeapMessages = bool));
+        dungeons.add(new ConfigBool(Text.literal("Auto requeue"), () -> Dungeons.enableAutoRequeue, bool -> Dungeons.enableAutoRequeue = bool));
+        dungeons.add(new ConfigBool(Text.literal("Death tick timer (not accurate currently)"), () -> Dungeons.enableDeathTickTimer, bool -> Dungeons.enableDeathTickTimer = bool));
 
         ConfigSection expo = new ConfigSection(Text.literal("Explosive shot"));
-        expo.add(new ConfigBool(Text.literal("calculate explosive shot"), () -> ExplosiveShot.calculateCriticalHit, bool -> ExplosiveShot.calculateCriticalHit = bool));
-        expo.add(new ConfigBool(Text.literal("Only in boss"), () -> ExplosiveShot.onlyInBoss, bool -> ExplosiveShot.onlyInBoss = bool));
+        expo.add(new ConfigBool(Text.literal("calculate explosive shot"), () -> Dungeons.calculateCriticalHit, bool -> Dungeons.calculateCriticalHit = bool));
+        expo.add(new ConfigBool(Text.literal("Only in boss"), () -> Dungeons.onlyInBoss, bool -> Dungeons.onlyInBoss = bool));
         dungeons.add(expo);
 
-        dungeons.add(new ConfigBool(Text.literal("Notification on key spawn"), () -> KeyNotifier.enableKeyNotifier, bool -> KeyNotifier.enableKeyNotifier = bool));
-        dungeons.add(new ConfigBool(Text.literal("Secret spawn timer"), () -> SecretSpawnTimer.enableSecretSpawnTimer, bool -> SecretSpawnTimer.enableSecretSpawnTimer = bool));
-        dungeons.add(new ConfigBool(Text.literal("Item highlight"), () -> ItemHighlight.highlightItems, bool -> ItemHighlight.highlightItems = bool));
+        dungeons.add(new ConfigBool(Text.literal("Notification on key spawn"), () -> Dungeons.enableKeyNotifier, bool -> Dungeons.enableKeyNotifier = bool));
+        dungeons.add(new ConfigBool(Text.literal("Secret spawn timer"), () -> Dungeons.enableSecretSpawnTimer, bool -> Dungeons.enableSecretSpawnTimer = bool));
+        dungeons.add(new ConfigBool(Text.literal("Item highlight"), () -> Dungeons.highlightItems, bool -> Dungeons.highlightItems = bool));
         screen.addCategory(dungeons);
 
         ConfigCategory floor7 = new ConfigCategory("Floor 7");
         ConfigSection waypoints = new ConfigSection(Text.literal("Waypoints"));
-        waypoints.add(new ConfigBool(Text.literal("Enable boss waypoints"), () -> BossWaypoints.enableBossWaypoints, bool -> BossWaypoints.enableBossWaypoints = bool));
+        waypoints.add(new ConfigBool(Text.literal("Enable boss waypoints"), () -> Floor7.enableBossWaypoints, bool -> Floor7.enableBossWaypoints = bool));
         waypoints.add(new ConfigBool(Text.literal("Enable placing waypoints"), BossWaypoints::getPlace, BossWaypoints::setPlace));
-        waypoints.add(new ConfigColor(Text.literal("Next waypoint color"), () -> BossWaypoints.nextWaypointColor, color -> BossWaypoints.nextWaypointColor = color, "next-waypoint-color", true));
-        waypoints.add(new ConfigBool(Text.literal("Next waypoint no depth check"), () -> BossWaypoints.nextWaypointThroughWall, bool -> BossWaypoints.nextWaypointThroughWall = bool));
+        waypoints.add(new ConfigColor(Text.literal("Next waypoint color"), () -> Floor7.nextWaypointColor, color -> Floor7.nextWaypointColor = color, "next-waypoint-color", true));
+        waypoints.add(new ConfigBool(Text.literal("Next waypoint no depth check"), () -> Floor7.nextWaypointThroughWall, bool -> Floor7.nextWaypointThroughWall = bool));
         floor7.add(waypoints);
 
         ConfigSection maxor = new ConfigSection(Text.literal("Maxor"));
-        maxor.add(new ConfigBool(Text.literal("Crystal Spawn Time"), () -> CrystalSpawn.enableCrystalSpawnTime, bool -> CrystalSpawn.enableCrystalSpawnTime = bool));
+        maxor.add(new ConfigBool(Text.literal("Crystal Spawn Time"), () -> Floor7.enableCrystalSpawnTime, bool -> Floor7.enableCrystalSpawnTime = bool));
         floor7.add(maxor);
 
         ConfigSection storm = new ConfigSection(Text.literal("Storm"));
-        storm.add(new ConfigBool(Text.literal("Storm Tick timer"), () -> StormTickTimer.enableStormTickTimer, bool -> StormTickTimer.enableStormTickTimer = bool));
-        storm.add(new ConfigBool(Text.literal("First Death time"), () -> StormTickTimer.enableStormDeathTime, bool -> StormTickTimer.enableStormDeathTime = bool));
-        storm.add(new ConfigBool(Text.literal("Distance to ledge"), () -> DistanceToLedge.displayDistanceToLedge, bool -> DistanceToLedge.displayDistanceToLedge = bool));
-        storm.add(new ConfigBool(Text.literal("Warn if spirit mask is used"), () -> StormTickTimer.notifyUsedSpiritMask, bool -> StormTickTimer.notifyUsedSpiritMask = bool));
+        storm.add(new ConfigBool(Text.literal("Storm Tick timer"), () -> Floor7.enableStormTickTimer, bool -> Floor7.enableStormTickTimer = bool));
+        storm.add(new ConfigBool(Text.literal("First Death time"), () -> Floor7.enableStormDeathTime, bool -> Floor7.enableStormDeathTime = bool));
+        storm.add(new ConfigBool(Text.literal("Distance to ledge"), () -> Floor7.displayDistanceToLedge, bool -> Floor7.displayDistanceToLedge = bool));
+        storm.add(new ConfigBool(Text.literal("Warn if spirit mask is used"), () -> Floor7.notifyUsedSpiritMask, bool -> Floor7.notifyUsedSpiritMask = bool));
         floor7.add(storm);
 
         ConfigSection goldor = new ConfigSection(Text.literal("Goldor"));
-        goldor.add(new ConfigBool(Text.literal("Goldor tick timer"), () -> GoldorTickTimer.enableGoldorTickTimer, bool -> GoldorTickTimer.enableGoldorTickTimer = bool));
-        goldor.add(new ConfigBool(Text.literal("Term start time"), () -> TermStartTimer.enableTermStartTimer, bool -> TermStartTimer.enableTermStartTimer = bool));
-        goldor.add(new ConfigBool(Text.literal("death ticks intervals"), () -> GoldorTickTimer.inDeathTicks, bool -> GoldorTickTimer.inDeathTicks = bool));
-        goldor.add(new ConfigBool(Text.literal("Positional messages"), () -> PositionMessages.enablePositionalMessages, bool -> PositionMessages.enablePositionalMessages = bool));
+        goldor.add(new ConfigBool(Text.literal("Goldor tick timer"), () -> Floor7.enableGoldorTickTimer, bool -> Floor7.enableGoldorTickTimer = bool));
+        goldor.add(new ConfigBool(Text.literal("Term start time"), () -> Floor7.enableTermStartTimer, bool -> Floor7.enableTermStartTimer = bool));
+        goldor.add(new ConfigBool(Text.literal("death ticks intervals"), () -> Floor7.inDeathTicks, bool -> Floor7.inDeathTicks = bool));
+        goldor.add(new ConfigBool(Text.literal("Positional messages"), () -> Floor7.enablePositionalMessages, bool -> Floor7.enablePositionalMessages = bool));
 
         floor7.add(goldor);
 
         ConfigSection relic = new ConfigSection(Text.literal("Relics"));
-        relic.add(new ConfigBool(Text.literal("Relic start timer"), () -> RelicTimer.enableRelicStartTimer, bool -> RelicTimer.enableRelicStartTimer = bool));
-        relic.add(new ConfigInt(Text.literal("Relic start timer ticks"), () -> RelicTimer.relicSpawnTicks, num -> RelicTimer.relicSpawnTicks = num, 1, 30, 50));
-        relic.add(new ConfigBool(Text.literal("Enable relic placed time"), () -> RelicTimer.enableRelicPlaceTime, bool -> RelicTimer.enableRelicPlaceTime = bool));
-        relic.add(new ConfigBool(Text.literal("Highlight picked up relic"), () -> RelicTimer.renderRelicHighlight, bool -> RelicTimer.renderRelicHighlight = bool));
+        relic.add(new ConfigBool(Text.literal("Relic start timer"), () -> Floor7.enableRelicStartTimer, bool -> Floor7.enableRelicStartTimer = bool));
+        relic.add(new ConfigInt(Text.literal("Relic start timer ticks"), () -> Floor7.relicSpawnTicks, num -> Floor7.relicSpawnTicks = num, 1, 30, 50));
+        relic.add(new ConfigBool(Text.literal("Enable relic placed time"), () -> Floor7.enableRelicPlaceTime, bool -> Floor7.enableRelicPlaceTime = bool));
+        relic.add(new ConfigBool(Text.literal("Highlight picked up relic"), () -> Floor7.renderRelicHighlight, bool -> Floor7.renderRelicHighlight = bool));
         floor7.add(relic);
 
         screen.addCategory(floor7);
@@ -180,8 +162,8 @@ public class Config {
         extra.add(new ConfigBool(Text.literal("Hide dead entities"), () -> ExtraOptions.hideDeadEntities, bool -> ExtraOptions.hideDeadEntities = bool));
 
         ConfigSection diana = new ConfigSection(Text.literal("Diana notifications"));
-        diana.add(new ConfigBool(Text.literal("Send Sound"), () -> DianaNotifier.sendSound, bool ->  DianaNotifier.sendSound = bool));
-        diana.add(new ConfigBool(Text.literal("Send Waypoint"), () ->  DianaNotifier.sendWaypoint, bool ->   DianaNotifier.sendWaypoint = bool));
+        diana.add(new ConfigBool(Text.literal("Send Sound"), () -> DianaNotifier.sendSound, bool -> DianaNotifier.sendSound = bool));
+        diana.add(new ConfigBool(Text.literal("Send Waypoint"), () -> DianaNotifier.sendWaypoint, bool -> DianaNotifier.sendWaypoint = bool));
         diana.add(new ConfigBool(Text.literal("Check Harpy"), () -> DianaNotifier.checkHarpy, bool -> DianaNotifier.checkHarpy = bool));
         diana.add(new ConfigBool(Text.literal("Check Bull"), () -> DianaNotifier.checkBull, bool -> DianaNotifier.checkBull = bool));
         diana.add(new ConfigBool(Text.literal("Check Nymph"), () -> DianaNotifier.checkNymph, bool -> DianaNotifier.checkNymph = bool));

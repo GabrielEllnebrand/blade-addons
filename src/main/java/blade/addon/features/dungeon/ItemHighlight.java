@@ -2,10 +2,10 @@ package blade.addon.features.dungeon;
 
 import blade.addon.utils.Constants;
 import blade.addon.utils.Location;
+import blade.addon.utils.config.values.Dungeons;
 import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.rendering.RenderLayers;
 import blade.addon.utils.rendering.RenderUtils;
-import config.practical.manager.ConfigValue;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientEntityEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
@@ -34,8 +34,6 @@ public class ItemHighlight {
 
     private static final ConcurrentHashMap<ItemEntity, Integer> trackedItems = new ConcurrentHashMap<>();
 
-    @ConfigValue
-    public static boolean highlightItems = false;
 
     public static void init() {
         ClientTickEvents.END_CLIENT_TICK.register(minecraftClient -> {
@@ -61,7 +59,7 @@ public class ItemHighlight {
         });
 
         WorldRenderEvents.BEFORE_DEBUG_RENDER.register(worldRenderContext -> {
-            if (!highlightItems) return;
+            if (!Dungeons.highlightItems) return;
             Camera camera = worldRenderContext.camera();
             Vec3d cameraPos = camera.getPos();
             MatrixStack matrixStack = worldRenderContext.matrixStack();
@@ -90,7 +88,7 @@ public class ItemHighlight {
     }
 
     public static boolean highlightItem(ItemEntity item) {
-        if (!highlightItems || !Location.inDungeon() || Phase.inBoss()) return false;
+        if (!Dungeons.highlightItems || !Location.inDungeon() || Phase.inBoss()) return false;
 
         Text itemText = item.getStack().getName();
         if (itemText == null) return false;

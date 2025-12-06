@@ -2,8 +2,8 @@ package blade.addon.features.dungeon;
 
 import blade.addon.utils.Location;
 import blade.addon.utils.Misc;
+import blade.addon.utils.config.values.Dungeons;
 import blade.addon.utils.events.Events;
-import config.practical.manager.ConfigValue;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.hud.ChatHud;
@@ -24,14 +24,12 @@ public class AutoRequeue {
 
     private static final HashMap<String, Text> playerHashMap = new HashMap<>();
 
-    @ConfigValue
-    public static boolean enableAutoRequeue = false;
 
     private static boolean someoneLeft = false;
 
     public static void init() {
         ClientReceiveMessageEvents.GAME.register((message, overlay) -> {
-            if (!Location.inDungeon() && !enableAutoRequeue) return;
+            if (!Location.inDungeon() && !Dungeons.enableAutoRequeue) return;
             String string = message.getString();
             Matcher matcher = LEFT_PATTERN.matcher(string);
             if (matcher.find()) {
@@ -65,7 +63,7 @@ public class AutoRequeue {
         });
 
         Events.ON_RUN_END.register(() -> {
-            if (!enableAutoRequeue || someoneLeft) return;
+            if (!Dungeons.enableAutoRequeue || someoneLeft) return;
 
             if (playerHashMap.isEmpty()) {
                 Misc.executeCommand("instancerequeue");

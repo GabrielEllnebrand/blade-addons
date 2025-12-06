@@ -4,6 +4,7 @@ import blade.addon.utils.Constants;
 import blade.addon.utils.Location;
 import blade.addon.utils.Misc;
 import blade.addon.utils.Waypoint;
+import blade.addon.utils.config.values.Floor7;
 import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.rendering.RenderLayers;
 import blade.addon.utils.rendering.RenderUtils;
@@ -11,7 +12,6 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import config.practical.manager.ConfigValue;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
@@ -45,15 +45,6 @@ public class BossWaypoints {
 
     public static final CopyOnWriteArrayList<Waypoint> waypoints = new CopyOnWriteArrayList<>();
 
-    @ConfigValue
-    public static boolean enableBossWaypoints = false;
-
-    @ConfigValue
-    public static int nextWaypointColor = 0xff00F7F7;
-
-    @ConfigValue
-    public static boolean nextWaypointThroughWall = false;
-
     private static boolean ignoreBoss = false;
     private static boolean place = false;
 
@@ -66,7 +57,7 @@ public class BossWaypoints {
     }
 
     public static boolean isInValidArea() {
-        if (!enableBossWaypoints) return false;
+        if (!Floor7.enableBossWaypoints) return false;
         if (ignoreBoss) return true;
 
         return Location.inDungeon() && Phase.inBoss();
@@ -100,8 +91,8 @@ public class BossWaypoints {
     }
 
     private static void addWaypoint(double x, double y, double z, double dx, double dy, double dz) {
-        float[] colorAsFloat = RenderUtils.toFloats(nextWaypointColor);
-        waypoints.add(new Waypoint(x, y, z, dx, dy, dz, colorAsFloat[0], colorAsFloat[1], colorAsFloat[2], colorAsFloat[3], nextWaypointThroughWall));
+        float[] colorAsFloat = RenderUtils.toFloats(Floor7.nextWaypointColor);
+        waypoints.add(new Waypoint(x, y, z, dx, dy, dz, colorAsFloat[0], colorAsFloat[1], colorAsFloat[2], colorAsFloat[3],Floor7.nextWaypointThroughWall));
         save();
     }
 

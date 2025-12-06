@@ -1,11 +1,12 @@
 package blade.addon.features.dungeon;
 
 import blade.addon.utils.Location;
+import blade.addon.utils.config.values.Dungeons;
 import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.events.Events;
 import config.practical.hud.HUDComponent;
-import config.practical.manager.ConfigValue;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
@@ -16,16 +17,6 @@ import java.util.regex.Pattern;
 public class ChestCounter {
 
     private static final Pattern PATTERN = Pattern.compile("^ Unclaimed chests: (\\d+)$");
-
-    @ConfigValue
-    public static boolean displayChestCount = false;
-    @ConfigValue
-    public static boolean onlyAfterRunOver = false;
-    @ConfigValue
-    public static boolean sendChestWarning = false;
-
-    @ConfigValue
-    public static int chestWarningCount = 55;
 
     private static int chestDisplayCount = 0;
     private static int countedChests = 0;
@@ -57,7 +48,7 @@ public class ChestCounter {
 
         Events.ON_RUN_END.register(() -> {
             countedChests++;
-            if (sendChestWarning && chestDisplayCount + countedChests >= chestWarningCount) {
+            if (Dungeons.sendChestWarning && chestDisplayCount + countedChests >= Dungeons.chestWarningCount) {
                 ClientPlayerEntity player = MinecraftClient.getInstance().player;
                 if (player != null) {
                     player.playSound(SoundEvents.BLOCK_NOTE_BLOCK_PLING.value(), 2, 1);
@@ -67,25 +58,20 @@ public class ChestCounter {
         });
     }
 
-    @ConfigValue
-    public static HUDComponent chestCounter = new HUDComponent(0, 0, 100, 10, 1, "Chest count",
-            () ->
-            {
-                if ((onlyAfterRunOver && !Phase.runOver())) return false;
-                return displayChestCount && Location.inDungeon();
-            },
-            ((hudComponent, drawContext) -> {
-                int x = hudComponent.getScaledX();
-                int y = hudComponent.getScaledY();
+    public static boolean display() {
+        if ((Dungeons.onlyAfterRunOver && !Phase.runOver())) return false;
+        return Dungeons.displayChestCount && Location.inDungeon();
+    }
 
-                if (hasUpdatedData) {
-                    drawContext.drawText(MinecraftClient.getInstance().textRenderer, Text.literal("Chests: " + Math.min(chestDisplayCount + countedChests, 60)), x, y, 0xffffffff, true);
-                } else {
-                    drawContext.drawText(MinecraftClient.getInstance().textRenderer, Text.literal("go to the dungeon hub"), x, y, 0xffff0000, true);
+    public static void render(HUDComponent component, DrawContext context) {
+        int x = component.getScaledX();
+        int y = component.getScaledY();
 
-                }
-            }), () -> displayChestCount
-    );
+        if (hasUpdatedData) {
+            context.drawText(MinecraftClient.getInstance().textRenderer, Text.literal("Chests: " + Math.min(chestDisplayCount + countedChests, 60)), x, y, 0xffffffff, true);
+        } else {
+            context.drawText(MinecraftClient.getInstance().textRenderer, Text.literal("go to the dungeon hub"), x, y, 0xffff0000, true);
 
-
+        }
+    }
 }

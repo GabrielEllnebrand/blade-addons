@@ -1,12 +1,13 @@
 package blade.addon.features.dungeon;
 
 import blade.addon.utils.Location;
+import blade.addon.utils.config.values.Dungeons;
 import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.events.Events;
 import config.practical.hud.HUDComponent;
-import config.practical.manager.ConfigValue;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.scoreboard.Scoreboard;
@@ -28,12 +29,9 @@ public class DupeClassChecker {
 
     private static boolean hasDuplicateClass = false;
 
-    @ConfigValue
-    public static boolean detectDuplicateClass = false;
-
     public static void init() {
         ClientReceiveMessageEvents.GAME.register((message, overlay) -> {
-            if (!Location.inDungeon() || Phase.runStarted() || !detectDuplicateClass) return;
+            if (!Location.inDungeon() || Phase.runStarted() || !Dungeons.detectDuplicateClass) return;
 
             Matcher matcher = STARTING_PATTERN.matcher(message.getString());
             if (!matcher.find()) return;
@@ -74,14 +72,14 @@ public class DupeClassChecker {
         return false;
     }
 
-    @ConfigValue
-    public static HUDComponent duplicateClassDisplay = new HUDComponent(0, 0, 130, 10, 1, "",
-            () -> Location.inDungeon() && hasDuplicateClass && !Phase.runStarted(),
-            ((hudComponent, drawContext) -> {
-                int x = hudComponent.getScaledX();
-                int y = hudComponent.getScaledY();
+    public static boolean display() {
+        return  Location.inDungeon() && hasDuplicateClass && !Phase.runStarted();
+    }
 
-                drawContext.drawText(MinecraftClient.getInstance().textRenderer, DISPLAY_TEXT, x, y, 0xffffffff, true);
-            }), () -> detectDuplicateClass
-    );
+    public static void render(HUDComponent component, DrawContext context) {
+        int x = component.getScaledX();
+        int y = component.getScaledY();
+
+        context.drawText(MinecraftClient.getInstance().textRenderer, DISPLAY_TEXT, x, y, 0xffffffff, true);
+    }
 }

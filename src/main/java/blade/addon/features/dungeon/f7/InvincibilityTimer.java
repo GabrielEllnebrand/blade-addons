@@ -3,10 +3,10 @@ package blade.addon.features.dungeon.f7;
 import blade.addon.utils.Constants;
 import blade.addon.utils.Location;
 import blade.addon.utils.Misc;
+import blade.addon.utils.config.values.Dungeons;
 import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.events.Events;
 import config.practical.hud.HUDComponent;
-import config.practical.manager.ConfigValue;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gl.RenderPipelines;
@@ -70,18 +70,6 @@ public class InvincibilityTimer {
         }
     }
 
-    @ConfigValue
-    public static boolean displayInvincibilityTimer = false;
-
-    @ConfigValue
-    public static boolean showProcTitle = false;
-
-    @ConfigValue
-    public static DisplayWhen displayWhen = DisplayWhen.ALWAYS;
-
-    @ConfigValue
-    public static boolean useSprites = false;
-
     public static void init() {
         Events.ON_SERVER_TICK.register(InvincibilityTimer::tick);
         ClientReceiveMessageEvents.GAME.register(InvincibilityTimer::detectPet);
@@ -143,19 +131,19 @@ public class InvincibilityTimer {
         Matcher matcher = BONZO_PATTERN.matcher(string);
         if (matcher.matches()) {
             bonzoMaskTicks = BONZO_MASK_COOLDOWN;
-            if (showProcTitle) {
+            if (Dungeons.showProcTitle) {
                 Misc.setTitle(Text.literal("Bonzo"));
             }
         }
         if (string.equals("Second Wind Activated! Your Spirit Mask saved your life!")) {
             spiritMaskTicks = SPIRIT_MASK_COOLDOWN;
-            if (showProcTitle) {
+            if (Dungeons.showProcTitle) {
                 Misc.setTitle(Text.literal("Spirit"));
             }
         }
         if (string.equals("Your Phoenix Pet saved you from certain death!")) {
             phoenixTicks = PHOENIX_COOLDOWN;
-            if (showProcTitle) {
+            if (Dungeons.showProcTitle) {
                 Misc.setTitle(Text.literal("Phoenix"));
             }
         }
@@ -223,45 +211,43 @@ public class InvincibilityTimer {
         return spiritMaskTicks > 0;
     }
 
-    @ConfigValue
-    public static HUDComponent invincibilityTimer = new HUDComponent(0, 0, 110, 28, 1, "Invincibility timer",
-            () -> {
-                if (!displayInvincibilityTimer || !Location.inDungeon()) {
-                    return false;
-                }
+    public static boolean display() {
+        if (!Dungeons.displayInvincibilityTimer || !Location.inDungeon()) {
+            return false;
+        }
 
-                switch (displayWhen) {
-                    case BOSS_ONLY -> {
-                        return Phase.inBoss();
-                    }
-                    case P3_ONLY -> {
-                        return Phase.inP3();
-                    }
-                    case ALWAYS -> {
-                        return true;
-                    }
-                    case USEFUL_PHASES -> {
-                        return Phase.inP3() || Phase.inP2();
-                    }
-                    case null, default -> {
-                        return false;
-                    }
-                }
-            },
-            ((hudComponent, drawContext) -> {
-                int x = hudComponent.getScaledX();
-                int y = hudComponent.getScaledY();
+        switch (Dungeons.displayWhen) {
+            case BOSS_ONLY -> {
+                return Phase.inBoss();
+            }
+            case P3_ONLY -> {
+                return Phase.inP3();
+            }
+            case ALWAYS -> {
+                return true;
+            }
+            case USEFUL_PHASES -> {
+                return Phase.inP3() || Phase.inP2();
+            }
+            case null, default -> {
+                return false;
+            }
+        }
+    }
 
-                if (useSprites) {
-                    drawSprite(drawContext, BONZO_SPRITE, x, y, bonzoMaskOn, bonzoMaskTicks, formatTimer(bonzoMaskTicks));
-                    drawSprite(drawContext, SPIRIT_SPRITE, x, y + SPRITE_SIZE + 1, spiritMaskOn, spiritMaskTicks, formatTimer(spiritMaskTicks));
-                    drawSprite(drawContext, PHOENIX_SPRITE, x, y + (SPRITE_SIZE + 1) * 2, phoenixOn, phoenixTicks, formatTimer(phoenixTicks));
+    public static void render(HUDComponent component, DrawContext context) {
+        int x = component.getScaledX();
+        int y = component.getScaledY();
 
-                } else {
-                    drawContext.drawText(MinecraftClient.getInstance().textRenderer, getBonzoText(), x, y, 0xffffffff, true);
-                    drawContext.drawText(MinecraftClient.getInstance().textRenderer, getSpiritText(), x, y + TEXT_HEIGHT, 0xffffffff, true);
-                    drawContext.drawText(MinecraftClient.getInstance().textRenderer, getPhoenixText(), x, y + TEXT_HEIGHT * 2, 0xffffffff, true);
-                }
-            }), () -> displayInvincibilityTimer
-    );
+        if (Dungeons.useSprites) {
+            drawSprite(context, BONZO_SPRITE, x, y, bonzoMaskOn, bonzoMaskTicks, formatTimer(bonzoMaskTicks));
+            drawSprite(context, SPIRIT_SPRITE, x, y + SPRITE_SIZE + 1, spiritMaskOn, spiritMaskTicks, formatTimer(spiritMaskTicks));
+            drawSprite(context, PHOENIX_SPRITE, x, y + (SPRITE_SIZE + 1) * 2, phoenixOn, phoenixTicks, formatTimer(phoenixTicks));
+
+        } else {
+            context.drawText(MinecraftClient.getInstance().textRenderer, getBonzoText(), x, y, 0xffffffff, true);
+            context.drawText(MinecraftClient.getInstance().textRenderer, getSpiritText(), x, y + TEXT_HEIGHT, 0xffffffff, true);
+            context.drawText(MinecraftClient.getInstance().textRenderer, getPhoenixText(), x, y + TEXT_HEIGHT * 2, 0xffffffff, true);
+        }
+    }
 }

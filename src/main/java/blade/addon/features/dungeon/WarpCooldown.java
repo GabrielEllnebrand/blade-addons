@@ -1,10 +1,11 @@
 package blade.addon.features.dungeon;
 
 import blade.addon.utils.Constants;
+import blade.addon.utils.config.values.Dungeons;
 import config.practical.hud.HUDComponent;
-import config.practical.manager.ConfigValue;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
@@ -19,12 +20,9 @@ public class WarpCooldown {
     private static long endTime = 0;
     private static boolean displayCooldown = false;
 
-    @ConfigValue
-    public static boolean enableWarpCooldown = false;
-
     public static void init() {
         ClientReceiveMessageEvents.GAME.register((message, overlay) -> {
-            if (!enableWarpCooldown) return;
+            if (!Dungeons.enableWarpCooldown) return;
 
             Matcher matcher = PATTERN.matcher(message.getString());
             if (matcher.find()) {
@@ -34,27 +32,25 @@ public class WarpCooldown {
         });
     }
 
-    @ConfigValue
-    public static HUDComponent warpCoolDown = new HUDComponent(0, 0, 110, 10, 0.75f, "Warp cooldown",
-            () -> {
-                if (!enableWarpCooldown || !displayCooldown) return false;
+    public static boolean display()  {
+        if (!Dungeons.enableWarpCooldown || !displayCooldown) return false;
 
-                if ((endTime - System.currentTimeMillis()) > 0) {
-                    return true;
-                } else {
-                    displayCooldown = false;
-                    return false;
-                }
-            },
-            ((hudComponent, drawContext) -> {
-                int x = hudComponent.getScaledX();
-                int y = hudComponent.getScaledY();
+        if ((endTime - System.currentTimeMillis()) > 0) {
+            return true;
+        } else {
+            displayCooldown = false;
+            return false;
+        }
+    }
 
-                double timeRemaining = Math.max((endTime - System.currentTimeMillis()) / 1000.0, 0);
+    public static void render(HUDComponent component, DrawContext context) {
+        int x = component.getScaledX();
+        int y = component.getScaledY();
 
-                Text text = Text.literal("Warp Cooldown: ").formatted(Formatting.DARK_PURPLE).append(Text.literal(Constants.DECIMAL_FORMAT.format(timeRemaining)).formatted(Formatting.WHITE));
+        double timeRemaining = Math.max((endTime - System.currentTimeMillis()) / 1000.0, 0);
 
-                drawContext.drawText(MinecraftClient.getInstance().textRenderer, text, x, y, 0xffffffff, true);
-            }), () ->enableWarpCooldown
-    );
+        Text text = Text.literal("Warp Cooldown: ").formatted(Formatting.DARK_PURPLE).append(Text.literal(Constants.DECIMAL_FORMAT.format(timeRemaining)).formatted(Formatting.WHITE));
+
+        context.drawText(MinecraftClient.getInstance().textRenderer, text, x, y, 0xffffffff, true);
+    }
 }

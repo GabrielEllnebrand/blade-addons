@@ -3,12 +3,12 @@ package blade.addon.features.dungeon.f7;
 import blade.addon.utils.Constants;
 import blade.addon.utils.Location;
 import blade.addon.utils.Misc;
+import blade.addon.utils.config.values.Floor7;
 import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.events.Events;
 import blade.addon.utils.rendering.RenderLayers;
 import blade.addon.utils.rendering.RenderUtils;
 import config.practical.hud.HUDComponent;
-import config.practical.manager.ConfigValue;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
@@ -16,6 +16,7 @@ import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.VertexConsumer;
@@ -53,27 +54,12 @@ public class RelicTimer {
     private static final int GREEN_COLOR = 0xff00ff00;
     private static final int RED_COLOR = 0xffff0000;
 
-    private static final int WIDTH = 30;
-
     private static final Pattern PATTERN = Pattern.compile("^(.+) picked the Corrupted (Red|Purple|Orange|Green|Blue) Relic!$");
 
     private static long pickupTime;
     private static Relic pickedupRelic = null;
 
-    @ConfigValue
-    public static boolean enableRelicStartTimer = false;
-
-    @ConfigValue
-    public static int relicSpawnTicks = 42;
-
-    @ConfigValue
-    public static boolean enableRelicPlaceTime = false;
-
-    @ConfigValue
-    public static boolean renderRelicHighlight = false;
-
-
-    private static int tick = relicSpawnTicks;
+    private static int tick = Floor7.relicSpawnTicks;
 
     public static void init() {
         Events.ON_SERVER_TICK.register(() -> {
@@ -83,7 +69,7 @@ public class RelicTimer {
 
         Events.ON_LOCATION_CHANGE.register(newLocation -> {
             if (Location.inDungeon()) {
-                tick = relicSpawnTicks;
+                tick = Floor7.relicSpawnTicks;
                 pickedupRelic = null;
             }
         });
@@ -95,7 +81,7 @@ public class RelicTimer {
         });
 
         ClientReceiveMessageEvents.GAME.register((message, overlay) -> {
-            if (!Location.inDungeon() || !Phase.inP5() || !enableRelicPlaceTime) return;
+            if (!Location.inDungeon() || !Phase.inP5() || !Floor7.enableRelicPlaceTime) return;
 
             String str = message.getString().replaceAll("§.", "");
             Matcher matcher = PATTERN.matcher(str);
@@ -128,7 +114,7 @@ public class RelicTimer {
         });
 
         WorldRenderEvents.BEFORE_DEBUG_RENDER.register(worldRenderContext -> {
-            if (pickedupRelic == null || !renderRelicHighlight) return;
+            if (pickedupRelic == null || !Floor7.renderRelicHighlight) return;
 
             Camera camera = worldRenderContext.camera();
             Vec3d cameraPos = camera.getPos();
@@ -157,7 +143,7 @@ public class RelicTimer {
         if (block.getBlock() != Blocks.ANVIL && block.getBlock() != Blocks.CAULDRON) return;
         double distance = pickedupRelic.box.getCenter().distanceTo(pos.toCenterPos());
         if (distance <= 1) {
-            if (enableRelicPlaceTime) {
+            if (Floor7.enableRelicPlaceTime) {
             double diff = (System.currentTimeMillis() - pickupTime) / 1000.0;
                 Misc.addChatMessage(Text.literal("The ").formatted(Formatting.GREEN)
                         .append(Text.literal(pickedupRelic.name().toLowerCase()).withColor(pickedupRelic.color))
@@ -170,20 +156,19 @@ public class RelicTimer {
 
     }
 
-    @ConfigValue
-    public static HUDComponent relicSpawnTimer = new HUDComponent(0, 0, WIDTH, 10, 1, "Relic Spawn Timer",
-            () -> enableRelicStartTimer && Location.inDungeon() && Phase.inP5() && tick > 0,
-            ((hudComponent, drawContext) -> {
-                int x = hudComponent.getScaledX();
-                int y = hudComponent.getScaledY();
+    public static boolean display() {
+        return  Floor7.enableRelicStartTimer && Location.inDungeon() && Phase.inP5() && tick > 0;
+    }
 
-                int color = tick > 7 ? GREEN_COLOR : RED_COLOR;
+    public static void render(HUDComponent component, DrawContext context)  {
+        int x = component.getScaledX();
+        int y = component.getScaledY();
 
-                double num = tick * Constants.TICK_DURATION;
+        int color = tick > 7 ? GREEN_COLOR : RED_COLOR;
 
-                RenderUtils.drawCenteredText(drawContext, MinecraftClient.getInstance().textRenderer, Text.literal(Constants.DECIMAL_FORMAT.format(num)), x, y, WIDTH, color);
+        double num = tick * Constants.TICK_DURATION;
 
-            }), () -> enableRelicStartTimer
-    );
+        RenderUtils.drawCenteredText(context, MinecraftClient.getInstance().textRenderer, Text.literal(Constants.DECIMAL_FORMAT.format(num)), x, y, component.getWidth(), color);
 
+    }
 }

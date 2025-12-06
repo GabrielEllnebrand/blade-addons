@@ -1,13 +1,14 @@
 package blade.addon.features.dungeon;
 
 import blade.addon.utils.Location;
+import blade.addon.utils.config.values.Dungeons;
 import blade.addon.utils.dungeon.DungeonClass;
 import blade.addon.utils.events.Events;
 import config.practical.hud.HUDComponent;
-import config.practical.manager.ConfigValue;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Style;
@@ -30,12 +31,9 @@ public class KeyNotifier {
     private static boolean isBloodKey = false;
     private static boolean sentSound = false;
 
-    @ConfigValue
-    public static boolean enableKeyNotifier = false;
-
     public static void init() {
         Events.ON_ENTITY_TRACKED.register((entity, world) -> {
-            if (!Location.inDungeon() || hasKey || !enableKeyNotifier) return;
+            if (!Location.inDungeon() || hasKey || !Dungeons.enableKeyNotifier) return;
             if (!DungeonClass.isClass(DungeonClass.ARCHER) && !DungeonClass.isClass(DungeonClass.MAGE)) return;
 
 
@@ -55,7 +53,7 @@ public class KeyNotifier {
         });
 
         ClientReceiveMessageEvents.GAME.register((message, overlay) -> {
-            if (!Location.inDungeon() || !hasKey || !enableKeyNotifier) return;
+            if (!Location.inDungeon() || !hasKey || !Dungeons.enableKeyNotifier) return;
             if (!DungeonClass.isClass(DungeonClass.ARCHER) && !DungeonClass.isClass(DungeonClass.MAGE)) return;
 
             Matcher matcher = AUTOMATIC_PICKUP_PATTERN.matcher(message.getString());
@@ -93,19 +91,19 @@ public class KeyNotifier {
 
     }
 
-    @ConfigValue
-    public static HUDComponent keyNotifierDisplay = new HUDComponent(0, 0, 120, 10, 1, "",
-            () -> Location.inDungeon() && hasKey,
-            ((hudComponent, drawContext) -> {
-                int x = hudComponent.getScaledX();
-                int y = hudComponent.getScaledY();
+    public static boolean display() {
+        return Location.inDungeon() && hasKey;
+    }
 
-                if (isBloodKey) {
-                    drawContext.drawText(MinecraftClient.getInstance().textRenderer, BLOOD_KEY, x, y, 0xffffffff, true);
-                } else {
-                    drawContext.drawText(MinecraftClient.getInstance().textRenderer, WITHER_KEY, x, y, 0xffffffff, true);
-                }
+    public static void render(HUDComponent component, DrawContext context) {
+        int x = component.getScaledX();
+        int y = component.getScaledY();
 
-            }), () -> enableKeyNotifier
-    );
+        if (isBloodKey) {
+            context.drawText(MinecraftClient.getInstance().textRenderer, BLOOD_KEY, x, y, 0xffffffff, true);
+        } else {
+            context.drawText(MinecraftClient.getInstance().textRenderer, WITHER_KEY, x, y, 0xffffffff, true);
+        }
+
+    }
 }

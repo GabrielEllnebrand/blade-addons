@@ -1,7 +1,7 @@
 package blade.addon.mixin;
 
-import blade.addon.features.ExtraOptions;
 import blade.addon.utils.Misc;
+import blade.addon.utils.config.values.ExtraOptions;
 import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.render.entity.state.EntityRenderState;
 import net.minecraft.entity.Entity;

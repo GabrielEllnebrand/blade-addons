@@ -1,9 +1,8 @@
-package blade.addon.features;
+package blade.addon.utils.config.values;
 
 import config.practical.manager.ConfigValue;
 
 public class ExtraOptions {
-
     @ConfigValue
     public static boolean hideFireInf5 = false;
 
@@ -15,9 +14,4 @@ public class ExtraOptions {
 
     @ConfigValue
     public static boolean hideDeadEntities = false;
-
-    public static void init() {
-
-    }
-
 }

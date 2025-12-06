@@ -2,8 +2,8 @@ package blade.addon.features.dungeon;
 
 import blade.addon.utils.Location;
 import blade.addon.utils.Misc;
+import blade.addon.utils.config.values.Dungeons;
 import blade.addon.utils.dungeon.Phase;
-import config.practical.manager.ConfigValue;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
@@ -17,15 +17,12 @@ public class ExplosiveShot {
     private static final Pattern PATTERN = Pattern.compile("^Your Explosive Shot hit (\\d+) enemies for ([\\d,?.]+) damage\\.$");
     private static final DecimalFormat FORMAT = new DecimalFormat("###,###,###,###");
 
-    @ConfigValue
-    public static boolean calculateCriticalHit = false;
-    @ConfigValue
-    public static boolean onlyInBoss = false;
+
 
     public static void init() {
         ClientReceiveMessageEvents.GAME.register((message, overlay) -> {
-            if (!Location.inDungeon() || !calculateCriticalHit) return;
-            if (onlyInBoss && !Phase.inBoss()) return;
+            if (!Location.inDungeon() || !Dungeons.calculateCriticalHit) return;
+            if (Dungeons.onlyInBoss && !Phase.inBoss()) return;
 
             String string = message.getString();
 

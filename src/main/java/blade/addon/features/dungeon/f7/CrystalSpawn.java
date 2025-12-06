@@ -2,13 +2,14 @@ package blade.addon.features.dungeon.f7;
 
 import blade.addon.utils.Constants;
 import blade.addon.utils.Location;
+import blade.addon.utils.config.values.Floor7;
 import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.events.Events;
 import blade.addon.utils.rendering.RenderUtils;
 import config.practical.hud.HUDComponent;
-import config.practical.manager.ConfigValue;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
@@ -20,18 +21,13 @@ public class CrystalSpawn {
     private static final Pattern PATTERN_1 = Pattern.compile("^\\[BOSS] Maxor: THAT BEAM! IT HURTS! IT HURTS!!$");
     private static final Pattern PATTERN_2 = Pattern.compile("^\\[BOSS] Maxor: YOU TRICKED ME!$");
 
-    @ConfigValue
-    public static boolean enableCrystalSpawnTime = false;
-
-    private static final int WIDTH = 30;
-
     private static final int TICK_SPAWN = 34;
     private static int tick = 0;
 
     public static void init() {
 
         ClientReceiveMessageEvents.GAME.register((message, overlay) -> {
-            if (!Location.inDungeon() || !Phase.inP1() || !enableCrystalSpawnTime) return;
+            if (!Location.inDungeon() || !Phase.inP1() || !Floor7.enableCrystalSpawnTime) return;
 
             Matcher matcher = PATTERN_1.matcher(message.getString());
             if (!matcher.find()) {
@@ -54,17 +50,16 @@ public class CrystalSpawn {
 
     }
 
-    @ConfigValue
-    public static HUDComponent crystalSpawnTime = new HUDComponent(0, 0, WIDTH, 10, 1, "Crystal Spawn Time",
-            () -> tick > 0 && Location.inDungeon(),
-            ((hudComponent, drawContext) -> {
-                int x = hudComponent.getScaledX();
-                int y = hudComponent.getScaledY();
+    public static boolean display() {
+        return  tick > 0 && Location.inDungeon() && Floor7.enableCrystalSpawnTime;
+    }
 
-                double num = tick * Constants.TICK_DURATION;
+    public static void render(HUDComponent component, DrawContext context) {
+        int x = component.getScaledX();
+        int y = component.getScaledY();
 
-                RenderUtils.drawCenteredText(drawContext, MinecraftClient.getInstance().textRenderer, Text.literal(Constants.DECIMAL_FORMAT.format(num)).formatted(Formatting.LIGHT_PURPLE), x, y, WIDTH);
+        double num = tick * Constants.TICK_DURATION;
 
-            }), () -> enableCrystalSpawnTime
-    );
+        RenderUtils.drawCenteredText(context, MinecraftClient.getInstance().textRenderer, Text.literal(Constants.DECIMAL_FORMAT.format(num)).formatted(Formatting.LIGHT_PURPLE), x, y, component.getWidth());
+    }
 }

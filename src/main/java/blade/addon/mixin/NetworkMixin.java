@@ -1,6 +1,6 @@
 package blade.addon.mixin;
 
-import blade.addon.features.ExtraOptions;
+import blade.addon.utils.config.values.ExtraOptions;
 import blade.addon.utils.events.Events;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;

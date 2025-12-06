@@ -1,8 +1,9 @@
 package blade.addon.mixin;
 
-import blade.addon.features.ExtraOptions;
 import blade.addon.features.dungeon.HidePlayers;
 import blade.addon.features.dungeon.ItemHighlight;
+import blade.addon.utils.config.values.Dungeons;
+import blade.addon.utils.config.values.ExtraOptions;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.render.Frustum;
@@ -33,7 +34,7 @@ public class RenderMixin {
             cir.setReturnValue(false);
         }
 
-        if (entity instanceof ItemEntity item && ItemHighlight.highlightItems) {
+        if (entity instanceof ItemEntity item && Dungeons.highlightItems) {
             if (ItemHighlight.hideItem(item)) {
                 cir.setReturnValue(false);
             }

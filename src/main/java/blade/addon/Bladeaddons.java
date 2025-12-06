@@ -26,6 +26,7 @@ import blade.addon.utils.Commands;
 import blade.addon.utils.Keybinds;
 import blade.addon.utils.Location;
 import blade.addon.utils.Scheduler;
+import blade.addon.utils.config.components.Components;
 import blade.addon.utils.config.Config;
 import blade.addon.utils.dungeon.DungeonClass;
 import blade.addon.utils.dungeon.Phase;
@@ -34,6 +35,7 @@ import net.fabricmc.api.ModInitializer;
 public class Bladeaddons implements ModInitializer {
 	@Override
 	public void onInitialize() {
+        Components.init();
         Config.manager.load();
 		Keybinds.register();
         Commands.register();

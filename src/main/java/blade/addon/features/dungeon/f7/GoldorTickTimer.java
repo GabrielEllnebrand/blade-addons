@@ -2,23 +2,17 @@ package blade.addon.features.dungeon.f7;
 
 import blade.addon.utils.Constants;
 import blade.addon.utils.Location;
+import blade.addon.utils.config.values.Floor7;
 import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.events.Events;
 import blade.addon.utils.rendering.RenderUtils;
 import config.practical.hud.HUDComponent;
-import config.practical.manager.ConfigValue;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
 
 public class GoldorTickTimer {
 
-    private static final int WIDTH = 30;
-
-    @ConfigValue
-    public static boolean enableGoldorTickTimer = false;
-
-    @ConfigValue
-    public static boolean inDeathTicks = true;
     private static int tick = 0;
 
     public static void init() {
@@ -33,29 +27,29 @@ public class GoldorTickTimer {
         });
     }
 
-    @ConfigValue
-    public static HUDComponent goldorTickTimer = new HUDComponent(0, 0, WIDTH, 10, 1, "Goldor Tick Timer",
-            () -> enableGoldorTickTimer && Location.inDungeon() && Phase.inTerminals(),
-            ((hudComponent, drawContext) -> {
-                int x = hudComponent.getScaledX();
-                int y = hudComponent.getScaledY();
+    public static boolean display() {
+        return  Floor7.enableGoldorTickTimer && Location.inDungeon() && Phase.inTerminals();
+    }
 
-                int color;
-                double num = tick * Constants.TICK_DURATION;
+    public static void render(HUDComponent component, DrawContext context) {
+        int x = component.getScaledX();
+        int y = component.getScaledY();
 
-                double mod = num % 3;
-                if (mod < 1) {
-                    color = Constants.GREEN_COLOR;
-                } else if (mod < 2) {
-                    color = Constants.ORANGE_COLOR;
-                } else {
-                    color = Constants.RED_COLOR;
-                }
+        int color;
+        double num = tick * Constants.TICK_DURATION;
 
-                if (inDeathTicks) num = mod;
+        double mod = num % 3;
+        if (mod < 1) {
+            color = Constants.GREEN_COLOR;
+        } else if (mod < 2) {
+            color = Constants.ORANGE_COLOR;
+        } else {
+            color = Constants.RED_COLOR;
+        }
 
-                RenderUtils.drawCenteredText(drawContext, MinecraftClient.getInstance().textRenderer, Text.literal(Constants.DECIMAL_FORMAT.format(num)), x, y, WIDTH, color);
+        if (Floor7.inDeathTicks) num = mod;
 
-            }), () -> enableGoldorTickTimer
-    );
+        RenderUtils.drawCenteredText(context, MinecraftClient.getInstance().textRenderer, Text.literal(Constants.DECIMAL_FORMAT.format(num)), x, y, component.getWidth(), color);
+
+    }
 }

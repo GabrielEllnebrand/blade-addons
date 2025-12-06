@@ -1,9 +1,9 @@
 package blade.addon.features.dungeon;
 
 import blade.addon.utils.Location;
+import blade.addon.utils.config.values.Dungeons;
 import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.events.Events;
-import config.practical.manager.ConfigValue;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.Vec3d;
 
@@ -17,17 +17,6 @@ public class HidePlayers {
     private static long startTime;
     private static boolean justLeapt = false;
 
-    @ConfigValue
-    public static boolean hideAfterLeap = false;
-
-    @ConfigValue
-    public static boolean hideOnlyInBoss = true;
-
-    @ConfigValue
-    public static boolean hideAtSS = false;
-
-    @ConfigValue
-    public static boolean hideBeforeTermsOnly = false;
 
     public static void init() {
         Events.ON_LEAP.register(message -> {
@@ -37,8 +26,8 @@ public class HidePlayers {
     }
 
     public static boolean testHideAtLeap() {
-        if (!hideAfterLeap || !justLeapt) return false;
-        if (!Phase.inBoss() && hideOnlyInBoss) return false;
+        if (!Dungeons.hideAfterLeap || !justLeapt) return false;
+        if (!Phase.inBoss() && Dungeons.hideOnlyInBoss) return false;
 
         if (System.currentTimeMillis() - startTime >= HIDE_DURATION) {
             justLeapt = false;
@@ -49,8 +38,8 @@ public class HidePlayers {
     }
 
     public static boolean testHideAtSS(PlayerEntity player) {
-        if (!hideAtSS || !Phase.inBoss()) return false;
-        if (hideBeforeTermsOnly && Phase.inP3()) return false;
+        if (!Dungeons.hideAtSS || !Phase.inBoss()) return false;
+        if (Dungeons.hideBeforeTermsOnly && Phase.inP3()) return false;
 
         return SS_POSITION.distanceTo(player.getPos()) <= DISTANCE;
     }

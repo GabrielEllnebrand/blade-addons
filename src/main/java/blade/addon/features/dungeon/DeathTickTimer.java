@@ -2,22 +2,20 @@ package blade.addon.features.dungeon;
 
 import blade.addon.utils.Constants;
 import blade.addon.utils.Location;
+import blade.addon.utils.config.values.Dungeons;
 import blade.addon.utils.events.Events;
 import blade.addon.utils.rendering.RenderUtils;
 import config.practical.hud.HUDComponent;
-import config.practical.manager.ConfigValue;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.Vec3d;
 
 public class DeathTickTimer {
 
-    private static final int WIDTH = 30;
     private static final int TOTAL_DEATH_TICKS = 40;
     private static Vec3d firstPosition;
 
-    @ConfigValue
-    public static boolean enableDeathTickTimer = false;
     private static int tick = TOTAL_DEATH_TICKS;
 
     public static void init() {
@@ -48,17 +46,16 @@ public class DeathTickTimer {
         }
     }
 
-    @ConfigValue
-    public static HUDComponent deathTickTimer = new HUDComponent(0, 0, WIDTH, 10, 1, "Death Tick Timer",
-            () -> enableDeathTickTimer && Location.inDungeon(),
-            ((hudComponent, drawContext) -> {
-                int x = hudComponent.getScaledX();
-                int y = hudComponent.getScaledY();
+    public static boolean display() {
+        return Dungeons.enableDeathTickTimer && Location.inDungeon();
+    }
 
-                double num = tick * Constants.TICK_DURATION;
+    public static void render(HUDComponent component, DrawContext context) {
+        int x = component.getScaledX();
+        int y = component.getScaledY();
 
-                RenderUtils.drawCenteredText(drawContext, MinecraftClient.getInstance().textRenderer, Text.literal(Constants.DECIMAL_FORMAT.format(num)), x, y, WIDTH);
+        double num = tick * Constants.TICK_DURATION;
+        RenderUtils.drawCenteredText(context, MinecraftClient.getInstance().textRenderer, Text.literal(Constants.DECIMAL_FORMAT.format(num)), x, y, component.getWidth());
 
-            }), () -> enableDeathTickTimer
-    );
+    }
 }
