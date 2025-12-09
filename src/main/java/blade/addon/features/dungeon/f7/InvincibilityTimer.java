@@ -39,7 +39,7 @@ public class InvincibilityTimer {
     private static final Pattern BONZO_ON_HEAD_PATTERN = Pattern.compile("Bonzo's Mask");
     private static final Pattern SPIRIT_ON_HEAD_PATTERN = Pattern.compile("Spirit Mask");
 
-    private static final Pattern MANUAL_EQUIP_PET_PATTERN = Pattern.compile("^You summoned your (\\D+)!$");
+    private static final Pattern MANUAL_EQUIP_PET_PATTERN = Pattern.compile("^You summoned your (\\D+)( ✦)?!$");
     private static final Pattern RULE_EQUIP_PET_PATTERN = Pattern.compile("^Autopet equipped your \\[Lvl [0-9]+] (\\D+)( ✦)?! VIEW RULE$");
 
     //in ticks
@@ -102,13 +102,13 @@ public class InvincibilityTimer {
         Matcher matcher = MANUAL_EQUIP_PET_PATTERN.matcher(string);
         if (matcher.find()) {
             String petName = matcher.group(1);
-            phoenixOn = petName.equals("Phoenix");
+            phoenixOn = petName.contains("Phoenix");
         }
 
         matcher = RULE_EQUIP_PET_PATTERN.matcher(string);
         if (matcher.find()) {
             String petName = matcher.group(1);
-            phoenixOn = petName.equals("Phoenix");
+            phoenixOn = petName.contains("Phoenix");
         }
     }
 

@@ -20,6 +20,9 @@ public class Floor7 {
     public static boolean enableStormTickTimer = false;
 
     @ConfigValue
+    public static boolean tickDownStormTickTimer = false;
+
+    @ConfigValue
     public static boolean enableStormDeathTime = false;
 
     @ConfigValue

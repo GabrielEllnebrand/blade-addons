@@ -25,8 +25,6 @@ public enum Location {
                 inSkyblock = serverType.getName().equals("SkyBlock");
             }
 
-            System.out.println(map.toUpperCase().replace(" ", "_"));
-
             try {
                 currentLocation = Location.valueOf(map.toUpperCase().replace(" ", "_"));
             } catch (IllegalArgumentException ignored) {

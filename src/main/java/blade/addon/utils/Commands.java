@@ -1,11 +1,14 @@
 package blade.addon.utils;
 
+import blade.addon.features.dungeon.LeapOrder;
 import blade.addon.features.dungeon.f7.BossWaypoints;
 import blade.addon.utils.config.Config;
 import blade.addon.utils.dungeon.FillHelper;
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.DoubleArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
@@ -14,38 +17,56 @@ import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.command.CommandRegistryAccess;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+
 public class Commands {
 
     private static final String[] COMMAND_ALIASES = {"ba", "blade", "bladeaddons"};
+    private static final LiteralArgumentBuilder<FabricClientCommandSource> devRoot = ClientCommandManager.literal("badev");
 
-    public static void register() {
+    public static void init() {
         ClientCommandRegistrationCallback.EVENT.register(Commands::registerCommands);
     }
 
     public static void registerCommands(@NotNull CommandDispatcher<FabricClientCommandSource> dispatcher,
                                         CommandRegistryAccess registryAccess) {
 
+        dispatcher.register(devRoot);
+
+
         //prob not a good solution but I don't use that many commands currently
         for (String alias : COMMAND_ALIASES) {
             dispatcher.register(
                     ClientCommandManager.literal(alias)
-                            .then(ClientCommandManager.literal("ep").executes(context -> FillHelper.fillItem(MinecraftClient.getInstance(), FillHelper.ENDER_PEARL, 16, 16)))
+                            .then(ClientCommandManager.literal("ep").executes(context -> FillHelper.fillItem(FillHelper.ENDER_PEARL, 16, 16, false)))
 
-                            .then(ClientCommandManager.literal("sb").executes(context -> FillHelper.fillItem(MinecraftClient.getInstance(), FillHelper.SUPERBOOM_TNT, 64, 64)))
+                            .then(ClientCommandManager.literal("sb").executes(context -> FillHelper.fillItem(FillHelper.SUPERBOOM_TNT, 64, 64, false)))
 
-                            .then(ClientCommandManager.literal("ij").executes(context -> FillHelper.fillItem(MinecraftClient.getInstance(), FillHelper.INFLATABLE_JERRY, 64, 64)))
+                            .then(ClientCommandManager.literal("ij").executes(context -> FillHelper.fillItem(FillHelper.INFLATABLE_JERRY, 64, 64, false)))
 
                             .then(ClientCommandManager.literal("refill")
                                     .executes(
                                             context -> {
-                                                FillHelper.fillItem(MinecraftClient.getInstance(), FillHelper.ENDER_PEARL, 16, 16);
-                                                Scheduler.scheduleTask(() -> FillHelper.fillItem(MinecraftClient.getInstance(), FillHelper.SUPERBOOM_TNT, 64, 64), 40);
-                                                Scheduler.scheduleTask(() -> FillHelper.fillItem(MinecraftClient.getInstance(), FillHelper.INFLATABLE_JERRY, 64, 64), 80);
+                                                FillHelper.fillItem(FillHelper.ENDER_PEARL, 16, 16, true);
+                                                Scheduler.scheduleTask(() -> FillHelper.fillItem(FillHelper.SUPERBOOM_TNT, 64, 64, true), 40);
+                                                Scheduler.scheduleTask(() -> FillHelper.fillItem(FillHelper.INFLATABLE_JERRY, 64, 64, true), 80);
                                                 return Constants.SUCCESS;
                                             }
 
                                     ))
 
+                            .then(ClientCommandManager.literal("leaporder")
+                                    .then(ClientCommandManager.argument("backupMage", StringArgumentType.string())
+                                            .then(ClientCommandManager.argument("odinOrder", BoolArgumentType.bool())
+                                                    .executes(context -> {
+                                                        String backupMage = StringArgumentType.getString(context, "backupMage");
+                                                        boolean odinOrder = BoolArgumentType.getBool(context, "odinOrder");
+                                                        LeapOrder.leapOrder(backupMage, odinOrder);
+                                                        return Constants.SUCCESS;
+                                                    })
+                                            )
+                                    )
+                            )
 
                             .then(ClientCommandManager.literal("waypoint")
 
@@ -145,16 +166,6 @@ public class Commands {
 
                             )
 
-                            .then(ClientCommandManager.literal("debug")
-                                    .then(ClientCommandManager.argument("option", StringArgumentType.greedyString()).executes(context -> {
-                                                String option = StringArgumentType.getString(context, "option");
-                                                return Debug.parseOption(option);
-                                            })
-                                    )
-                            )
-
-
-
                             .executes(commandContext -> Scheduler.scheduleScreen(Config.createScreen(null)))
             );
 
@@ -165,4 +176,7 @@ public class Commands {
         }
     }
 
+    public static void registerDevCommand(LiteralArgumentBuilder<FabricClientCommandSource> commandManager) {
+        devRoot.then(commandManager);
+    }
 }

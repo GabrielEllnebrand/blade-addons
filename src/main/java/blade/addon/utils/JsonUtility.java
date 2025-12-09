@@ -32,7 +32,7 @@ public class JsonUtility {
                 return parseSplits(element);
             }
         } catch (IOException e) {
-            System.out.println(e.getMessage());
+            Debug.addDebugLog(e.getMessage());
         }
 
         return new HashMap<>();
@@ -78,7 +78,7 @@ public class JsonUtility {
                 return parsePositonalMessages(element);
             }
         } catch (IOException e) {
-            System.out.println(e.getMessage());
+            Debug.addDebugLog(e.getMessage());
         }
 
         return new ArrayList<>();

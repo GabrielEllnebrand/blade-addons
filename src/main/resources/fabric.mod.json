@@ -3,9 +3,9 @@
 	"id": "blade-addons",
 	"version": "${version}",
 	"name": "blade-addons",
-	"description": "This is an example description! Tell everyone what your mod is about!",
+	"description": "Just some 1.21 mod that ports mods like valley",
 	"authors": [
-		"Me!"
+		"BladeMasterGabe"
 	],
 	"contact": {
 		"homepage": "https://fabricmc.net/",

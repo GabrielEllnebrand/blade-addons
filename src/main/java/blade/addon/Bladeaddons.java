@@ -23,13 +23,15 @@ import blade.addon.features.dungeon.f7.RelicTimer;
 import blade.addon.features.dungeon.f7.StormTickTimer;
 import blade.addon.features.dungeon.f7.TermStartTimer;
 import blade.addon.utils.Commands;
+import blade.addon.utils.Debug;
 import blade.addon.utils.Keybinds;
 import blade.addon.utils.Location;
 import blade.addon.utils.Scheduler;
-import blade.addon.utils.config.components.Components;
 import blade.addon.utils.config.Config;
+import blade.addon.utils.config.components.Components;
 import blade.addon.utils.dungeon.DungeonClass;
 import blade.addon.utils.dungeon.Phase;
+import blade.addon.utils.dungeon.Section;
 import net.fabricmc.api.ModInitializer;
 
 public class Bladeaddons implements ModInitializer {
@@ -37,10 +39,12 @@ public class Bladeaddons implements ModInitializer {
 	public void onInitialize() {
         Components.init();
         Config.manager.load();
-		Keybinds.register();
-        Commands.register();
+		Keybinds.init();
+        Commands.init();
+        Debug.init();
 		Location.init();
         Phase.init();
+        Section.init();
         DungeonClass.init();
         StormTickTimer.init();
         GoldorTickTimer.init();

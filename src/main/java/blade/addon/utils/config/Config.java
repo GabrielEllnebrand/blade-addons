@@ -10,6 +10,7 @@ import blade.addon.utils.config.values.Dungeons;
 import blade.addon.utils.config.values.ExtraOptions;
 import blade.addon.utils.config.values.Floor7;
 import blade.addon.utils.dungeon.Phase;
+import blade.addon.utils.dungeon.Section;
 import blade.addon.utils.dungeon.Split;
 import config.practical.ConfigurableScreen;
 import config.practical.category.ConfigCategory;
@@ -29,7 +30,7 @@ public class Config {
 
     private static final Text TITLE = Text.literal("Blade Addons");
     public static final ConfigManager manager = new ConfigManager("./config/" + Constants.NAMESPACE + ".json",
-            List.of(Phase.class, Split.class, MobHighlight.class, ExtraOptions.class, DianaNotifier.class, Components.class, Dungeons.class, Floor7.class));
+            List.of(Phase.class, Section.class, Split.class, MobHighlight.class, ExtraOptions.class, DianaNotifier.class, Components.class, Dungeons.class, Floor7.class));
 
     public static Screen createScreen(Screen parent) {
         ConfigurableScreen screen = new ConfigurableScreen(TITLE, parent, manager);
@@ -91,6 +92,7 @@ public class Config {
 
         ConfigSection storm = new ConfigSection(Text.literal("Storm"));
         storm.add(new ConfigBool(Text.literal("Storm Tick timer"), () -> Floor7.enableStormTickTimer, bool -> Floor7.enableStormTickTimer = bool));
+        storm.add(new ConfigBool(Text.literal("Tick down from 5"), () -> Floor7.tickDownStormTickTimer, bool -> Floor7.tickDownStormTickTimer = bool));
         storm.add(new ConfigBool(Text.literal("First Death time"), () -> Floor7.enableStormDeathTime, bool -> Floor7.enableStormDeathTime = bool));
         storm.add(new ConfigBool(Text.literal("Distance to ledge"), () -> Floor7.displayDistanceToLedge, bool -> Floor7.displayDistanceToLedge = bool));
         storm.add(new ConfigBool(Text.literal("Warn if spirit mask is used"), () -> Floor7.notifyUsedSpiritMask, bool -> Floor7.notifyUsedSpiritMask = bool));
@@ -101,6 +103,9 @@ public class Config {
         goldor.add(new ConfigBool(Text.literal("Term start time"), () -> Floor7.enableTermStartTimer, bool -> Floor7.enableTermStartTimer = bool));
         goldor.add(new ConfigBool(Text.literal("death ticks intervals"), () -> Floor7.inDeathTicks, bool -> Floor7.inDeathTicks = bool));
         goldor.add(new ConfigBool(Text.literal("Positional messages"), () -> Floor7.enablePositionalMessages, bool -> Floor7.enablePositionalMessages = bool));
+        goldor.add(new ConfigBool(Text.literal("Terminal splits"), () -> Section.enableTerminalSplits, bool -> Section.enableTerminalSplits = bool));
+        goldor.add(new ConfigOptions<>(Text.literal("Display when"), Section.DisplayTerminalSplitsWhen.values(), () -> Section.displayTerminalSplitsWhen, when -> Section.displayTerminalSplitsWhen = when));
+
 
         floor7.add(goldor);
 
@@ -116,6 +121,7 @@ public class Config {
         ConfigCategory splits = new ConfigCategory("Splits");
         splits.add(new ConfigBool(Text.literal("Enable Splits"), () -> Phase.enableSplits, bool -> Phase.enableSplits = bool));
         splits.add(new ConfigBool(Text.literal("Include total time"), () -> Phase.includeTotalTime, bool -> Phase.includeTotalTime = bool));
+        splits.add(new ConfigBool(Text.literal("Send split in chat when over"), () -> Phase.sendSplitInChat, bool -> Phase.sendSplitInChat = bool));
         splits.add(new ConfigOptions<>(Text.literal("Tick timer type"), Split.TimerType.values(), () -> Split.timerType, type -> Split.timerType = type));
 
         splits.add(new ConfigColor(Text.literal("Real time color (Inactive)"), () -> Split.realTimeColorInactive, color -> Split.realTimeColorInactive = color, "real-time-inactive", false));
@@ -160,6 +166,7 @@ public class Config {
         extra.add(new ConfigBool(Text.literal("Hide arrows stuck to entities"), () -> ExtraOptions.hideStuckArrows, bool -> ExtraOptions.hideStuckArrows = bool));
         extra.add(new ConfigBool(Text.literal("Disable ability on cooldown sound"), () -> ExtraOptions.disableAbilityCooldownSound, bool -> ExtraOptions.disableAbilityCooldownSound = bool));
         extra.add(new ConfigBool(Text.literal("Hide dead entities"), () -> ExtraOptions.hideDeadEntities, bool -> ExtraOptions.hideDeadEntities = bool));
+        extra.add(new ConfigBool(Text.literal("Item rarity background"), () -> ExtraOptions.itemRarityBackground, bool -> ExtraOptions.itemRarityBackground = bool));
 
         ConfigSection diana = new ConfigSection(Text.literal("Diana notifications"));
         diana.add(new ConfigBool(Text.literal("Send Sound"), () -> DianaNotifier.sendSound, bool -> DianaNotifier.sendSound = bool));

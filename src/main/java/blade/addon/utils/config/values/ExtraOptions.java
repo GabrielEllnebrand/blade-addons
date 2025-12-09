@@ -14,4 +14,7 @@ public class ExtraOptions {
 
     @ConfigValue
     public static boolean hideDeadEntities = false;
+
+    @ConfigValue
+    public static boolean itemRarityBackground = false;
 }

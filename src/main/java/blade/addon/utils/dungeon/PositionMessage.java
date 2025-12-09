@@ -26,7 +26,7 @@ public class PositionMessage {
 
     private boolean inAValidSection() {
         for (int section: sections) {
-            if (Phase.inSection(section)) return true;
+            if (Section.inSection(section)) return true;
         }
         return false;
     }

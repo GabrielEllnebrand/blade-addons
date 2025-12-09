@@ -23,22 +23,16 @@ public class Phase {
 
     private static final Pattern END_PATTERN = Pattern.compile("^\\s*☠ Defeated (.+) in 0?([\\dhms ]+)\\s*(\\(NEW RECORD!\\))?$");
     private static final Pattern SEARCH_PATTERN = Pattern.compile("^ ⏣ The Catacombs .*$");
-    private static final Pattern TERMINALS_DONE_PATTERN = Pattern.compile("(activated|completed) (a terminal|a device|a lever)! \\((\\d)/(\\d)\\)$");
 
     private static final Split DUMMY_SPLIT = new Split("test split", "if this is called idk", "if this is called idk", 43690);
 
     private static final HashMap<String, ArrayList<Split>> FLOOR_SPLITS = JsonUtility.readSplits("/data/splits.json");
 
-    private static final int TEXT_HEIGHT = 10;
     private static final int DUMMY_SIZE = 10;
 
     private static ArrayList<Split> currentSplits;
     private static int currentPhase = -1;
     private static String floor = "";
-
-    private static int currentSection = 0;
-    private static boolean termsDone = false;
-    private static boolean gateBlownUp = false;
 
     private static boolean inFloor7 = false;
     private static boolean stormDead = false;
@@ -49,6 +43,9 @@ public class Phase {
 
     @ConfigValue
     public static boolean includeTotalTime = false;
+
+    @ConfigValue
+    public static boolean sendSplitInChat = false;
 
     public static void init() {
         Events.ON_SERVER_TICK.register(() -> {
@@ -95,9 +92,6 @@ public class Phase {
         inFloor7 = false;
         stormDead = false;
         runOver = false;
-        currentSection = 0;
-        termsDone = false;
-        gateBlownUp = false;
     }
 
     public static void parseGameMessage(Text message) {
@@ -114,6 +108,10 @@ public class Phase {
             currentSplit.parseMessage(string);
 
             if (currentSplit.ended()) {
+                if (sendSplitInChat) {
+                    Misc.addChatMessage(currentSplit.createNameText().append(currentSplit.createTimeText()));
+                }
+
                 currentPhase = i + 1;
                 if (Events.ON_PHASE_CHANGE.hasListeners()) {
                     Events.ON_PHASE_CHANGE.invoke(PhaseEvent::onPhaseChange);
@@ -134,11 +132,9 @@ public class Phase {
         }
 
         if (inP2()) {
-            parseP2(string);
-        }
-
-        if (inP3()) {
-            parseP3(string);
+            if (string.equals("[BOSS] Storm: I should have known that I stood no chance.")) {
+                stormDead = true;
+            }
         }
     }
 
@@ -163,62 +159,13 @@ public class Phase {
         }
     }
 
-
-    private static void parseP2(String string) {
-        if (string.equals("[BOSS] Storm: I should have known that I stood no chance.")) {
-            stormDead = true;
-            currentSection = 1;
-        }
-    }
-
-    private static void parseP3(String string) {
-        if (!termsDone) {
-            Matcher matcher = TERMINALS_DONE_PATTERN.matcher(string);
-            if (matcher.find()) {
-                String num1 = matcher.group(3);
-                String num2 = matcher.group(4);
-                if (num1.equals(num2)) {
-                    termsDone = true;
-                }
-            }
-        }
-
-        if (!gateBlownUp) {
-            if (string.equals("The gate has been destroyed!")) {
-                gateBlownUp = true;
-            }
-        }
-
-        if (gateBlownUp && termsDone) {
-            currentSection++;
-            gateBlownUp = false;
-            termsDone = false;
-        }
-
-        if (string.equals("The Core entrance is opening!")) {
-            //so in "goldor tunnel" can be shown after terms are done
-            currentSection = 5;
-        }
-    }
-
     public static double getPhase() {
         return currentPhase;
     }
 
-    public static double getSection() {
-        return currentSection;
-    }
 
     public static boolean isInFloor7() {
         return inFloor7;
-    }
-
-    public static boolean isGateBlownUp() {
-        return gateBlownUp;
-    }
-
-    public static boolean isTermsDone() {
-        return termsDone;
     }
 
     public static boolean runStarted() {
@@ -245,12 +192,12 @@ public class Phase {
         return currentPhase == 6 && inFloor7;
     }
 
-    public static boolean inP3() {
-        return (currentPhase == 6 || currentPhase == 7) && inFloor7;
+    public static boolean inGoldorTunnel() {
+        return currentPhase == 7 && inFloor7;
     }
 
-    public static boolean inSection(int section) {
-        return currentSection == section && inP3();
+    public static boolean inP3() {
+        return (currentPhase == 6 || currentPhase == 7) && inFloor7;
     }
 
     public static boolean inP5() {
@@ -275,12 +222,12 @@ public class Phase {
                     if (!includeTotalTime) splitCount--;
 
                     for (int i = 0; i < splitCount; i++) {
-                        currentSplits.get(i).drawSplit(drawContext, textRenderer, x, y + TEXT_HEIGHT * i);
+                        currentSplits.get(i).drawSplit(drawContext, textRenderer, x, y + Constants.TEXT_HEIGHT * i);
 
                     }
                 } else {
                     for (int i = 0; i < DUMMY_SIZE; i++) {
-                        DUMMY_SPLIT.drawSplit(drawContext, textRenderer, x, y + TEXT_HEIGHT * i);
+                        DUMMY_SPLIT.drawSplit(drawContext, textRenderer, x, y + Constants.TEXT_HEIGHT * i);
                     }
                 }
             }), () -> enableSplits

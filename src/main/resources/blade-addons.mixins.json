@@ -5,6 +5,7 @@
   "mixins": [
     "ArrowMixin",
     "InventoryMixin",
+    "ItemStackMixin",
     "NetworkMixin",
     "ServerTickMixin"
   ],
@@ -17,6 +18,8 @@
   "client": [
     "BlockEntityRenderMixin",
     "FireMixin",
+    "HandledScreenMixin",
+    "InGameHudMixin",
     "NetworkMixin",
     "PositionMixin",
     "RenderMixin"
