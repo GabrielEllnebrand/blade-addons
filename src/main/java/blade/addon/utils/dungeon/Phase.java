@@ -29,6 +29,7 @@ public class Phase {
     private static final HashMap<String, ArrayList<Split>> FLOOR_SPLITS = JsonUtility.readSplits("/data/splits.json");
 
     private static final int DUMMY_SIZE = 10;
+    public static final int SPLIT_LENGTH = 165;
 
     private static ArrayList<Split> currentSplits;
     private static int currentPhase = -1;
@@ -208,8 +209,10 @@ public class Phase {
         return runOver;
     }
 
+
+
     @ConfigValue
-    public static HUDComponent splitTimer = new HUDComponent(0, 0, Split.SPLIT_LENGTH, 100, 1, "Splits",
+    public static HUDComponent splitTimer = new HUDComponent(0, 0, SPLIT_LENGTH, 100, 1, "Splits",
             () -> Location.inDungeon() && enableSplits && Phase.runStarted(),
             ((hudComponent, drawContext) -> {
                 int x = hudComponent.getScaledX();
@@ -222,12 +225,12 @@ public class Phase {
                     if (!includeTotalTime) splitCount--;
 
                     for (int i = 0; i < splitCount; i++) {
-                        currentSplits.get(i).drawSplit(drawContext, textRenderer, x, y + Constants.TEXT_HEIGHT * i);
+                        currentSplits.get(i).drawSplit(drawContext, textRenderer, x, y + Constants.TEXT_HEIGHT * i, SPLIT_LENGTH);
 
                     }
                 } else {
                     for (int i = 0; i < DUMMY_SIZE; i++) {
-                        DUMMY_SPLIT.drawSplit(drawContext, textRenderer, x, y + Constants.TEXT_HEIGHT * i);
+                        DUMMY_SPLIT.drawSplit(drawContext, textRenderer, x, y + Constants.TEXT_HEIGHT * i, SPLIT_LENGTH);
                     }
                 }
             }), () -> enableSplits

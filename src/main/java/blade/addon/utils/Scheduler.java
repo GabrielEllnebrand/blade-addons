@@ -2,6 +2,7 @@ package blade.addon.utils;
 
 import com.mojang.brigadier.Command;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.sound.SoundEvent;
@@ -12,9 +13,6 @@ public class Scheduler {
 
     private static Screen scheduledScreen = null;
     private static int screenTicks = 0;
-    private static SoundEvent scheduledSound = null;
-    private static float scheduledVolume = 0;
-    private static float scheduledPitch = 0;
     private static String scheduledCommand = null;
 
     static class Task {
@@ -36,14 +34,6 @@ public class Scheduler {
                 if (screenTicks <= 0) {
                     minecraftClient.setScreen(scheduledScreen);
                     scheduledScreen = null;
-                }
-            }
-
-            if (scheduledSound != null) {
-                ClientPlayerEntity player = minecraftClient.player;
-                if (player != null) {
-                    player.playSound(scheduledSound, scheduledVolume, scheduledPitch);
-                    scheduledSound = null;
                 }
             }
 
@@ -75,9 +65,12 @@ public class Scheduler {
     }
 
     public static void scheduleSound(SoundEvent soundEvent, float volume, float pitch) {
-        scheduledSound = soundEvent;
-        scheduledVolume = volume;
-        scheduledPitch = pitch;
+        tasks.add(new Task(() -> {
+            ClientPlayerEntity player = MinecraftClient.getInstance().player;
+            if (player == null) return;
+            player.playSound(soundEvent, volume, pitch);
+        }, 1));
+
     }
 
     public static void scheduleCommand(String command) {

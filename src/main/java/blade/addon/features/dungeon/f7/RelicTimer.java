@@ -11,10 +11,6 @@ import blade.addon.utils.rendering.RenderUtils;
 import config.practical.hud.HUDComponent;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
-import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
-import net.fabricmc.fabric.api.event.player.UseBlockCallback;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.network.ClientPlayerEntity;
@@ -24,7 +20,6 @@ import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.VertexRendering;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
-import net.minecraft.util.ActionResult;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
@@ -97,20 +92,30 @@ public class RelicTimer {
             }
         });
 
-        AttackBlockCallback.EVENT.register((playerEntity, world, hand, blockPos, direction) -> {
-            if (world == null) return ActionResult.PASS;
-            if (!Location.inDungeon() || !Phase.inP5() || pickedupRelic == null) return ActionResult.PASS;
-            BlockState block = world.getBlockState(blockPos);
-            onBlockClick(block, blockPos);
-            return ActionResult.PASS;
-        });
+        Events.ON_BLOCK_INTERACTION.register((result, itemStack) -> {
+            if (!Location.inDungeon() || !Phase.inP5() || pickedupRelic == null) return false;
+            BlockPos pos = result.getBlockPos();
 
-        UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> {
-            if (world == null) return ActionResult.PASS;
-            if (!Location.inDungeon() || !Phase.inP5() || pickedupRelic == null) return ActionResult.PASS;
-            BlockState block = world.getBlockState(hitResult.getBlockPos());
-            onBlockClick(block, hitResult.getBlockPos());
-            return ActionResult.PASS;
+            Text name = itemStack.getCustomName();
+            if (name == null) return false;
+            if (!name.getString().contains("Relic")) return false;
+
+            if (pos.getX() == pickedupRelic.box.minX && (pos.getY() == pickedupRelic.box.minY || pos.getY() == pickedupRelic.box.minY - 1) && pos.getZ() == pickedupRelic.box.minZ) {
+                if (Floor7.enableRelicPlaceTime) {
+                    double diff = (System.currentTimeMillis() - pickupTime) / 1000.0;
+                    Misc.addChatMessage(Text.literal("The ").formatted(Formatting.GREEN)
+                            .append(Text.literal(pickedupRelic.name().toLowerCase()).withColor(pickedupRelic.color))
+                            .append(" relic was placed in ").formatted(Formatting.GREEN)
+                            .append(Text.literal(Constants.DECIMAL_FORMAT.format(diff) + "s.").formatted(Formatting.YELLOW)));
+                }
+                pickedupRelic = null;
+            } else {
+                if (Floor7.blockIncorrectRelicPlace) {
+                    Misc.addChatMessage(Text.literal("incorrect click!"));
+                    return true;
+                }
+            }
+            return false;
         });
 
         WorldRenderEvents.BEFORE_DEBUG_RENDER.register(worldRenderContext -> {
@@ -139,28 +144,11 @@ public class RelicTimer {
 
     }
 
-    private static void onBlockClick(BlockState block, BlockPos pos) {
-        if (block.getBlock() != Blocks.ANVIL && block.getBlock() != Blocks.CAULDRON) return;
-        double distance = pickedupRelic.box.getCenter().distanceTo(pos.toCenterPos());
-        if (distance <= 1) {
-            if (Floor7.enableRelicPlaceTime) {
-            double diff = (System.currentTimeMillis() - pickupTime) / 1000.0;
-                Misc.addChatMessage(Text.literal("The ").formatted(Formatting.GREEN)
-                        .append(Text.literal(pickedupRelic.name().toLowerCase()).withColor(pickedupRelic.color))
-                        .append(" relic was placed in ").formatted(Formatting.GREEN)
-                        .append(Text.literal(Constants.DECIMAL_FORMAT.format(diff) + "s.").formatted(Formatting.YELLOW)));
-            }
-            pickedupRelic = null;
-        }
-
-
-    }
-
     public static boolean display() {
-        return  Floor7.enableRelicStartTimer && Location.inDungeon() && Phase.inP5() && tick > 0;
+        return Floor7.enableRelicStartTimer && Location.inDungeon() && Phase.inP5() && tick > 0;
     }
 
-    public static void render(HUDComponent component, DrawContext context)  {
+    public static void render(HUDComponent component, DrawContext context) {
         int x = component.getScaledX();
         int y = component.getScaledY();
 

@@ -4,6 +4,7 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "ArrowMixin",
+    "EntityMixin",
     "InventoryMixin",
     "ItemStackMixin",
     "NetworkMixin",
@@ -20,8 +21,10 @@
     "FireMixin",
     "HandledScreenMixin",
     "InGameHudMixin",
+    "MinecraftClientMixin",
     "NetworkMixin",
     "PositionMixin",
-    "RenderMixin"
+    "RenderMixin",
+    "StatusEffectsDisplayMixin"
   ]
 }

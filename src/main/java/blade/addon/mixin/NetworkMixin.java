@@ -1,5 +1,8 @@
 package blade.addon.mixin;
 
+import blade.addon.utils.Debug;
+import blade.addon.utils.Misc;
+import blade.addon.utils.Scheduler;
 import blade.addon.utils.config.values.ExtraOptions;
 import blade.addon.utils.events.Events;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
@@ -15,6 +18,7 @@ import net.minecraft.network.packet.s2c.play.TeamS2CPacket;
 import net.minecraft.scoreboard.Team;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -68,6 +72,10 @@ public class NetworkMixin {
 
         if (pitch == 0.0 && volume == 8.0 && event == SoundEvents.ENTITY_ENDERMAN_TELEPORT) {
             ci.cancel();
+        }
+
+        if (Debug.sendSound) {
+            Scheduler.scheduleTask(() -> Misc.addChatMessage(Text.literal("Sound: " + event.id())), 1);
         }
     }
 

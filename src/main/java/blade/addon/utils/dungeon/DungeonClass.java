@@ -1,6 +1,8 @@
 package blade.addon.utils.dungeon;
 
+import blade.addon.features.dungeon.f7.DragSpawnTimer;
 import blade.addon.utils.Location;
+import blade.addon.utils.config.values.Floor7;
 import blade.addon.utils.events.Events;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 
@@ -38,4 +40,11 @@ public enum DungeonClass {
         return currentClass == dungeonClass;
     }
 
+    public static boolean isArchTeam() {
+        return currentClass == DungeonClass.ARCHER || currentClass == DungeonClass.TANK || (currentClass == DungeonClass.HEALER && Floor7.healerTeam == DragSpawnTimer.Team.ARCHER_TEAM);
+    }
+
+    public static boolean isBersTeam() {
+        return currentClass == DungeonClass.BERSERK || currentClass == DungeonClass.MAGE || (currentClass == DungeonClass.HEALER && Floor7.healerTeam == DragSpawnTimer.Team.BERS_TEAM);
+    }
 }

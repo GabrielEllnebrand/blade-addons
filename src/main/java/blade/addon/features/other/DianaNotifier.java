@@ -1,5 +1,7 @@
-package blade.addon.features;
+package blade.addon.features.other;
 
+import blade.addon.utils.Debug;
+import blade.addon.utils.Location;
 import blade.addon.utils.Misc;
 import blade.addon.utils.Scheduler;
 import blade.addon.utils.events.Events;
@@ -24,6 +26,7 @@ public class DianaNotifier {
 
     public static void init() {
         Events.ON_GAME_MESSAGE.register(message-> {
+            if (!Location.in(Location.HUB)) return;
             String string = message.getString();
             String lowerCase = string.toLowerCase();
             if (!lowerCase.contains("you dug out a")) return;
@@ -48,7 +51,7 @@ public class DianaNotifier {
             Misc.setTitle(Text.literal(name));
             ClientPlayerEntity player = client.player;
             if (player == null) {
-                Misc.addChatMessage(Text.literal("Player is somehow null"));
+                Debug.sendDebugMessage(Text.literal("Player is null when checking diana message"));
                 return;
             }
 

@@ -7,7 +7,6 @@ import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.events.Events;
 import blade.addon.utils.rendering.RenderUtils;
 import config.practical.hud.HUDComponent;
-import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
@@ -26,12 +25,12 @@ public class CrystalSpawn {
 
     public static void init() {
 
-        ClientReceiveMessageEvents.GAME.register((message, overlay) -> {
+        Events.ON_GAME_MESSAGE.register(text -> {
             if (!Location.inDungeon() || !Phase.inP1() || !Floor7.enableCrystalSpawnTime) return;
 
-            Matcher matcher = PATTERN_1.matcher(message.getString());
+            Matcher matcher = PATTERN_1.matcher(text.getString());
             if (!matcher.find()) {
-                matcher = PATTERN_2.matcher(message.getString());
+                matcher = PATTERN_2.matcher(text.getString());
 
                 if (!matcher.find()) return;
             }

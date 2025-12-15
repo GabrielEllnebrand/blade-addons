@@ -33,12 +33,14 @@ public class Section {
     }
 
     private static final Split[] splits = {
-            new Split("1st", "", "", 0xffffffff),
-            new Split("2nd", "", "", 0xffffffff),
-            new Split("3rd", "", "", 0xffffffff),
-            new Split("4th", "", "", 0xffffffff),};
+            new Split("1st", "", "", 16755200),
+            new Split("2nd", "", "", 16755200),
+            new Split("3rd", "", "", 16755200),
+            new Split("4th", "", "", 16755200),};
 
     private static final Pattern TERMINALS_DONE_PATTERN = Pattern.compile("(activated|completed) (a terminal|a device|a lever)! \\((\\d)/(\\d)\\)$");
+
+    public static int SPLIT_LENGTH = 120;
 
     private static int currentSection = 0;
     private static int completed = 0;
@@ -137,7 +139,7 @@ public class Section {
                     completed = recentlyCompleted;
                 }
             } catch (NumberFormatException e) {
-                Debug.addDebugLog("Failed to parse terminal message, " + e.getMessage());
+                Debug.LOGGER.error("Failed to parse terminal message, {}", e.getMessage());
             }
 
 
@@ -191,10 +193,10 @@ public class Section {
         TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
 
         for (int i = 0; i < splits.length; i++) {
-            splits[i].drawSplit(context, textRenderer, x, y + Constants.TEXT_HEIGHT * i);
+            splits[i].drawSplit(context, textRenderer, x, y + Constants.TEXT_HEIGHT * i, SPLIT_LENGTH);
         }
     }
 
     @ConfigValue
-    public static HUDComponent terminalSplits = new HUDComponent(0, 0, Split.SPLIT_LENGTH, 50, 1, "Term splits", Section::display, Section::render, () -> enableTerminalSplits);
+    public static HUDComponent terminalSplits = new HUDComponent(0, 0, SPLIT_LENGTH, 50, 1, "Term splits", Section::display, Section::render, () -> enableTerminalSplits);
 }

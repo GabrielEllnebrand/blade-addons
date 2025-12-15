@@ -70,4 +70,7 @@ public class Dungeons {
 
     @ConfigValue
     public static boolean enableSecretSpawnTimer = false;
+
+    @ConfigValue
+    public static boolean combineScreenNotifications = false;
 }

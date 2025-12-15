@@ -3,13 +3,13 @@ package blade.addon.features.dungeon.f7;
 import blade.addon.utils.Constants;
 import blade.addon.utils.Location;
 import blade.addon.utils.Misc;
+import blade.addon.utils.Scheduler;
 import blade.addon.utils.config.values.Floor7;
 import blade.addon.utils.dungeon.DungeonClass;
 import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.events.Events;
 import blade.addon.utils.rendering.RenderUtils;
 import config.practical.hud.HUDComponent;
-import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
@@ -49,19 +49,22 @@ public class StormTickTimer {
             }
         });
 
-        ClientReceiveMessageEvents.GAME.register((message, overlay) -> {
+        Events.ON_GAME_MESSAGE.register(text -> {
             if (!Location.inDungeon() || !Phase.inP2() || !Floor7.enableStormDeathTime) return;
 
-            Matcher matcher = PATTERN.matcher(message.getString());
+            Matcher matcher = PATTERN.matcher(text.getString());
 
             if (matcher.find()) {
                 deathTime = (tick * Constants.TICK_DURATION);
                 deathStartDisplayTime = System.currentTimeMillis();
-                Misc.addChatMessage(
+
+                //prob dosent need to schedule it but threads are scary
+                Scheduler.scheduleTask(() -> Misc.addChatMessage(
                         Text.literal("Storm died at: ").formatted(Formatting.GREEN)
                                 .append(Text.literal(Constants.DECIMAL_FORMAT.format(deathTime) + "s").formatted(Formatting.YELLOW))
                                 .append(Text.literal(".").formatted(Formatting.GREEN))
-                );
+                ), 1);
+
             }
 
         });
@@ -87,7 +90,7 @@ public class StormTickTimer {
 
         }
 
-        RenderUtils.drawCenteredText(context, MinecraftClient.getInstance().textRenderer, Constants.DECIMAL_FORMAT.format(num), x, y, component.getWidth());
+        RenderUtils.drawCenteredText(context, MinecraftClient.getInstance().textRenderer, Constants.DECIMAL_FORMAT.format(num), x, y, component.getWidth(), Floor7.stormTickTimerColor);
 
     }
 

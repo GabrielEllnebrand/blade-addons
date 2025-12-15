@@ -17,4 +17,22 @@ public class ExtraOptions {
 
     @ConfigValue
     public static boolean itemRarityBackground = false;
+
+    @ConfigValue
+    public static boolean hideStatusOverLay = false;
+
+    @ConfigValue
+    public static boolean disableGlowing = false;
+
+    @ConfigValue
+    public static String textPrefix = "";
+
+    @ConfigValue
+    public static boolean highlightSelectedPet = false;
+
+    @ConfigValue
+    public static boolean drawPetHUD = false;
+
+    @ConfigValue
+    public static boolean includePetSprite = true;
 }

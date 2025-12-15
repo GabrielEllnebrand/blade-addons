@@ -22,7 +22,6 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
@@ -36,9 +35,6 @@ import java.nio.file.Paths;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class BossWaypoints {
-
-    private static final Text ON = Text.literal("ON").formatted(Formatting.GREEN);
-    private static final Text OFF = Text.literal("OFF").formatted(Formatting.RED);
 
     private static final String filePath = "./config/" + Constants.NAMESPACE + "-waypoints.json";
     private static final String WAYPOINTS_NAME = "waypoints";
@@ -69,12 +65,12 @@ public class BossWaypoints {
 
     public static void setPlace(boolean shouldPlace) {
         place = shouldPlace;
-        Misc.addChatMessage(Text.literal("Edit mode: ").append(place ? ON : OFF));
+        Misc.addChatMessage(Text.literal("Edit mode: ").append(Misc.getStatusText(place)));
     }
 
     public static void setIgnoreBoss(boolean shouldIgnoreBoss) {
         ignoreBoss = shouldIgnoreBoss;
-        Misc.addChatMessage(Text.literal("Ignore boss: ").append(ignoreBoss ? ON : OFF));
+        Misc.addChatMessage(Text.literal("Ignore boss: ").append(Misc.getStatusText(ignoreBoss)));
     }
 
     public static void togglePlace() {

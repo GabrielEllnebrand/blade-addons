@@ -8,6 +8,8 @@ import net.minecraft.network.ClientConnection;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.common.CommonPingS2CPacket;
 import net.minecraft.network.packet.s2c.play.GameMessageS2CPacket;
+import net.minecraft.network.packet.s2c.play.ParticleS2CPacket;
+import net.minecraft.particle.ParticleEffect;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -28,6 +30,16 @@ public class ServerTickMixin {
         if (packet instanceof GameMessageS2CPacket message) {
             if (Events.ON_GAME_MESSAGE.hasListeners()) {
                 Events.ON_GAME_MESSAGE.invoke(gameMessageEvent -> gameMessageEvent.onGameMessage(message.content()));
+            }
+        }
+
+        if (packet instanceof ParticleS2CPacket particle) {
+            double x = particle.getX();
+            double y = particle.getY();
+            double z = particle.getZ();
+            ParticleEffect effect = particle.getParameters();
+            if (Events.ON_PARTICLE.hasListeners()) {
+                Events.ON_PARTICLE.invoke(particleEvent -> particleEvent.onParticle(x, y, z, effect));
             }
         }
 

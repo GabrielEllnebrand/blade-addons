@@ -1,5 +1,6 @@
 package blade.addon.utils.config.values;
 
+import blade.addon.features.dungeon.f7.DragSpawnTimer;
 import config.practical.manager.ConfigValue;
 
 public class Floor7 {
@@ -18,6 +19,9 @@ public class Floor7 {
 
     @ConfigValue
     public static boolean enableStormTickTimer = false;
+
+    @ConfigValue
+    public static int stormTickTimerColor = 0xffffffff;
 
     @ConfigValue
     public static boolean tickDownStormTickTimer = false;
@@ -54,4 +58,19 @@ public class Floor7 {
 
     @ConfigValue
     public static boolean renderRelicHighlight = false;
+
+    @ConfigValue
+    public static boolean blockIncorrectRelicPlace = false;
+
+    @ConfigValue
+    public static boolean combineTickTimers = false;
+
+    @ConfigValue
+    public static boolean dragSpawnTimers = false;
+
+    @ConfigValue
+    public static boolean sendSoundOnDragSpawn = false;
+
+    @ConfigValue
+    public static DragSpawnTimer.Team healerTeam = DragSpawnTimer.Team.ARCHER_TEAM;
 }

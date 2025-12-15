@@ -1,22 +1,27 @@
 package blade.addon.utils;
 
-import blade.addon.features.item.ItemRarity;
+import blade.addon.utils.config.values.ExtraOptions;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.LoreComponent;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
-
-import java.util.List;
+import net.minecraft.util.Formatting;
 
 public class Misc {
     public static final MinecraftClient instance = MinecraftClient.getInstance();
+    private static final Text ON = Text.literal("ON").formatted(Formatting.GREEN);
+    private static final Text OFF = Text.literal("OFF").formatted(Formatting.RED);
 
     public static boolean isClientPlayer(PlayerEntity entity) {
+        ClientPlayerEntity clientPlayer = instance.player;
+        if (clientPlayer == null) return false;
+        return clientPlayer == entity;
+    }
+
+    public static boolean isClientPlayer(Entity entity) {
         ClientPlayerEntity clientPlayer = instance.player;
         if (clientPlayer == null) return false;
         return clientPlayer == entity;
@@ -25,10 +30,14 @@ public class Misc {
     public static void addChatMessage(Text text) {
         try {
             InGameHud gameHud = MinecraftClient.getInstance().inGameHud;
-            gameHud.getChatHud().addMessage(text);
+            gameHud.getChatHud().addMessage(Text.literal(ExtraOptions.textPrefix).append(text));
         } catch (IndexOutOfBoundsException ignored) {
-            Debug.addDebugLog("Chat message failed to get added");
+            Debug.LOGGER.error("Chat message failed to get added");
         }
+    }
+
+    public static Text getStatusText(boolean status) {
+        return status ? ON : OFF;
     }
 
     public static void setTitle(Text text) {
@@ -39,28 +48,5 @@ public class Misc {
         ClientPlayNetworkHandler networkHandler = MinecraftClient.getInstance().getNetworkHandler();
         if (networkHandler == null) return;
         networkHandler.sendChatCommand(string);
-    }
-
-    public static ItemRarity getRarity(ItemStack item) {
-        LoreComponent lore = item.get(DataComponentTypes.LORE);
-        if (lore == null)  return ItemRarity.NONE;
-
-        List<Text> lines = lore.lines();
-        if (lines.isEmpty()) return ItemRarity.NONE;
-        Text line = lines.getLast();
-
-        if (line == null) return ItemRarity.NONE;
-        String string = line.getString();
-        String[] rarityStrings = string.split(" ");
-
-        for (String testString: rarityStrings) {
-            try {
-               ItemRarity rarity = ItemRarity.valueOf(testString);
-               return rarity;
-            } catch (IllegalArgumentException ignored) {
-
-            }
-        }
-        return ItemRarity.NONE;
     }
 }

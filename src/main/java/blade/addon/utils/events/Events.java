@@ -1,9 +1,12 @@
 package blade.addon.utils.events;
 
+import blade.addon.utils.events.interfaces.BlockInteractionEvent;
 import blade.addon.utils.events.interfaces.EntityTrackEvent;
 import blade.addon.utils.events.interfaces.GameMessageEvent;
 import blade.addon.utils.events.interfaces.LeapEvent;
 import blade.addon.utils.events.interfaces.LocationChangeEvent;
+import blade.addon.utils.events.interfaces.ParticleEvent;
+import blade.addon.utils.events.interfaces.PetEvent;
 import blade.addon.utils.events.interfaces.PhaseEvent;
 import blade.addon.utils.events.interfaces.PlayerListEvent;
 import blade.addon.utils.events.interfaces.RunEndEvent;
@@ -22,4 +25,9 @@ public class Events {
     public static final EventHandler<ScoreBoardEvent> ON_TEAM = new EventHandler<>();
     public static final EventHandler<GameMessageEvent> ON_GAME_MESSAGE = new EventHandler<>();
     public static final EventHandler<PhaseEvent> ON_PHASE_CHANGE = new EventHandler<>();
+    public static final EventHandler<ParticleEvent> ON_PARTICLE = new EventHandler<>();
+    public static final CancelableEventHandler<BlockInteractionEvent> ON_BLOCK_INTERACTION = new CancelableEventHandler<>();
+    public static final EventHandler<PetEvent> ON_PET = new EventHandler<>();
+
+
 }

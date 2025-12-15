@@ -4,10 +4,14 @@ import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.dungeon.Section;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.minecraft.text.Text;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Debug {
 
+    public static final Logger LOGGER = LoggerFactory.getLogger(Constants.NAMESPACE);
     private static boolean sendDebug = false;
+    public static boolean sendSound = false;
 
     public static void init() {
        registerCommands();
@@ -22,15 +26,18 @@ public class Debug {
 
         Commands.registerDevCommand(ClientCommandManager.literal("toggleSendDebug").executes(context -> {
             sendDebug = !sendDebug;
-            Misc.addChatMessage(Text.literal("Send debug: " + sendDebug));
+            Misc.addChatMessage(Text.literal("Send debug: ").append(Misc.getStatusText(sendDebug)));
+            return Constants.SUCCESS;
+        }));
+
+        Commands.registerDevCommand(ClientCommandManager.literal("toggleSoundInChat").executes(context -> {
+            sendSound = !sendSound;
+            Misc.addChatMessage(Text.literal("Send Sound: ").append(Misc.getStatusText(sendSound)));
             return Constants.SUCCESS;
         }));
     }
 
-    //TODO: change this to a LOG object
-    public static void addDebugLog(String message) {
-        System.out.println("Blade-addons:" + message);
-    }
+
 
     public static void sendDebugMessage(Text text) {
         if (sendDebug) {

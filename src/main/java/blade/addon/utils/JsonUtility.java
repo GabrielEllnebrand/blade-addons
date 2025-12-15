@@ -32,7 +32,7 @@ public class JsonUtility {
                 return parseSplits(element);
             }
         } catch (IOException e) {
-            Debug.addDebugLog(e.getMessage());
+            Debug.LOGGER.error("Failed to parse a split");
         }
 
         return new HashMap<>();
@@ -78,7 +78,7 @@ public class JsonUtility {
                 return parsePositonalMessages(element);
             }
         } catch (IOException e) {
-            Debug.addDebugLog(e.getMessage());
+            Debug.LOGGER.error("failed to parse positional messages");
         }
 
         return new ArrayList<>();

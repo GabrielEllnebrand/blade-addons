@@ -24,8 +24,6 @@ public class Split {
         }
     }
 
-    public static final int SPLIT_LENGTH = 165;
-
     public static final int GREEN = 5635925;
     public static final int GRAY = 11184810;
     public static final int DARK_GRAY = 5592405;
@@ -178,12 +176,12 @@ public class Split {
                         ));
     }
 
-    public void drawSplit(DrawContext context, TextRenderer textRenderer, int x, int y) {
+    public void drawSplit(DrawContext context, TextRenderer textRenderer, int x, int y, int maxWidth) {
         Text nameText = createNameText();
         Text timerText = createTimeText();
 
         int timerWidth = textRenderer.getWidth(timerText);
         context.drawText(textRenderer, nameText, x, y, 0xffffffff, true);
-        context.drawText(textRenderer, timerText, x + SPLIT_LENGTH - timerWidth, y, 0xffffffff, true);
+        context.drawText(textRenderer, timerText, x + maxWidth - timerWidth, y, 0xffffffff, true);
     }
 }

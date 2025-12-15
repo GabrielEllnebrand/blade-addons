@@ -47,6 +47,9 @@ public class HidePlayers {
     public static boolean shouldHidePlayers(PlayerEntity player) {
         if (!Location.inDungeon()) return false;
 
+        //in case it's a mob instead of a player
+        if (player.getName().getString().contains(" ")) return false;
+
         if (testHideAtLeap()) {
             return true;
         }

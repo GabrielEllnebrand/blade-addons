@@ -39,9 +39,6 @@ public class InvincibilityTimer {
     private static final Pattern BONZO_ON_HEAD_PATTERN = Pattern.compile("Bonzo's Mask");
     private static final Pattern SPIRIT_ON_HEAD_PATTERN = Pattern.compile("Spirit Mask");
 
-    private static final Pattern MANUAL_EQUIP_PET_PATTERN = Pattern.compile("^You summoned your (\\D+)( ✦)?!$");
-    private static final Pattern RULE_EQUIP_PET_PATTERN = Pattern.compile("^Autopet equipped your \\[Lvl [0-9]+] (\\D+)( ✦)?! VIEW RULE$");
-
     //in ticks
     private static final int BONZO_MASK_COOLDOWN = 180 * 20;
     private static final int SPIRIT_MASK_COOLDOWN = 30 * 20;
@@ -72,7 +69,6 @@ public class InvincibilityTimer {
 
     public static void init() {
         Events.ON_SERVER_TICK.register(InvincibilityTimer::tick);
-        ClientReceiveMessageEvents.GAME.register(InvincibilityTimer::detectPet);
         Events.ON_SLOT_CHANGE.register(InvincibilityTimer::detectHelmet);
 
         Events.ON_LOCATION_CHANGE.register(newLocation -> {
@@ -82,6 +78,9 @@ public class InvincibilityTimer {
                 phoenixTicks = 0;
             }
         });
+
+        Events.ON_PET.register(name -> phoenixOn = name.equals("Phoenix"));
+
 
         ClientReceiveMessageEvents.GAME.register((message, overlay) -> {
             if (Location.inDungeon()) {
@@ -94,22 +93,6 @@ public class InvincibilityTimer {
         bonzoMaskTicks = Math.max(0, bonzoMaskTicks - 1);
         spiritMaskTicks = Math.max(0, spiritMaskTicks - 1);
         phoenixTicks = Math.max(0, phoenixTicks - 1);
-    }
-
-    private static void detectPet(Text message, boolean overlay) {
-        if (!Location.inDungeon()) return;
-        String string = message.getString().replaceAll("§.", "");
-        Matcher matcher = MANUAL_EQUIP_PET_PATTERN.matcher(string);
-        if (matcher.find()) {
-            String petName = matcher.group(1);
-            phoenixOn = petName.contains("Phoenix");
-        }
-
-        matcher = RULE_EQUIP_PET_PATTERN.matcher(string);
-        if (matcher.find()) {
-            String petName = matcher.group(1);
-            phoenixOn = petName.contains("Phoenix");
-        }
     }
 
     private static void detectHelmet(int slot, ItemStack item) {

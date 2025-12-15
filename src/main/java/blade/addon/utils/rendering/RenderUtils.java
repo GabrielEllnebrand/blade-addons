@@ -23,6 +23,10 @@ public class RenderUtils {
         drawCenteredText(context, textRenderer, text, x, y, maxWidth, 0xffffffff);
     }
 
+    public static void drawCenteredText(DrawContext context, TextRenderer textRenderer, String string, int x, int y, int maxWidth, int color) {
+        drawCenteredText(context, textRenderer, Text.literal(string), x, y, maxWidth, color);
+    }
+
     public static void drawCenteredText(DrawContext context, TextRenderer textRenderer, String string, int x, int y, int maxWidth) {
         drawCenteredText(context, textRenderer, Text.literal(string), x, y, maxWidth, 0xffffffff);
     }

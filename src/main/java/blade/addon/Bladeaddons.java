@@ -1,6 +1,6 @@
 package blade.addon;
 
-import blade.addon.features.DianaNotifier;
+import blade.addon.features.other.DianaNotifier;
 import blade.addon.features.dungeon.AutoRequeue;
 import blade.addon.features.dungeon.ChestCounter;
 import blade.addon.features.dungeon.DeathTickTimer;
@@ -16,12 +16,14 @@ import blade.addon.features.dungeon.WarpCooldown;
 import blade.addon.features.dungeon.f7.BossWaypoints;
 import blade.addon.features.dungeon.f7.CrystalSpawn;
 import blade.addon.features.dungeon.f7.DistanceToLedge;
+import blade.addon.features.dungeon.f7.DragSpawnTimer;
 import blade.addon.features.dungeon.f7.GoldorTickTimer;
 import blade.addon.features.dungeon.f7.InvincibilityTimer;
 import blade.addon.features.dungeon.f7.PositionMessages;
 import blade.addon.features.dungeon.f7.RelicTimer;
 import blade.addon.features.dungeon.f7.StormTickTimer;
 import blade.addon.features.dungeon.f7.TermStartTimer;
+import blade.addon.features.other.SelectedPet;
 import blade.addon.utils.Commands;
 import blade.addon.utils.Debug;
 import blade.addon.utils.Keybinds;
@@ -69,5 +71,7 @@ public class Bladeaddons implements ModInitializer {
         ItemHighlight.init();
         BossWaypoints.init();
         DianaNotifier.init();
+        DragSpawnTimer.init();
+        SelectedPet.init();
     }
 }
