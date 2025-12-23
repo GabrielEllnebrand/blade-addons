@@ -1,11 +1,11 @@
 package blade.addon.utils.config;
 
-import blade.addon.features.other.DianaNotifier;
-import blade.addon.features.dungeon.MobHighlight;
 import blade.addon.features.dungeon.f7.BossWaypoints;
 import blade.addon.features.dungeon.f7.DragSpawnTimer;
 import blade.addon.features.dungeon.f7.InvincibilityTimer;
-import blade.addon.utils.Constants;
+import blade.addon.features.dungeon.f7.LocationNotifier;
+import blade.addon.features.highlight.MobHighlight;
+import blade.addon.features.other.DianaNotifier;
 import blade.addon.utils.config.components.Components;
 import blade.addon.utils.config.values.Dungeons;
 import blade.addon.utils.config.values.ExtraOptions;
@@ -17,11 +17,13 @@ import config.practical.ConfigurableScreen;
 import config.practical.category.ConfigCategory;
 import config.practical.manager.ConfigManager;
 import config.practical.widgets.ConfigBool;
+import config.practical.widgets.ConfigButton;
 import config.practical.widgets.ConfigSection;
 import config.practical.widgets.ConfigString;
 import config.practical.widgets.color.ConfigColor;
 import config.practical.widgets.options.ConfigOptions;
 import config.practical.widgets.sliders.ConfigDouble;
+import config.practical.widgets.sliders.ConfigFloat;
 import config.practical.widgets.sliders.ConfigInt;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
@@ -31,7 +33,7 @@ import java.util.List;
 public class Config {
 
     private static final Text TITLE = Text.literal("Blade Addons");
-    public static final ConfigManager manager = new ConfigManager("./config/" + Constants.NAMESPACE + ".json",
+    public static final ConfigManager manager = new ConfigManager(FolderUtility.OLD_PATH + FolderUtility.ADDONS_NAME,
             List.of(Phase.class, Section.class, Split.class, MobHighlight.class, ExtraOptions.class, DianaNotifier.class, Components.class, Dungeons.class, Floor7.class));
 
     public static Screen createScreen(Screen parent) {
@@ -78,10 +80,14 @@ public class Config {
         dungeons.add(new ConfigBool(Text.literal("Secret spawn timer"), () -> Dungeons.enableSecretSpawnTimer, bool -> Dungeons.enableSecretSpawnTimer = bool));
         dungeons.add(new ConfigBool(Text.literal("Item highlight"), () -> Dungeons.highlightItems, bool -> Dungeons.highlightItems = bool));
         dungeons.add(new ConfigBool(Text.literal("Combine screen notifications"), () -> Dungeons.combineScreenNotifications, bool -> Dungeons.combineScreenNotifications = bool));
+        dungeons.add(new ConfigBool(Text.literal("Don't protect held item in run"), () -> Dungeons.dontProtectHeldItem, bool -> Dungeons.dontProtectHeldItem = bool));
+        dungeons.add(new ConfigBool(Text.literal("Hide blaze nametags"), () -> Dungeons.hideBlazeNameTag, bool -> Dungeons.hideBlazeNameTag = bool));
+
         screen.addCategory(dungeons);
 
         ConfigCategory floor7 = new ConfigCategory("Floor 7");
         floor7.add(new ConfigBool(Text.literal("Combine tick timers"), () -> Floor7.combineTickTimers, bool -> Floor7.combineTickTimers = bool));
+        floor7.add(new ConfigBool(Text.literal("Enable player leap count"), () -> Floor7.leapNotifications, bool -> Floor7.leapNotifications = bool));
 
         ConfigSection waypoints = new ConfigSection(Text.literal("Waypoints"));
         waypoints.add(new ConfigBool(Text.literal("Enable boss waypoints"), () -> Floor7.enableBossWaypoints, bool -> Floor7.enableBossWaypoints = bool));
@@ -101,6 +107,8 @@ public class Config {
         storm.add(new ConfigBool(Text.literal("First Death time"), () -> Floor7.enableStormDeathTime, bool -> Floor7.enableStormDeathTime = bool));
         storm.add(new ConfigBool(Text.literal("Distance to ledge"), () -> Floor7.displayDistanceToLedge, bool -> Floor7.displayDistanceToLedge = bool));
         storm.add(new ConfigBool(Text.literal("Warn if spirit mask is used"), () -> Floor7.notifyUsedSpiritMask, bool -> Floor7.notifyUsedSpiritMask = bool));
+        storm.add(new ConfigBool(Text.literal("Pillar explode timer"), () -> Floor7.timePillarExplosion, bool -> Floor7.timePillarExplosion = bool));
+        storm.add(new ConfigBool(Text.literal("Storm crushed notification"), () -> Floor7.notifyStormCrush, bool -> Floor7.notifyStormCrush = bool));
         floor7.add(storm);
 
         ConfigSection goldor = new ConfigSection(Text.literal("Goldor"));
@@ -110,14 +118,31 @@ public class Config {
         goldor.add(new ConfigBool(Text.literal("Positional messages"), () -> Floor7.enablePositionalMessages, bool -> Floor7.enablePositionalMessages = bool));
         goldor.add(new ConfigBool(Text.literal("Terminal splits"), () -> Section.enableTerminalSplits, bool -> Section.enableTerminalSplits = bool));
         goldor.add(new ConfigOptions<>(Text.literal("Display when"), Section.DisplayTerminalSplitsWhen.values(), () -> Section.displayTerminalSplitsWhen, when -> Section.displayTerminalSplitsWhen = when));
+        goldor.add(new ConfigBool(Text.literal("Pre4 completion notification"), () -> Floor7.notifyPre4Completion, bool -> Floor7.notifyPre4Completion = bool));
+        goldor.add(new ConfigBool(Text.literal("Disable titles on pre4"), () -> Floor7.disableTitlesAtPre4, bool -> Floor7.disableTitlesAtPre4 = bool));
+        goldor.add(new ConfigBool(Text.literal("Melody warning notification"), () -> Floor7.notifiyMelody, bool -> Floor7.notifiyMelody = bool));
+
         floor7.add(goldor);
+
+        ConfigSection locationNotifier = new ConfigSection(Text.literal("At location notifier"));
+        locationNotifier.add(new ConfigBool(Text.literal("Display Location messages on screen"), () -> Floor7.displayLocationNotification, bool -> Floor7.displayLocationNotification = bool));
+        locationNotifier.add(new ConfigInt(Text.literal("Display duration (in client ticks)"), () -> Floor7.notificationDuration, num -> Floor7.notificationDuration = num, 1, 1, 20));
+        locationNotifier.add(new ConfigString(Text.literal("Sound id"), () -> Floor7.notificationSound, str -> Floor7.notificationSound = str));
+        locationNotifier.add(new ConfigFloat(Text.literal("Volume"), () -> Floor7.notificationVolume, num -> Floor7.notificationVolume = num, 0.05f, 0, 2));
+        locationNotifier.add(new ConfigFloat(Text.literal("Pitch"), () -> Floor7.notificationPitch, num -> Floor7.notificationPitch = num, 0.05f, 0, 2));
+        locationNotifier.add(new ConfigInt(Text.literal("Sound repetitions"), () -> Floor7.notificationRepetitions, num -> Floor7.notificationRepetitions = num, 1, 0, 20));
+        locationNotifier.add(new ConfigButton(Text.literal("Test notification"), () -> LocationNotifier.startNotification("Someone At <location>!!")));
+
+        floor7.add(locationNotifier);
 
         ConfigSection phase5 = new ConfigSection(Text.literal("Relics and Dragons"));
         phase5.add(new ConfigBool(Text.literal("Relic start timer"), () -> Floor7.enableRelicStartTimer, bool -> Floor7.enableRelicStartTimer = bool));
+        phase5.add(new ConfigBool(Text.literal("Replace with progress bar"), () -> Floor7.replaceWithProgressBar, bool -> Floor7.replaceWithProgressBar = bool));
         phase5.add(new ConfigInt(Text.literal("Relic start timer ticks"), () -> Floor7.relicSpawnTicks, num -> Floor7.relicSpawnTicks = num, 1, 30, 50));
         phase5.add(new ConfigBool(Text.literal("Enable relic placed time"), () -> Floor7.enableRelicPlaceTime, bool -> Floor7.enableRelicPlaceTime = bool));
         phase5.add(new ConfigBool(Text.literal("Block incorrect relic place"), () -> Floor7.blockIncorrectRelicPlace, bool -> Floor7.blockIncorrectRelicPlace = bool));
         phase5.add(new ConfigBool(Text.literal("Highlight picked up relic"), () -> Floor7.renderRelicHighlight, bool -> Floor7.renderRelicHighlight = bool));
+        phase5.add(new ConfigBool(Text.literal("Send all relic times"), () -> Floor7.showAllRelicTimes, bool -> Floor7.showAllRelicTimes = bool));
         phase5.add(new ConfigBool(Text.literal("Enable Dragon spawn timers"), () -> Floor7.dragSpawnTimers, bool -> Floor7.dragSpawnTimers = bool));
         phase5.add(new ConfigBool(Text.literal("Send sound on dragon spawn"), () -> Floor7.sendSoundOnDragSpawn, bool -> Floor7.sendSoundOnDragSpawn = bool));
         phase5.add(new ConfigOptions<>(Text.literal("Healer prio"), DragSpawnTimer.Team.values(), () -> Floor7.healerTeam, team -> Floor7.healerTeam = team));
@@ -178,6 +203,12 @@ public class Config {
         extra.add(new ConfigBool(Text.literal("Item rarity background"), () -> ExtraOptions.itemRarityBackground, bool -> ExtraOptions.itemRarityBackground = bool));
         extra.add(new ConfigBool(Text.literal("Hide potion effects overlay"), () -> ExtraOptions.hideStatusOverLay, bool -> ExtraOptions.hideStatusOverLay = bool));
         extra.add(new ConfigBool(Text.literal("Disable glowing"), () -> ExtraOptions.disableGlowing, bool -> ExtraOptions.disableGlowing = bool));
+        extra.add(new ConfigBool(Text.literal("Draw item starCount"), () -> ExtraOptions.drawStarCount, bool -> ExtraOptions.drawStarCount = bool));
+        extra.add(new ConfigBool(Text.literal("Highlight protected items"), () -> ExtraOptions.highlightProtectedItem, bool -> ExtraOptions.highlightProtectedItem = bool));
+        extra.add(new ConfigBool(Text.literal("Show pbs in chat"), () -> ExtraOptions.showPbs, bool -> ExtraOptions.showPbs = bool));
+        extra.add(new ConfigBool(Text.literal("Disable scroll wheel in hotbar"), () -> ExtraOptions.disableScrollHotbar, bool -> ExtraOptions.disableScrollHotbar = bool));
+        extra.add(new ConfigBool(Text.literal("Display kicked time"), () -> ExtraOptions.enableKickedTimer, bool -> ExtraOptions.enableKickedTimer = bool));
+        extra.add(new ConfigBool(Text.literal("Display rag axe duration"), () -> ExtraOptions.enableRagaxeDisplay, bool -> ExtraOptions.enableRagaxeDisplay = bool));
 
         ConfigSection pets = new ConfigSection(Text.literal("Pets"));
         pets.add(new ConfigBool(Text.literal("Highlight selected pet"), () -> ExtraOptions.highlightSelectedPet, bool -> ExtraOptions.highlightSelectedPet = bool));
@@ -192,6 +223,18 @@ public class Config {
         diana.add(new ConfigBool(Text.literal("Check Bull"), () -> DianaNotifier.checkBull, bool -> DianaNotifier.checkBull = bool));
         diana.add(new ConfigBool(Text.literal("Check Nymph"), () -> DianaNotifier.checkNymph, bool -> DianaNotifier.checkNymph = bool));
         extra.add(diana);
+
+        ConfigSection ss = new ConfigSection(Text.literal("Simon says practise"));
+        ss.add(new ConfigBool(Text.literal("Practise outside of is"), () -> ExtraOptions.practiceSSAnywhere, bool -> ExtraOptions.practiceSSAnywhere = bool));
+        ss.add(new ConfigBool(Text.literal("Skip automatically"), () -> ExtraOptions.autoSkip, bool -> ExtraOptions.autoSkip = bool));
+        ss.add(new ConfigBool(Text.literal("Realistic delay"), () -> ExtraOptions.realisticDelay, bool -> ExtraOptions.realisticDelay = bool));
+        ss.add(new ConfigBool(Text.literal("Include lucky button"), () -> ExtraOptions.includeLuckyButton, bool -> ExtraOptions.includeLuckyButton = bool));
+        ss.add(new ConfigBool(Text.literal("Block unlucky button click"), () -> ExtraOptions.blockUnluckyButtonClick, bool -> ExtraOptions.blockUnluckyButtonClick = bool));
+        ss.add(new ConfigDouble(Text.literal("Lucky button rng (0.1)"), () -> ExtraOptions.luckyButtonRng, num -> ExtraOptions.luckyButtonRng = num, 0.01, 0, 1));
+        ss.add(new ConfigColor(Text.literal("Lucky button color"), () -> ExtraOptions.luckyButtonColor, color -> ExtraOptions.luckyButtonColor = color, "lucky-button-color", true));
+
+        extra.add(ss);
+
 
         screen.addCategory(extra);
 

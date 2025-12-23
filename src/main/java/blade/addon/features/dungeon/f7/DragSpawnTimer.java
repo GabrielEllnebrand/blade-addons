@@ -59,7 +59,7 @@ public class DragSpawnTimer {
 
     public static void init() {
         Events.ON_PARTICLE.register((x, y, z, effect) -> {
-            if (effect.getType() != ParticleTypes.FLAME) return;
+            if (effect.getType() != ParticleTypes.ENCHANT) return;
             Dragon detectedDragon = getDragon(x, y, z);
 
             if (detectedDragon == Dragon.NONE) return;
@@ -77,7 +77,7 @@ public class DragSpawnTimer {
             } else if (detectedDragon != currentDragon && !hasDoneSplit) {
                 currentDragon = getPrio(detectedDragon, currentDragon);
                 prevDragon = currentDragon;
-                dupeTick = DUPE_DELAY + 50;
+                dupeTick = DUPE_DELAY * 2;
                 hasDoneSplit = true;
             }
         });

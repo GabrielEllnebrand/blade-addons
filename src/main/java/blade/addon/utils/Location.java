@@ -4,6 +4,7 @@ import blade.addon.utils.events.Events;
 import net.hypixel.data.type.ServerType;
 import net.hypixel.modapi.HypixelModAPI;
 import net.hypixel.modapi.packet.impl.clientbound.event.ClientboundLocationPacket;
+import net.minecraft.text.Text;
 
 public enum Location {
     NONE,
@@ -14,6 +15,7 @@ public enum Location {
 
     private static Location currentLocation = Location.NONE;
     private static boolean inSkyblock = false;
+    private static boolean detectedNewLocation = false;
 
     public static void init() {
 
@@ -30,6 +32,8 @@ public enum Location {
             } catch (IllegalArgumentException ignored) {
                 currentLocation = Location.NONE;
             }
+            detectedNewLocation = true;
+            Debug.sendDebugMessage(Text.literal("Location: " + currentLocation));
 
             if (Events.ON_LOCATION_CHANGE.hasListeners()) {
                 Events.ON_LOCATION_CHANGE.listeners.forEach(locationChangeEvent -> locationChangeEvent.onLocationChange(currentLocation));
@@ -53,5 +57,13 @@ public enum Location {
 
     public static boolean inSkyblock() {
         return inSkyblock;
+    }
+
+    public static void swapWorld() {
+        detectedNewLocation = false;
+    }
+
+    public static boolean hasRecivedLocation() {
+        return detectedNewLocation;
     }
 }

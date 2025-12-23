@@ -42,7 +42,6 @@ public class ServerTickMixin {
                 Events.ON_PARTICLE.invoke(particleEvent -> particleEvent.onParticle(x, y, z, effect));
             }
         }
-
     }
 
     @Inject(method = "sendImmediately", at = @At("HEAD"))

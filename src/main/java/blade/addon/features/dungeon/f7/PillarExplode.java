@@ -1,0 +1,65 @@
+package blade.addon.features.dungeon.f7;
+
+import blade.addon.utils.Constants;
+import blade.addon.utils.Location;
+import blade.addon.utils.Scheduler;
+import blade.addon.utils.config.values.Floor7;
+import blade.addon.utils.dungeon.Phase;
+import blade.addon.utils.events.Events;
+import blade.addon.utils.rendering.RenderUtils;
+import config.practical.hud.HUDComponent;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
+import net.minecraft.sound.SoundEvents;
+import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
+
+public class PillarExplode {
+
+    private static final int TOTAL_TICKS = 20;
+    private static int tick = 0;
+
+    public static void init() {
+        Events.ON_GAME_MESSAGE.register(text -> {
+            if (!Floor7.notifyStormCrush && !Floor7.timePillarExplosion) return;
+            if (!Location.inDungeon() || !Phase.inP2()) return;
+
+            String string = text.getString();
+            if (string == null) return;
+
+            if (string.equals("[BOSS] Storm: Oof") ||string.equals("[BOSS] Storm: Ouch, that hurt!")) {
+                tick = TOTAL_TICKS;
+                Scheduler.scheduleSound(SoundEvents.BLOCK_NOTE_BLOCK_PLING.value(), 1, 1);
+            }
+        });
+
+        Events.ON_SERVER_TICK.register(() -> tick = Math.max(tick - 1, 0));
+    }
+
+    public static boolean displayTimer() {
+        return Floor7.notifyStormCrush && tick > 0;
+    }
+
+    public static void renderTimer(HUDComponent component, DrawContext context) {
+        int x = component.getScaledX();
+        int y = component.getScaledY();
+
+        Formatting formatting = (tick < 6? Formatting.GREEN: Formatting.RED);
+
+        double num = tick * Constants.TICK_DURATION;
+
+        RenderUtils.drawCenteredText(context, MinecraftClient.getInstance().textRenderer, Text.literal(Constants.DECIMAL_FORMAT.format(num).formatted(formatting)), x, y, component.getWidth());
+
+    }
+
+    public static boolean display() {
+        return Floor7.timePillarExplosion && tick > 0;
+    }
+
+    public static void render(HUDComponent component, DrawContext context) {
+        int x = component.getScaledX();
+        int y = component.getScaledY();
+        RenderUtils.drawCenteredText(context, MinecraftClient.getInstance().textRenderer, Text.literal("§6||| §bStorm crushed! §6|||"), x, y, component.getWidth());
+
+    }
+}

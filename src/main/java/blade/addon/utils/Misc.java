@@ -27,6 +27,16 @@ public class Misc {
         return clientPlayer == entity;
     }
 
+    public static boolean isClientPlayer(String name) {
+        ClientPlayerEntity clientPlayer = instance.player;
+        if (clientPlayer == null) return false;
+        return clientPlayer.getName().getString().equals(name);
+    }
+
+    public static double getDistance(double x1, double z1, double x2, double z2) {
+        return ((x1 - x2) * (x1 - x2)) + ((z1 - z2) * (z1 - z2));
+    }
+
     public static void addChatMessage(Text text) {
         try {
             InGameHud gameHud = MinecraftClient.getInstance().inGameHud;

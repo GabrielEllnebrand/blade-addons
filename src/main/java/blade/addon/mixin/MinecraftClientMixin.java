@@ -1,8 +1,10 @@
 package blade.addon.mixin;
 
+import blade.addon.utils.Location;
 import blade.addon.utils.events.Events;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
@@ -23,12 +25,14 @@ public class MinecraftClientMixin {
     @Inject(method = "doItemUse", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/item/ItemStack;getCount()I"), cancellable = true)
     private void testInteraction(CallbackInfo ci, @Local ItemStack itemStack) {
         BlockHitResult blockHitResult = (BlockHitResult) this.crosshairTarget;
-
         if (blockHitResult == null) return;
         if (Events.ON_BLOCK_INTERACTION.test(blockInteractionEvent -> blockInteractionEvent.iteract(blockHitResult, itemStack))) {
             ci.cancel();
         }
+    }
 
-
+    @Inject(method = "setWorld", at=@At(value = "TAIL"))
+    private void onWorld(ClientWorld world, CallbackInfo ci) {
+        Location.swapWorld();
     }
 }

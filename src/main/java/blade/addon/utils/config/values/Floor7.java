@@ -63,6 +63,9 @@ public class Floor7 {
     public static boolean blockIncorrectRelicPlace = false;
 
     @ConfigValue
+    public static boolean replaceWithProgressBar = false;
+
+    @ConfigValue
     public static boolean combineTickTimers = false;
 
     @ConfigValue
@@ -73,4 +76,46 @@ public class Floor7 {
 
     @ConfigValue
     public static DragSpawnTimer.Team healerTeam = DragSpawnTimer.Team.ARCHER_TEAM;
+
+    @ConfigValue
+    public static boolean displayLocationNotification = false;
+
+    @ConfigValue
+    public static int notificationDuration = 15;
+
+    @ConfigValue
+    public static String notificationSound = "block.note_block.pling";
+
+    @ConfigValue
+    public static float notificationVolume = 1;
+
+    @ConfigValue
+    public static float notificationPitch = 1;
+
+    @ConfigValue
+    public static int notificationRepetitions = 3;
+
+    @ConfigValue
+    public static boolean predevForAll = true;
+
+    @ConfigValue
+    public static boolean showAllRelicTimes = true;
+
+    @ConfigValue
+    public static boolean notifyPre4Completion = false;
+
+    @ConfigValue
+    public static boolean notifyStormCrush = false;
+
+    @ConfigValue
+    public static boolean timePillarExplosion = false;
+
+    @ConfigValue
+    public static boolean notifiyMelody = false;
+
+    @ConfigValue
+    public static boolean leapNotifications = false;
+
+    @ConfigValue
+    public static boolean disableTitlesAtPre4 = false;
 }

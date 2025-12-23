@@ -73,4 +73,10 @@ public class Dungeons {
 
     @ConfigValue
     public static boolean combineScreenNotifications = false;
+
+    @ConfigValue
+    public static boolean dontProtectHeldItem = true;
+
+    @ConfigValue
+    public static boolean hideBlazeNameTag = false;
 }

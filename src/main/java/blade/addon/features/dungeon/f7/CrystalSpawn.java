@@ -2,13 +2,17 @@ package blade.addon.features.dungeon.f7;
 
 import blade.addon.utils.Constants;
 import blade.addon.utils.Location;
+import blade.addon.utils.Misc;
 import blade.addon.utils.config.values.Floor7;
 import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.events.Events;
 import blade.addon.utils.rendering.RenderUtils;
+import blade.addon.utils.times.PersonalBests;
 import config.practical.hud.HUDComponent;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.entity.decoration.EndCrystalEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
@@ -19,6 +23,10 @@ public class CrystalSpawn {
 
     private static final Pattern PATTERN_1 = Pattern.compile("^\\[BOSS] Maxor: THAT BEAM! IT HURTS! IT HURTS!!$");
     private static final Pattern PATTERN_2 = Pattern.compile("^\\[BOSS] Maxor: YOU TRICKED ME!$");
+    private static final Pattern RELIC_PICK_UP = Pattern.compile("(\\w+) picked up an Energy Crystal!$");
+
+    private static long pickupTime = 0;
+    private static boolean pickedUp = false;
 
     private static final int TICK_SPAWN = 34;
     private static int tick = 0;
@@ -29,28 +37,62 @@ public class CrystalSpawn {
             if (!Location.inDungeon() || !Phase.inP1() || !Floor7.enableCrystalSpawnTime) return;
 
             Matcher matcher = PATTERN_1.matcher(text.getString());
-            if (!matcher.find()) {
-                matcher = PATTERN_2.matcher(text.getString());
-
-                if (!matcher.find()) return;
+            if (matcher.find()) {
+                tick = TICK_SPAWN;
+                return;
             }
 
-            tick = TICK_SPAWN;
+            matcher = PATTERN_2.matcher(text.getString());
+            if (matcher.find()) {
+                tick = TICK_SPAWN;
+                return;
+            }
+
+            matcher = RELIC_PICK_UP.matcher(text.getString());
+            if (matcher.find()) {
+                String name = matcher.group(1);
+                if (Misc.isClientPlayer(name)) {
+                    pickupTime = System.currentTimeMillis();
+                    pickedUp = true;
+                }
+
+            }
+
         });
-
-
         Events.ON_SERVER_TICK.register(() -> tick = Math.max(tick - 1, 0));
 
         Events.ON_LOCATION_CHANGE.register(newLocation -> {
             if (Location.inDungeon()) {
                 tick = 0;
+                pickedUp = false;
             }
         });
 
+        Events.ON_ENTITY_SPAWNED.register((entity, world) -> {
+            if (!pickedUp || !Location.inDungeon() || !Floor7.enableCrystalSpawnTime || !Phase.inP1()) return;
+            if (entity instanceof EndCrystalEntity crystal) {
+                ClientPlayerEntity player = MinecraftClient.getInstance().player;
+                if (player == null) return;
+
+                double px = player.getX();
+                double cx = crystal.getX();
+                double pz = player.getZ();
+                double cz = crystal.getZ();
+
+                double distance = Misc.getDistance(px, pz, cx, cz);
+
+                if (distance < 5 && crystal.getY() == 224.375) {
+                    PersonalBests.crystalTime.testNewTime(Text.literal("§aCrystal placed in "), pickupTime);
+                    pickedUp = false;
+                }
+
+            }
+
+        });
     }
 
     public static boolean display() {
-        return  tick > 0 && Location.inDungeon() && Floor7.enableCrystalSpawnTime;
+        return tick > 0 && Location.inDungeon() && Floor7.enableCrystalSpawnTime;
     }
 
     public static void render(HUDComponent component, DrawContext context) {

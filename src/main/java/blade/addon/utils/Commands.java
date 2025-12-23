@@ -2,8 +2,10 @@ package blade.addon.utils;
 
 import blade.addon.features.dungeon.LeapOrder;
 import blade.addon.features.dungeon.f7.BossWaypoints;
+import blade.addon.features.item.ProtectItem;
 import blade.addon.utils.config.Config;
 import blade.addon.utils.dungeon.FillHelper;
+import blade.addon.utils.times.PersonalBests;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.DoubleArgumentType;
@@ -16,8 +18,6 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.command.CommandRegistryAccess;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.ArrayList;
 
 public class Commands {
 
@@ -55,7 +55,7 @@ public class Commands {
 
                                     ))
 
-                            .then(ClientCommandManager.literal("leaporder")
+                            .then( ClientCommandManager.literal("leaporder")
                                     .then(ClientCommandManager.argument("backupMage", StringArgumentType.string())
                                             .then(ClientCommandManager.argument("odinOrder", BoolArgumentType.bool())
                                                     .executes(context -> {
@@ -65,8 +65,7 @@ public class Commands {
                                                         return Constants.SUCCESS;
                                                     })
                                             )
-                                    )
-                            )
+                                    ))
 
                             .then(ClientCommandManager.literal("waypoint")
 
@@ -165,6 +164,16 @@ public class Commands {
                                     }))
 
                             )
+
+                            .then(ClientCommandManager.literal("protectItem").executes(context -> {
+                                ProtectItem.protectSelected();
+                                return Constants.SUCCESS;
+                            }))
+
+                            .then(ClientCommandManager.literal("resetPbs").executes(context -> {
+                                PersonalBests.reset();
+                                return Constants.SUCCESS;
+                            }))
 
                             .executes(commandContext -> Scheduler.scheduleScreen(Config.createScreen(null)))
             );

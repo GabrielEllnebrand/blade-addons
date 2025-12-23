@@ -1,0 +1,45 @@
+package blade.addon.features.other;
+
+import blade.addon.utils.Constants;
+import blade.addon.utils.config.values.ExtraOptions;
+import blade.addon.utils.events.Events;
+import blade.addon.utils.rendering.RenderUtils;
+import config.practical.hud.HUDComponent;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
+
+public class KickedTimer {
+
+    private static boolean isKicked = false;
+    private static long kickedTime = 0;
+
+    public static void init() {
+        Events.ON_GAME_MESSAGE.register(text -> {
+            if (!ExtraOptions.enableKickedTimer) return;
+            String string = text.getString();
+            if (string == null) return;
+
+            if (string.contains("You were kicked while joining that server!")) {
+                kickedTime = System.currentTimeMillis();
+                isKicked = true;
+
+            }
+        });
+    }
+
+    public static boolean display() {
+        return isKicked;
+    }
+
+    public static void render(HUDComponent component, DrawContext context) {
+        long diff = System.currentTimeMillis() - kickedTime;
+        if (diff > 60 * 1000) isKicked = false;
+
+        int x = component.getScaledX();
+        int y = component.getScaledY();
+
+        RenderUtils.drawCenteredText(context, MinecraftClient.getInstance().textRenderer, "§5Time kicked: §f" + Constants.DECIMAL_FORMAT.format(Math.min(diff / 1000.0, 60)) + "s", x, y, component.getWidth());
+
+    }
+
+}

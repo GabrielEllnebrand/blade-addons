@@ -122,6 +122,9 @@ public class Phase {
             //just for starting the run
             if (currentSplit.started() && currentPhase == -1) {
                 currentPhase = i;
+                if (Events.ON_PHASE_CHANGE.hasListeners()) {
+                    Events.ON_PHASE_CHANGE.invoke(PhaseEvent::onPhaseChange);
+                }
             }
 
 
@@ -171,6 +174,10 @@ public class Phase {
 
     public static boolean runStarted() {
         return currentPhase >= 0;
+    }
+
+    public static boolean runJustStarted() {
+        return currentPhase == 0;
     }
 
     public static boolean inBoss() {

@@ -35,4 +35,43 @@ public class ExtraOptions {
 
     @ConfigValue
     public static boolean includePetSprite = true;
+
+    @ConfigValue
+    public static boolean drawStarCount = false;
+
+    @ConfigValue
+    public static boolean highlightProtectedItem = false;
+
+    @ConfigValue
+    public static boolean showPbs = true;
+
+    @ConfigValue
+    public static boolean disableScrollHotbar = false;
+
+    @ConfigValue
+    public static boolean enableKickedTimer = true;
+
+    @ConfigValue
+    public static boolean enableRagaxeDisplay = false;
+
+    @ConfigValue
+    public static boolean autoSkip = true;
+
+    @ConfigValue
+    public static boolean realisticDelay = false;
+
+    @ConfigValue
+    public static boolean includeLuckyButton = false;
+
+    @ConfigValue
+    public static double luckyButtonRng = 0.1;
+
+    @ConfigValue
+    public static int luckyButtonColor = 0xff4a4f4b;
+
+    @ConfigValue
+    public static boolean practiceSSAnywhere = false;
+
+    @ConfigValue
+    public static boolean blockUnluckyButtonClick = false;
 }

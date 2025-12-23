@@ -31,18 +31,18 @@ public class ItemRarityHighlight {
 
         List<Text> lines = lore.lines();
         if (lines.isEmpty()) return ItemRarity.NONE;
-        Text line = lines.getLast();
 
-        if (line == null) return ItemRarity.NONE;
-        String string = line.getString();
-        String[] rarityStrings = string.split(" ");
+        for (Text line: lines.reversed()) {
+            String string = line.getString();
+            String[] rarityStrings = string.split(" ");
 
-        for (String testString: rarityStrings) {
-            try {
-                ItemRarity rarity = ItemRarity.valueOf(testString);
-                return rarity;
-            } catch (IllegalArgumentException ignored) {
+            for (String testString: rarityStrings) {
+                try {
+                    ItemRarity rarity = ItemRarity.valueOf(testString);
+                    return rarity;
+                } catch (IllegalArgumentException ignored) {
 
+                }
             }
         }
         return ItemRarity.NONE;

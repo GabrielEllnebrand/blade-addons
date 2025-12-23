@@ -2,6 +2,9 @@ package blade.addon.utils.config.components;
 
 import blade.addon.features.dungeon.DupeClassChecker;
 import blade.addon.features.dungeon.KeyNotifier;
+import blade.addon.features.dungeon.f7.MelodyWarning;
+import blade.addon.features.dungeon.f7.PillarExplode;
+import blade.addon.features.dungeon.f7.Pre4Notifier;
 import blade.addon.utils.config.values.Dungeons;
 import blade.addon.utils.rendering.RenderUtils;
 import config.practical.hud.HUDComponent;
@@ -17,6 +20,12 @@ public class CombinedScreenNotifications {
             return true;
         } else if (KeyNotifier.display()) {
             return true;
+        } else if (Pre4Notifier.display()) {
+            return true;
+        } else if (MelodyWarning.display()) {
+            return true;
+        } else if (PillarExplode.display()) {
+            return true;
         }
         return false;
     }
@@ -26,7 +35,14 @@ public class CombinedScreenNotifications {
             DupeClassChecker.render(component, context);
         } else if (KeyNotifier.display()) {
             KeyNotifier.render(component, context);
-        } else {
+        } else if (Pre4Notifier.display()) {
+            Pre4Notifier.render(component, context);
+        } else if (MelodyWarning.display()) {
+            MelodyWarning.render(component, context);
+        }else if (PillarExplode.display()) {
+            PillarExplode.render(component, context);
+        }
+        else {
             int x = component.getScaledX();
             int y = component.getScaledY();
 

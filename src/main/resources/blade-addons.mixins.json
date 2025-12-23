@@ -8,6 +8,7 @@
     "InventoryMixin",
     "ItemStackMixin",
     "NetworkMixin",
+    "PlayerEntityMixin",
     "ServerTickMixin"
   ],
   "injectors": {
@@ -18,10 +19,13 @@
   },
   "client": [
     "BlockEntityRenderMixin",
+    "ClientPlayerEntityMixin",
+    "EntityRendererMixin",
     "FireMixin",
     "HandledScreenMixin",
     "InGameHudMixin",
     "MinecraftClientMixin",
+    "MouseMixin",
     "NetworkMixin",
     "PositionMixin",
     "RenderMixin",

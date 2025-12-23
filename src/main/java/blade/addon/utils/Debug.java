@@ -1,7 +1,10 @@
 package blade.addon.utils;
 
+import blade.addon.features.dungeon.f7.LocationNotifier;
+import blade.addon.features.dungeon.f7.RelicTimer;
 import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.dungeon.Section;
+import com.mojang.brigadier.arguments.StringArgumentType;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.minecraft.text.Text;
 import org.slf4j.Logger;
@@ -14,8 +17,7 @@ public class Debug {
     public static boolean sendSound = false;
 
     public static void init() {
-       registerCommands();
-
+        registerCommands();
     }
 
     private static void registerCommands() {
@@ -35,8 +37,20 @@ public class Debug {
             Misc.addChatMessage(Text.literal("Send Sound: ").append(Misc.getStatusText(sendSound)));
             return Constants.SUCCESS;
         }));
-    }
 
+        Commands.registerDevCommand(ClientCommandManager.literal("testRelicGUI").executes(context -> {
+            RelicTimer.testRelicGUI();
+            return Constants.SUCCESS;
+        }));
+
+        Commands.registerDevCommand(ClientCommandManager.literal("sendNotification").then(ClientCommandManager.argument("message", StringArgumentType.string()).executes(context -> {
+                            String message = StringArgumentType.getString(context, "message");
+                            LocationNotifier.startNotification(message);
+                            return Constants.SUCCESS;
+                        })
+                )
+        );
+    }
 
 
     public static void sendDebugMessage(Text text) {

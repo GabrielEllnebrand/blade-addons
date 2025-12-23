@@ -1,9 +1,9 @@
 package blade.addon.features.dungeon.f7;
 
-import blade.addon.utils.Constants;
 import blade.addon.utils.Location;
 import blade.addon.utils.Misc;
 import blade.addon.utils.Waypoint;
+import blade.addon.utils.config.FolderUtility;
 import blade.addon.utils.config.values.Floor7;
 import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.rendering.RenderLayers;
@@ -36,7 +36,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class BossWaypoints {
 
-    private static final String filePath = "./config/" + Constants.NAMESPACE + "-waypoints.json";
+    private static final String filePath = FolderUtility.OLD_PATH + FolderUtility.WAYPOINTS_NAME;
     private static final String WAYPOINTS_NAME = "waypoints";
 
     public static final CopyOnWriteArrayList<Waypoint> waypoints = new CopyOnWriteArrayList<>();
@@ -134,6 +134,7 @@ public class BossWaypoints {
             waypoints.remove(waypoint);
         }
 
+        save();
         return ActionResult.PASS;
     }
 

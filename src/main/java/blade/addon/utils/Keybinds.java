@@ -10,6 +10,7 @@ import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.LoreComponent;
+import net.minecraft.component.type.NbtComponent;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 import org.lwjgl.glfw.GLFW;
@@ -22,6 +23,8 @@ public class Keybinds {
 
     private static KeyBinding openConfig;
     private static KeyBinding getItemLore;
+    private static KeyBinding getItemCustomData;
+
 
     public static void init() {
 
@@ -33,6 +36,12 @@ public class Keybinds {
 
         getItemLore = KeyBindingHelper.registerKeyBinding(new KeyBinding(
                 "Grabs the items lore",
+                InputUtil.Type.KEYSYM,
+                GLFW.GLFW_KEY_UNKNOWN,
+                CATEGORY));
+
+        getItemCustomData = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+                "Grabs the items custom data",
                 InputUtil.Type.KEYSYM,
                 GLFW.GLFW_KEY_UNKNOWN,
                 CATEGORY));
@@ -66,6 +75,24 @@ public class Keybinds {
             }
 
             Misc.addChatMessage(Text.literal("Rarity: " + ItemRarityHighlight.getRarity(heldStack).name()));
+        }
+
+        if (getItemCustomData.wasPressed()) {
+            ClientPlayerEntity player = client.player;
+            if (player == null) {
+                Misc.addChatMessage(Text.literal("player is null"));
+                return;
+            }
+
+            ItemStack heldStack = player.getMainHandStack();
+            NbtComponent nbt = heldStack.get(DataComponentTypes.CUSTOM_DATA);
+            if (nbt == null) {
+                Misc.addChatMessage(Text.literal("nbt is null"));
+                return;
+            }
+
+            Misc.addChatMessage(Text.literal(nbt.toString()));
+
         }
     }
 }

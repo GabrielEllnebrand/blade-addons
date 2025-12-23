@@ -8,6 +8,7 @@ import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.events.Events;
 import blade.addon.utils.rendering.RenderLayers;
 import blade.addon.utils.rendering.RenderUtils;
+import blade.addon.utils.times.PersonalBests;
 import config.practical.hud.HUDComponent;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
@@ -19,6 +20,10 @@ import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.VertexRendering;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.entity.decoration.ArmorStandEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
@@ -31,18 +36,21 @@ import java.util.regex.Pattern;
 public class RelicTimer {
 
     enum Relic {
-        GREEN(new Box(49, 7, 44, 50, 8, 45), 0xff55ff55),
-        RED(new Box(51, 7, 42, 52, 8, 43), 0xffff5555),
-        PURPLE(new Box(54, 7, 41, 55, 8, 42), 0xffff55ff),
-        ORANGE(new Box(57, 7, 42, 58, 8, 43), 0xffffaa00),
-        BLUE(new Box(59, 7, 44, 60, 8, 45), 0xff55ffff);
+        GREEN(new Box(49, 7, 44, 50, 8, 45), 0xff55ff55, "§cRed"),
+        RED(new Box(51, 7, 42, 52, 8, 43), 0xffff5555, "§aGreen"),
+        PURPLE(new Box(54, 7, 41, 55, 8, 42), 0xffff55ff, "§5Purple"),
+        ORANGE(new Box(57, 7, 42, 58, 8, 43), 0xffffaa00, "§6Orange"),
+        BLUE(new Box(59, 7, 44, 60, 8, 45), 0xff55ffff, "§bBlue");
 
         final Box box;
         final int color;
+        final String name;
+        long placedTime = 0;
 
-        Relic(Box box, int color) {
+        Relic(Box box, int color, String name) {
             this.box = box;
             this.color = color;
+            this.name = name;
         }
     }
 
@@ -51,27 +59,39 @@ public class RelicTimer {
 
     private static final Pattern PATTERN = Pattern.compile("^(.+) picked the Corrupted (Red|Purple|Orange|Green|Blue) Relic!$");
 
-    private static long pickupTime;
+    private static long phaseStartTime;
     private static Relic pickedupRelic = null;
 
     private static int tick = Floor7.relicSpawnTicks;
 
+    //only here to test the relic progress bar
+    private static boolean forceGUI = false;
+
     public static void init() {
         Events.ON_SERVER_TICK.register(() -> {
-            if (!Location.inDungeon() || !Phase.inP5()) return;
-            tick = Math.max(tick - 1, 0);
+            if (!forceGUI) {
+                if (!Location.inDungeon() || !Phase.inP5()) return;
+            }
+            tick = Math.max(tick - 1, -1);
+
+            if (tick == -1) {
+                forceGUI = false;
+            }
         });
 
         Events.ON_LOCATION_CHANGE.register(newLocation -> {
             if (Location.inDungeon()) {
                 tick = Floor7.relicSpawnTicks;
                 pickedupRelic = null;
+                for (Relic relic : Relic.values()) {
+                    relic.placedTime = 0;
+                }
             }
         });
 
         Events.ON_PHASE_CHANGE.register(() -> {
             if (Phase.inP5()) {
-                pickupTime = System.currentTimeMillis();
+                phaseStartTime = System.currentTimeMillis();
             }
         });
 
@@ -92,6 +112,37 @@ public class RelicTimer {
             }
         });
 
+        Events.ON_ENTITY_SPAWNED.register((entity, world) -> {
+            if (!Location.inDungeon() || !Phase.inP5() || !Floor7.showAllRelicTimes) return;
+
+
+            if (entity instanceof ArmorStandEntity armorStand) {
+                ItemStack helmet = armorStand.getEquippedStack(EquipmentSlot.HEAD);
+                Text text = helmet.getName();
+                if (text == null) return;
+                String name = text.getString();
+                if (!name.contains("Relic")) return;
+
+                double ax = armorStand.getX();
+                double az = armorStand.getZ();
+
+                for (Relic relic : Relic.values()) {
+                    if (Misc.getDistance(relic.box.maxX, ax, relic.box.maxZ, az) < 1) {
+                        relic.placedTime = System.currentTimeMillis();
+                        break;
+                    }
+                }
+
+                if (allRelicsPlaced()) {
+                    for (Relic relic : Relic.values()) {
+                        long time = relic.placedTime - phaseStartTime;
+                        Misc.addChatMessage(Text.literal(relic.name + " &aRelic placed in &e" + Constants.DECIMAL_FORMAT.format(time) + "s&a."));
+                    }
+                }
+            }
+
+        });
+
         Events.ON_BLOCK_INTERACTION.register((result, itemStack) -> {
             if (!Location.inDungeon() || !Phase.inP5() || pickedupRelic == null) return false;
             BlockPos pos = result.getBlockPos();
@@ -102,11 +153,18 @@ public class RelicTimer {
 
             if (pos.getX() == pickedupRelic.box.minX && (pos.getY() == pickedupRelic.box.minY || pos.getY() == pickedupRelic.box.minY - 1) && pos.getZ() == pickedupRelic.box.minZ) {
                 if (Floor7.enableRelicPlaceTime) {
-                    double diff = (System.currentTimeMillis() - pickupTime) / 1000.0;
-                    Misc.addChatMessage(Text.literal("The ").formatted(Formatting.GREEN)
+                    MutableText text = Text.literal("The ").formatted(Formatting.GREEN)
                             .append(Text.literal(pickedupRelic.name().toLowerCase()).withColor(pickedupRelic.color))
-                            .append(" relic was placed in ").formatted(Formatting.GREEN)
-                            .append(Text.literal(Constants.DECIMAL_FORMAT.format(diff) + "s.").formatted(Formatting.YELLOW)));
+                            .append(" relic was placed in ").formatted(Formatting.GREEN);
+
+                    switch (pickedupRelic) {
+                        case RED -> PersonalBests.redRelicTime.testNewTime(text, phaseStartTime);
+                        case ORANGE -> PersonalBests.orangeRelicTime.testNewTime(text, phaseStartTime);
+                        case BLUE -> PersonalBests.blueRelicTime.testNewTime(text, phaseStartTime);
+                        case GREEN -> PersonalBests.greenRelicTime.testNewTime(text, phaseStartTime);
+                        case PURPLE -> PersonalBests.purpleRelicTime.testNewTime(text, phaseStartTime);
+                    }
+
                 }
                 pickedupRelic = null;
             } else {
@@ -144,8 +202,20 @@ public class RelicTimer {
 
     }
 
+    public static void testRelicGUI() {
+        forceGUI = true;
+        tick = Floor7.relicSpawnTicks;
+    }
+
+    private static boolean allRelicsPlaced() {
+        for (Relic relic : Relic.values()) {
+            if (relic.placedTime == 0) return false;
+        }
+        return true;
+    }
+
     public static boolean display() {
-        return Floor7.enableRelicStartTimer && Location.inDungeon() && Phase.inP5() && tick > 0;
+        return Floor7.enableRelicStartTimer && Location.inDungeon() && Phase.inP5() && tick > -1 && !Floor7.replaceWithProgressBar;
     }
 
     public static void render(HUDComponent component, DrawContext context) {
@@ -157,6 +227,31 @@ public class RelicTimer {
         double num = tick * Constants.TICK_DURATION;
 
         RenderUtils.drawCenteredText(context, MinecraftClient.getInstance().textRenderer, Text.literal(Constants.DECIMAL_FORMAT.format(num)), x, y, component.getWidth(), color);
+
+    }
+
+    public static boolean displayProgressBar() {
+        if (forceGUI) return true;
+        return Floor7.enableRelicStartTimer && Location.inDungeon() && Phase.inP5() && tick > -1 && Floor7.replaceWithProgressBar;
+    }
+
+    public static void renderProgressBar(HUDComponent component, DrawContext context) {
+        int x = component.getScaledX();
+        int y = component.getScaledY();
+
+        //from valleyAddons
+        StringBuilder message = new StringBuilder("§8[");
+
+        int diff = Floor7.relicSpawnTicks - tick;
+        for (int i = 0; i < Floor7.relicSpawnTicks; i++) {
+            if (i < diff) {
+                if (tick < 2) message.append("§a|");
+                else message.append("§c|");
+            } else message.append("§7|");
+        }
+        message.append("§8]");
+
+        RenderUtils.drawCenteredText(context, MinecraftClient.getInstance().textRenderer, Text.literal(message.toString()), x, y, component.getWidth(), 0xffffffff);
 
     }
 }

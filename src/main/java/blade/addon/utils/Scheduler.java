@@ -64,13 +64,16 @@ public class Scheduler {
         return Command.SINGLE_SUCCESS;
     }
 
-    public static void scheduleSound(SoundEvent soundEvent, float volume, float pitch) {
+    public static void scheduleSound(SoundEvent soundEvent, float volume, float pitch, int delay) {
         tasks.add(new Task(() -> {
             ClientPlayerEntity player = MinecraftClient.getInstance().player;
             if (player == null) return;
             player.playSound(soundEvent, volume, pitch);
-        }, 1));
+        }, delay));
+    }
 
+    public static void scheduleSound(SoundEvent soundEvent, float volume, float pitch) {
+        scheduleSound(soundEvent, volume, pitch, 1);
     }
 
     public static void scheduleCommand(String command) {

@@ -3,15 +3,14 @@ package blade.addon.utils.dungeon;
 import blade.addon.utils.Constants;
 import blade.addon.utils.Debug;
 import blade.addon.utils.Location;
-import blade.addon.utils.Misc;
 import blade.addon.utils.events.Events;
+import blade.addon.utils.events.interfaces.SectionEvent;
 import config.practical.hud.HUDComponent;
 import config.practical.manager.ConfigValue;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -37,8 +36,7 @@ public class Section {
             new Split("2nd", "", "", 16755200),
             new Split("3rd", "", "", 16755200),
             new Split("4th", "", "", 16755200),};
-
-    private static final Pattern TERMINALS_DONE_PATTERN = Pattern.compile("(activated|completed) (a terminal|a device|a lever)! \\((\\d)/(\\d)\\)$");
+    private static final Pattern TERMINALS_DONE_PATTERN = Pattern.compile("^(\\w+) (activated|completed) a (terminal|device|lever)! \\((\\d)/(\\d)\\)$");
 
     public static int SPLIT_LENGTH = 120;
 
@@ -49,9 +47,6 @@ public class Section {
 
     @ConfigValue
     public static boolean enableTerminalSplits = false;
-
-    @ConfigValue
-    public static boolean sendTermianlSplits = false;
 
     @ConfigValue
     public static DisplayTerminalSplitsWhen displayTerminalSplitsWhen = DisplayTerminalSplitsWhen.TERMINALS_ONLY;
@@ -68,6 +63,7 @@ public class Section {
                 currentSection = 1;
                 splits[0].start();
             } else if (Phase.inGoldorTunnel()) {
+                currentSection = 5;
                 endAllSections();
             }
         });
@@ -96,6 +92,9 @@ public class Section {
         resetSection();
         endSplit(currentSection);
         currentSection++;
+        if (Events.ON_SECTION_CHANGE.hasListeners()) {
+            Events.ON_SECTION_CHANGE.invoke(SectionEvent::onSection);
+        }
         startSplit(currentSection);
     }
 
@@ -115,12 +114,8 @@ public class Section {
         for(Split split: splits) {
             split.end();
         }
-        if (sendTermianlSplits) {
-            Misc.addChatMessage(Text.literal("Splits: ").formatted(Formatting.GREEN));
-            for (Split split : splits) {
-                split.end();
-                Misc.addChatMessage(split.createNameText().append(split.createTimeText()));
-            }
+        if (Events.ON_SECTION_CHANGE.hasListeners()) {
+            Events.ON_SECTION_CHANGE.invoke(SectionEvent::onSection);
         }
     }
 
@@ -130,12 +125,21 @@ public class Section {
         String string = message.getString();
         Matcher matcher = TERMINALS_DONE_PATTERN.matcher(string);
         if (matcher.find()) {
+            String name = matcher.group(1);
+            String objective = matcher.group(3);
+            String currentCompleted = matcher.group(4);
+            String totalNeeded = matcher.group(5);
+
+            if (Events.ON_TERMINAL.hasListeners()) {
+                Events.ON_TERMINAL.invoke(terminalEvent -> terminalEvent.onComplete(name, objective));
+            }
+
             try {
-                int recentlyCompleted = Integer.parseInt(matcher.group(3));
+                int recentlyCompleted = Integer.parseInt(currentCompleted);
                 if ((recentlyCompleted == total && gateBlownUp) || (recentlyCompleted < completed)) {
                     incrementSection();
                 } else {
-                    total = Integer.parseInt(matcher.group(4));
+                    total = Integer.parseInt(totalNeeded);
                     completed = recentlyCompleted;
                 }
             } catch (NumberFormatException e) {

@@ -1,4 +1,4 @@
-package blade.addon.features.dungeon;
+package blade.addon.features.highlight;
 
 import blade.addon.utils.Location;
 import blade.addon.utils.Misc;
@@ -337,8 +337,8 @@ public class MobHighlight {
 
     private static boolean isMiniBoss(Entity entity) {
         if (entity instanceof PlayerEntity player) {
-            ItemStack leggings = player.getInventory().getStack(39);
-            int id = Item.getRawId(leggings.getItem());
+            ItemStack helmet = player.getInventory().getStack(39);
+            int id = Item.getRawId(helmet.getItem());
             return id == DIAMOND_HELMET_ID || id == PLAYER_HEAD_ID;
         }
 

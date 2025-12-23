@@ -1,6 +1,5 @@
 package blade.addon;
 
-import blade.addon.features.other.DianaNotifier;
 import blade.addon.features.dungeon.AutoRequeue;
 import blade.addon.features.dungeon.ChestCounter;
 import blade.addon.features.dungeon.DeathTickTimer;
@@ -10,7 +9,6 @@ import blade.addon.features.dungeon.HidePlayers;
 import blade.addon.features.dungeon.ItemHighlight;
 import blade.addon.features.dungeon.KeyNotifier;
 import blade.addon.features.dungeon.LeapMessage;
-import blade.addon.features.dungeon.MobHighlight;
 import blade.addon.features.dungeon.SecretSpawnTimer;
 import blade.addon.features.dungeon.WarpCooldown;
 import blade.addon.features.dungeon.f7.BossWaypoints;
@@ -19,10 +17,21 @@ import blade.addon.features.dungeon.f7.DistanceToLedge;
 import blade.addon.features.dungeon.f7.DragSpawnTimer;
 import blade.addon.features.dungeon.f7.GoldorTickTimer;
 import blade.addon.features.dungeon.f7.InvincibilityTimer;
+import blade.addon.features.dungeon.f7.LeapNotification;
+import blade.addon.features.dungeon.f7.LocationNotifier;
+import blade.addon.features.dungeon.f7.MelodyWarning;
+import blade.addon.features.dungeon.f7.PillarExplode;
 import blade.addon.features.dungeon.f7.PositionMessages;
+import blade.addon.features.dungeon.f7.Pre4Notifier;
+import blade.addon.features.dungeon.f7.PredevTimer;
 import blade.addon.features.dungeon.f7.RelicTimer;
 import blade.addon.features.dungeon.f7.StormTickTimer;
 import blade.addon.features.dungeon.f7.TermStartTimer;
+import blade.addon.features.highlight.MobHighlight;
+import blade.addon.features.other.DianaNotifier;
+import blade.addon.features.other.KickedTimer;
+import blade.addon.features.other.PracticeSS;
+import blade.addon.features.other.RagDisplay;
 import blade.addon.features.other.SelectedPet;
 import blade.addon.utils.Commands;
 import blade.addon.utils.Debug;
@@ -30,18 +39,22 @@ import blade.addon.utils.Keybinds;
 import blade.addon.utils.Location;
 import blade.addon.utils.Scheduler;
 import blade.addon.utils.config.Config;
+import blade.addon.utils.config.FolderUtility;
 import blade.addon.utils.config.components.Components;
 import blade.addon.utils.dungeon.DungeonClass;
 import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.dungeon.Section;
+import blade.addon.utils.events.CustomEvents;
 import net.fabricmc.api.ModInitializer;
 
 public class Bladeaddons implements ModInitializer {
 	@Override
 	public void onInitialize() {
+        FolderUtility.init();
         Components.init();
         Config.manager.load();
 		Keybinds.init();
+        CustomEvents.init();
         Commands.init();
         Debug.init();
 		Location.init();
@@ -73,5 +86,14 @@ public class Bladeaddons implements ModInitializer {
         DianaNotifier.init();
         DragSpawnTimer.init();
         SelectedPet.init();
+        LocationNotifier.init();
+        PredevTimer.init();
+        KickedTimer.init();
+        Pre4Notifier.init();
+        PillarExplode.init();
+        MelodyWarning.init();
+        RagDisplay.init();
+        LeapNotification.init();
+        PracticeSS.init();
     }
 }

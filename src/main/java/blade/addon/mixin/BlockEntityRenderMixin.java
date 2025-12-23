@@ -1,6 +1,6 @@
 package blade.addon.mixin;
 
-import blade.addon.features.dungeon.MobHighlight;
+import blade.addon.features.highlight.MobHighlight;
 import blade.addon.utils.Location;
 import blade.addon.utils.rendering.RenderLayers;
 import blade.addon.utils.rendering.RenderUtils;
