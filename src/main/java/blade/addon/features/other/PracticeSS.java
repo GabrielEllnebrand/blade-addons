@@ -100,7 +100,7 @@ public class PracticeSS {
 
             if (started && !showingPattern) {
                 if (currentIndex == 1 && ticksSinceLuckyButton > 0) {
-                    return !ExtraOptions.blockUnluckyButtonClick;
+                    return ExtraOptions.blockUnluckyButtonClick;
                 }
 
                 BlockPos nextButton = buttons.get(currentIndex);
