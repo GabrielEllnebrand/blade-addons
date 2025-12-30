@@ -1,9 +1,11 @@
 package blade.addon.mixin;
 
+import blade.addon.features.dungeon.f7.invincibility.MaskHighlight;
 import blade.addon.features.item.ItemRarityHighlight;
 import blade.addon.features.item.ProtectItem;
 import blade.addon.features.item.SelectedPetHighlight;
 import blade.addon.features.item.StarCountHighlight;
+import blade.addon.utils.config.values.Dungeons;
 import blade.addon.utils.config.values.ExtraOptions;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.GenericContainerScreen;
@@ -63,6 +65,10 @@ public class HandledScreenMixin<T extends ScreenHandler> {
         int x = slot.x;
         int y = slot.y;
         ItemStack stack = slot.getStack();
+
+        if (Dungeons.maskHighlight) {
+            MaskHighlight.draw(context, stack, x, y);
+        }
 
         if (ExtraOptions.drawStarCount) {
             StarCountHighlight.draw(context, stack, x, y);

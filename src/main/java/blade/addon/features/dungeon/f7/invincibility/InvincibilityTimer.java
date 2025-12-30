@@ -1,5 +1,6 @@
-package blade.addon.features.dungeon.f7;
+package blade.addon.features.dungeon.f7.invincibility;
 
+import blade.addon.features.dungeon.f7.terms.Pre4Notifier;
 import blade.addon.utils.Constants;
 import blade.addon.utils.Location;
 import blade.addon.utils.Misc;
@@ -114,19 +115,19 @@ public class InvincibilityTimer {
         Matcher matcher = BONZO_PATTERN.matcher(string);
         if (matcher.matches()) {
             bonzoMaskTicks = BONZO_MASK_COOLDOWN;
-            if (Dungeons.showProcTitle) {
+            if (Dungeons.showProcTitle && !Pre4Notifier.atDev()) {
                 Misc.setTitle(Text.literal("Bonzo"));
             }
         }
         if (string.equals("Second Wind Activated! Your Spirit Mask saved your life!")) {
             spiritMaskTicks = SPIRIT_MASK_COOLDOWN;
-            if (Dungeons.showProcTitle) {
+            if (Dungeons.showProcTitle && !Pre4Notifier.atDev()) {
                 Misc.setTitle(Text.literal("Spirit"));
             }
         }
         if (string.equals("Your Phoenix Pet saved you from certain death!")) {
             phoenixTicks = PHOENIX_COOLDOWN;
-            if (Dungeons.showProcTitle) {
+            if (Dungeons.showProcTitle && !Pre4Notifier.atDev()) {
                 Misc.setTitle(Text.literal("Phoenix"));
             }
         }
@@ -165,6 +166,14 @@ public class InvincibilityTimer {
             Formatting format = phoenixOn ? Formatting.YELLOW : Formatting.GREEN;
             return Text.literal("Phoenix ").formatted(format);
         }
+    }
+
+    public static double getBonzoProgress() {
+        return (double) bonzoMaskTicks / BONZO_MASK_COOLDOWN;
+    }
+
+    public static double getSpiritProgress() {
+        return (double) spiritMaskTicks / SPIRIT_MASK_COOLDOWN;
     }
 
     private static void drawSprite(DrawContext context, Identifier identifier, int x, int y, boolean isOn, int ticks, Text timerText) {

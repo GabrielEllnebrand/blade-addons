@@ -27,7 +27,7 @@ public class BlockEntityRenderMixin {
     @Inject(method = "render(Lnet/minecraft/block/entity/BlockEntity;FLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;)V", at = @At("TAIL"))
     private static<E extends BlockEntity> void render(E blockEntity, float tickProgress, MatrixStack matrices, VertexConsumerProvider vertexConsumers, CallbackInfo ci) {
         if (blockEntity instanceof TrappedChestBlockEntity) {
-            if (!Location.inDungeon() || !MobHighlight.mobHighlight || !MobHighlight.highlightMimicChests) return;
+            if (!Location.inDungeon() || !MobHighlight.highlightMimicChests) return;
             if (MobHighlight.renderFilled()) {
                 VertexConsumer buffer = vertexConsumers.getBuffer(RenderLayers.FILLED_ENTITY_LAYER);
                 float[] rgba = RenderUtils.toFloats(MobHighlight.mimicFilledColor);

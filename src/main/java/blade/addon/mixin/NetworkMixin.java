@@ -1,6 +1,5 @@
 package blade.addon.mixin;
 
-import blade.addon.features.dungeon.f7.Pre4Notifier;
 import blade.addon.utils.Debug;
 import blade.addon.utils.Misc;
 import blade.addon.utils.Scheduler;
@@ -20,7 +19,6 @@ import net.minecraft.network.packet.s2c.play.EntityTrackerUpdateS2CPacket;
 import net.minecraft.network.packet.s2c.play.PlaySoundS2CPacket;
 import net.minecraft.network.packet.s2c.play.PlayerListS2CPacket;
 import net.minecraft.network.packet.s2c.play.TeamS2CPacket;
-import net.minecraft.network.packet.s2c.play.TitleS2CPacket;
 import net.minecraft.scoreboard.Team;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
@@ -83,14 +81,9 @@ public class NetworkMixin {
             Scheduler.scheduleTask(() -> Misc.addChatMessage(Text.literal("Sound: " + event.id())), 1);
         }
 
-        if (Events.ON_SOUND.hasListeners()) {
-            Events.ON_SOUND.invoke(soundEvent -> soundEvent.onSound(event, volume, pitch));
+        if (Events.ON_SOUND.test(soundEvent -> soundEvent.onSound(event, volume, pitch))) {
+            ci.cancel();
         }
-    }
-
-    @Inject(method = "onTitle", at = @At(value = "HEAD"), cancellable = true)
-    public void onOverLayMessage(TitleS2CPacket packet, CallbackInfo ci) {
-        if (Pre4Notifier.disableTitles()) ci.cancel();
     }
 
     @Inject(method = "onEntitySpawn", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayNetworkHandler;playSpawnSound(Lnet/minecraft/entity/Entity;)V"))

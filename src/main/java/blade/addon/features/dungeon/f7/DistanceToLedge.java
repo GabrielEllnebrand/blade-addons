@@ -11,9 +11,11 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.text.Text;
+import net.minecraft.util.math.Box;
 
 public class DistanceToLedge {
 
+    private static final Box YELLOW_PAD = new Box(20, 163, 0, 58, 213, 107);
     private static final double MIN_X = 33.704;
 
     public static void init() {
@@ -27,8 +29,15 @@ public class DistanceToLedge {
         return player.getX() - MIN_X;
     }
 
+    private static boolean isAtYellow() {
+        ClientPlayerEntity player = MinecraftClient.getInstance().player;
+        if (player == null) return false;
+        return YELLOW_PAD.contains(player.getPos());
+    }
+
     public static boolean display() {
         if (!Floor7.displayDistanceToLedge || !Location.inDungeon()) return false;
+        if (Floor7.showDistanceAtYellowOnly && !isAtYellow()) return false;
         return Phase.inP2() && !Phase.stormDead() && (DungeonClass.isClass(DungeonClass.MAGE) || DungeonClass.isClass(DungeonClass.ARCHER));
     }
 

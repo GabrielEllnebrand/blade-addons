@@ -96,6 +96,9 @@ public class MobHighlight {
     public static boolean highlightMimicChests = true;
 
     @ConfigValue
+    public static int outlineWidth = 4;
+
+    @ConfigValue
     public static int starFilledColor = 0xff00ff00;
     @ConfigValue
     public static int tankFilledColor = 0xffff0000;
@@ -458,7 +461,7 @@ public class MobHighlight {
 
         VertexConsumerProvider consumers = worldRenderContext.consumers();
         if (consumers == null) return;
-        VertexConsumer outlineConsumer = consumers.getBuffer(RenderLayers.OUTLINE_ENTITY_LAYER);
+        VertexConsumer outlineConsumer = consumers.getBuffer(RenderLayers.getOutline(outlineWidth));
 
 
         trackedMobs.forEach((entity, mobType) -> {

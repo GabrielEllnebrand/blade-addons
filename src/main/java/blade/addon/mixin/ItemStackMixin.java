@@ -1,7 +1,9 @@
 package blade.addon.mixin;
 
-import blade.addon.features.item.ItemRarityHolder;
+import blade.addon.features.dungeon.f7.invincibility.MaskHolder;
+import blade.addon.features.dungeon.f7.invincibility.MaskType;
 import blade.addon.features.item.ItemRarity;
+import blade.addon.features.item.ItemRarityHolder;
 import blade.addon.features.item.PetHolder;
 import blade.addon.features.item.ProtectedItemHolder;
 import blade.addon.features.item.StarCountHolder;
@@ -10,7 +12,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
 @Mixin(ItemStack.class)
-public class ItemStackMixin implements ItemRarityHolder, PetHolder, StarCountHolder, ProtectedItemHolder {
+public class ItemStackMixin implements ItemRarityHolder, PetHolder, StarCountHolder, ProtectedItemHolder, MaskHolder {
 
     @Unique
     private ItemRarity itemRarity = null;
@@ -32,6 +34,9 @@ public class ItemStackMixin implements ItemRarityHolder, PetHolder, StarCountHol
 
     @Unique
     boolean isItemProtected = false;
+
+    @Unique
+    MaskType maskType = null;
 
     @Override
     public ItemRarity blade_addons$getItemRarity() {
@@ -100,5 +105,20 @@ public class ItemStackMixin implements ItemRarityHolder, PetHolder, StarCountHol
     @Override
     public boolean blade_addons$isProtected() {
         return isItemProtected;
+    }
+
+    @Override
+    public boolean blade_addons$scannedMask() {
+        return maskType != null;
+    }
+
+    @Override
+    public void blade_addons$setMask(MaskType maskType) {
+        this.maskType = maskType;
+    }
+
+    @Override
+    public MaskType blade_addons$getMask() {
+        return maskType;
     }
 }

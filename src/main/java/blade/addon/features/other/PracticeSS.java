@@ -45,10 +45,12 @@ public class PracticeSS {
     private static final CopyOnWriteArrayList<BlockPos> buttons = new CopyOnWriteArrayList<>();
 
     private static BlockPos startPos = null;
+    private static Direction direction = null;
 
-    private static final long SKIP_TIME = 500;
-    private static final int LAST_SHOWN_DURATION = 11;
-    private static final int UNLUCKY_DURATION = 35;
+    private static final long SKIP_TIME_MS = 500;
+    private static final int LAST_SHOWN_DURATION = 9;
+    private static final int UNLUCKY_DURATION = 36;
+    private static final int START_WAIT_DURATION = 6;
 
     private static boolean started = false;
     private static boolean showingPattern = false;
@@ -57,6 +59,7 @@ public class PracticeSS {
     private static int endIndex = 4;
 
     private static int ticksLeft = 0;
+    private static int totalTicks = 0;
 
     private static long startTime = 0;
 
@@ -67,8 +70,6 @@ public class PracticeSS {
 
     private static boolean wasLuckyButton = false;
     private static int ticksSinceLuckyButton = 0;
-
-    private static Direction direction = null;
 
     public static void init() {
 
@@ -83,53 +84,11 @@ public class PracticeSS {
             if (!isValidBlock(block)) return false;
 
             if (isStartButton(pos)) {
-                if (started && ExtraOptions.autoSkip) {
-                    start(world, state, pos);
-                    startPos = pos;
-                } else if (inSkipPhase || System.currentTimeMillis() - skippedTime < SKIP_TIME) {
-                    clicks++;
-                    if (clicks >= 2 && inSkipPhase) {
-                        skipped = true;
-                        skippedTime = System.currentTimeMillis();
-                    }
-                } else {
-                    start(world, state, pos);
-                    startPos = pos;
-                }
+                parseStartButton(world, state, pos);
             }
 
             if (started && !showingPattern) {
-                if (currentIndex == 1 && ticksSinceLuckyButton > 0) {
-                    return ExtraOptions.blockUnluckyButtonClick;
-                }
-
-                BlockPos nextButton = buttons.get(currentIndex);
-                if (samePosition(pos, nextButton)) {
-                    currentIndex++;
-
-                    if (currentIndex == 5) {
-                        if (ExtraOptions.realisticDelay) {
-                            if (wasLuckyButton) {
-                                PersonalBests.practiseSSRealisticLuckyTime.testNewTime(Text.literal("SS with Realistic Time (Lucky Button) Took: "), startTime);
-                            } else {
-                                PersonalBests.practiseSSRealisticTime.testNewTime(Text.literal("SS with Realistic Time Took: "), startTime);
-                            }
-
-                        } else {
-                            if (wasLuckyButton) {
-                                PersonalBests.practiseSSLuckyTime.testNewTime(Text.literal("SS (Lucky Button) Took: "), startTime);
-                            } else {
-                                PersonalBests.practiseSSTime.testNewTime(Text.literal("SS Took: "), startTime);
-                            }
-
-                        }
-
-
-                        reset();
-                    } else if (currentIndex == endIndex) {
-                        incStage();
-                    }
-                }
+                return parseNormalButton(pos);
             }
 
             return false;
@@ -144,7 +103,7 @@ public class PracticeSS {
                 }
             }
 
-            if (System.currentTimeMillis() - startTime > SKIP_TIME && inSkipPhase) {
+            if (System.currentTimeMillis() - startTime > SKIP_TIME_MS && inSkipPhase) {
                 inSkipPhase = false;
 
                 if (skipped) {
@@ -161,6 +120,41 @@ public class PracticeSS {
         WorldRenderEvents.BEFORE_DEBUG_RENDER.register(PracticeSS::render);
         Events.ON_LOCATION_CHANGE.register(location -> reset());
 
+    }
+
+    private static void parseStartButton(ClientWorld world, BlockState state, BlockPos pos) {
+        if (started && ExtraOptions.autoSkip) {
+            start(world, state, pos);
+            startPos = pos;
+        } else if (inSkipPhase || System.currentTimeMillis() - skippedTime < SKIP_TIME_MS) {
+            clicks++;
+            if (clicks >= 2 && inSkipPhase) {
+                skipped = true;
+                skippedTime = System.currentTimeMillis();
+            }
+        } else {
+            start(world, state, pos);
+            startPos = pos;
+        }
+    }
+
+    private static boolean parseNormalButton(BlockPos pos) {
+        if (currentIndex == 1 && ticksSinceLuckyButton > 0) {
+            return ExtraOptions.blockUnluckyButtonClick;
+        }
+
+        BlockPos nextButton = buttons.get(currentIndex);
+        if (samePosition(pos, nextButton)) {
+            currentIndex++;
+
+            if (currentIndex == 5) {
+                recordTime();
+            } else if (currentIndex == endIndex) {
+                incStage();
+            }
+        }
+
+        return false;
     }
 
     private static void start(ClientWorld world, BlockState state, BlockPos pos) {
@@ -247,6 +241,7 @@ public class PracticeSS {
     }
 
     private static boolean isStartButton(BlockPos pos) {
+        if (samePosition(pos, ExtraOptions.startButton)) return true;
         for (BlockPos startPos : START_POSES) {
             if (samePosition(pos, startPos)) return true;
         }
@@ -255,7 +250,36 @@ public class PracticeSS {
     }
 
     private static boolean samePosition(BlockPos pos1, BlockPos pos2) {
+        if (pos1 == null || pos2 == null) return false;
         return pos1.getX() == pos2.getX() && pos1.getY() == pos2.getY() && pos1.getZ() == pos2.getZ();
+    }
+
+    private static void recordTime() {
+        if (ExtraOptions.realisticDelay) {
+            if (ExtraOptions.includeLuckyButton) {
+                if (wasLuckyButton) {
+                    PersonalBests.practiseSSRealisticTime.testNewTime(Text.literal("SS with Realistic Time (Lucky Button) Took: "), startTime);
+                } else {
+                    PersonalBests.practiseSSRealisticUnluckyTime.testNewTime(Text.literal("SS with Realistic Time Took: "), startTime);
+                }
+            } else {
+                PersonalBests.practiseSSRealisticTime.testNewTime(Text.literal("SS with Realistic Time Took: "), startTime);
+            }
+
+        } else {
+            if (ExtraOptions.includeLuckyButton) {
+                if (wasLuckyButton) {
+                    PersonalBests.practiseSSTime.testNewTime(Text.literal("SS (Lucky Button) Took: "), startTime);
+                } else {
+                    PersonalBests.practiseSSUnluckyTime.testNewTime(Text.literal("SS Time Took: "), startTime);
+                }
+            } else {
+                PersonalBests.practiseSSTime.testNewTime(Text.literal("SS Took: "), startTime);
+            }
+
+        }
+
+        reset();
     }
 
     private static void reset() {
@@ -267,6 +291,7 @@ public class PracticeSS {
         ticksSinceLuckyButton = 0;
         wasLuckyButton = false;
         direction = null;
+        totalTicks = 0;
     }
 
     private static int getColor(int index) {
@@ -289,7 +314,14 @@ public class PracticeSS {
 
         endIndex = stage;
         currentIndex = 0;
-        ticksLeft = getDelay() * endIndex + (ExtraOptions.realisticDelay ? stage != 2 ? LAST_SHOWN_DURATION : 4 : 0);
+        totalTicks = getDelay() * endIndex;
+        if (ExtraOptions.realisticDelay) {
+            totalTicks += LAST_SHOWN_DURATION;
+            if (stage != 2) {
+                totalTicks += START_WAIT_DURATION;
+            }
+        }
+        ticksLeft = totalTicks;
         showingPattern = true;
     }
 
@@ -325,9 +357,11 @@ public class PracticeSS {
 
 
         if (showingPattern) {
-            int lastIndex = getLastDisplayIndex();
-            renderButtons(matrixStack, buffer, 0, lastIndex);
-            renderBackground(matrixStack, buffer, lastIndex - 1);
+            if (!ExtraOptions.realisticDelay || totalTicks - ticksLeft > START_WAIT_DURATION || endIndex != 2) {
+                int lastIndex = getLastDisplayIndex();
+                renderButtons(matrixStack, buffer, 0, lastIndex);
+                renderBackground(matrixStack, buffer, lastIndex - 1);
+            }
         } else {
             renderButtons(matrixStack, buffer, currentIndex, endIndex);
         }

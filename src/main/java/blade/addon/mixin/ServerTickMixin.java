@@ -18,7 +18,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(ClientConnection.class)
 public class ServerTickMixin {
 
-    @Inject(method = "channelRead0(Lio/netty/channel/ChannelHandlerContext;Lnet/minecraft/network/packet/Packet;)V", at = @At("HEAD"), order=0)
+    @Inject(method = "channelRead0(Lio/netty/channel/ChannelHandlerContext;Lnet/minecraft/network/packet/Packet;)V", at = @At("HEAD"), order=0, cancellable = true)
     private void channelRead0(ChannelHandlerContext channelHandlerContext, Packet<?> packet, CallbackInfo ci) {
         if (packet instanceof CommonPingS2CPacket common && Events.ON_SERVER_TICK.hasListeners()) {
             //admins send these packets too for inventory changes
@@ -28,6 +28,12 @@ public class ServerTickMixin {
         }
 
         if (packet instanceof GameMessageS2CPacket message) {
+            if (Events.ON_CANCELABLE_GAME_MESSAGE.test(gameMessageEvent -> gameMessageEvent.onGameMessage(message.content()))) {
+                ci.cancel();
+                return;
+            }
+
+
             if (Events.ON_GAME_MESSAGE.hasListeners()) {
                 Events.ON_GAME_MESSAGE.invoke(gameMessageEvent -> gameMessageEvent.onGameMessage(message.content()));
             }

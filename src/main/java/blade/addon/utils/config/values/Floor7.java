@@ -1,7 +1,9 @@
 package blade.addon.utils.config.values;
 
 import blade.addon.features.dungeon.f7.DragSpawnTimer;
+import config.practical.data.SoundData;
 import config.practical.manager.ConfigValue;
+import net.minecraft.sound.SoundEvents;
 
 public class Floor7 {
 
@@ -66,6 +68,9 @@ public class Floor7 {
     public static boolean replaceWithProgressBar = false;
 
     @ConfigValue
+    public static boolean useValleyBar = true;
+
+    @ConfigValue
     public static boolean combineTickTimers = false;
 
     @ConfigValue
@@ -84,13 +89,7 @@ public class Floor7 {
     public static int notificationDuration = 15;
 
     @ConfigValue
-    public static String notificationSound = "block.note_block.pling";
-
-    @ConfigValue
-    public static float notificationVolume = 1;
-
-    @ConfigValue
-    public static float notificationPitch = 1;
+    public static SoundData atLocationSound = new SoundData(SoundEvents.BLOCK_NOTE_BLOCK_PLING.value(), 1, 1);
 
     @ConfigValue
     public static int notificationRepetitions = 3;
@@ -118,4 +117,13 @@ public class Floor7 {
 
     @ConfigValue
     public static boolean disableTitlesAtPre4 = false;
+
+    @ConfigValue
+    public static boolean showDistanceAtYellowOnly = false;
+
+    @ConfigValue
+    public static boolean dontNotifiyForYourself = true;
+
+    @ConfigValue
+    public static boolean hideTerminalTitles = false;
 }

@@ -31,4 +31,10 @@ public class RenderPipelines {
             .withDepthWrite(true)
             .build());
 
+
+    public static final RenderPipeline OUTLINE_PIPELINE = net.minecraft.client.gl.RenderPipelines.register(RenderPipeline.builder(net.minecraft.client.gl.RenderPipelines.RENDERTYPE_LINES_SNIPPET)
+            .withLocation(Identifier.of(Constants.NAMESPACE, "outline-entity"))
+            .withDepthWrite(true)
+            .build());
+
 }

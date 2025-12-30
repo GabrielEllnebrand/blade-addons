@@ -1,6 +1,7 @@
 package blade.addon.features.other;
 
 import blade.addon.utils.Constants;
+import blade.addon.utils.Scheduler;
 import blade.addon.utils.config.values.ExtraOptions;
 import blade.addon.utils.events.Events;
 import blade.addon.utils.rendering.RenderUtils;
@@ -23,16 +24,24 @@ public class RagDisplay {
 
     public static void init() {
         Events.ON_SOUND.register((soundEvent, volume, pitch) -> {
-            if (!ExtraOptions.enableRagaxeDisplay) return;
-            if (soundEvent != SOUND) return;
-            if (volume != 1 && pitch != 1.4920635223388672) return;
+            if (!ExtraOptions.enableRagaxeDisplay && !ExtraOptions.useCustomRagSound) return false;
+            if (soundEvent != SOUND) return false;
+            if (volume != 1 && pitch != 1.4920635223388672) return false;
 
             ClientPlayerEntity player = MinecraftClient.getInstance().player;
-            if (player == null) return;
+            if (player == null) return false;
 
-            if (player.getMainHandStack().getName().getString().contains("Ragnarock")) {
+            if (!player.getMainHandStack().getName().getString().contains("Ragnarock")) return false;
+
+            if (ExtraOptions.enableRagaxeDisplay) {
                 tick = TOTAL_TICKS;
             }
+
+            if (ExtraOptions.useCustomRagSound) {
+                Scheduler.scheduleSound(ExtraOptions.ragSound);
+                return true;
+            }
+            return false;
         });
 
         Events.ON_SERVER_TICK.register(() -> tick = Math.max(tick - 1, 0));

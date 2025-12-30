@@ -1,4 +1,4 @@
-package blade.addon.features.dungeon.f7;
+package blade.addon.features.dungeon.f7.terms;
 
 import blade.addon.utils.Constants;
 import blade.addon.utils.Location;
@@ -11,34 +11,45 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
 
-public class TermStartTimer {
+public class GoldorTickTimer {
 
-    private static final int TOTAL_TICKS = 100;
-
-    private static int tick = 100;
+    private static int tick = 0;
 
     public static void init() {
         Events.ON_SERVER_TICK.register(() -> {
-            if (Location.inDungeon() && Phase.inP2() && Phase.stormDead()) tick--;
+            if (Location.inDungeon() && Phase.inTerminals()) tick++;
         });
 
         Events.ON_LOCATION_CHANGE.register(newLocation -> {
             if (Location.inDungeon()) {
-                tick = TOTAL_TICKS;
+                tick = 0;
             }
         });
     }
 
     public static boolean display() {
-        return Floor7.enableTermStartTimer && Location.inDungeon() && Phase.inP2() && Phase.stormDead();
+        return  Floor7.enableGoldorTickTimer && Location.inDungeon() && Phase.inTerminals();
     }
 
     public static void render(HUDComponent component, DrawContext context) {
         int x = component.getScaledX();
         int y = component.getScaledY();
 
+        int color;
         double num = tick * Constants.TICK_DURATION;
-        RenderUtils.drawCenteredText(context, MinecraftClient.getInstance().textRenderer, Text.literal(Constants.DECIMAL_FORMAT.format(num)), x, y, component.getWidth(), 0xFFFFFF55);
+
+        double mod = num % 3;
+        if (mod < 1) {
+            color = Constants.GREEN_COLOR;
+        } else if (mod < 2) {
+            color = Constants.ORANGE_COLOR;
+        } else {
+            color = Constants.RED_COLOR;
+        }
+
+        if (Floor7.inDeathTicks) num = mod;
+
+        RenderUtils.drawCenteredText(context, MinecraftClient.getInstance().textRenderer, Text.literal(Constants.DECIMAL_FORMAT.format(num)), x, y, component.getWidth(), color);
 
     }
 }

@@ -1,5 +1,6 @@
-package blade.addon.features.dungeon.f7;
+package blade.addon.features.dungeon.f7.terms;
 
+import blade.addon.utils.Misc;
 import blade.addon.utils.Scheduler;
 import blade.addon.utils.config.values.Floor7;
 import blade.addon.utils.dungeon.Phase;
@@ -24,7 +25,7 @@ public class Pre4Notifier {
         Events.ON_TERMINAL.register((name, objective) -> {
             if (!Floor7.notifyPre4Completion) return;
 
-            if (objective.equals("device") && atDev()) {
+            if (objective.equals("device") && Misc.isClientPlayer(name) && atDev()) {
                 completedTime = System.currentTimeMillis();
                 showNotification = true;
                 Scheduler.scheduleSound(SoundEvents.BLOCK_NOTE_BLOCK_PLING.value(), 1, 1);
@@ -32,7 +33,7 @@ public class Pre4Notifier {
         });
     }
 
-    private static boolean atDev() {
+    public static boolean atDev() {
         ClientPlayerEntity player = MinecraftClient.getInstance().player;
         if (player == null) return false;
         return (player.getX() >= 63 && player.getX() <= 64 && player.getY() == 127 && player.getZ() >= 35 && player.getZ() <= 36);

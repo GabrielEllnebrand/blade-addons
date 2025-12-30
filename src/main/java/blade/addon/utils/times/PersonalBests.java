@@ -40,9 +40,9 @@ public class PersonalBests {
     @ConfigValue
     public static PersonalBest practiseSSRealisticTime = new PersonalBest();
     @ConfigValue
-    public static PersonalBest practiseSSRealisticLuckyTime = new PersonalBest();
+    public static PersonalBest practiseSSRealisticUnluckyTime = new PersonalBest();
     @ConfigValue
-    public static PersonalBest practiseSSLuckyTime = new PersonalBest();
+    public static PersonalBest practiseSSUnluckyTime = new PersonalBest();
 
     public static void save() {
         pbManager.save();

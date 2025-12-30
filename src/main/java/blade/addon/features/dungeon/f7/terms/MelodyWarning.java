@@ -1,4 +1,4 @@
-package blade.addon.features.dungeon.f7;
+package blade.addon.features.dungeon.f7.terms;
 
 import blade.addon.utils.Location;
 import blade.addon.utils.config.values.Floor7;
@@ -9,6 +9,7 @@ import blade.addon.utils.rendering.RenderUtils;
 import config.practical.hud.HUDComponent;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.text.Text;
 
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -22,6 +23,7 @@ public class MelodyWarning {
     private static final CopyOnWriteArrayList<String> names = new CopyOnWriteArrayList<>();
 
     private static boolean melodyStarted = false;
+    private static boolean ownUsername = false;
     private static String name;
     private static int furthestProgress = 0;
 
@@ -37,6 +39,7 @@ public class MelodyWarning {
                     melodyStarted = true;
                     name = username;
                     furthestProgress = progress;
+                    ownUsername = isOwnUsername(username);
                     if (!names.contains(username)) {
                         names.add(username);
                     }
@@ -59,15 +62,24 @@ public class MelodyWarning {
         });
     }
 
+    private static boolean isOwnUsername(String username) {
+        ClientPlayerEntity player = MinecraftClient.getInstance().player;
+        if (player == null) return false;
+        Text textName = player.getName();
+        if (textName == null) return false;
+        return textName.getString().equals(username);
+    }
+
     private static void reset() {
         names.clear();
         furthestProgress = 0;
         name = "";
         melodyStarted = false;
+        ownUsername = false;
     }
 
     public static boolean display() {
-        return melodyStarted && Floor7.notifiyMelody;
+        return melodyStarted && Floor7.notifiyMelody && !ownUsername;
     }
 
     public static void render(HUDComponent component, DrawContext context) {

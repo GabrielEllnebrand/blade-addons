@@ -68,7 +68,7 @@ public class ChestCounter {
         int y = component.getScaledY();
 
         if (hasUpdatedData) {
-            context.drawText(MinecraftClient.getInstance().textRenderer, Text.literal("Chests: " + Math.min(chestDisplayCount + countedChests, 60)), x, y, 0xffffffff, true);
+            context.drawText(MinecraftClient.getInstance().textRenderer, Text.literal("Chests: " + Math.min(chestDisplayCount + countedChests, 60)), x, y, Dungeons.chestCountColor , true);
         } else {
             context.drawText(MinecraftClient.getInstance().textRenderer, Text.literal("go to the dungeon hub"), x, y, 0xffff0000, true);
 

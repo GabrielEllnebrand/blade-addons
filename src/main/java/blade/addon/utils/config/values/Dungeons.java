@@ -1,6 +1,6 @@
 package blade.addon.utils.config.values;
 
-import blade.addon.features.dungeon.f7.InvincibilityTimer;
+import blade.addon.features.dungeon.f7.invincibility.InvincibilityTimer;
 import config.practical.manager.ConfigValue;
 
 public class Dungeons {
@@ -51,6 +51,9 @@ public class Dungeons {
     public static int chestWarningCount = 55;
 
     @ConfigValue
+    public static int chestCountColor = 0xffffffff;
+
+    @ConfigValue
     public static boolean enableLeapMessages = false;
 
     @ConfigValue
@@ -79,4 +82,16 @@ public class Dungeons {
 
     @ConfigValue
     public static boolean hideBlazeNameTag = false;
+
+    @ConfigValue
+    public static boolean hidePlayersInRange = false;
+
+    @ConfigValue
+    public static double hidePlayerRange = 2;
+
+    @ConfigValue
+    public static boolean disableDropAnimation = false;
+
+    @ConfigValue
+    public static boolean maskHighlight = false;
 }

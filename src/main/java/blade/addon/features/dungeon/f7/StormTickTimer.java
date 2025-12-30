@@ -1,5 +1,6 @@
 package blade.addon.features.dungeon.f7;
 
+import blade.addon.features.dungeon.f7.invincibility.InvincibilityTimer;
 import blade.addon.utils.Constants;
 import blade.addon.utils.Location;
 import blade.addon.utils.Misc;

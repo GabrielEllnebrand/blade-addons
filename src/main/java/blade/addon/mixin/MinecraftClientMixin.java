@@ -1,5 +1,6 @@
 package blade.addon.mixin;
 
+import blade.addon.features.item.DropAnimation;
 import blade.addon.utils.Location;
 import blade.addon.utils.events.Events;
 import com.llamalad7.mixinextras.sugar.Local;
@@ -14,6 +15,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(MinecraftClient.class)
 public class MinecraftClientMixin {
@@ -29,6 +31,11 @@ public class MinecraftClientMixin {
         if (Events.ON_BLOCK_INTERACTION.test(blockInteractionEvent -> blockInteractionEvent.iteract(blockHitResult, itemStack))) {
             ci.cancel();
         }
+    }
+
+    @Inject(method = "doAttack", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/hit/HitResult;getType()Lnet/minecraft/util/hit/HitResult$Type;"))
+    private void onHit(CallbackInfoReturnable<Boolean> cir) {
+        DropAnimation.clearData();
     }
 
     @Inject(method = "setWorld", at=@At(value = "TAIL"))

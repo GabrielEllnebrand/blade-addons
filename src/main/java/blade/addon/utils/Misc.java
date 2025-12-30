@@ -1,34 +1,40 @@
 package blade.addon.utils;
 
 import blade.addon.utils.config.values.ExtraOptions;
+import blade.addon.utils.interfaces.GameHud;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.LoreComponent;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
+import java.util.List;
+
 public class Misc {
-    public static final MinecraftClient instance = MinecraftClient.getInstance();
+    public static final MinecraftClient INSTANCE = MinecraftClient.getInstance();
     private static final Text ON = Text.literal("ON").formatted(Formatting.GREEN);
     private static final Text OFF = Text.literal("OFF").formatted(Formatting.RED);
 
     public static boolean isClientPlayer(PlayerEntity entity) {
-        ClientPlayerEntity clientPlayer = instance.player;
+        ClientPlayerEntity clientPlayer = INSTANCE.player;
         if (clientPlayer == null) return false;
         return clientPlayer == entity;
     }
 
     public static boolean isClientPlayer(Entity entity) {
-        ClientPlayerEntity clientPlayer = instance.player;
+        ClientPlayerEntity clientPlayer = INSTANCE.player;
         if (clientPlayer == null) return false;
         return clientPlayer == entity;
     }
 
     public static boolean isClientPlayer(String name) {
-        ClientPlayerEntity clientPlayer = instance.player;
+        ClientPlayerEntity clientPlayer = INSTANCE.player;
         if (clientPlayer == null) return false;
         return clientPlayer.getName().getString().equals(name);
     }
@@ -39,7 +45,7 @@ public class Misc {
 
     public static void addChatMessage(Text text) {
         try {
-            InGameHud gameHud = MinecraftClient.getInstance().inGameHud;
+            InGameHud gameHud = INSTANCE.inGameHud;
             gameHud.getChatHud().addMessage(Text.literal(ExtraOptions.textPrefix).append(text));
         } catch (IndexOutOfBoundsException ignored) {
             Debug.LOGGER.error("Chat message failed to get added");
@@ -51,12 +57,33 @@ public class Misc {
     }
 
     public static void setTitle(Text text) {
-        MinecraftClient.getInstance().inGameHud.setTitle(text);
+        INSTANCE.inGameHud.setTitle(text);
+    }
+
+    public static void forceTitle(Text title, Text subtitle) {
+        GameHud gameHud = (GameHud) INSTANCE.inGameHud;
+        gameHud.blade_addons$forceTitle(title, subtitle);
     }
 
     public static void executeCommand(String string) {
-        ClientPlayNetworkHandler networkHandler = MinecraftClient.getInstance().getNetworkHandler();
+        ClientPlayNetworkHandler networkHandler = INSTANCE.getNetworkHandler();
         if (networkHandler == null) return;
         networkHandler.sendChatCommand(string);
+    }
+
+    public static boolean containsLore(ItemStack item, String match) {
+        LoreComponent lore = item.get(DataComponentTypes.LORE);
+        if (lore == null)  return false;
+
+        List<Text> lines = lore.lines();
+        if (lines.isEmpty()) return false;
+
+        for (Text line: lines.reversed()) {
+            String string = line.getString();
+            if (string.contains(match)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

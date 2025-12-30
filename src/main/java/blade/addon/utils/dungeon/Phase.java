@@ -95,11 +95,11 @@ public class Phase {
         runOver = false;
     }
 
-    public static void parseGameMessage(Text message) {
-        if (!Location.inDungeon()) return;
+    public static boolean parseGameMessage(Text message) {
+        if (!Location.inDungeon()) return false;
         String string = message.getString();
-        if (currentSplits == null) return;
-        if (runOver) return;
+        if (currentSplits == null) return false;
+        if (runOver) return false;
 
         for (int i = 0; i < currentSplits.size(); i++) {
 
@@ -127,7 +127,6 @@ public class Phase {
                 }
             }
 
-
         }
 
         Matcher matcher = END_PATTERN.matcher(string);
@@ -140,6 +139,8 @@ public class Phase {
                 stormDead = true;
             }
         }
+
+        return false;
     }
 
     private static void endRun() {

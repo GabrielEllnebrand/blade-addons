@@ -1,4 +1,4 @@
-package blade.addon.features.dungeon.f7;
+package blade.addon.features.dungeon.f7.location;
 
 import blade.addon.utils.Location;
 import blade.addon.utils.Scheduler;
@@ -9,10 +9,9 @@ import config.practical.hud.HUDComponent;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.sound.SoundEvent;
+import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
-import net.minecraft.util.Identifier;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -31,8 +30,16 @@ public class LocationNotifier {
             if (!matcher.find()) return;
             String action = matcher.group(1);
 
+            ClientPlayerEntity player = MinecraftClient.getInstance().player;
+            if (player == null) return;
+            Text name = player.getName();
+            if (name == null) return;
+            if (Floor7.dontNotifiyForYourself && name.getString().equals(username)) return;
             String screenNotification = (username + " is " + action + message.substring(action.length()) + "!").replaceAll("§.", "");
+            if (PositionMessages.hasBeenSent(screenNotification)) return;
             startNotification(screenNotification);
+
+
         });
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> ticks = Math.max(ticks - 1, 0));
@@ -43,8 +50,7 @@ public class LocationNotifier {
         ticks = Floor7.notificationDuration;
 
         for (int i = 0; i < Floor7.notificationRepetitions; i++) {
-            SoundEvent event = SoundEvent.of(Identifier.of(Floor7.notificationSound));
-            Scheduler.scheduleSound(event, Floor7.notificationVolume, Floor7.notificationPitch, i + 1);
+            Scheduler.scheduleSound(Floor7.atLocationSound, i + 1);
         }
     }
 

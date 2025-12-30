@@ -124,7 +124,7 @@ public class ProtectItem {
             Slot slot = slots.get(49);
             ItemStack stack = slot.getStack();
             Text itemName = stack.getName();
-            if (itemName != null && itemName.getString().contains("Sell Item")) {
+            if (itemName != null && itemName.getString().contains("Sell Item") || Misc.containsLore(stack, "Click to buyback!")) {
                 Misc.addChatMessage(Text.literal("Protected ").append(item.getName()).append(" From being sold"));
                 return true;
             }

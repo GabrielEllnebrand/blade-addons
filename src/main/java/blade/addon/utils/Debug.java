@@ -1,6 +1,6 @@
 package blade.addon.utils;
 
-import blade.addon.features.dungeon.f7.LocationNotifier;
+import blade.addon.features.dungeon.f7.location.LocationNotifier;
 import blade.addon.features.dungeon.f7.RelicTimer;
 import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.dungeon.Section;
@@ -15,7 +15,8 @@ public class Debug {
     public static final Logger LOGGER = LoggerFactory.getLogger(Constants.NAMESPACE);
     private static boolean sendDebug = false;
     public static boolean sendSound = false;
-
+    public static boolean termInfo = false;
+    public static boolean renderPositions = false;
     public static void init() {
         registerCommands();
     }
@@ -43,6 +44,12 @@ public class Debug {
             return Constants.SUCCESS;
         }));
 
+        Commands.registerDevCommand(ClientCommandManager.literal("termInfo").executes(context -> {
+            termInfo = !termInfo;
+            Misc.addChatMessage(Text.literal("Terminal info: ").append(Misc.getStatusText(termInfo)));
+            return Constants.SUCCESS;
+        }));
+
         Commands.registerDevCommand(ClientCommandManager.literal("sendNotification").then(ClientCommandManager.argument("message", StringArgumentType.string()).executes(context -> {
                             String message = StringArgumentType.getString(context, "message");
                             LocationNotifier.startNotification(message);
@@ -50,6 +57,12 @@ public class Debug {
                         })
                 )
         );
+
+        Commands.registerDevCommand(ClientCommandManager.literal("drawPositionBoxes").executes(context -> {
+            renderPositions = !renderPositions;
+            Misc.addChatMessage(Text.literal("Render positons: ").append(Misc.getStatusText(renderPositions)));
+            return Constants.SUCCESS;
+        }));
     }
 
 

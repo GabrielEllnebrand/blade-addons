@@ -1,6 +1,9 @@
 package blade.addon.utils.config.values;
 
+import config.practical.data.SoundData;
 import config.practical.manager.ConfigValue;
+import net.minecraft.sound.SoundEvents;
+import net.minecraft.util.math.BlockPos;
 
 public class ExtraOptions {
     @ConfigValue
@@ -74,4 +77,19 @@ public class ExtraOptions {
 
     @ConfigValue
     public static boolean blockUnluckyButtonClick = false;
+
+    @ConfigValue
+    public static boolean compactHoppityMsgs = false;
+
+    @ConfigValue
+    public static BlockPos startButton = new BlockPos(2, 2, 2);
+
+    @ConfigValue
+    public static boolean disableRecipeBook = false;
+
+    @ConfigValue
+    public static boolean useCustomRagSound = false;
+
+    @ConfigValue
+    public static SoundData ragSound = new SoundData(SoundEvents.BLOCK_NOTE_BLOCK_PLING.value(), 1, 1);
 }

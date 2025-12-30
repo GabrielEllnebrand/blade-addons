@@ -2,9 +2,9 @@ package blade.addon.utils.config.components;
 
 import blade.addon.features.dungeon.DupeClassChecker;
 import blade.addon.features.dungeon.KeyNotifier;
-import blade.addon.features.dungeon.f7.MelodyWarning;
+import blade.addon.features.dungeon.f7.terms.MelodyWarning;
 import blade.addon.features.dungeon.f7.PillarExplode;
-import blade.addon.features.dungeon.f7.Pre4Notifier;
+import blade.addon.features.dungeon.f7.terms.Pre4Notifier;
 import blade.addon.utils.config.values.Dungeons;
 import blade.addon.utils.rendering.RenderUtils;
 import config.practical.hud.HUDComponent;

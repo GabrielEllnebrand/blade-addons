@@ -1,8 +1,10 @@
 package blade.addon.utils.dungeon;
 
+import blade.addon.features.dungeon.f7.terms.TitleHider;
 import blade.addon.utils.Constants;
 import blade.addon.utils.Debug;
 import blade.addon.utils.Location;
+import blade.addon.utils.Misc;
 import blade.addon.utils.events.Events;
 import blade.addon.utils.events.interfaces.SectionEvent;
 import config.practical.hud.HUDComponent;
@@ -11,6 +13,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -40,7 +43,7 @@ public class Section {
 
     public static int SPLIT_LENGTH = 120;
 
-    private static int currentSection = 0;
+    private static int currentSection = -1;
     private static int completed = 0;
     private static int total = 7;
     private static boolean gateBlownUp = false;
@@ -59,10 +62,23 @@ public class Section {
             }
         });
         Events.ON_PHASE_CHANGE.register(() -> {
+            if (Phase.inP2()) {
+                currentSection = 0;
+            }
+
             if (Phase.inTerminals()) {
+                if (Debug.termInfo) {
+                    Misc.addChatMessage(Text.literal("Terminals started"));
+                }
                 currentSection = 1;
                 splits[0].start();
             } else if (Phase.inGoldorTunnel()) {
+                if (TitleHider.shouldHideTitle()) {
+                    Misc.forceTitle(Text.empty(), Text.literal("The Core entrance is opening!").formatted(Formatting.GREEN));
+                }
+                if (Debug.termInfo) {
+                    Misc.addChatMessage(Text.literal("Terminals ended"));
+                }
                 currentSection = 5;
                 endAllSections();
             }
@@ -76,9 +92,9 @@ public class Section {
     }
 
     private static void reset() {
-        currentSection = 0;
+        currentSection = -1;
         resetSection();
-        for(Split split: splits) {
+        for (Split split : splits) {
             split.reset();
         }
     }
@@ -92,6 +108,10 @@ public class Section {
         resetSection();
         endSplit(currentSection);
         currentSection++;
+
+        if (Debug.termInfo) {
+            Misc.addChatMessage(Text.literal("section: " + currentSection));
+        }
         if (Events.ON_SECTION_CHANGE.hasListeners()) {
             Events.ON_SECTION_CHANGE.invoke(SectionEvent::onSection);
         }
@@ -111,16 +131,19 @@ public class Section {
     }
 
     private static void endAllSections() {
-        for(Split split: splits) {
+        for (Split split : splits) {
             split.end();
+        }
+        if (Debug.termInfo) {
+            Misc.addChatMessage(Text.literal("ending all sections"));
         }
         if (Events.ON_SECTION_CHANGE.hasListeners()) {
             Events.ON_SECTION_CHANGE.invoke(SectionEvent::onSection);
         }
     }
 
-    private static void parseMessage(Text message) {
-        if (!Phase.inTerminals() || !enableTerminalSplits) return;
+    private static boolean parseMessage(Text message) {
+        if (!Phase.inTerminals()) return false;
 
         String string = message.getString();
         Matcher matcher = TERMINALS_DONE_PATTERN.matcher(string);
@@ -130,6 +153,10 @@ public class Section {
             String currentCompleted = matcher.group(4);
             String totalNeeded = matcher.group(5);
 
+            if (Debug.termInfo) {
+                Misc.addChatMessage(Text.literal("name:" + name + ":objective>" + objective + ":(" + currentCompleted + "/" + totalNeeded + ")"));
+            }
+
             if (Events.ON_TERMINAL.hasListeners()) {
                 Events.ON_TERMINAL.invoke(terminalEvent -> terminalEvent.onComplete(name, objective));
             }
@@ -138,7 +165,13 @@ public class Section {
                 int recentlyCompleted = Integer.parseInt(currentCompleted);
                 if ((recentlyCompleted == total && gateBlownUp) || (recentlyCompleted < completed)) {
                     incrementSection();
+                    if (TitleHider.shouldHideTitle()) {
+                        Misc.forceTitle(Text.empty(), message);
+                    }
                 } else {
+                    if (Misc.isClientPlayer(name) && TitleHider.shouldHideTitle()) {
+                        Misc.forceTitle(Text.empty(), message);
+                    }
                     total = Integer.parseInt(totalNeeded);
                     completed = recentlyCompleted;
                 }
@@ -151,6 +184,10 @@ public class Section {
             if (string.equals("The gate has been destroyed!")) {
                 gateBlownUp = true;
 
+                if (TitleHider.shouldHideTitle()) {
+                    Misc.forceTitle(Text.empty(), message);
+                }
+
                 if (completed == total) {
                     incrementSection();
                 }
@@ -162,6 +199,8 @@ public class Section {
             endAllSections();
             Debug.sendDebugMessage(Text.literal("Core section"));
         }
+
+        return false;
     }
 
 
@@ -174,6 +213,7 @@ public class Section {
     }
 
     public static boolean inSection(int section) {
+        if (section == 0 && (Phase.inP2() || Phase.inP3())) return true;
         return currentSection == section && Phase.inP3();
     }
 

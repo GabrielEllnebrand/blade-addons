@@ -1,4 +1,4 @@
-package blade.addon.features.dungeon.f7;
+package blade.addon.features.dungeon.f7.terms;
 
 import blade.addon.utils.Location;
 import blade.addon.utils.config.values.Floor7;

@@ -1,9 +1,13 @@
 package blade.addon.features.dungeon;
 
 import blade.addon.utils.Location;
+import blade.addon.utils.Misc;
 import blade.addon.utils.config.values.Dungeons;
+import blade.addon.utils.detection.Detection;
 import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.events.Events;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.Vec3d;
 
@@ -47,14 +51,24 @@ public class HidePlayers {
     public static boolean shouldHidePlayers(PlayerEntity player) {
         if (!Location.inDungeon()) return false;
 
-        //in case it's a mob instead of a player
-        if (player.getName().getString().contains(" ")) return false;
+        if (!Detection.isARealPlayer(player)) return false;
+        if (Misc.isClientPlayer(player)) return false;
 
         if (testHideAtLeap()) {
             return true;
         }
 
-        return testHideAtSS(player);
+        if (testHideAtSS(player)) {
+            return true;
+        }
+
+        if (Dungeons.hidePlayersInRange) {
+            ClientPlayerEntity clientPlayer = MinecraftClient.getInstance().player;
+            if (clientPlayer == null) return false;
+            return player.getPos().distanceTo(clientPlayer.getPos()) <= Dungeons.hidePlayerRange;
+        }
+
+        return false;
     }
 
 

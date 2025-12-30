@@ -23,11 +23,15 @@
     "EntityRendererMixin",
     "FireMixin",
     "HandledScreenMixin",
+    "HeldItemRendererMixin",
     "InGameHudMixin",
+    "InventoryScreenMixin",
     "MinecraftClientMixin",
     "MouseMixin",
     "NetworkMixin",
     "PositionMixin",
+    "RecipeBookScreenMixin",
+    "RecipeBookWidgetMixin",
     "RenderMixin",
     "StatusEffectsDisplayMixin"
   ]

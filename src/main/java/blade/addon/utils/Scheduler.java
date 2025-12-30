@@ -1,11 +1,13 @@
 package blade.addon.utils;
 
 import com.mojang.brigadier.Command;
+import config.practical.data.SoundData;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.sound.SoundEvent;
+import net.minecraft.sound.SoundEvents;
 
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -74,6 +76,15 @@ public class Scheduler {
 
     public static void scheduleSound(SoundEvent soundEvent, float volume, float pitch) {
         scheduleSound(soundEvent, volume, pitch, 1);
+    }
+
+
+    public static void scheduleSound(SoundData soundData, int tick) {
+        scheduleSound(SoundEvent.of(soundData.getSound()), soundData.getVolume(), soundData.getPitch(), tick);
+    }
+
+    public static void scheduleSound(SoundData soundData) {
+       scheduleSound(soundData, 1);
     }
 
     public static void scheduleCommand(String command) {

@@ -240,16 +240,28 @@ public class RelicTimer {
         int y = component.getScaledY();
 
         //from valleyAddons
+
         StringBuilder message = new StringBuilder("§8[");
 
-        int diff = Floor7.relicSpawnTicks - tick;
-        for (int i = 0; i < Floor7.relicSpawnTicks; i++) {
-            if (i < diff) {
-                if (tick < 2) message.append("§a|");
-                else message.append("§c|");
-            } else message.append("§7|");
+        if (Floor7.useValleyBar) {
+            for (int i = 0; i < Floor7.relicSpawnTicks; ++i) {
+                if (i < tick) {
+                    if (tick > 2) message.append("§a|");
+                    else message.append("§c|");
+                }
+                else message.append("§7|");
+            }
+            message.append("§8]");
+        } else {
+            int diff = Floor7.relicSpawnTicks - tick;
+            for (int i = 0; i < Floor7.relicSpawnTicks; i++) {
+                if (i < diff) {
+                    if (tick < 2) message.append("§a|");
+                    else message.append("§c|");
+                } else message.append("§7|");
+            }
+            message.append("§8]");
         }
-        message.append("§8]");
 
         RenderUtils.drawCenteredText(context, MinecraftClient.getInstance().textRenderer, Text.literal(message.toString()), x, y, component.getWidth(), 0xffffffff);
 

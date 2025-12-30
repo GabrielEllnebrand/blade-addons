@@ -15,19 +15,21 @@ import blade.addon.features.dungeon.f7.BossWaypoints;
 import blade.addon.features.dungeon.f7.CrystalSpawn;
 import blade.addon.features.dungeon.f7.DistanceToLedge;
 import blade.addon.features.dungeon.f7.DragSpawnTimer;
-import blade.addon.features.dungeon.f7.GoldorTickTimer;
-import blade.addon.features.dungeon.f7.InvincibilityTimer;
-import blade.addon.features.dungeon.f7.LeapNotification;
-import blade.addon.features.dungeon.f7.LocationNotifier;
-import blade.addon.features.dungeon.f7.MelodyWarning;
+import blade.addon.features.dungeon.f7.terms.GoldorTickTimer;
+import blade.addon.features.dungeon.f7.invincibility.InvincibilityTimer;
+import blade.addon.features.dungeon.f7.terms.LeapNotification;
+import blade.addon.features.dungeon.f7.location.LocationNotifier;
+import blade.addon.features.dungeon.f7.terms.MelodyWarning;
 import blade.addon.features.dungeon.f7.PillarExplode;
-import blade.addon.features.dungeon.f7.PositionMessages;
-import blade.addon.features.dungeon.f7.Pre4Notifier;
+import blade.addon.features.dungeon.f7.location.PositionMessages;
+import blade.addon.features.dungeon.f7.terms.Pre4Notifier;
 import blade.addon.features.dungeon.f7.PredevTimer;
 import blade.addon.features.dungeon.f7.RelicTimer;
 import blade.addon.features.dungeon.f7.StormTickTimer;
-import blade.addon.features.dungeon.f7.TermStartTimer;
+import blade.addon.features.dungeon.f7.terms.TermStartTimer;
 import blade.addon.features.highlight.MobHighlight;
+import blade.addon.features.item.DropAnimation;
+import blade.addon.features.other.CompactHoppity;
 import blade.addon.features.other.DianaNotifier;
 import blade.addon.features.other.KickedTimer;
 import blade.addon.features.other.PracticeSS;
@@ -41,6 +43,7 @@ import blade.addon.utils.Scheduler;
 import blade.addon.utils.config.Config;
 import blade.addon.utils.config.FolderUtility;
 import blade.addon.utils.config.components.Components;
+import blade.addon.utils.config.values.Buttons;
 import blade.addon.utils.dungeon.DungeonClass;
 import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.dungeon.Section;
@@ -52,6 +55,7 @@ public class Bladeaddons implements ModInitializer {
 	public void onInitialize() {
         FolderUtility.init();
         Components.init();
+        Buttons.init();
         Config.manager.load();
 		Keybinds.init();
         CustomEvents.init();
@@ -95,5 +99,7 @@ public class Bladeaddons implements ModInitializer {
         RagDisplay.init();
         LeapNotification.init();
         PracticeSS.init();
+        CompactHoppity.init();
+        DropAnimation.init();
     }
 }

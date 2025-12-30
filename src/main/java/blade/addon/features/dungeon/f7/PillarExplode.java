@@ -27,7 +27,7 @@ public class PillarExplode {
             String string = text.getString();
             if (string == null) return;
 
-            if (string.equals("[BOSS] Storm: Oof") ||string.equals("[BOSS] Storm: Ouch, that hurt!")) {
+            if (string.equals("[BOSS] Storm: Oof") || string.equals("[BOSS] Storm: Ouch, that hurt!")) {
                 tick = TOTAL_TICKS;
                 Scheduler.scheduleSound(SoundEvents.BLOCK_NOTE_BLOCK_PLING.value(), 1, 1);
             }
@@ -37,14 +37,14 @@ public class PillarExplode {
     }
 
     public static boolean displayTimer() {
-        return Floor7.notifyStormCrush && tick > 0;
+        return Floor7.timePillarExplosion && tick > 0;
     }
 
     public static void renderTimer(HUDComponent component, DrawContext context) {
         int x = component.getScaledX();
         int y = component.getScaledY();
 
-        Formatting formatting = (tick < 6? Formatting.GREEN: Formatting.RED);
+        Formatting formatting = (tick < 6 ? Formatting.GREEN : Formatting.RED);
 
         double num = tick * Constants.TICK_DURATION;
 
@@ -53,7 +53,7 @@ public class PillarExplode {
     }
 
     public static boolean display() {
-        return Floor7.timePillarExplosion && tick > 0;
+        return Floor7.notifyStormCrush && tick > 0;
     }
 
     public static void render(HUDComponent component, DrawContext context) {

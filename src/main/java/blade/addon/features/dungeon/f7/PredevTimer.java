@@ -14,7 +14,7 @@ public class PredevTimer {
 
     private static long bossEnterTime = 0;
     private static boolean at3rdDev = false;
-    private static boolean enteredBoss = false;
+    private static boolean shouldTrack = false;
 
     public static void init() {
 
@@ -22,14 +22,16 @@ public class PredevTimer {
             if (Phase.inP1()) {
                 bossEnterTime = System.currentTimeMillis();
                 at3rdDev = false;
-                enteredBoss = true;
+                shouldTrack = true;
+            } else if (Phase.inP3()) {
+                shouldTrack = false;
             }
         });
 
-        Events.ON_LOCATION_CHANGE.register(newLocation -> enteredBoss = false);
+        Events.ON_LOCATION_CHANGE.register(newLocation -> shouldTrack = false);
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            if (!enteredBoss || at3rdDev || (!Floor7.predevForAll && !DungeonClass.isClass(DungeonClass.HEALER))) return;
+            if (!shouldTrack || at3rdDev || (!Floor7.predevForAll && !DungeonClass.isClass(DungeonClass.HEALER))) return;
             ClientPlayerEntity player = client.player;
             if (player == null) return;
             if (Misc.getDistance(player.getX(), player.getZ(), 1, 77) <= 3) {
@@ -38,10 +40,10 @@ public class PredevTimer {
         });
 
         Events.ON_LEAP.register(message -> {
-            if (at3rdDev && enteredBoss && (DungeonClass.isClass(DungeonClass.HEALER) || Floor7.predevForAll)) {
+            if (at3rdDev && shouldTrack && (DungeonClass.isClass(DungeonClass.HEALER) || Floor7.predevForAll)) {
                 PersonalBests.predevTime.testNewTime(Text.literal("§aPredev completed in "), bossEnterTime);
                 at3rdDev = false;
-                enteredBoss = false;
+                shouldTrack = false;
             }
         });
 
