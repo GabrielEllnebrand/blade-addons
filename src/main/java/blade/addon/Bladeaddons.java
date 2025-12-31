@@ -27,6 +27,7 @@ import blade.addon.features.dungeon.f7.PredevTimer;
 import blade.addon.features.dungeon.f7.RelicTimer;
 import blade.addon.features.dungeon.f7.StormTickTimer;
 import blade.addon.features.dungeon.f7.terms.TermStartTimer;
+import blade.addon.features.highlight.MimicHighlight;
 import blade.addon.features.highlight.MobHighlight;
 import blade.addon.features.item.DropAnimation;
 import blade.addon.features.other.CompactHoppity;
@@ -51,17 +52,17 @@ import blade.addon.utils.events.CustomEvents;
 import net.fabricmc.api.ModInitializer;
 
 public class Bladeaddons implements ModInitializer {
-	@Override
-	public void onInitialize() {
+    @Override
+    public void onInitialize() {
         FolderUtility.init();
         Components.init();
         Buttons.init();
         Config.manager.load();
-		Keybinds.init();
+        Keybinds.init();
         CustomEvents.init();
         Commands.init();
         Debug.init();
-		Location.init();
+        Location.init();
         Phase.init();
         Section.init();
         DungeonClass.init();
@@ -101,5 +102,6 @@ public class Bladeaddons implements ModInitializer {
         PracticeSS.init();
         CompactHoppity.init();
         DropAnimation.init();
+        MimicHighlight.init();
     }
 }

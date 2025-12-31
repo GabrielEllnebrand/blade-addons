@@ -3,13 +3,14 @@
   "package": "blade.addon.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "ArrowMixin",
+    "ClientConnectionMixin",
+    "ClientPlayNetworkHandlerMixin",
+    "ChunkMixin",
     "EntityMixin",
-    "InventoryMixin",
     "ItemStackMixin",
-    "NetworkMixin",
     "PlayerEntityMixin",
-    "ServerTickMixin"
+    "PlayerInventoryMixin",
+    "StuckArrowsFeatureRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1
@@ -18,21 +19,18 @@
     "requireAnnotations": true
   },
   "client": [
-    "BlockEntityRenderMixin",
     "ClientPlayerEntityMixin",
+    "ClientPlayNetworkHandlerMixin",
     "EntityRendererMixin",
-    "FireMixin",
+    "EntityRenderManagerMixin",
     "HandledScreenMixin",
     "HeldItemRendererMixin",
     "InGameHudMixin",
     "InventoryScreenMixin",
     "MinecraftClientMixin",
     "MouseMixin",
-    "NetworkMixin",
-    "PositionMixin",
     "RecipeBookScreenMixin",
     "RecipeBookWidgetMixin",
-    "RenderMixin",
     "StatusEffectsDisplayMixin"
   ]
 }

@@ -1,6 +1,7 @@
 package blade.addon.mixin;
 
 import blade.addon.features.other.InventoryButton;
+import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
 import net.minecraft.client.gui.screen.ingame.RecipeBookScreen;
@@ -19,12 +20,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(InventoryScreen.class)
 public abstract class InventoryScreenMixin extends RecipeBookScreen<PlayerScreenHandler> {
-
-    @Shadow
-    private float mouseX;
-
-    @Shadow
-    private float mouseY;
 
     @Final
     @Shadow
@@ -46,9 +41,9 @@ public abstract class InventoryScreenMixin extends RecipeBookScreen<PlayerScreen
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        InventoryButton.parseClicks(mouseX - x, mouseY - y, button);
-        return super.mouseClicked(mouseX, mouseY, button);
+    public boolean mouseClicked(Click click, boolean doubled) {
+        InventoryButton.parseClicks(click.x() - x, click.y() - y);
+        return super.mouseClicked(click, doubled);
     }
 
     @Inject(method = "drawForeground", at = @At("HEAD"), cancellable = true)

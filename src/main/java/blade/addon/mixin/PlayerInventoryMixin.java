@@ -9,10 +9,10 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(PlayerInventory.class)
-public class InventoryMixin {
+public class PlayerInventoryMixin {
 
     @Inject(method = "setStack", at = @At("HEAD"))
-    private void channelRead0(int slot, ItemStack stack, CallbackInfo ci) {
+    private void setStack(int slot, ItemStack stack, CallbackInfo ci) {
         if (Events.ON_SLOT_CHANGE.hasListeners()) {
             Events.ON_SLOT_CHANGE.listeners.forEach(slotChangeEvent -> slotChangeEvent.onSlotChange(slot, stack));
         }

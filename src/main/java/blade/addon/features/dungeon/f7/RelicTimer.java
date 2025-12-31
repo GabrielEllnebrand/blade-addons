@@ -11,11 +11,10 @@ import blade.addon.utils.rendering.RenderUtils;
 import blade.addon.utils.times.PersonalBests;
 import config.practical.hud.HUDComponent;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
-import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
+import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.VertexRendering;
@@ -176,28 +175,26 @@ public class RelicTimer {
             return false;
         });
 
-        WorldRenderEvents.BEFORE_DEBUG_RENDER.register(worldRenderContext -> {
+        WorldRenderEvents.BEFORE_DEBUG_RENDER.register(context -> {
             if (pickedupRelic == null || !Floor7.renderRelicHighlight) return;
 
-            Camera camera = worldRenderContext.camera();
-            Vec3d cameraPos = camera.getPos();
+            Vec3d camera = context.worldState().cameraRenderState.pos;
+            MatrixStack matrices = context.matrices();
+            if (matrices == null) return;
+            matrices.push();
+            matrices.translate(-camera.x, -camera.y, -camera.z);
 
-            MatrixStack matrixStack = worldRenderContext.matrixStack();
-            if (matrixStack == null) return;
-            matrixStack.push();
-            matrixStack.translate(-cameraPos.x, -cameraPos.y, -cameraPos.z);
-
-            VertexConsumerProvider consumers = worldRenderContext.consumers();
+            VertexConsumerProvider consumers = context.consumers();
             if (consumers == null) return;
             VertexConsumer buffer = consumers.getBuffer(RenderLayers.FILLED_LAYER);
 
 
             Box box = pickedupRelic.box;
             float[] color = RenderUtils.toFloats(pickedupRelic.color);
-            VertexRendering.drawFilledBox(matrixStack, buffer, box.minX, box.minY, box.minZ, box.maxX, box.maxY, box.maxZ, color[0], color[1], color[2], color[3]);
+            VertexRendering.drawFilledBox(matrices, buffer, box.minX, box.minY, box.minZ, box.maxX, box.maxY, box.maxZ, color[0], color[1], color[2], color[3]);
 
 
-            matrixStack.pop();
+            matrices.pop();
         });
 
     }

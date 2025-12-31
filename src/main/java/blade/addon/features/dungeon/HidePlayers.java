@@ -45,7 +45,7 @@ public class HidePlayers {
         if (!Dungeons.hideAtSS || !Phase.inBoss()) return false;
         if (Dungeons.hideBeforeTermsOnly && Phase.inP3()) return false;
 
-        return SS_POSITION.distanceTo(player.getPos()) <= DISTANCE;
+        return SS_POSITION.distanceTo(player.getEntityPos()) <= DISTANCE;
     }
 
     public static boolean shouldHidePlayers(PlayerEntity player) {
@@ -65,7 +65,10 @@ public class HidePlayers {
         if (Dungeons.hidePlayersInRange) {
             ClientPlayerEntity clientPlayer = MinecraftClient.getInstance().player;
             if (clientPlayer == null) return false;
-            return player.getPos().distanceTo(clientPlayer.getPos()) <= Dungeons.hidePlayerRange;
+
+            double distance = player.getEntityPos().distanceTo(clientPlayer.getEntityPos());
+            if (!Double.isFinite(distance) || !Double.isFinite(Dungeons.hidePlayerRange)) return false;
+            return distance <= Dungeons.hidePlayerRange;
         }
 
         return false;

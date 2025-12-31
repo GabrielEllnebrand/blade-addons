@@ -36,7 +36,7 @@ public class PositionMessage {
     public void tick(ClientPlayerEntity player) {
         if (sent) return;
         if (!inAValidSection()) return;
-        if (inRange(player.getPos())) {
+        if (inRange(player.getEntityPos())) {
             sent = true;
             if (Floor7.enablePositionalMessages) {
                 player.networkHandler.sendChatCommand("pc " + message);

@@ -12,10 +12,9 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
-import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
+import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderContext;
+import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
-import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.util.math.MatrixStack;
@@ -138,49 +137,47 @@ public class BossWaypoints {
         return ActionResult.PASS;
     }
 
-    private static void renderThroughWall(WorldRenderContext worldRenderContext) {
+    private static void renderThroughWall(WorldRenderContext context) {
         if (!isInValidArea()) return;
 
-        Camera camera = worldRenderContext.camera();
-        Vec3d cameraPos = camera.getPos();
-        MatrixStack matrixStack = worldRenderContext.matrixStack();
-        if (matrixStack == null) return;
-        matrixStack.push();
-        matrixStack.translate(-cameraPos.x, -cameraPos.y, -cameraPos.z);
+        Vec3d camera = context.worldState().cameraRenderState.pos;
+        MatrixStack matrices = context.matrices();
+        if (matrices == null) return;
+        matrices.push();
+        matrices.translate(-camera.x, -camera.y, -camera.z);
 
-        VertexConsumerProvider consumers = worldRenderContext.consumers();
+        VertexConsumerProvider consumers = context.consumers();
         if (consumers == null) return;
         VertexConsumer consumer = consumers.getBuffer(RenderLayers.FILLED_LAYER);
 
         waypoints.forEach(waypoint -> {
             if (waypoint.isThroughWall()) {
-                waypoint.Render(consumer, matrixStack);
+                waypoint.Render(consumer, matrices);
             }
         });
-        matrixStack.pop();
+        matrices.pop();
 
     }
 
-    private static void render(WorldRenderContext worldRenderContext) {
+    private static void render(WorldRenderContext context) {
         if (!isInValidArea()) return;
+        Vec3d camera = context.worldState().cameraRenderState.pos;
 
-        Camera camera = worldRenderContext.camera();
-        Vec3d cameraPos = camera.getPos();
-        MatrixStack matrixStack = worldRenderContext.matrixStack();
-        if (matrixStack == null) return;
-        matrixStack.push();
-        matrixStack.translate(-cameraPos.x, -cameraPos.y, -cameraPos.z);
+        MatrixStack matrices = context.matrices();
+        if (matrices == null) return;
+        matrices.push();
+        matrices.translate(-camera.x, -camera.y, -camera.z);
 
-        VertexConsumerProvider consumers = worldRenderContext.consumers();
+        VertexConsumerProvider consumers = context.consumers();
         if (consumers == null) return;
         VertexConsumer consumer = consumers.getBuffer(RenderLayers.THROUGH_WALL_FILLED_LAYER);
 
         waypoints.forEach(waypoint -> {
             if (!waypoint.isThroughWall()) {
-                waypoint.Render(consumer, matrixStack);
+                waypoint.Render(consumer, matrices);
             }
         });
-        matrixStack.pop();
+        matrices.pop();
 
     }
 

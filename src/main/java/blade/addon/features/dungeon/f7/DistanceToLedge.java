@@ -32,7 +32,7 @@ public class DistanceToLedge {
     private static boolean isAtYellow() {
         ClientPlayerEntity player = MinecraftClient.getInstance().player;
         if (player == null) return false;
-        return YELLOW_PAD.contains(player.getPos());
+        return YELLOW_PAD.contains(player.getEntityPos());
     }
 
     public static boolean display() {

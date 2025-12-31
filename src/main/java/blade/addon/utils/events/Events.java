@@ -1,5 +1,6 @@
 package blade.addon.utils.events;
 
+import blade.addon.utils.events.interfaces.BlockEntityEvent;
 import blade.addon.utils.events.interfaces.BlockInteractionEvent;
 import blade.addon.utils.events.interfaces.CancelableMessageEvent;
 import blade.addon.utils.events.interfaces.EntityEvent;
@@ -43,6 +44,8 @@ public class Events {
     public static final CancelableEventHandler<BlockInteractionEvent> ON_BLOCK_INTERACTION = new CancelableEventHandler<>();
 
     public static final CancelableEventHandler<PlaySoundEvent> ON_SOUND = new CancelableEventHandler<>();
+
+    public static final EventHandler<BlockEntityEvent> ON_BLOCK_ENTITY = new EventHandler<>();
 
 
 }

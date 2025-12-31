@@ -7,11 +7,10 @@ import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.events.Events;
 import blade.addon.utils.rendering.RenderLayers;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
-import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
+import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderContext;
+import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.VertexRendering;
@@ -97,31 +96,30 @@ public class PositionMessages {
         }
     }
 
-    private static void render(WorldRenderContext worldRenderContext) {
+    private static void render(WorldRenderContext context) {
         if (!Location.inDungeon() || !Debug.renderPositions) return;
 
-        Camera camera = worldRenderContext.camera();
-        Vec3d cameraPos = camera.getPos();
-        MatrixStack matrixStack = worldRenderContext.matrixStack();
-        if (matrixStack == null) return;
-        matrixStack.push();
-        matrixStack.translate(-cameraPos.x, -cameraPos.y, -cameraPos.z);
+        Vec3d camera = context.worldState().cameraRenderState.pos;
+        MatrixStack matrices = context.matrices();
+        if (matrices == null) return;
+        matrices.push();
+        matrices.translate(-camera.x, -camera.y, -camera.z);
 
-        VertexConsumerProvider consumers = worldRenderContext.consumers();
+        VertexConsumerProvider consumers = context.consumers();
         if (consumers == null) return;
         VertexConsumer consumer = consumers.getBuffer(RenderLayers.OUTLINE_LAYER);
+        MatrixStack.Entry entry = matrices.peek();
         for (PositionMessage positionMessage : positionMessages) {
             Box box = positionMessage.getBox();
-
             if (positionMessage.sent()) {
-                VertexRendering.drawBox(matrixStack, consumer, box, 0, 1, 0, 1);
+                VertexRendering.drawBox(entry, consumer, box, 0, 1, 0, 1);
             } else {
-                VertexRendering.drawBox(matrixStack, consumer, box, 1, 0, 0, 1);
+                VertexRendering.drawBox(entry, consumer, box, 1, 0, 0, 1);
             }
         }
 
 
-        matrixStack.pop();
+        matrices.pop();
 
     }
 }

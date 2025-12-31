@@ -75,7 +75,7 @@ public class LeapNotification {
     }
 
     private static int getSpot(ClientPlayerEntity player) {
-        Vec3d pos = player.getPos();
+        Vec3d pos = player.getEntityPos();
         if (HEE2_BOX.contains(pos)) return 2;
         if (EE2_BOX.contains(pos)) return 2;
         else if (EE3_BOX.contains(pos)) return 3;

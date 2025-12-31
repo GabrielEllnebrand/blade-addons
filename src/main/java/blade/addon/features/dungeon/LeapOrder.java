@@ -1,9 +1,11 @@
 package blade.addon.features.dungeon;
 
+import blade.addon.utils.Debug;
 import blade.addon.utils.Misc;
 import blade.addon.utils.dungeon.DungeonClass;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.scoreboard.Team;
 import net.minecraft.text.Text;
@@ -30,12 +32,13 @@ public class LeapOrder {
         DungeonClass playersClass = null;
 
         ClientPlayerEntity player = MinecraftClient.getInstance().player;
-        if (player == null) {
-            Misc.addChatMessage(Text.literal("Player is somehow null"));
+        ClientWorld world = MinecraftClient.getInstance().world;
+        if (player == null || world == null) {
+            Debug.LOGGER.warn("Player or World is null");
             return;
         }
 
-        Scoreboard scoreboard = player.getScoreboard();
+        Scoreboard scoreboard = world.getScoreboard();
         for (Team team : scoreboard.getTeams()) {
             String teamStr = team.getPrefix().getString() + team.getSuffix().getString();
             Matcher matcher = PATTERN.matcher(teamStr);

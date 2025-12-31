@@ -8,6 +8,7 @@ import blade.addon.utils.events.Events;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
+import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.network.PlayerListEntry;
 import net.minecraft.text.Text;
 
@@ -61,7 +62,8 @@ public enum DungeonClass {
     }
 
     private static void detectClasses() {
-        ClientPlayNetworkHandler networkHandler = MinecraftClient.getInstance().getNetworkHandler();
+        MinecraftClient client = MinecraftClient.getInstance();
+        ClientPlayNetworkHandler networkHandler = client.getNetworkHandler();
         if (networkHandler == null) return;
         Collection<PlayerListEntry> entryCollection = networkHandler.getPlayerList();
 
@@ -77,6 +79,15 @@ public enum DungeonClass {
                 if (className == null) continue;
                 nameClassMap.put(name, className);
             }
+        }
+
+        //incase currentClass could not detect class before
+        if (currentClass == null) {
+            ClientPlayerEntity player = client.player;
+            if (player == null) return;
+            String name = player.getStringifiedName();
+            currentClass = nameClassMap.get(name);
+
         }
     }
 

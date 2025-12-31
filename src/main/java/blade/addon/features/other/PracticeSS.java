@@ -9,13 +9,12 @@ import blade.addon.utils.rendering.RenderLayers;
 import blade.addon.utils.rendering.RenderUtils;
 import blade.addon.utils.times.PersonalBests;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
-import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
+import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderContext;
+import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderEvents;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.VertexRendering;
@@ -340,18 +339,15 @@ public class PracticeSS {
         return endIndex - ticksLeft / getDelay();
     }
 
-    private static void render(WorldRenderContext worldRenderContext) {
+    private static void render(WorldRenderContext context) {
         if (!started) return;
+        Vec3d camera = context.worldState().cameraRenderState.pos;
+        MatrixStack matrices = context.matrices();
+        if (matrices == null) return;
+        matrices.push();
+        matrices.translate(-camera.x, -camera.y, -camera.z);
 
-        Camera camera = worldRenderContext.camera();
-        Vec3d cameraPos = camera.getPos();
-
-        MatrixStack matrixStack = worldRenderContext.matrixStack();
-        if (matrixStack == null) return;
-        matrixStack.push();
-        matrixStack.translate(-cameraPos.x, -cameraPos.y, -cameraPos.z);
-
-        VertexConsumerProvider consumers = worldRenderContext.consumers();
+        VertexConsumerProvider consumers = context.consumers();
         if (consumers == null) return;
         VertexConsumer buffer = consumers.getBuffer(RenderLayers.FILLED_LAYER);
 
@@ -359,15 +355,15 @@ public class PracticeSS {
         if (showingPattern) {
             if (!ExtraOptions.realisticDelay || totalTicks - ticksLeft > START_WAIT_DURATION || endIndex != 2) {
                 int lastIndex = getLastDisplayIndex();
-                renderButtons(matrixStack, buffer, 0, lastIndex);
-                renderBackground(matrixStack, buffer, lastIndex - 1);
+                renderButtons(matrices, buffer, 0, lastIndex);
+                renderBackground(matrices, buffer, lastIndex - 1);
             }
         } else {
-            renderButtons(matrixStack, buffer, currentIndex, endIndex);
+            renderButtons(matrices, buffer, currentIndex, endIndex);
         }
 
 
-        matrixStack.pop();
+        matrices.pop();
     }
 
     private static void renderButtons(MatrixStack matrixStack, VertexConsumer buffer, int start, int end) {

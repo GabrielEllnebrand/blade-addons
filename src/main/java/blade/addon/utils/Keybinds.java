@@ -13,13 +13,12 @@ import net.minecraft.component.type.LoreComponent;
 import net.minecraft.component.type.NbtComponent;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.List;
 
 public class Keybinds {
-
-    private static final String CATEGORY = Constants.NAMESPACE;
 
     private static KeyBinding openConfig;
     private static KeyBinding getItemLore;
@@ -28,23 +27,25 @@ public class Keybinds {
 
     public static void init() {
 
+        KeyBinding.Category category = KeyBinding.Category.create(Identifier.of(Constants.NAMESPACE));
+
         openConfig = KeyBindingHelper.registerKeyBinding(new KeyBinding(
                 "opens Config",
                 InputUtil.Type.KEYSYM,
                 GLFW.GLFW_KEY_RIGHT_SHIFT,
-                CATEGORY));
+                category));
 
         getItemLore = KeyBindingHelper.registerKeyBinding(new KeyBinding(
                 "Grabs the items lore",
                 InputUtil.Type.KEYSYM,
                 GLFW.GLFW_KEY_UNKNOWN,
-                CATEGORY));
+                category));
 
         getItemCustomData = KeyBindingHelper.registerKeyBinding(new KeyBinding(
                 "Grabs the items custom data",
                 InputUtil.Type.KEYSYM,
                 GLFW.GLFW_KEY_UNKNOWN,
-                CATEGORY));
+                category));
 
         ClientTickEvents.END_CLIENT_TICK.register(Keybinds::checkInputs);
     }

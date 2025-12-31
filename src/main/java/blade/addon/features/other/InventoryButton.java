@@ -38,7 +38,7 @@ public class InventoryButton {
         context.drawText(textRenderer, "" + index, x + (SIZE - center) / 2 + 1, y + (SIZE - textRenderer.fontHeight) / 2 + 1, 0xffffffff, true);
     }
 
-    public void onClick(double mouseX, double mouseY, int button) {
+    public void onClick(double mouseX, double mouseY) {
         String str = command.get();
         if (str == null ||str.isEmpty()) return;
         Misc.executeCommand(str);
@@ -48,10 +48,10 @@ public class InventoryButton {
         return mouseX >= x && mouseX <= x + SIZE && mouseY >= y && mouseY <= y + SIZE;
     }
 
-    public static void parseClicks(double mouseX, double mouseY, int button) {
+    public static void parseClicks(double mouseX, double mouseY) {
         for (InventoryButton inventoryButton : inventoryButtons) {
             if (inventoryButton.inBounds(mouseX, mouseY)) {
-                inventoryButton.onClick(mouseX, mouseY, button);
+                inventoryButton.onClick(mouseX, mouseY);
             }
         }
     }

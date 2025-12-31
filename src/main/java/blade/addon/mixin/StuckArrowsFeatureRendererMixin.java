@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(StuckArrowsFeatureRenderer.class)
-public class ArrowMixin {
+public class StuckArrowsFeatureRendererMixin {
 
     @Inject(method = "getObjectCount", at=@At("TAIL"), cancellable = true)
     public void shouldRender(CallbackInfoReturnable<Integer> cir) {

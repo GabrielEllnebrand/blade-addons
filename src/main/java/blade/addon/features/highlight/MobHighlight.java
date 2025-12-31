@@ -9,13 +9,12 @@ import blade.addon.utils.rendering.RenderUtils;
 import config.practical.manager.ConfigValue;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientEntityEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
-import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
+import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderContext;
+import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.network.PlayerListEntry;
-import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.VertexRendering;
@@ -254,7 +253,7 @@ public class MobHighlight {
         Entity closest = null;
         double smallestDistance = maxDistance;
         double maxY = armorStand.getY();
-        Box boundingBox = Box.of(armorStand.getPos().subtract(0, 0.5, 0), 2, 3, 2);
+        Box boundingBox = Box.of(armorStand.getEntityPos().subtract(0, 0.5, 0), 2, 3, 2);
 
 
         ArrayList<Entity> meetsRequirements = new ArrayList<>();
@@ -273,7 +272,7 @@ public class MobHighlight {
             if (!requirements.test(current)) continue;
             if (current.getY() > maxY) continue;
 
-            double distance = armorStand.getPos().distanceTo(current.getPos());
+            double distance = armorStand.getEntityPos().distanceTo(current.getEntityPos());
             if (smallestDistance > distance) {
                 closest = current;
                 smallestDistance = distance;
@@ -314,7 +313,7 @@ public class MobHighlight {
 
             //this is a hack which will fail if someone has a really old bugged ign that includes a space
             if (entry != null) {
-                String name = entry.getProfile().getName();
+                String name = entry.getProfile().name();
                 return !name.isEmpty() && !name.contains(" ");
             }
         }
@@ -413,25 +412,25 @@ public class MobHighlight {
         return box;
     }
 
-    private static void renderFilled(WorldRenderContext worldRenderContext) {
+    private static void renderFilled(WorldRenderContext context) {
         if (!mobHighlight || dontRenderHighlight) return;
         if (!renderFilled()) return;
-        Camera camera = worldRenderContext.camera();
-        Vec3d cameraPos = camera.getPos();
-        MatrixStack matrixStack = worldRenderContext.matrixStack();
-        if (matrixStack == null) return;
-        matrixStack.push();
-        matrixStack.translate(-cameraPos.x, -cameraPos.y, -cameraPos.z);
+        Vec3d camera = context.worldState().cameraRenderState.pos;
+        MatrixStack matrices = context.matrices();
+        if (matrices == null) return;
+        matrices.push();
+        matrices.translate(-camera.x, -camera.y, -camera.z);
 
-        VertexConsumerProvider consumers = worldRenderContext.consumers();
+        VertexConsumerProvider consumers = context.consumers();
         if (consumers == null) return;
         VertexConsumer filledConsumer = consumers.getBuffer(RenderLayers.FILLED_ENTITY_LAYER);
+
+        double tickProgress = MinecraftClient.getInstance().getRenderTickCounter().getTickProgress(false);
 
         trackedMobs.forEach((entity, mobType) -> {
 
             if (entity.isInvisible() && MobHighlight.dontShowInvisibleMobs && entity instanceof PlayerEntity) return;
 
-            double tickProgress = worldRenderContext.tickCounter().getTickProgress(false);
             double x = MathHelper.lerp(tickProgress, entity.lastRenderX, entity.getX());
             double y = MathHelper.lerp(tickProgress, entity.lastRenderY, entity.getY());
             double z = MathHelper.lerp(tickProgress, entity.lastRenderZ, entity.getZ());
@@ -441,34 +440,35 @@ public class MobHighlight {
 
             int filledColor = MobHighlight.getFilledColor(entity);
             float[] rgba = RenderUtils.toFloats(filledColor);
-            VertexRendering.drawFilledBox(matrixStack, filledConsumer, box.minX, box.minY, box.minZ, box.maxX, box.maxY, box.maxZ, rgba[0], rgba[1], rgba[2], rgba[3]);
+            VertexRendering.drawFilledBox(matrices, filledConsumer, box.minX, box.minY, box.minZ, box.maxX, box.maxY, box.maxZ, rgba[0], rgba[1], rgba[2], rgba[3]);
         });
 
 
-        matrixStack.pop();
+        matrices.pop();
 
     }
 
-    private static void renderOutline(WorldRenderContext worldRenderContext) {
+    private static void renderOutline(WorldRenderContext context) {
         if (!mobHighlight || dontRenderHighlight) return;
         if (!renderOutline()) return;
-        Camera camera = worldRenderContext.camera();
-        Vec3d cameraPos = camera.getPos();
-        MatrixStack matrixStack = worldRenderContext.matrixStack();
-        if (matrixStack == null) return;
-        matrixStack.push();
-        matrixStack.translate(-cameraPos.x, -cameraPos.y, -cameraPos.z);
+        Vec3d camera = context.worldState().cameraRenderState.pos;
+        MatrixStack matrices = context.matrices();
+        if (matrices == null) return;
+        matrices.push();
+        matrices.translate(-camera.x, -camera.y, -camera.z);
 
-        VertexConsumerProvider consumers = worldRenderContext.consumers();
+        VertexConsumerProvider consumers = context.consumers();
         if (consumers == null) return;
         VertexConsumer outlineConsumer = consumers.getBuffer(RenderLayers.getOutline(outlineWidth));
 
+        double tickProgress = MinecraftClient.getInstance().getRenderTickCounter().getTickProgress(false);
+
+        MatrixStack.Entry entry = matrices.peek();
 
         trackedMobs.forEach((entity, mobType) -> {
 
             if (entity.isInvisible() && MobHighlight.dontShowInvisibleMobs && entity instanceof PlayerEntity) return;
 
-            double tickProgress = worldRenderContext.tickCounter().getTickProgress(false);
             double x = MathHelper.lerp(tickProgress, entity.lastRenderX, entity.getX());
             double y = MathHelper.lerp(tickProgress, entity.lastRenderY, entity.getY());
             double z = MathHelper.lerp(tickProgress, entity.lastRenderZ, entity.getZ());
@@ -478,11 +478,11 @@ public class MobHighlight {
 
             int outlineColor = MobHighlight.getOutlineColor(entity);
             float[] rgba = RenderUtils.toFloats(outlineColor);
-            VertexRendering.drawBox(matrixStack, outlineConsumer, box, rgba[0], rgba[1], rgba[2], rgba[3]);
+            VertexRendering.drawBox(entry, outlineConsumer, box, rgba[0], rgba[1], rgba[2], rgba[3]);
         });
 
 
-        matrixStack.pop();
+        matrices.pop();
 
     }
 }

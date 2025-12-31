@@ -1,5 +1,6 @@
 package blade.addon.mixin;
 
+import blade.addon.features.dungeon.DeathTickTimer;
 import blade.addon.utils.Debug;
 import blade.addon.utils.Misc;
 import blade.addon.utils.Scheduler;
@@ -18,6 +19,7 @@ import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
 import net.minecraft.network.packet.s2c.play.EntityTrackerUpdateS2CPacket;
 import net.minecraft.network.packet.s2c.play.PlaySoundS2CPacket;
 import net.minecraft.network.packet.s2c.play.PlayerListS2CPacket;
+import net.minecraft.network.packet.s2c.play.PlayerPositionLookS2CPacket;
 import net.minecraft.network.packet.s2c.play.TeamS2CPacket;
 import net.minecraft.scoreboard.Team;
 import net.minecraft.sound.SoundEvent;
@@ -31,7 +33,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ClientPlayNetworkHandler.class)
-public class NetworkMixin {
+public class ClientPlayNetworkHandlerMixin {
 
 
     @Shadow
@@ -68,7 +70,7 @@ public class NetworkMixin {
     }
 
     @Inject(method = "onPlaySound", at = @At(value = "HEAD"), cancellable = true)
-    private void onTeam(PlaySoundS2CPacket packet, CallbackInfo ci) {
+    private void onSound(PlaySoundS2CPacket packet, CallbackInfo ci) {
         float volume = packet.getVolume();
         float pitch = packet.getPitch();
         SoundEvent event = packet.getSound().value();
@@ -101,6 +103,11 @@ public class NetworkMixin {
 
     }
 
+    @Inject(method = "onPlayerPositionLook", at = @At("HEAD"))
+    private void onPlayerLook(PlayerPositionLookS2CPacket packet, CallbackInfo ci) {
+        DeathTickTimer.onTeleport(packet.change().position());
+    }
+
     @Unique
     private static boolean isARealPlayer(Entity entity) {
         if (entity instanceof PlayerEntity player) {
@@ -114,7 +121,7 @@ public class NetworkMixin {
 
             //this is a hack which will fail if someone has a really old bugged ign that includes a space
             if (entry != null) {
-                String name = entry.getProfile().getName();
+                String name = entry.getProfile().name();
                 return !name.isEmpty() && !name.contains(" ");
             }
         }
