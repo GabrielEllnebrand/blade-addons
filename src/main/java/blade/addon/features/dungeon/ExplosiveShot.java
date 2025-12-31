@@ -6,7 +6,6 @@ import blade.addon.utils.config.values.Dungeons;
 import blade.addon.utils.dungeon.Phase;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
 
 import java.text.DecimalFormat;
 import java.util.regex.Matcher;
@@ -38,11 +37,7 @@ public class ExplosiveShot {
 
                     double damagePerEntity = amountNum / countNum;
 
-                    Misc.addChatMessage(
-                            Text.literal("Explosive shot did ").formatted(Formatting.GREEN)
-                                    .append(Text.literal(FORMAT.format(damagePerEntity)).formatted(Formatting.YELLOW))
-                                    .append(Text.literal(" damage per enemy.").formatted(Formatting.GREEN))
-                    );
+                    Misc.addChatMessage(Text.literal("§aExplosive shot did §e" + FORMAT.format(damagePerEntity) +"§a damage per enemy."));
 
                 } catch (NumberFormatException ignored) {
                 }

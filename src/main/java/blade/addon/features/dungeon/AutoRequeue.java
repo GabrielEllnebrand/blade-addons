@@ -5,10 +5,7 @@ import blade.addon.utils.Misc;
 import blade.addon.utils.config.values.Dungeons;
 import blade.addon.utils.events.Events;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.hud.ChatHud;
 import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
 
 import java.util.HashMap;
 import java.util.regex.Matcher;
@@ -31,13 +28,13 @@ public class AutoRequeue {
                 Matcher matcher = UNDT_PATTERN.matcher(message);
                 if (matcher.find()) {
                     playerHashMap.remove(username);
-                    Misc.addChatMessage(Text.literal("Downtime removed").formatted(Formatting.GREEN));
+                    Misc.addChatMessage(Text.literal("§aDowntime removed"));
                 }
             } else {
                 Matcher matcher = DT_PATTERN.matcher(message);
                 if (matcher.find()) {
                     playerHashMap.put(username, message);
-                    Misc.addChatMessage(Text.literal("Downtime added").formatted(Formatting.GREEN));
+                    Misc.addChatMessage(Text.literal("§aDowntime added"));
                 }
             }
         });
@@ -57,8 +54,7 @@ public class AutoRequeue {
                 Misc.executeCommand("instancerequeue");
             } else {
                 Misc.addChatMessage(Text.literal("Downtime reasons:"));
-                ChatHud chathud = MinecraftClient.getInstance().inGameHud.getChatHud();
-                playerHashMap.forEach((name, string) -> chathud.addMessage(Text.literal(name + "> " + string)));
+                playerHashMap.forEach((name, string) -> Misc.addChatMessage((Text.literal(name + "> " + string))));
 
 
             }

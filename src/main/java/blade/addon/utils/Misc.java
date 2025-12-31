@@ -3,6 +3,7 @@ package blade.addon.utils;
 import blade.addon.utils.config.values.ExtraOptions;
 import blade.addon.utils.interfaces.GameHud;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.hud.ChatHud;
 import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.ClientPlayerEntity;
@@ -46,7 +47,13 @@ public class Misc {
     public static void addChatMessage(Text text) {
         try {
             InGameHud gameHud = INSTANCE.inGameHud;
-            gameHud.getChatHud().addMessage(Text.literal(ExtraOptions.textPrefix).append(text));
+            ChatHud hud = gameHud.getChatHud();
+            if (INSTANCE.isOnThread()) {
+                hud.addMessage(Text.literal(ExtraOptions.textPrefix).append(text));
+            } else {
+                INSTANCE.executeSync(() ->  hud.addMessage(Text.literal(ExtraOptions.textPrefix).append(text)));
+            }
+
         } catch (IndexOutOfBoundsException ignored) {
             Debug.LOGGER.error("Chat message failed to get added");
         }

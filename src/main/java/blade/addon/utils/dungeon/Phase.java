@@ -12,7 +12,6 @@ import config.practical.manager.ConfigValue;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -147,14 +146,14 @@ public class Phase {
         runOver = true;
         currentPhase = currentSplits.size();
 
-        Misc.addChatMessage(Text.literal("Splits: ").formatted(Formatting.GREEN));
+        Misc.addChatMessage(Text.literal("§aSplits: "));
         for (Split split : currentSplits) {
             split.end();
             Misc.addChatMessage(split.createNameText().append(split.createTimeText()));
         }
         if (!currentSplits.isEmpty()) {
             double time = currentSplits.getLast().getTimeDiffrence();
-            Text timeLost = Text.literal("Approximately ").formatted(Formatting.GREEN).append(net.minecraft.text.Text.literal(Constants.DECIMAL_FORMAT.format(time) + "s ").formatted(Formatting.YELLOW)).append(net.minecraft.text.Text.literal("lost to lag.").formatted(Formatting.GREEN));
+            Text timeLost = Text.literal("§aApproximately §e" + Constants.DECIMAL_FORMAT.format(time) + "s §alost to lag.");
             Misc.addChatMessage(timeLost);
         }
 
