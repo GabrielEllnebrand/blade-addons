@@ -12,7 +12,6 @@ import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 
 import java.util.List;
@@ -27,7 +26,7 @@ public class SelectedPet {
     private static final Pattern MANUAL_EQUIP_PET_PATTERN = Pattern.compile("^You (summoned|despawned) your (\\D+)!$");
     private static final Pattern RULE_EQUIP_PET_PATTERN = Pattern.compile("^Autopet equipped your \\[Lvl [0-9]+] (\\D+)! VIEW RULE$");
 
-    private static final Text NO_PET = Text.literal("No pet").formatted(Formatting.RED);
+    private static final Text NO_PET = Text.literal("§cNo pet");
     private static final String identifierPrefix = "pets/";
 
     private static Text currentPetText = NO_PET;
@@ -66,14 +65,14 @@ public class SelectedPet {
         });
 
         Events.ON_PLAYER_ENTRY.register(receivedEntry -> {
-            if (receivedEntry == null) return;
+            if (receivedEntry == null) return false;
             Text text = receivedEntry.displayName();
-            if (text == null) return;
+            if (text == null) return false;
 
             String string = text.getString();
             if (string.equals(" No pet selected")) {
                 despawnPet();
-                return;
+                return false;
             }
 
             Matcher matcher = TAB_PET_PATTERN.matcher(string);
@@ -82,15 +81,13 @@ public class SelectedPet {
                 Style style = getStyle(text, petName);
                 summonPet(petName, Text.literal(petName).setStyle(style));
             }
+
+            return false;
         });
     }
 
     private static void despawnPet() {
-
-        if (!currentPetString.isEmpty() && Events.ON_PET.hasListeners()) {
-            Events.ON_PET.invoke(petEvent -> petEvent.onPet(""));
-        }
-
+        Events.ON_PET.invoke(petEvent -> petEvent.onPet(""));
         currentPetText = NO_PET;
         currentPetString = "";
         spriteId = null;
@@ -105,10 +102,7 @@ public class SelectedPet {
         currentPetText = textName;
         currentPetString = stringName;
 
-        if (Events.ON_PET.hasListeners()) {
-            Events.ON_PET.invoke(petEvent -> petEvent.onPet(currentPetString));
-        }
-
+        Events.ON_PET.invoke(petEvent -> petEvent.onPet(currentPetString));
         updateSprite(stringName);
     }
 
@@ -152,7 +146,7 @@ public class SelectedPet {
 
         TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
 
-        context.drawText(textRenderer, currentPetText, x + (ExtraOptions.includePetSprite? 18: 0), y + component.getHeight() - textRenderer.fontHeight, 0xffffffff, true);
+        context.drawText(textRenderer, currentPetText, x + (ExtraOptions.includePetSprite ? 18 : 0), y + component.getHeight() - textRenderer.fontHeight, 0xffffffff, true);
 
     }
 

@@ -12,9 +12,6 @@ public class Dungeons {
     public static boolean enableWarpCooldown = false;
 
     @ConfigValue
-    public static boolean detectDuplicateClass = false;
-
-    @ConfigValue
     public static boolean displayInvincibilityTimer = false;
 
     @ConfigValue
@@ -60,9 +57,6 @@ public class Dungeons {
     public static boolean enableAutoRequeue = false;
 
     @ConfigValue
-    public static boolean enableDeathTickTimer = false;
-
-    @ConfigValue
     public static boolean calculateCriticalHit = false;
 
     @ConfigValue
@@ -94,4 +88,16 @@ public class Dungeons {
 
     @ConfigValue
     public static boolean maskHighlight = false;
+
+    @ConfigValue
+    public static boolean detectDuplicateClass = false;
+
+    @ConfigValue
+    public static boolean ignoreDupeMage = false;
+
+    @ConfigValue
+    public static boolean detectPlayerCount = false;
+
+    @ConfigValue
+    public static int playersNeeded = 5;
 }

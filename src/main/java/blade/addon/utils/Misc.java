@@ -40,20 +40,20 @@ public class Misc {
         return clientPlayer.getName().getString().equals(name);
     }
 
+    public static double getDistance(Entity e1, Entity e2) {
+        return getDistance(e1.getX(), e1.getZ(), e2.getX(), e2.getZ());
+    }
+
     public static double getDistance(double x1, double z1, double x2, double z2) {
         return ((x1 - x2) * (x1 - x2)) + ((z1 - z2) * (z1 - z2));
     }
 
     public static void addChatMessage(Text text) {
         try {
+            if (INSTANCE == null) return;
             InGameHud gameHud = INSTANCE.inGameHud;
             ChatHud hud = gameHud.getChatHud();
-            if (INSTANCE.isOnThread()) {
-                hud.addMessage(Text.literal(ExtraOptions.textPrefix).append(text));
-            } else {
-                INSTANCE.executeSync(() ->  hud.addMessage(Text.literal(ExtraOptions.textPrefix).append(text)));
-            }
-
+            forceMainThread(() -> hud.addMessage(Text.literal(ExtraOptions.textPrefix).append(text)));
         } catch (IndexOutOfBoundsException ignored) {
             Debug.LOGGER.error("Chat message failed to get added");
         }
@@ -64,33 +64,41 @@ public class Misc {
     }
 
     public static void setTitle(Text text) {
-        INSTANCE.inGameHud.setTitle(text);
+        forceMainThread(() -> INSTANCE.inGameHud.setTitle(text));
     }
 
     public static void forceTitle(Text title, Text subtitle) {
         GameHud gameHud = (GameHud) INSTANCE.inGameHud;
-        gameHud.blade_addons$forceTitle(title, subtitle);
+        forceMainThread(() -> gameHud.blade_addons$forceTitle(title, subtitle));
     }
 
     public static void executeCommand(String string) {
         ClientPlayNetworkHandler networkHandler = INSTANCE.getNetworkHandler();
         if (networkHandler == null) return;
-        networkHandler.sendChatCommand(string);
+        forceMainThread(() -> networkHandler.sendChatCommand(string));
     }
 
     public static boolean containsLore(ItemStack item, String match) {
         LoreComponent lore = item.get(DataComponentTypes.LORE);
-        if (lore == null)  return false;
+        if (lore == null) return false;
 
         List<Text> lines = lore.lines();
         if (lines.isEmpty()) return false;
 
-        for (Text line: lines.reversed()) {
+        for (Text line : lines.reversed()) {
             String string = line.getString();
             if (string.contains(match)) {
                 return true;
             }
         }
         return false;
+    }
+
+    private static void forceMainThread(Runnable runnable) {
+        if (INSTANCE.isOnThread()) {
+            runnable.run();
+        } else {
+            INSTANCE.executeSync(runnable);
+        }
     }
 }

@@ -126,4 +126,7 @@ public class Floor7 {
 
     @ConfigValue
     public static boolean hideTerminalTitles = false;
+
+    @ConfigValue
+    public static boolean terminalTimeStamps = false;
 }

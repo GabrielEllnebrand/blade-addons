@@ -15,17 +15,17 @@ public class TermStartTimer {
 
     private static final int TOTAL_TICKS = 100;
 
-    private static int tick = 100;
+    private static int tick = TOTAL_TICKS;
 
     public static void init() {
         Events.ON_SERVER_TICK.register(() -> {
             if (Location.inDungeon() && Phase.inP2() && Phase.stormDead()) tick--;
+            return false;
         });
 
         Events.ON_LOCATION_CHANGE.register(newLocation -> {
-            if (Location.inDungeon()) {
-                tick = TOTAL_TICKS;
-            }
+           tick = TOTAL_TICKS;
+            return false;
         });
     }
 
@@ -38,7 +38,7 @@ public class TermStartTimer {
         int y = component.getScaledY();
 
         double num = tick * Constants.TICK_DURATION;
-        RenderUtils.drawCenteredText(context, MinecraftClient.getInstance().textRenderer, Text.literal(Constants.DECIMAL_FORMAT.format(num)), x, y, component.getWidth(), 0xFFFFFF55);
+        RenderUtils.drawCenteredText(context, MinecraftClient.getInstance().textRenderer, Text.literal(Constants.DECIMAL_FORMAT.format(num)), x, y, component.getWidth(), Constants.YELLOW_COLOR);
 
     }
 }

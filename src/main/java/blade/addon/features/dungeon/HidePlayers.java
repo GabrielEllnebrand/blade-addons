@@ -26,6 +26,7 @@ public class HidePlayers {
         Events.ON_LEAP.register(message -> {
             justLeapt = true;
             startTime = System.currentTimeMillis();
+            return false;
         });
     }
 
@@ -48,11 +49,19 @@ public class HidePlayers {
         return SS_POSITION.distanceTo(player.getEntityPos()) <= DISTANCE;
     }
 
-    public static boolean shouldHidePlayers(PlayerEntity player) {
-        if (!Location.inDungeon()) return false;
+    public static boolean testHideInRange(PlayerEntity player) {
+        if (!Dungeons.hidePlayersInRange) return false;
+        ClientPlayerEntity clientPlayer = MinecraftClient.getInstance().player;
+        if (clientPlayer == null) return false;
 
-        if (!Detection.isARealPlayer(player)) return false;
-        if (Misc.isClientPlayer(player)) return false;
+        double distance = player.getEntityPos().distanceTo(clientPlayer.getEntityPos());
+        if (!Double.isFinite(distance) || !Double.isFinite(Dungeons.hidePlayerRange)) return false;
+        return distance <= Dungeons.hidePlayerRange;
+
+    }
+
+    public static boolean shouldHidePlayers(PlayerEntity player) {
+        if (!Location.inDungeon() || !Detection.isARealPlayer(player) || Misc.isClientPlayer(player)) return false;
 
         if (testHideAtLeap()) {
             return true;
@@ -62,16 +71,7 @@ public class HidePlayers {
             return true;
         }
 
-        if (Dungeons.hidePlayersInRange) {
-            ClientPlayerEntity clientPlayer = MinecraftClient.getInstance().player;
-            if (clientPlayer == null) return false;
-
-            double distance = player.getEntityPos().distanceTo(clientPlayer.getEntityPos());
-            if (!Double.isFinite(distance) || !Double.isFinite(Dungeons.hidePlayerRange)) return false;
-            return distance <= Dungeons.hidePlayerRange;
-        }
-
-        return false;
+        return testHideInRange(player);
     }
 
 

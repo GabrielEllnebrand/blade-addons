@@ -45,6 +45,9 @@ public class Config {
         ConfigSection start = new ConfigSection(Text.literal("Start of run"));
         start.add(new ConfigBool(Text.literal("Warp cooldown"), () -> Dungeons.enableWarpCooldown, bool -> Dungeons.enableWarpCooldown = bool));
         start.add(new ConfigBool(Text.literal("Dupe class warning"), () -> Dungeons.detectDuplicateClass, bool -> Dungeons.detectDuplicateClass = bool));
+        start.add(new ConfigBool(Text.literal("Ignore dupe mage"), () -> Dungeons.ignoreDupeMage, bool -> Dungeons.ignoreDupeMage = bool));
+        start.add(new ConfigBool(Text.literal("Player count warning"), () -> Dungeons.detectPlayerCount, bool -> Dungeons.detectPlayerCount = bool));
+        start.add(new ConfigInt(Text.literal("Players needed"), () -> Dungeons.playersNeeded, count -> Dungeons.playersNeeded = count, 1, 1, 5));
         dungeons.add(start);
 
         ConfigSection invincibility = new ConfigSection(Text.literal("Invincibility Timer"));
@@ -75,7 +78,6 @@ public class Config {
         dungeons.add(chests);
         dungeons.add(new ConfigBool(Text.literal("Leap message"), () -> Dungeons.enableLeapMessages, bool -> Dungeons.enableLeapMessages = bool));
         dungeons.add(new ConfigBool(Text.literal("Auto requeue"), () -> Dungeons.enableAutoRequeue, bool -> Dungeons.enableAutoRequeue = bool));
-        dungeons.add(new ConfigBool(Text.literal("Death tick timer (not accurate currently)"), () -> Dungeons.enableDeathTickTimer, bool -> Dungeons.enableDeathTickTimer = bool));
 
         ConfigSection expo = new ConfigSection(Text.literal("Explosive shot"));
         expo.add(new ConfigBool(Text.literal("calculate explosive shot"), () -> Dungeons.calculateCriticalHit, bool -> Dungeons.calculateCriticalHit = bool));
@@ -131,6 +133,7 @@ public class Config {
         goldor.add(new ConfigBool(Text.literal("Disable titles on pre4"), () -> Floor7.disableTitlesAtPre4, bool -> Floor7.disableTitlesAtPre4 = bool));
         goldor.add(new ConfigBool(Text.literal("Melody warning notification"), () -> Floor7.notifiyMelody, bool -> Floor7.notifiyMelody = bool));
         goldor.add(new ConfigBool(Text.literal("Hide most titles in terminals"), () -> Floor7.hideTerminalTitles, bool -> Floor7.hideTerminalTitles = bool));
+        goldor.add(new ConfigBool(Text.literal("Send terminal time stamps"), () -> Floor7.terminalTimeStamps, bool -> Floor7.terminalTimeStamps = bool));
 
         floor7.add(goldor);
 

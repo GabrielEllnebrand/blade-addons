@@ -40,6 +40,7 @@ public class PositionMessages {
         WorldRenderEvents.BEFORE_ENTITIES.register(PositionMessages::render);
         Events.ON_LOCATION_CHANGE.register(newLocation -> {
             disableAll();
+            return false;
         });
 
         Events.ON_PHASE_CHANGE.register(() -> {
@@ -66,6 +67,7 @@ public class PositionMessages {
                 SPLIT_2.setSent(true);
                 SAFE_2_HIGH.setSent(true);
             }
+            return false;
         });
 
 

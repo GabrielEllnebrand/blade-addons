@@ -26,6 +26,7 @@ public class PredevTimer {
             } else if (Phase.inP3()) {
                 shouldTrack = false;
             }
+            return false;
         });
 
         Events.ON_LOCATION_CHANGE.register(newLocation -> shouldTrack = false);
@@ -45,6 +46,7 @@ public class PredevTimer {
                 at3rdDev = false;
                 shouldTrack = false;
             }
+            return false;
         });
 
     }

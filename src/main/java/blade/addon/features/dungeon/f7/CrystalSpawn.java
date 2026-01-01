@@ -14,7 +14,6 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.decoration.EndCrystalEntity;
 import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -34,18 +33,18 @@ public class CrystalSpawn {
     public static void init() {
 
         Events.ON_GAME_MESSAGE.register(text -> {
-            if (!Location.inDungeon() || !Phase.inP1() || !Floor7.enableCrystalSpawnTime) return;
+            if (!Location.inDungeon() || !Phase.inP1() || !Floor7.enableCrystalSpawnTime) return false;
 
             Matcher matcher = PATTERN_1.matcher(text.getString());
             if (matcher.find()) {
                 tick = TICK_SPAWN;
-                return;
+                return false;
             }
 
             matcher = PATTERN_2.matcher(text.getString());
             if (matcher.find()) {
                 tick = TICK_SPAWN;
-                return;
+                return false;
             }
 
             matcher = RELIC_PICK_UP.matcher(text.getString());
@@ -57,37 +56,35 @@ public class CrystalSpawn {
                 }
 
             }
-
+            return false;
         });
-        Events.ON_SERVER_TICK.register(() -> tick = Math.max(tick - 1, 0));
+        Events.ON_SERVER_TICK.register(() -> {
+            tick = Math.max(tick - 1, 0);
+            return false;
+        });
 
         Events.ON_LOCATION_CHANGE.register(newLocation -> {
-            if (Location.inDungeon()) {
-                tick = 0;
-                pickedUp = false;
-            }
+            tick = 0;
+            pickedUp = false;
+            return false;
         });
 
         Events.ON_ENTITY_SPAWNED.register((entity, world) -> {
-            if (!pickedUp || !Location.inDungeon() || !Floor7.enableCrystalSpawnTime || !Phase.inP1()) return;
+            if (!pickedUp || !Location.inDungeon() || !Floor7.enableCrystalSpawnTime || !Phase.inP1()) return false;
+
             if (entity instanceof EndCrystalEntity crystal) {
                 ClientPlayerEntity player = MinecraftClient.getInstance().player;
-                if (player == null) return;
+                if (player == null) return false;
 
-                double px = player.getX();
-                double cx = crystal.getX();
-                double pz = player.getZ();
-                double cz = crystal.getZ();
+                double distance = Misc.getDistance(player, crystal);
 
-                double distance = Misc.getDistance(px, pz, cx, cz);
-
-                if (distance < 5 && crystal.getY() == 224.375) {
+                if (distance < 6 && crystal.getY() == 224.375) {
                     PersonalBests.crystalTime.testNewTime(Text.literal("§aCrystal placed in "), pickupTime);
                     pickedUp = false;
                 }
 
             }
-
+            return false;
         });
     }
 
@@ -96,11 +93,6 @@ public class CrystalSpawn {
     }
 
     public static void render(HUDComponent component, DrawContext context) {
-        int x = component.getScaledX();
-        int y = component.getScaledY();
-
-        double num = tick * Constants.TICK_DURATION;
-
-        RenderUtils.drawCenteredText(context, MinecraftClient.getInstance().textRenderer, Text.literal(Constants.DECIMAL_FORMAT.format(num)).formatted(Formatting.LIGHT_PURPLE), x, y, component.getWidth());
+        RenderUtils.drawTimer(component, context, tick, Constants.LIGHT_PURPLE);
     }
 }

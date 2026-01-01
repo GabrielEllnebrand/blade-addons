@@ -16,7 +16,7 @@ public class CompactHoppity {
 
     public static void init() {
 
-        Events.ON_CANCELABLE_GAME_MESSAGE.register(text -> {
+        Events.ON_GAME_MESSAGE.register(text -> {
             if (!ExtraOptions.compactHoppityMsgs) return false;
 
             String string = text.getString();

@@ -2,7 +2,6 @@ package blade.addon.utils.events;
 
 import blade.addon.utils.events.interfaces.BlockEntityEvent;
 import blade.addon.utils.events.interfaces.BlockInteractionEvent;
-import blade.addon.utils.events.interfaces.CancelableMessageEvent;
 import blade.addon.utils.events.interfaces.EntityEvent;
 import blade.addon.utils.events.interfaces.GameMessageEvent;
 import blade.addon.utils.events.interfaces.LeapEvent;
@@ -40,10 +39,9 @@ public class Events {
     public static final EventHandler<EntityEvent> ON_ENTITY_SPAWNED = new EventHandler<>();
 
     public static final EventHandler<GameMessageEvent> ON_GAME_MESSAGE = new EventHandler<>();
-    public static final CancelableEventHandler<CancelableMessageEvent> ON_CANCELABLE_GAME_MESSAGE = new CancelableEventHandler<>();
-    public static final CancelableEventHandler<BlockInteractionEvent> ON_BLOCK_INTERACTION = new CancelableEventHandler<>();
+    public static final EventHandler<BlockInteractionEvent> ON_BLOCK_INTERACTION = new EventHandler<>();
 
-    public static final CancelableEventHandler<PlaySoundEvent> ON_SOUND = new CancelableEventHandler<>();
+    public static final EventHandler<PlaySoundEvent> ON_SOUND = new EventHandler<>();
 
     public static final EventHandler<BlockEntityEvent> ON_BLOCK_ENTITY = new EventHandler<>();
 

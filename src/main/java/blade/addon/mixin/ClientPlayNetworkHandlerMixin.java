@@ -1,9 +1,7 @@
 package blade.addon.mixin;
 
-import blade.addon.features.dungeon.DeathTickTimer;
 import blade.addon.utils.Debug;
 import blade.addon.utils.Misc;
-import blade.addon.utils.Scheduler;
 import blade.addon.utils.config.values.ExtraOptions;
 import blade.addon.utils.detection.PlayerDataHolder;
 import blade.addon.utils.events.Events;
@@ -19,7 +17,6 @@ import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
 import net.minecraft.network.packet.s2c.play.EntityTrackerUpdateS2CPacket;
 import net.minecraft.network.packet.s2c.play.PlaySoundS2CPacket;
 import net.minecraft.network.packet.s2c.play.PlayerListS2CPacket;
-import net.minecraft.network.packet.s2c.play.PlayerPositionLookS2CPacket;
 import net.minecraft.network.packet.s2c.play.TeamS2CPacket;
 import net.minecraft.scoreboard.Team;
 import net.minecraft.sound.SoundEvent;
@@ -48,24 +45,18 @@ public class ClientPlayNetworkHandlerMixin {
     private void onTracking(EntityTrackerUpdateS2CPacket packet, CallbackInfo ci, @Local Entity entity) {
         if (entity == null) return;
 
-        if (Events.ON_ENTITY_TRACKED.hasListeners()) {
-            Events.ON_ENTITY_TRACKED.listeners.forEach(entityTrackEvent -> entityTrackEvent.onEntity(entity, world));
-        }
+        Events.ON_ENTITY_TRACKED.invoke(entityTrackEvent -> entityTrackEvent.onEntity(entity, world));
     }
 
     @Inject(method = "handlePlayerListAction", at = @At(value = "TAIL"))
     private void onPlayerList(PlayerListS2CPacket.Action action, PlayerListS2CPacket.Entry receivedEntry, PlayerListEntry currentEntry, CallbackInfo ci) {
-        if (Events.ON_PLAYER_ENTRY.hasListeners()) {
-            Events.ON_PLAYER_ENTRY.listeners.forEach(playerListEvent -> playerListEvent.onNewPlayerEntry(receivedEntry));
-        }
+        Events.ON_PLAYER_ENTRY.invoke(playerListEvent -> playerListEvent.onNewPlayerEntry(receivedEntry));
     }
 
     @Inject(method = "onTeam", at = @At(value = "TAIL"))
     private void onTeam(TeamS2CPacket packet, CallbackInfo ci, @Local Team team) {
         if (team == null) return;
         String teamStr = team.getPrefix().getString() + team.getSuffix().getString();
-
-        if (!Events.ON_TEAM.hasListeners()) return;
         Events.ON_TEAM.invoke(scoreBoardEvent -> scoreBoardEvent.onTeam(teamStr));
     }
 
@@ -80,32 +71,22 @@ public class ClientPlayNetworkHandlerMixin {
         }
 
         if (Debug.sendSound) {
-            Scheduler.scheduleTask(() -> Misc.addChatMessage(Text.literal("Sound: " + event.id())), 1);
+            Misc.addChatMessage(Text.literal("Sound: " + event.id()));
         }
 
-        if (Events.ON_SOUND.test(soundEvent -> soundEvent.onSound(event, volume, pitch))) {
+        if (Events.ON_SOUND.invoke(soundEvent -> soundEvent.onSound(event, volume, pitch))) {
             ci.cancel();
         }
     }
 
     @Inject(method = "onEntitySpawn", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayNetworkHandler;playSpawnSound(Lnet/minecraft/entity/Entity;)V"))
     public void onEntitySpawn(EntitySpawnS2CPacket packet, CallbackInfo ci, @Local Entity entity) {
-
         if (entity instanceof PlayerEntity player) {
             PlayerDataHolder dataHolder = (PlayerDataHolder) (Object) player;
             boolean isRealPlayer = isARealPlayer(player);
             dataHolder.blade_addons$setIsRealPlayer(isRealPlayer);
         }
-
-        if (Events.ON_ENTITY_SPAWNED.hasListeners()) {
-            Events.ON_ENTITY_SPAWNED.listeners.forEach(entityTrackEvent -> entityTrackEvent.onEntity(entity, world));
-        }
-
-    }
-
-    @Inject(method = "onPlayerPositionLook", at = @At("HEAD"))
-    private void onPlayerLook(PlayerPositionLookS2CPacket packet, CallbackInfo ci) {
-        DeathTickTimer.onTeleport(packet.change().position());
+        Events.ON_ENTITY_SPAWNED.invoke(entityTrackEvent -> entityTrackEvent.onEntity(entity, world));
     }
 
     @Unique

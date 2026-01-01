@@ -1,5 +1,5 @@
 package blade.addon.utils.events.interfaces;
 
 public interface TerminalEvent {
-    void onComplete(String name, String objective);
+    boolean onComplete(String formattedName, String action, String objective, int current, int total);
 }

@@ -117,7 +117,10 @@ public class PracticeSS {
         });
 
         WorldRenderEvents.BEFORE_DEBUG_RENDER.register(PracticeSS::render);
-        Events.ON_LOCATION_CHANGE.register(location -> reset());
+        Events.ON_LOCATION_CHANGE.register(location -> {
+            reset();
+            return false;
+        });
 
     }
 

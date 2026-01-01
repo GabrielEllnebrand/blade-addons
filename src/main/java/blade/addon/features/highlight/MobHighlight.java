@@ -134,7 +134,7 @@ public class MobHighlight {
 
     public static void init() {
         Events.ON_ENTITY_TRACKED.register((entity, world) -> {
-            if (!Location.inDungeon() || !mobHighlight) return;
+            if (!Location.inDungeon() || !mobHighlight) return false;
 
             if (Phase.inBoss()) {
                 if (entity instanceof WitherEntity wither) {
@@ -161,6 +161,8 @@ public class MobHighlight {
                     trackedMobs.put(player, MobType.ASSASSIN);
                 }
             }
+
+            return false;
         });
 
         ClientTickEvents.END_CLIENT_TICK.register(minecraftClient -> {
@@ -188,6 +190,7 @@ public class MobHighlight {
         Events.ON_LOCATION_CHANGE.register(newLocation -> {
             trackedMobs.clear();
             possibleEntities.clear();
+            return false;
         });
 
         WorldRenderEvents.AFTER_ENTITIES.register(MobHighlight::renderFilled);

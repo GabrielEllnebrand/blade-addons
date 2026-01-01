@@ -7,7 +7,6 @@ import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -48,9 +47,6 @@ public class WarpCooldown {
         int y = component.getScaledY();
 
         double timeRemaining = Math.max((endTime - System.currentTimeMillis()) / 1000.0, 0);
-
-        Text text = Text.literal("Warp Cooldown: ").formatted(Formatting.DARK_PURPLE).append(Text.literal(Constants.DECIMAL_FORMAT.format(timeRemaining)).formatted(Formatting.WHITE));
-
-        context.drawText(MinecraftClient.getInstance().textRenderer, text, x, y, 0xffffffff, true);
+        context.drawText(MinecraftClient.getInstance().textRenderer, Text.literal("§5Warp Cooldown: §f" + Constants.DECIMAL_FORMAT.format(timeRemaining)), x, y, 0xffffffff, true);
     }
 }

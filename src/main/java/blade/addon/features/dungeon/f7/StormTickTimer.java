@@ -4,17 +4,14 @@ import blade.addon.features.dungeon.f7.invincibility.InvincibilityTimer;
 import blade.addon.utils.Constants;
 import blade.addon.utils.Location;
 import blade.addon.utils.Misc;
-import blade.addon.utils.Scheduler;
 import blade.addon.utils.config.values.Floor7;
 import blade.addon.utils.dungeon.DungeonClass;
 import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.events.Events;
 import blade.addon.utils.rendering.RenderUtils;
 import config.practical.hud.HUDComponent;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -40,6 +37,7 @@ public class StormTickTimer {
             if (tick == WARN_TICK && Floor7.notifyUsedSpiritMask && DungeonClass.isClass(DungeonClass.MAGE) && InvincibilityTimer.spiritMaskUsed()) {
                 Misc.setTitle(Text.literal("Leap to arch"));
             }
+            return false;
         });
 
         Events.ON_LOCATION_CHANGE.register(newLocation -> {
@@ -48,26 +46,21 @@ public class StormTickTimer {
                 deathTime = 0;
                 deathStartDisplayTime = 0;
             }
+            return false;
         });
 
         Events.ON_GAME_MESSAGE.register(text -> {
-            if (!Location.inDungeon() || !Phase.inP2() || !Floor7.enableStormDeathTime) return;
+            if (!Location.inDungeon() || !Phase.inP2() || !Floor7.enableStormDeathTime) return false;
 
             Matcher matcher = PATTERN.matcher(text.getString());
 
             if (matcher.find()) {
                 deathTime = (tick * Constants.TICK_DURATION);
                 deathStartDisplayTime = System.currentTimeMillis();
-
-                //prob dosent need to schedule it but threads are scary
-                Scheduler.scheduleTask(() -> Misc.addChatMessage(
-                        Text.literal("Storm died at: ").formatted(Formatting.GREEN)
-                                .append(Text.literal(Constants.DECIMAL_FORMAT.format(deathTime) + "s").formatted(Formatting.YELLOW))
-                                .append(Text.literal(".").formatted(Formatting.GREEN))
-                ), 1);
-
+                Misc.addChatMessage(Text.literal("§aStorm died at: §e" + Constants.DECIMAL_FORMAT.format(deathTime) + "s§a."));
             }
 
+            return false;
         });
     }
 
@@ -81,18 +74,11 @@ public class StormTickTimer {
     }
 
     public static void render(HUDComponent component, DrawContext context) {
-        int x = component.getScaledX();
-        int y = component.getScaledY();
-
         double num = tick * Constants.TICK_DURATION;
-
         if (Floor7.tickDownStormTickTimer) {
             num = CRUSH_TICK * Constants.TICK_DURATION - num;
-
         }
-
-        RenderUtils.drawCenteredText(context, MinecraftClient.getInstance().textRenderer, Constants.DECIMAL_FORMAT.format(num), x, y, component.getWidth(), Floor7.stormTickTimerColor);
-
+        RenderUtils.drawTimer(component, context, num, Floor7.stormTickTimerColor);
     }
 
     public static boolean displayDeathTime() {
@@ -100,10 +86,6 @@ public class StormTickTimer {
     }
 
     public static void renderDeathTime(HUDComponent component, DrawContext context) {
-        int x = component.getScaledX();
-        int y = component.getScaledY();
-
-        RenderUtils.drawCenteredText(context, MinecraftClient.getInstance().textRenderer, Text.literal(Constants.DECIMAL_FORMAT.format(deathTime)).formatted(Formatting.DARK_PURPLE), x, y, component.getWidth());
-
+        RenderUtils.drawTimer(component, context, deathTime, Constants.DARK_PURPLE);
     }
 }

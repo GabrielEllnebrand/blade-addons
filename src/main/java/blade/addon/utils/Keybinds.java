@@ -23,6 +23,8 @@ public class Keybinds {
     private static KeyBinding openConfig;
     private static KeyBinding getItemLore;
     private static KeyBinding getItemCustomData;
+    private static KeyBinding trades;
+    private static KeyBinding potions;
 
 
     public static void init() {
@@ -46,6 +48,19 @@ public class Keybinds {
                 InputUtil.Type.KEYSYM,
                 GLFW.GLFW_KEY_UNKNOWN,
                 category));
+
+        trades = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+                "Opens the trades menu",
+                InputUtil.Type.KEYSYM,
+                GLFW.GLFW_KEY_UNKNOWN,
+                category));
+
+        potions = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+                "Opens the potion bag",
+                InputUtil.Type.KEYSYM,
+                GLFW.GLFW_KEY_UNKNOWN,
+                category));
+
 
         ClientTickEvents.END_CLIENT_TICK.register(Keybinds::checkInputs);
     }
@@ -94,6 +109,13 @@ public class Keybinds {
 
             Misc.addChatMessage(Text.literal(nbt.toString()));
 
+        }
+
+        if (trades.wasPressed()) {
+            Misc.executeCommand("trades");
+        }
+        if (potions.wasPressed()) {
+            Misc.executeCommand("potionbag");
         }
     }
 }

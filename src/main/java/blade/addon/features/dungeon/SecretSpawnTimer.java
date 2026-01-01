@@ -24,33 +24,29 @@ public class SecretSpawnTimer {
     public static void init() {
 
         Events.ON_TEAM.register(text -> {
-            if (!Location.inDungeon() || !Dungeons.enableSecretSpawnTimer) return;
-
+            if (!Location.inDungeon() || !Dungeons.enableSecretSpawnTimer) return false;
             Matcher matcher = PATTERN.matcher(text);
             if (matcher.find()) {
                 tick = TICKS_PER_SECOND;
             }
+            return false;
         });
 
-        Events.ON_SERVER_TICK.register(() -> tick = Math.max(tick - 1, 0));
+        Events.ON_SERVER_TICK.register(() -> {
+            tick = Math.max(tick - 1, 0);
+            return false;
+        });
     }
 
     public static boolean display() {
-        return  Location.inDungeon() && Dungeons.enableSecretSpawnTimer && !Phase.inBoss() && Phase.runStarted();
+        return Location.inDungeon() && Dungeons.enableSecretSpawnTimer && !Phase.inBoss() && Phase.runStarted();
     }
 
     public static void render(HUDComponent component, DrawContext context) {
         int x = component.getScaledX();
         int y = component.getScaledY();
 
-        int color;
-        if (tick > 10) {
-            color = Constants.GREEN_COLOR;
-        } else if (tick > 5) {
-            color = Constants.ORANGE_COLOR;
-        } else {
-            color = Constants.RED_COLOR;
-        }
+        int color = tick > 10 ? Constants.GREEN_COLOR : tick > 5 ? Constants.ORANGE_COLOR : Constants.RED_COLOR;
 
         RenderUtils.drawCenteredText(context, MinecraftClient.getInstance().textRenderer, Text.literal(tick + ""), x, y, component.getWidth(), color);
 

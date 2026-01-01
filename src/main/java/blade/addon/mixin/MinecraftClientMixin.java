@@ -28,7 +28,7 @@ public class MinecraftClientMixin {
     private void testInteraction(CallbackInfo ci, @Local ItemStack itemStack) {
         BlockHitResult blockHitResult = (BlockHitResult) this.crosshairTarget;
         if (blockHitResult == null) return;
-        if (Events.ON_BLOCK_INTERACTION.test(blockInteractionEvent -> blockInteractionEvent.iteract(blockHitResult, itemStack))) {
+        if (Events.ON_BLOCK_INTERACTION.invoke(blockInteractionEvent -> blockInteractionEvent.iteract(blockHitResult, itemStack))) {
             ci.cancel();
         }
     }

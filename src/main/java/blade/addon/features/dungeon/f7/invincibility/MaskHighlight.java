@@ -1,10 +1,8 @@
 package blade.addon.features.dungeon.f7.invincibility;
 
+import blade.addon.utils.data.ItemUtil;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.NbtComponent;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
 
 public class MaskHighlight {
 
@@ -31,21 +29,12 @@ public class MaskHighlight {
     }
 
     public static MaskType getMaskType(ItemStack item) {
-        String id = getId(item);
+        String id = ItemUtil.getId(item);
         if (id == null) return MaskType.NONE;
 
         if (id.contains("SPIRIT_MASK")) return MaskType.SPIRIT;
         if (id.contains("BONZO_MASK")) return MaskType.BONZO;
         return MaskType.NONE;
-    }
-
-    public static String getId(ItemStack item) {
-        NbtComponent nbt = item.get(DataComponentTypes.CUSTOM_DATA);
-        if (nbt == null) return null;
-
-        NbtCompound compound = nbt.copyNbt();
-
-        return compound.getString("id", null);
     }
 
 }

@@ -5,6 +5,7 @@ import blade.addon.utils.Debug;
 import blade.addon.utils.Location;
 import blade.addon.utils.Misc;
 import blade.addon.utils.config.FolderUtility;
+import blade.addon.utils.data.ItemUtil;
 import blade.addon.utils.dungeon.Phase;
 import config.practical.manager.ConfigManager;
 import config.practical.manager.ConfigValue;
@@ -13,10 +14,7 @@ import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.NbtComponent;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.text.Text;
@@ -44,7 +42,7 @@ public class ProtectItem {
         }
 
         ItemStack item = player.getInventory().getSelectedStack();
-        String uuid = getUuid(item);
+        String uuid = ItemUtil.getUuid(item);
         if (uuid == null) {
             Misc.addChatMessage(Text.literal("Cant protect this item, it does not have a uuid"));
             return;
@@ -65,7 +63,7 @@ public class ProtectItem {
 
     public static boolean protect(ItemStack stack) {
 
-        String uuid = getUuid(stack);
+        String uuid = ItemUtil.getUuid(stack);
 
         //TODO: add smth for non uuid items
         if (uuid == null) {
@@ -75,21 +73,12 @@ public class ProtectItem {
         return protectedItems.contains(uuid);
     }
 
-    public static String getUuid(ItemStack item) {
-        NbtComponent nbt = item.get(DataComponentTypes.CUSTOM_DATA);
-        if (nbt == null) return null;
-
-        NbtCompound compound = nbt.copyNbt();
-
-        return compound.getString("uuid", null);
-    }
-
     public static void draw(DrawContext context, ItemStack stack, int x, int y) {
         ProtectedItemHolder holder = (ProtectedItemHolder) (Object) stack;
         assert holder != null;
 
         if (!holder.blade_addons$hasScannedProtection()) {
-            String uuid = getUuid(stack);
+            String uuid = ItemUtil.getUuid(stack);
             if (uuid == null) return;
             holder.blade_addons$setProtected(protectedItems.contains(uuid));
         }
@@ -138,9 +127,6 @@ public class ProtectItem {
             }
 
         }
-
-        System.out.println(slots.size());
-
         return false;
     }
 

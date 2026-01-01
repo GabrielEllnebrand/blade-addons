@@ -2,23 +2,28 @@ package blade.addon.utils.events;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 public class EventHandler<T> {
-    public final List<T> listeners = new ArrayList<>();
+    /**
+     * This class handles some specified Event
+     * to cancel the event if implemented return true
+     * else return false
+     */
+
+    private final List<T> listeners = new ArrayList<>();
 
     public void register(T listener) {
         listeners.add(listener);
     }
 
-    public void invoke(Consumer<T> action) {
+    public boolean invoke(Predicate<T> action) {
+        if (listeners.isEmpty()) return false;
         for (T listener : listeners) {
-            action.accept(listener);
+            if (action.test(listener)) {
+                return true;
+            }
         }
+        return false;
     }
-
-    public boolean hasListeners() {
-        return !listeners.isEmpty();
-    }
-
 }

@@ -1,5 +1,8 @@
 package blade.addon.utils.rendering;
 
+import blade.addon.utils.Constants;
+import config.practical.hud.HUDComponent;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
@@ -14,8 +17,8 @@ public class RenderUtils {
     }
 
     public static void drawCenteredText(DrawContext context, TextRenderer textRenderer, Text text, int x, int y, int maxWidth, int color) {
+        if (textRenderer == null) return;
         int centered = (maxWidth - textRenderer.getWidth(text)) / 2;
-
         context.drawText(textRenderer, text, x + centered, y, color, true);
 
     }
@@ -31,5 +34,16 @@ public class RenderUtils {
         drawCenteredText(context, textRenderer, Text.literal(string), x, y, maxWidth, 0xffffffff);
     }
 
+    public static void drawTimer(HUDComponent component, DrawContext context, int tick, int color) {
+        double num = tick * Constants.TICK_DURATION;
+        drawTimer(component, context, num, color);
+    }
+
+    public static void drawTimer(HUDComponent component, DrawContext context, double num, int color) {
+        int x = component.getScaledX();
+        int y = component.getScaledY();
+
+        RenderUtils.drawCenteredText(context, MinecraftClient.getInstance().textRenderer, Text.literal(Constants.DECIMAL_FORMAT.format(num)), x, y, component.getWidth(), color);
+    }
 
 }

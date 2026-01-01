@@ -1,6 +1,7 @@
 package blade.addon.features.dungeon.f7.terms;
 
 import blade.addon.utils.Location;
+import blade.addon.utils.Misc;
 import blade.addon.utils.config.values.Floor7;
 import blade.addon.utils.dungeon.DungeonClass;
 import blade.addon.utils.dungeon.Phase;
@@ -9,7 +10,6 @@ import blade.addon.utils.rendering.RenderUtils;
 import config.practical.hud.HUDComponent;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.text.Text;
 
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -29,8 +29,8 @@ public class MelodyWarning {
 
     public static void init() {
         Events.ON_PARTY_MESSAGE.register((username, message) -> {
-            if (!Floor7.notifiyMelody) return;
-            if (!Location.inDungeon() || !Phase.inTerminals()) return;
+            if (!Floor7.notifiyMelody) return false;
+            if (!Location.inDungeon() || !Phase.inTerminals()) return false;
 
             Matcher matcher = PATTERN.matcher(message);
             if (matcher.find()) {
@@ -39,35 +39,31 @@ public class MelodyWarning {
                     melodyStarted = true;
                     name = username;
                     furthestProgress = progress;
-                    ownUsername = isOwnUsername(username);
+                    ownUsername = Misc.isClientPlayer(username);
                     if (!names.contains(username)) {
                         names.add(username);
                     }
                 }
             }
+            return false;
         });
 
-        Events.ON_TERMINAL.register((username, objective) -> {
-            if (names.contains(username) && objective.equals("terminal")) {
+        Events.ON_TERMINAL.register((formattedName, action, objective, current, total) -> {
+            if (names.contains(formattedName) && objective.equals("terminal")) {
                 reset();
             }
+            return false;
         });
 
-        Events.ON_SECTION_CHANGE.register(MelodyWarning::reset);
+        Events.ON_SECTION_CHANGE.register(() -> {
+            reset();
+            return false;
+        });
 
         Events.ON_LOCATION_CHANGE.register(newLocation -> {
-            if (Location.inDungeon()) {
-                reset();
-            }
+           reset();
+            return false;
         });
-    }
-
-    private static boolean isOwnUsername(String username) {
-        ClientPlayerEntity player = MinecraftClient.getInstance().player;
-        if (player == null) return false;
-        Text textName = player.getName();
-        if (textName == null) return false;
-        return textName.getString().equals(username);
     }
 
     private static void reset() {

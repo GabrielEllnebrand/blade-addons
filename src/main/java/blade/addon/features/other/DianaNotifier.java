@@ -26,10 +26,10 @@ public class DianaNotifier {
 
     public static void init() {
         Events.ON_GAME_MESSAGE.register(message-> {
-            if (!Location.in(Location.HUB)) return;
+            if (!Location.in(Location.HUB)) return false;
             String string = message.getString();
             String lowerCase = string.toLowerCase();
-            if (!lowerCase.contains("you dug out a")) return;
+            if (!lowerCase.contains("you dug out a")) return false;
             if (checkHarpy) {
                 check(lowerCase, "harpy");
             }
@@ -42,6 +42,8 @@ public class DianaNotifier {
             if (checkNymph) {
                 check(lowerCase, "stranded nymph");
             }
+
+            return false;
         });
     }
 

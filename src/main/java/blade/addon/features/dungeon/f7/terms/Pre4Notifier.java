@@ -22,14 +22,16 @@ public class Pre4Notifier {
 
 
     public static void init() {
-        Events.ON_TERMINAL.register((name, objective) -> {
-            if (!Floor7.notifyPre4Completion) return;
+        Events.ON_TERMINAL.register((name, action, objective, current, total) -> {
+            if (!Floor7.notifyPre4Completion) return true;
 
             if (objective.equals("device") && Misc.isClientPlayer(name) && atDev()) {
                 completedTime = System.currentTimeMillis();
                 showNotification = true;
                 Scheduler.scheduleSound(SoundEvents.BLOCK_NOTE_BLOCK_PLING.value(), 1, 1);
             }
+
+            return false;
         });
     }
 

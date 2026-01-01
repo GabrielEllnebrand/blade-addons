@@ -35,9 +35,7 @@ public enum Location {
             detectedNewLocation = true;
             Debug.sendDebugMessage(Text.literal("Location: " + currentLocation));
 
-            if (Events.ON_LOCATION_CHANGE.hasListeners()) {
-                Events.ON_LOCATION_CHANGE.listeners.forEach(locationChangeEvent -> locationChangeEvent.onLocationChange(currentLocation));
-            }
+            Events.ON_LOCATION_CHANGE.invoke(locationChangeEvent -> locationChangeEvent.onLocationChange(currentLocation));
         }));
 
         instance.subscribeToEventPacket(ClientboundLocationPacket.class);

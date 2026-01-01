@@ -15,15 +15,16 @@ public class KickedTimer {
 
     public static void init() {
         Events.ON_GAME_MESSAGE.register(text -> {
-            if (!ExtraOptions.enableKickedTimer) return;
+            if (!ExtraOptions.enableKickedTimer || isKicked) return false;
             String string = text.getString();
-            if (string == null) return;
+            if (string == null) return false;
 
             if (string.contains("You were kicked while joining that server!")) {
                 kickedTime = System.currentTimeMillis();
                 isKicked = true;
-
             }
+
+            return false;
         });
     }
 

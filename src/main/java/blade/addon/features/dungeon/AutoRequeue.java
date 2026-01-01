@@ -13,8 +13,6 @@ import java.util.regex.Pattern;
 
 public class AutoRequeue {
 
-    private static final Pattern DT_PATTERN = Pattern.compile("!dt");
-    private static final Pattern UNDT_PATTERN = Pattern.compile("!undt");
     private static final Pattern LEFT_PATTERN = Pattern.compile("has left the party.$");
 
     private static final HashMap<String, String> playerHashMap = new HashMap<>();
@@ -25,19 +23,19 @@ public class AutoRequeue {
     public static void init() {
         Events.ON_PARTY_MESSAGE.register((username, message) -> {
             if (playerHashMap.containsKey(username)) {
-                Matcher matcher = UNDT_PATTERN.matcher(message);
-                if (matcher.find()) {
+                if (message.contains("!undt")) {
                     playerHashMap.remove(username);
                     Misc.addChatMessage(Text.literal("§aDowntime removed"));
                 }
             } else {
-                Matcher matcher = DT_PATTERN.matcher(message);
-                if (matcher.find()) {
+                if (message.contains("!dt")) {
                     playerHashMap.put(username, message);
                     Misc.addChatMessage(Text.literal("§aDowntime added"));
                 }
             }
+            return false;
         });
+
         ClientReceiveMessageEvents.GAME.register((message, overlay) -> {
             if (!Location.inDungeon() && !Dungeons.enableAutoRequeue) return;
             String string = message.getString();
@@ -48,7 +46,7 @@ public class AutoRequeue {
         });
 
         Events.ON_RUN_END.register(() -> {
-            if (!Dungeons.enableAutoRequeue || someoneLeft) return;
+            if (!Dungeons.enableAutoRequeue || someoneLeft) return false;
 
             if (playerHashMap.isEmpty()) {
                 Misc.executeCommand("instancerequeue");
@@ -58,11 +56,13 @@ public class AutoRequeue {
 
 
             }
+            return false;
         });
 
         Events.ON_LOCATION_CHANGE.register(newLocation -> {
             playerHashMap.clear();
             someoneLeft = false;
+            return false;
         });
     }
 }

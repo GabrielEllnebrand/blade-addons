@@ -1,13 +1,11 @@
 package blade.addon.features.dungeon.f7;
 
-import blade.addon.utils.Constants;
 import blade.addon.utils.Scheduler;
 import blade.addon.utils.config.values.Floor7;
 import blade.addon.utils.dungeon.DungeonClass;
 import blade.addon.utils.events.Events;
 import blade.addon.utils.rendering.RenderUtils;
 import config.practical.hud.HUDComponent;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.sound.SoundEvents;
@@ -59,14 +57,14 @@ public class DragSpawnTimer {
 
     public static void init() {
         Events.ON_PARTICLE.register((x, y, z, effect) -> {
-            if (effect.getType() != ParticleTypes.ENCHANT) return;
+            if (effect.getType() != ParticleTypes.ENCHANT) return false;
             Dragon detectedDragon = getDragon(x, y, z);
 
-            if (detectedDragon == Dragon.NONE) return;
+            if (detectedDragon == Dragon.NONE) return false;
 
             //the dupe check is to stop purple from just breaking it when it spawns
             if (currentDragon == Dragon.NONE) {
-                if ((prevDragon == detectedDragon && dupeTick > 0)) return;
+                if ((prevDragon == detectedDragon && dupeTick > 0)) return false;
                 currentDragon = detectedDragon;
                 prevDragon = currentDragon;
                 dupeTick = DUPE_DELAY;
@@ -80,6 +78,8 @@ public class DragSpawnTimer {
                 dupeTick = DUPE_DELAY * 2;
                 hasDoneSplit = true;
             }
+
+            return false;
         });
 
         Events.ON_SERVER_TICK.register(() -> {
@@ -92,9 +92,13 @@ public class DragSpawnTimer {
             if (tick == 0 && currentDragon != Dragon.NONE) {
                 currentDragon = Dragon.NONE;
             }
+            return false;
         });
 
-        Events.ON_LOCATION_CHANGE.register(newLocation -> reset());
+        Events.ON_LOCATION_CHANGE.register(newLocation -> {
+            reset();
+            return false;
+        });
     }
 
     private static void reset() {
@@ -106,27 +110,19 @@ public class DragSpawnTimer {
 
     //checks are from valley addons
     private static Dragon getDragon(double x, double y, double z) {
-        // check if correct height
         if (y >= 14 && y <= 19) {
-            // check if red/green
             if (x >= 27 && x <= 32) {
-                // check if red
                 if (z == 59) {
                     return Dragon.RED;
-                    // check if green
                 } else if (z == 94) {
                     return Dragon.GREEN;
                 }
-                // check if blue/orange
             } else if (x >= 79 && x <= 85) {
-                // check if blue
                 if (z == 94) {
                     return Dragon.BLUE;
-                    // check if orange
                 } else if (z == 56) {
                     return Dragon.ORANGE;
                 }
-                // check if purple
             } else if (x == 56) {
                 return Dragon.PURPLE;
             }
@@ -156,12 +152,6 @@ public class DragSpawnTimer {
     }
 
     public static void render(HUDComponent component, DrawContext context) {
-        int x = component.getScaledX();
-        int y = component.getScaledY();
-
-        double num = tick * Constants.TICK_DURATION;
-
-        RenderUtils.drawCenteredText(context, MinecraftClient.getInstance().textRenderer, Constants.DECIMAL_FORMAT.format(num), x, y, component.getWidth(), currentDragon.color);
-
+        RenderUtils.drawTimer(component, context, tick, currentDragon.color);
     }
 }

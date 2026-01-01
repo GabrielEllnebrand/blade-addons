@@ -33,6 +33,7 @@ public enum DungeonClass {
                 currentClass = null;
                 nameClassMap.clear();
             }
+            return false;
         });
 
         ClientReceiveMessageEvents.GAME.register((message, overlay) -> {
@@ -49,6 +50,7 @@ public enum DungeonClass {
             if (Phase.runJustStarted() && Location.inDungeon()) {
                 Scheduler.scheduleTask(DungeonClass::detectClasses, 140);
             }
+            return false;
         });
 
     }
@@ -67,7 +69,7 @@ public enum DungeonClass {
         if (networkHandler == null) return;
         Collection<PlayerListEntry> entryCollection = networkHandler.getPlayerList();
 
-        for (PlayerListEntry entry: entryCollection) {
+        for (PlayerListEntry entry : entryCollection) {
             Text text = entry.getDisplayName();
             if (text == null) continue;
             String string = text.getString();

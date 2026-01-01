@@ -18,9 +18,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(ClientConnection.class)
 public class ClientConnectionMixin {
 
-    @Inject(method = "channelRead0(Lio/netty/channel/ChannelHandlerContext;Lnet/minecraft/network/packet/Packet;)V", at = @At("HEAD"), order=0, cancellable = true)
+    @Inject(method = "channelRead0(Lio/netty/channel/ChannelHandlerContext;Lnet/minecraft/network/packet/Packet;)V", at = @At("HEAD"), order = 0, cancellable = true)
     private void channelRead0(ChannelHandlerContext channelHandlerContext, Packet<?> packet, CallbackInfo ci) {
-        if (packet instanceof CommonPingS2CPacket common && Events.ON_SERVER_TICK.hasListeners()) {
+        if (packet instanceof CommonPingS2CPacket common) {
             //admins send these packets too for inventory changes
             //thankfully they all have the param 0 for some reason
             if (common.getParameter() == 0) return;
@@ -28,14 +28,9 @@ public class ClientConnectionMixin {
         }
 
         if (packet instanceof GameMessageS2CPacket message) {
-            if (Events.ON_CANCELABLE_GAME_MESSAGE.test(gameMessageEvent -> gameMessageEvent.onGameMessage(message.content()))) {
+            if (Events.ON_GAME_MESSAGE.invoke(gameMessageEvent -> gameMessageEvent.onGameMessage(message.content()))) {
                 ci.cancel();
                 return;
-            }
-
-
-            if (Events.ON_GAME_MESSAGE.hasListeners()) {
-                Events.ON_GAME_MESSAGE.invoke(gameMessageEvent -> gameMessageEvent.onGameMessage(message.content()));
             }
         }
 
@@ -44,15 +39,15 @@ public class ClientConnectionMixin {
             double y = particle.getY();
             double z = particle.getZ();
             ParticleEffect effect = particle.getParameters();
-            if (Events.ON_PARTICLE.hasListeners()) {
-                Events.ON_PARTICLE.invoke(particleEvent -> particleEvent.onParticle(x, y, z, effect));
-            }
+
+            Events.ON_PARTICLE.invoke(particleEvent -> particleEvent.onParticle(x, y, z, effect));
+
         }
     }
 
     @Inject(method = "sendImmediately", at = @At("HEAD"))
     private void sendImmediately(Packet<?> packet, ChannelFutureListener channelFutureListener, boolean flush, CallbackInfo ci) {
-        if (packet instanceof CommonPingS2CPacket common && Events.ON_SERVER_TICK.hasListeners()) {
+        if (packet instanceof CommonPingS2CPacket common) {
             if (common.getParameter() == 0) return;
             Events.ON_SERVER_TICK.invoke(ServerTickEvent::onServerTick);
         }

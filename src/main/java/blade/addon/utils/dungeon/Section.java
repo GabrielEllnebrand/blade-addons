@@ -5,6 +5,7 @@ import blade.addon.utils.Constants;
 import blade.addon.utils.Debug;
 import blade.addon.utils.Location;
 import blade.addon.utils.Misc;
+import blade.addon.utils.config.values.Floor7;
 import blade.addon.utils.events.Events;
 import blade.addon.utils.events.interfaces.SectionEvent;
 import config.practical.hud.HUDComponent;
@@ -42,6 +43,7 @@ public class Section {
     private static final Pattern TERMINALS_DONE_PATTERN = Pattern.compile("^(\\w+) (activated|completed) a (terminal|device|lever)! \\((\\d)/(\\d)\\)$");
 
     public static int SPLIT_LENGTH = 120;
+    private static final int TERM_PHASE_INDEX = 6;
 
     private static int currentSection = -1;
     private static int completed = 0;
@@ -57,9 +59,8 @@ public class Section {
     public static void init() {
         Events.ON_GAME_MESSAGE.register(Section::parseMessage);
         Events.ON_LOCATION_CHANGE.register(newLocation -> {
-            if (Location.inDungeon()) {
-                reset();
-            }
+            reset();
+            return false;
         });
         Events.ON_PHASE_CHANGE.register(() -> {
             if (Phase.inP2()) {
@@ -82,12 +83,14 @@ public class Section {
                 currentSection = 5;
                 endAllSections();
             }
+            return false;
         });
         Events.ON_SERVER_TICK.register(() -> {
-            if (currentSection < 1 || currentSection > 5) return;
+            if (currentSection < 1 || currentSection > 5) return false;
             for (Split split : splits) {
                 split.tick();
             }
+            return false;
         });
     }
 
@@ -112,9 +115,8 @@ public class Section {
         if (Debug.termInfo) {
             Misc.addChatMessage(Text.literal("section: " + currentSection));
         }
-        if (Events.ON_SECTION_CHANGE.hasListeners()) {
-            Events.ON_SECTION_CHANGE.invoke(SectionEvent::onSection);
-        }
+
+        Events.ON_SECTION_CHANGE.invoke(SectionEvent::onSection);
         startSplit(currentSection);
     }
 
@@ -137,9 +139,7 @@ public class Section {
         if (Debug.termInfo) {
             Misc.addChatMessage(Text.literal("ending all sections"));
         }
-        if (Events.ON_SECTION_CHANGE.hasListeners()) {
-            Events.ON_SECTION_CHANGE.invoke(SectionEvent::onSection);
-        }
+        Events.ON_SECTION_CHANGE.invoke(SectionEvent::onSection);
     }
 
     private static boolean parseMessage(Text message) {
@@ -149,34 +149,43 @@ public class Section {
         Matcher matcher = TERMINALS_DONE_PATTERN.matcher(string);
         if (matcher.find()) {
             String name = matcher.group(1);
+            String action = matcher.group(2);
             String objective = matcher.group(3);
-            String currentCompleted = matcher.group(4);
-            String totalNeeded = matcher.group(5);
+            int currentCompleted;
+            int totalNeeded;
+
+            try {
+                currentCompleted = Integer.parseInt(matcher.group(4));
+                totalNeeded = Integer.parseInt(matcher.group(5));
+            } catch (NumberFormatException e) {
+                Debug.LOGGER.error("Failed to parse terminal message, {}", e.getMessage());
+                return false;
+            }
 
             if (Debug.termInfo) {
                 Misc.addChatMessage(Text.literal("name:" + name + ":objective>" + objective + ":(" + currentCompleted + "/" + totalNeeded + ")"));
             }
 
-            if (Events.ON_TERMINAL.hasListeners()) {
-                Events.ON_TERMINAL.invoke(terminalEvent -> terminalEvent.onComplete(name, objective));
+            Events.ON_TERMINAL.invoke(terminalEvent -> terminalEvent.onComplete(name, action, objective, currentCompleted, totalNeeded));
+
+
+            int recentlyCompleted = currentCompleted;
+            if ((recentlyCompleted == total && gateBlownUp) || (recentlyCompleted < completed)) {
+                incrementSection();
+                if (TitleHider.shouldHideTitle()) {
+                    Misc.forceTitle(Text.empty(), message);
+                }
+            } else {
+                if (Misc.isClientPlayer(name) && TitleHider.shouldHideTitle()) {
+                    Misc.forceTitle(Text.empty(), message);
+                }
+                total = totalNeeded;
+                completed = recentlyCompleted;
             }
 
-            try {
-                int recentlyCompleted = Integer.parseInt(currentCompleted);
-                if ((recentlyCompleted == total && gateBlownUp) || (recentlyCompleted < completed)) {
-                    incrementSection();
-                    if (TitleHider.shouldHideTitle()) {
-                        Misc.forceTitle(Text.empty(), message);
-                    }
-                } else {
-                    if (Misc.isClientPlayer(name) && TitleHider.shouldHideTitle()) {
-                        Misc.forceTitle(Text.empty(), message);
-                    }
-                    total = Integer.parseInt(totalNeeded);
-                    completed = recentlyCompleted;
-                }
-            } catch (NumberFormatException e) {
-                Debug.LOGGER.error("Failed to parse terminal message, {}", e.getMessage());
+            if (Floor7.terminalTimeStamps) {
+                Misc.addChatMessage(Text.literal(name + " §a" + action + " " + objective + "! (§c" + currentCompleted + "§a/ " + totalNeeded + ") §8(§7" + getSectionTime() + "s §8| §7" + Phase.getPhaseTime(TERM_PHASE_INDEX) + "s§8)"));
+                return true;
             }
 
 
@@ -192,6 +201,10 @@ public class Section {
                     incrementSection();
                 }
 
+                if (Floor7.terminalTimeStamps) {
+                    Misc.addChatMessage(Text.literal("§aThe gate has been destroyed! §8(§7" + getSectionTime() + "s §8| §7" + Phase.getPhaseTime(TERM_PHASE_INDEX) + "s§8)"));
+                    return true;
+                }
             }
         } else if (string.equals("The Core entrance is opening!")) {
             //so in "goldor tunnel" can be shown after terms are done
@@ -204,7 +217,7 @@ public class Section {
     }
 
 
-    public static double getSection() {
+    public static int getSection() {
         return currentSection;
     }
 
@@ -215,6 +228,11 @@ public class Section {
     public static boolean inSection(int section) {
         if (section == 0 && (Phase.inP2() || Phase.inP3())) return true;
         return currentSection == section && Phase.inP3();
+    }
+
+    public static double getSectionTime() {
+        if (currentSection < 0 || currentSection >= splits.length) return -1;
+        return splits[currentSection].getRealTime();
     }
 
     public static boolean display() {

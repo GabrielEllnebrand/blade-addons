@@ -4,5 +4,5 @@ import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
 
 public interface EntityEvent {
-    void onEntity(Entity entity, ClientWorld world);
+    boolean onEntity(Entity entity, ClientWorld world);
 }

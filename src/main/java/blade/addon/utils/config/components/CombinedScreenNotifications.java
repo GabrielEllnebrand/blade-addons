@@ -1,6 +1,6 @@
 package blade.addon.utils.config.components;
 
-import blade.addon.features.dungeon.DupeClassChecker;
+import blade.addon.features.dungeon.RunStartValidator;
 import blade.addon.features.dungeon.KeyNotifier;
 import blade.addon.features.dungeon.f7.terms.MelodyWarning;
 import blade.addon.features.dungeon.f7.PillarExplode;
@@ -16,7 +16,7 @@ public class CombinedScreenNotifications {
     public static boolean display() {
         if (!Dungeons.combineScreenNotifications) return false;
 
-        if (DupeClassChecker.display()) {
+        if (RunStartValidator.display()) {
             return true;
         } else if (KeyNotifier.display()) {
             return true;
@@ -31,8 +31,8 @@ public class CombinedScreenNotifications {
     }
 
     public static void render(HUDComponent component, DrawContext context) {
-        if (DupeClassChecker.display()) {
-            DupeClassChecker.render(component, context);
+        if (RunStartValidator.display()) {
+            RunStartValidator.render(component, context);
         } else if (KeyNotifier.display()) {
             KeyNotifier.render(component, context);
         } else if (Pre4Notifier.display()) {

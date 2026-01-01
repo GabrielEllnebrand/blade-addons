@@ -21,19 +21,24 @@ public class PillarExplode {
 
     public static void init() {
         Events.ON_GAME_MESSAGE.register(text -> {
-            if (!Floor7.notifyStormCrush && !Floor7.timePillarExplosion) return;
-            if (!Location.inDungeon() || !Phase.inP2()) return;
+            if (!Floor7.notifyStormCrush && !Floor7.timePillarExplosion) return false;
+            if (!Location.inDungeon() || !Phase.inP2()) return false;
 
             String string = text.getString();
-            if (string == null) return;
+            if (string == null) return false;
 
             if (string.equals("[BOSS] Storm: Oof") || string.equals("[BOSS] Storm: Ouch, that hurt!")) {
                 tick = TOTAL_TICKS;
                 Scheduler.scheduleSound(SoundEvents.BLOCK_NOTE_BLOCK_PLING.value(), 1, 1);
             }
+
+            return false;
         });
 
-        Events.ON_SERVER_TICK.register(() -> tick = Math.max(tick - 1, 0));
+        Events.ON_SERVER_TICK.register(() -> {
+            tick = Math.max(tick - 1, 0);
+            return false;
+        });
     }
 
     public static boolean displayTimer() {
@@ -41,15 +46,8 @@ public class PillarExplode {
     }
 
     public static void renderTimer(HUDComponent component, DrawContext context) {
-        int x = component.getScaledX();
-        int y = component.getScaledY();
-
-        Formatting formatting = (tick < 6 ? Formatting.GREEN : Formatting.RED);
-
-        double num = tick * Constants.TICK_DURATION;
-
-        RenderUtils.drawCenteredText(context, MinecraftClient.getInstance().textRenderer, Text.literal(Constants.DECIMAL_FORMAT.format(num).formatted(formatting)), x, y, component.getWidth());
-
+        int color = tick < 6 ? Constants.GREEN_COLOR : Constants.RED_COLOR;
+        RenderUtils.drawTimer(component, context, tick, color);
     }
 
     public static boolean display() {

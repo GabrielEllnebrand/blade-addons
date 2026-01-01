@@ -28,16 +28,18 @@ public class MimicHighlight {
 
         Events.ON_LOCATION_CHANGE.register(location -> {
             mimicList.clear();
+            return false;
         });
 
        Events.ON_BLOCK_ENTITY.register(blockEntity -> {
-          if (!Location.inDungeon()) return;
+          if (!Location.inDungeon()) return false;
           if (blockEntity instanceof TrappedChestBlockEntity mimic) {
               mimicList.add(mimic);
           }
+           return false;
        });
 
-       ClientTickEvents.END_CLIENT_TICK.register(client -> {mimicList.removeIf(BlockEntity::isRemoved);});
+       ClientTickEvents.END_CLIENT_TICK.register(client -> mimicList.removeIf(BlockEntity::isRemoved));
 
         WorldRenderEvents.AFTER_ENTITIES.register(MimicHighlight::renderFilled);
         WorldRenderEvents.AFTER_ENTITIES.register(MimicHighlight::renderOutline);

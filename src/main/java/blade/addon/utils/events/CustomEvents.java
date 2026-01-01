@@ -1,6 +1,7 @@
 package blade.addon.utils.events;
 
 import blade.addon.utils.Debug;
+import blade.addon.utils.Location;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 
 import java.util.regex.Matcher;
@@ -8,14 +9,16 @@ import java.util.regex.Pattern;
 
 public class CustomEvents {
 
-    private static final Pattern PATTERN = Pattern.compile("^§9Party §8>");
+    private static final Pattern PARTY_PATTERN = Pattern.compile("^§9Party §8>");
+    private static final Pattern LEAP_PATTERN = Pattern.compile("^You have teleported to .*!$");
 
     private static final int PARTY_MSG_OFFSET = 11;
 
     public static void init() {
+        //party event
         ClientReceiveMessageEvents.GAME.register((message, overlay) -> {
             String string = message.getString();
-            Matcher matcher = PATTERN.matcher(string);
+            Matcher matcher = PARTY_PATTERN.matcher(string);
             if (!matcher.find()) return;
 
             int index = string.indexOf(":");
@@ -34,10 +37,19 @@ public class CustomEvents {
             }
 
             String username = tempUsername;
-            if (Events.ON_PARTY_MESSAGE.hasListeners()) {
-                Events.ON_PARTY_MESSAGE.invoke(partyMessageEvent -> partyMessageEvent.sentMessage(username, sentMessage));
-            }
+            Events.ON_PARTY_MESSAGE.invoke(partyMessageEvent -> partyMessageEvent.sentMessage(username, sentMessage));
+        });
 
+        //leap event
+        ClientReceiveMessageEvents.GAME.register((message, overlay) -> {
+            if (Location.inDungeon()) {
+                String string = message.getString();
+
+                Matcher matcher = LEAP_PATTERN.matcher(string);
+                if (!matcher.find()) return;
+
+                Events.ON_LEAP.invoke(leapEvent -> leapEvent.onLeap(message));
+            }
         });
     }
 }

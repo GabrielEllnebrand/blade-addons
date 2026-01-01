@@ -69,13 +69,15 @@ public class RelicTimer {
     public static void init() {
         Events.ON_SERVER_TICK.register(() -> {
             if (!forceGUI) {
-                if (!Location.inDungeon() || !Phase.inP5()) return;
+                if (!Location.inDungeon() || !Phase.inP5()) return false;
             }
             tick = Math.max(tick - 1, -1);
 
             if (tick == -1) {
                 forceGUI = false;
             }
+
+            return false;
         });
 
         Events.ON_LOCATION_CHANGE.register(newLocation -> {
@@ -86,12 +88,15 @@ public class RelicTimer {
                     relic.placedTime = 0;
                 }
             }
+
+            return false;
         });
 
         Events.ON_PHASE_CHANGE.register(() -> {
             if (Phase.inP5()) {
                 phaseStartTime = System.currentTimeMillis();
             }
+            return false;
         });
 
         ClientReceiveMessageEvents.GAME.register((message, overlay) -> {
@@ -112,15 +117,15 @@ public class RelicTimer {
         });
 
         Events.ON_ENTITY_SPAWNED.register((entity, world) -> {
-            if (!Location.inDungeon() || !Phase.inP5() || !Floor7.showAllRelicTimes) return;
+            if (!Location.inDungeon() || !Phase.inP5() || !Floor7.showAllRelicTimes) return false;
 
 
             if (entity instanceof ArmorStandEntity armorStand) {
                 ItemStack helmet = armorStand.getEquippedStack(EquipmentSlot.HEAD);
                 Text text = helmet.getName();
-                if (text == null) return;
+                if (text == null) return false;
                 String name = text.getString();
-                if (!name.contains("Relic")) return;
+                if (!name.contains("Relic")) return false;
 
                 double ax = armorStand.getX();
                 double az = armorStand.getZ();
@@ -139,7 +144,7 @@ public class RelicTimer {
                     }
                 }
             }
-
+            return false;
         });
 
         Events.ON_BLOCK_INTERACTION.register((result, itemStack) -> {
@@ -216,15 +221,8 @@ public class RelicTimer {
     }
 
     public static void render(HUDComponent component, DrawContext context) {
-        int x = component.getScaledX();
-        int y = component.getScaledY();
-
         int color = tick > 7 ? GREEN_COLOR : RED_COLOR;
-
-        double num = tick * Constants.TICK_DURATION;
-
-        RenderUtils.drawCenteredText(context, MinecraftClient.getInstance().textRenderer, Text.literal(Constants.DECIMAL_FORMAT.format(num)), x, y, component.getWidth(), color);
-
+        RenderUtils.drawTimer(component, context, tick, color);
     }
 
     public static boolean displayProgressBar() {
@@ -237,7 +235,6 @@ public class RelicTimer {
         int y = component.getScaledY();
 
         //from valleyAddons
-
         StringBuilder message = new StringBuilder("§8[");
 
         if (Floor7.useValleyBar) {

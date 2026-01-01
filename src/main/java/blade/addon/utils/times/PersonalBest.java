@@ -47,9 +47,9 @@ public class PersonalBest {
 
     private Text getAsText(boolean isPb) {
         if (isPb) {
-            return Text.literal("§e" + Constants.DECIMAL_FORMAT.format(newestTime) + "s §d§l(PB)").setStyle(Style.EMPTY);
+            return Text.literal("§e" + Constants.DECIMAL_FORMAT.format(newestTime) + "s. §d§l(PB)").setStyle(Style.EMPTY);
         } else {
-            return Text.literal("§e" + Constants.DECIMAL_FORMAT.format(newestTime) + "s §8(§7" + Constants.DECIMAL_FORMAT.format(bestTime) + "§8)").setStyle(Style.EMPTY);
+            return Text.literal("§e" + Constants.DECIMAL_FORMAT.format(newestTime) + "s. §8(§7" + Constants.DECIMAL_FORMAT.format(bestTime) + "§8)").setStyle(Style.EMPTY);
         }
     }
 

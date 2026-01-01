@@ -1,23 +1,22 @@
 package blade.addon.utils.config.components;
 
 import blade.addon.features.dungeon.ChestCounter;
-import blade.addon.features.dungeon.DeathTickTimer;
-import blade.addon.features.dungeon.DupeClassChecker;
+import blade.addon.features.dungeon.RunStartValidator;
 import blade.addon.features.dungeon.KeyNotifier;
-import blade.addon.features.dungeon.f7.terms.LeapNotification;
-import blade.addon.features.dungeon.f7.location.LocationNotifier;
 import blade.addon.features.dungeon.SecretSpawnTimer;
 import blade.addon.features.dungeon.WarpCooldown;
 import blade.addon.features.dungeon.f7.CrystalSpawn;
 import blade.addon.features.dungeon.f7.DistanceToLedge;
 import blade.addon.features.dungeon.f7.DragSpawnTimer;
-import blade.addon.features.dungeon.f7.terms.GoldorTickTimer;
-import blade.addon.features.dungeon.f7.invincibility.InvincibilityTimer;
-import blade.addon.features.dungeon.f7.terms.MelodyWarning;
 import blade.addon.features.dungeon.f7.PillarExplode;
-import blade.addon.features.dungeon.f7.terms.Pre4Notifier;
 import blade.addon.features.dungeon.f7.RelicTimer;
 import blade.addon.features.dungeon.f7.StormTickTimer;
+import blade.addon.features.dungeon.f7.invincibility.InvincibilityTimer;
+import blade.addon.features.dungeon.f7.location.LocationNotifier;
+import blade.addon.features.dungeon.f7.terms.GoldorTickTimer;
+import blade.addon.features.dungeon.f7.terms.LeapNotification;
+import blade.addon.features.dungeon.f7.terms.MelodyWarning;
+import blade.addon.features.dungeon.f7.terms.Pre4Notifier;
 import blade.addon.features.dungeon.f7.terms.TermStartTimer;
 import blade.addon.features.other.KickedTimer;
 import blade.addon.features.other.RagDisplay;
@@ -43,13 +42,10 @@ public class Components {
     public static HUDComponent chestCounter = new HUDComponent(0, 0, 110, 10, 1, "Chest count", ChestCounter::display, ChestCounter::render, () -> Dungeons.displayChestCount);
 
     @ConfigValue
-    public static HUDComponent deathTickTimer = new HUDComponent(0, 0, 30, 10, 1, "Death Tick Timer", DeathTickTimer::display, DeathTickTimer::render, () -> Dungeons.enableDeathTickTimer);
-
-    @ConfigValue
     public static HUDComponent keyNotifierDisplay = new HUDComponent(0, 0, NOTIFICATION_WIDTH, 10, 1, "", KeyNotifier::display, KeyNotifier::render, () -> Dungeons.enableKeyNotifier && !Dungeons.combineScreenNotifications);
 
     @ConfigValue
-    public static HUDComponent duplicateClassDisplay = new HUDComponent(0, 0, NOTIFICATION_WIDTH, 10, 1, "", DupeClassChecker::display, DupeClassChecker::render, () -> Dungeons.detectDuplicateClass && !Dungeons.combineScreenNotifications);
+    public static HUDComponent duplicateClassDisplay = new HUDComponent(0, 0, NOTIFICATION_WIDTH, 10, 1, "", RunStartValidator::display, RunStartValidator::render, () -> (Dungeons.detectDuplicateClass || Dungeons.detectPlayerCount) && !Dungeons.combineScreenNotifications);
 
     @ConfigValue
     public static HUDComponent secretSpawnTimer = new HUDComponent(0, 0, 20, 10, 1, "Secret spawn timer", SecretSpawnTimer::display, SecretSpawnTimer::render, () -> Dungeons.enableSecretSpawnTimer);

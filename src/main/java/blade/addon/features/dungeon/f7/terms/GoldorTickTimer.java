@@ -7,9 +7,7 @@ import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.events.Events;
 import blade.addon.utils.rendering.RenderUtils;
 import config.practical.hud.HUDComponent;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.text.Text;
 
 public class GoldorTickTimer {
 
@@ -18,12 +16,14 @@ public class GoldorTickTimer {
     public static void init() {
         Events.ON_SERVER_TICK.register(() -> {
             if (Location.inDungeon() && Phase.inTerminals()) tick++;
+            return false;
         });
 
         Events.ON_LOCATION_CHANGE.register(newLocation -> {
             if (Location.inDungeon()) {
                 tick = 0;
             }
+            return false;
         });
     }
 
@@ -32,24 +32,11 @@ public class GoldorTickTimer {
     }
 
     public static void render(HUDComponent component, DrawContext context) {
-        int x = component.getScaledX();
-        int y = component.getScaledY();
-
-        int color;
         double num = tick * Constants.TICK_DURATION;
-
         double mod = num % 3;
-        if (mod < 1) {
-            color = Constants.GREEN_COLOR;
-        } else if (mod < 2) {
-            color = Constants.ORANGE_COLOR;
-        } else {
-            color = Constants.RED_COLOR;
-        }
-
+        int color = (mod < 1? Constants.GREEN_COLOR: mod < 2? Constants.ORANGE_COLOR: Constants.RED_COLOR);
         if (Floor7.inDeathTicks) num = mod;
 
-        RenderUtils.drawCenteredText(context, MinecraftClient.getInstance().textRenderer, Text.literal(Constants.DECIMAL_FORMAT.format(num)), x, y, component.getWidth(), color);
-
+        RenderUtils.drawTimer(component, context, num, color);
     }
 }

@@ -1,13 +1,15 @@
 package blade.addon.features.dungeon;
 
+import blade.addon.utils.Constants;
 import blade.addon.utils.Location;
+import blade.addon.utils.Misc;
+import blade.addon.utils.Scheduler;
 import blade.addon.utils.config.values.Dungeons;
 import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.events.Events;
 import config.practical.hud.HUDComponent;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 
@@ -27,12 +29,13 @@ public class ChestCounter {
             if (Location.in(Location.DUNGEON_HUB)) {
                 hasUpdatedData = false;
             }
+            return false;
         });
 
         Events.ON_PLAYER_ENTRY.register(receivedEntry -> {
-            if (receivedEntry == null || !Location.in(Location.DUNGEON_HUB)) return;
+            if (receivedEntry == null || !Location.in(Location.DUNGEON_HUB)) return false;
             Text text = receivedEntry.displayName();
-            if (text == null) return;
+            if (text == null) return false;
 
             String string = text.getString();
             Matcher matcher = PATTERN.matcher(string);
@@ -44,17 +47,17 @@ public class ChestCounter {
                 } catch (NumberFormatException ignored) {
                 }
             }
+            return false;
         });
 
         Events.ON_RUN_END.register(() -> {
             countedChests++;
             if (Dungeons.sendChestWarning && chestDisplayCount + countedChests >= Dungeons.chestWarningCount) {
-                ClientPlayerEntity player = MinecraftClient.getInstance().player;
-                if (player != null) {
-                    player.playSound(SoundEvents.BLOCK_NOTE_BLOCK_PLING.value(), 2, 1);
-                }
-                MinecraftClient.getInstance().inGameHud.setTitle(Text.literal("Chest count reached").withColor(0xffff0000));
+                Scheduler.scheduleSound(SoundEvents.BLOCK_NOTE_BLOCK_PLING.value(), 2, 1);
+                Misc.setTitle(Text.literal("§cChest count reached"));
             }
+
+            return false;
         });
     }
 
@@ -70,7 +73,7 @@ public class ChestCounter {
         if (hasUpdatedData) {
             context.drawText(MinecraftClient.getInstance().textRenderer, Text.literal("Chests: " + Math.min(chestDisplayCount + countedChests, 60)), x, y, Dungeons.chestCountColor , true);
         } else {
-            context.drawText(MinecraftClient.getInstance().textRenderer, Text.literal("go to the dungeon hub"), x, y, 0xffff0000, true);
+            context.drawText(MinecraftClient.getInstance().textRenderer, Text.literal("go to the dungeon hub"), x, y, Constants.RED_COLOR, true);
 
         }
     }

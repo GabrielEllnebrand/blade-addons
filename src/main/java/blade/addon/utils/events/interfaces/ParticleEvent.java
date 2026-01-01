@@ -4,5 +4,5 @@ import net.minecraft.particle.ParticleEffect;
 
 public interface ParticleEvent {
 
-    void onParticle(double x, double y, double z, ParticleEffect effect);
+    boolean onParticle(double x, double y, double z, ParticleEffect effect);
 }

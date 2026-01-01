@@ -1,6 +1,5 @@
 package blade.addon.features.dungeon.f7;
 
-import blade.addon.utils.Constants;
 import blade.addon.utils.Location;
 import blade.addon.utils.config.values.Floor7;
 import blade.addon.utils.dungeon.DungeonClass;
@@ -10,7 +9,6 @@ import config.practical.hud.HUDComponent;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.text.Text;
 import net.minecraft.util.math.Box;
 
 public class DistanceToLedge {
@@ -42,9 +40,6 @@ public class DistanceToLedge {
     }
 
     public static void render(HUDComponent component, DrawContext context) {
-        int x = component.getScaledX();
-        int y = component.getScaledY();
-
-        RenderUtils.drawCenteredText(context, MinecraftClient.getInstance().textRenderer, Text.literal(Constants.DECIMAL_FORMAT.format(getDistance())), x, y, component.getWidth());
+        RenderUtils.drawTimer(component, context, getDistance(), 0xffffffff);
     }
 }

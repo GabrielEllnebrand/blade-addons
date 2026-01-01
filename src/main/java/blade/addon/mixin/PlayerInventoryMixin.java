@@ -13,8 +13,6 @@ public class PlayerInventoryMixin {
 
     @Inject(method = "setStack", at = @At("HEAD"))
     private void setStack(int slot, ItemStack stack, CallbackInfo ci) {
-        if (Events.ON_SLOT_CHANGE.hasListeners()) {
-            Events.ON_SLOT_CHANGE.listeners.forEach(slotChangeEvent -> slotChangeEvent.onSlotChange(slot, stack));
-        }
+        Events.ON_SLOT_CHANGE.invoke(slotChangeEvent -> slotChangeEvent.onSlotChange(slot, stack));
     }
 }

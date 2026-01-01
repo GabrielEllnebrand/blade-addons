@@ -49,33 +49,33 @@ public class Phase {
 
     public static void init() {
         Events.ON_SERVER_TICK.register(() -> {
-            if (currentSplits == null || runOver) return;
+            if (currentSplits == null || runOver) return false;
             for (Split split : currentSplits) {
                 split.tick();
             }
+            return false;
         });
 
         Events.ON_LOCATION_CHANGE.register(newLocation -> {
-            if (Location.inDungeon()) {
-                reset();
-            }
+            reset();
+            return false;
         });
 
         Events.ON_GAME_MESSAGE.register(Phase::parseGameMessage);
         Events.ON_TEAM.register(Phase::detectFloor);
     }
 
-    private static void detectFloor(String line) {
-        if (!Location.inDungeon() || floor != null) return;
+    private static boolean detectFloor(String line) {
+        if (!Location.inDungeon() || floor != null) return false;
 
         Matcher matcher = SEARCH_PATTERN.matcher(line);
-        if (!matcher.find()) return;
+        if (!matcher.find()) return false;
         int start = line.indexOf("(");
         int end = line.indexOf(")");
         floor = line.substring(start + 1, end);
 
         currentSplits = FLOOR_SPLITS.get(floor);
-        if (currentSplits!= null) {
+        if (currentSplits != null) {
             for (Split split : currentSplits) {
                 split.reset();
             }
@@ -83,6 +83,8 @@ public class Phase {
         if (floor != null) {
             if (floor.contains("7")) inFloor7 = true;
         }
+
+        return false;
     }
 
     private static void reset() {
@@ -113,24 +115,20 @@ public class Phase {
                 }
 
                 currentPhase = i + 1;
-                if (Events.ON_PHASE_CHANGE.hasListeners()) {
-                    Events.ON_PHASE_CHANGE.invoke(PhaseEvent::onPhaseChange);
-                }
+                Events.ON_PHASE_CHANGE.invoke(PhaseEvent::onPhaseChange);
             }
 
             //just for starting the run
             if (currentSplit.started() && currentPhase == -1) {
                 currentPhase = i;
-                if (Events.ON_PHASE_CHANGE.hasListeners()) {
-                    Events.ON_PHASE_CHANGE.invoke(PhaseEvent::onPhaseChange);
-                }
+                Events.ON_PHASE_CHANGE.invoke(PhaseEvent::onPhaseChange);
             }
 
         }
 
         Matcher matcher = END_PATTERN.matcher(string);
         if (matcher.find()) {
-           endRun();
+            endRun();
         }
 
         if (inP2()) {
@@ -157,10 +155,7 @@ public class Phase {
             Misc.addChatMessage(timeLost);
         }
 
-
-        if (Events.ON_RUN_END.hasListeners()) {
-            Events.ON_RUN_END.listeners.forEach(RunEndEvent::onRunEnd);
-        }
+        Events.ON_RUN_END.invoke(RunEndEvent::onRunEnd);
     }
 
     public static double getPhase() {
@@ -217,6 +212,10 @@ public class Phase {
     }
 
 
+    public static double getPhaseTime(int index) {
+        if (index < 0 ||index >= currentSplits.size()) return 0;
+        return currentSplits.get(index).getRealTime();
+    }
 
     @ConfigValue
     public static HUDComponent splitTimer = new HUDComponent(0, 0, SPLIT_LENGTH, 100, 1, "Splits",
