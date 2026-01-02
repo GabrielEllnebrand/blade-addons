@@ -22,9 +22,9 @@ public class SelectedPet {
 
     private static final int COLOR_OFFSET = 2;
 
-    private static final Pattern TAB_PET_PATTERN = Pattern.compile(" \\[Lvl \\d+] (\\D+)");
-    private static final Pattern MANUAL_EQUIP_PET_PATTERN = Pattern.compile("^You (summoned|despawned) your (\\D+)!$");
-    private static final Pattern RULE_EQUIP_PET_PATTERN = Pattern.compile("^Autopet equipped your \\[Lvl [0-9]+] (\\D+)! VIEW RULE$");
+    private static final Pattern TAB_PET_PATTERN = Pattern.compile(" \\[Lvl \\d+] (?:\\[[^]]+] )?(.+)");
+    private static final Pattern MANUAL_EQUIP_PET_PATTERN = Pattern.compile("^You (summoned|despawned) your (?:\\[Lvl \\d+] )?(?:\\[[^]]+] )?(.+)!$");
+    private static final Pattern RULE_EQUIP_PET_PATTERN = Pattern.compile("^Autopet equipped your \\[Lvl \\d+] (?:\\[[^]]+] )?(.+)! VIEW RULE$");
 
     private static final Text NO_PET = Text.literal("§cNo pet");
     private static final String identifierPrefix = "pets/";

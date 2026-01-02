@@ -14,6 +14,8 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 
 import java.util.List;
 
@@ -38,6 +40,13 @@ public class Misc {
         ClientPlayerEntity clientPlayer = INSTANCE.player;
         if (clientPlayer == null) return false;
         return clientPlayer.getName().getString().equals(name);
+    }
+
+    public static Vec3d getPos(Entity entity, double tickProgress) {
+        double x = MathHelper.lerp(tickProgress, entity.lastRenderX, entity.getX());
+        double y = MathHelper.lerp(tickProgress, entity.lastRenderY, entity.getY());
+        double z = MathHelper.lerp(tickProgress, entity.lastRenderZ, entity.getZ());
+        return new Vec3d(x, y, z);
     }
 
     public static double getDistance(Entity e1, Entity e2) {

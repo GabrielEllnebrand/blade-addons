@@ -28,6 +28,7 @@ import blade.addon.features.dungeon.f7.terms.Pre4Notifier;
 import blade.addon.features.dungeon.f7.terms.TermStartTimer;
 import blade.addon.features.highlight.MimicHighlight;
 import blade.addon.features.highlight.MobHighlight;
+import blade.addon.features.highlight.SheepHighlight;
 import blade.addon.features.item.DropAnimation;
 import blade.addon.features.other.CompactHoppity;
 import blade.addon.features.other.DianaNotifier;
@@ -101,5 +102,6 @@ public class Bladeaddons implements ModInitializer {
         CompactHoppity.init();
         DropAnimation.init();
         MimicHighlight.init();
+        SheepHighlight.init();
     }
 }

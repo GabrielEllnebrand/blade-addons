@@ -16,6 +16,7 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -184,8 +185,13 @@ public class Section {
             }
 
             if (Floor7.terminalTimeStamps) {
-                Misc.addChatMessage(Text.literal(name + " §a" + action + " " + objective + "! (§c" + currentCompleted + "§a/ " + totalNeeded + ") §8(§7" + getSectionTime() + "s §8| §7" + Phase.getPhaseTime(TERM_PHASE_INDEX) + "s§8)"));
-                return true;
+                //have to do it like this because for some reason they have the color in the
+                //Style object and not in the string literal
+                List<Text> texts = message.getSiblings();
+                if (!texts.isEmpty()) {
+                    Misc.addChatMessage(Text.literal(name).setStyle(texts.getFirst().getStyle()).append(Text.literal(" §a" + action + " " + objective + "! (§c" + currentCompleted + "§a/" + totalNeeded + ") §8(§7" + getSectionTime() + "s §8| §7" + Phase.getPhaseTime(TERM_PHASE_INDEX) + "s§8)")));
+                    return true;
+                }
             }
 
 
@@ -231,8 +237,9 @@ public class Section {
     }
 
     public static double getSectionTime() {
-        if (currentSection < 0 || currentSection >= splits.length) return -1;
-        return splits[currentSection].getRealTime();
+        int index = currentSection - 1;
+        if (index < 0 || index >= splits.length) return -1;
+        return splits[index].getRealTime();
     }
 
     public static boolean display() {
