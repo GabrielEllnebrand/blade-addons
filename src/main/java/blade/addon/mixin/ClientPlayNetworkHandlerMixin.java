@@ -1,5 +1,6 @@
 package blade.addon.mixin;
 
+import blade.addon.features.dungeon.f7.terms.TitleHider;
 import blade.addon.utils.Debug;
 import blade.addon.utils.Misc;
 import blade.addon.utils.config.values.ExtraOptions;
@@ -17,6 +18,7 @@ import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
 import net.minecraft.network.packet.s2c.play.EntityTrackerUpdateS2CPacket;
 import net.minecraft.network.packet.s2c.play.PlaySoundS2CPacket;
 import net.minecraft.network.packet.s2c.play.PlayerListS2CPacket;
+import net.minecraft.network.packet.s2c.play.SubtitleS2CPacket;
 import net.minecraft.network.packet.s2c.play.TeamS2CPacket;
 import net.minecraft.scoreboard.Team;
 import net.minecraft.sound.SoundEvent;
@@ -78,6 +80,13 @@ public class ClientPlayNetworkHandlerMixin {
             ci.cancel();
         }
     }
+
+    @Inject(method = "onSubtitle", at = @At("HEAD"))
+    public void onTitle(SubtitleS2CPacket packet, CallbackInfo ci) {
+        TitleHider.processSubtitle(packet);
+    }
+
+
 
     @Inject(method = "onEntitySpawn", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayNetworkHandler;playSpawnSound(Lnet/minecraft/entity/Entity;)V"))
     public void onEntitySpawn(EntitySpawnS2CPacket packet, CallbackInfo ci, @Local Entity entity) {

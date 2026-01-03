@@ -45,5 +45,4 @@ public class RenderUtils {
 
         RenderUtils.drawCenteredText(context, MinecraftClient.getInstance().textRenderer, Text.literal(Constants.DECIMAL_FORMAT.format(num)), x, y, component.getWidth(), color);
     }
-
 }

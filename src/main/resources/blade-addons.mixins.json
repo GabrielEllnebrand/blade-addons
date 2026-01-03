@@ -3,9 +3,9 @@
   "package": "blade.addon.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "ChunkMixin",
     "ClientConnectionMixin",
     "ClientPlayNetworkHandlerMixin",
-    "ChunkMixin",
     "EntityMixin",
     "ItemStackMixin",
     "PlayerEntityMixin",

@@ -159,9 +159,9 @@ public class Split {
         if (timerType == TimerType.DIFFRENCE) {
             double diff = realTime - tickTime;
             if (diff > 0) {
-                serverTime = "+" + Constants.DECIMAL_FORMAT.format(diff) + "s ";
+                serverTime = "+" + Constants.DECIMAL_FORMAT.format(diff) + "s";
             } else {
-                serverTime = Constants.DECIMAL_FORMAT.format(diff) + "s ";
+                serverTime = Constants.DECIMAL_FORMAT.format(diff) + "s";
             }
         } else {
             //default to tick timer

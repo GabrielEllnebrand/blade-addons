@@ -36,7 +36,6 @@ import net.minecraft.item.Items;
 import net.minecraft.text.Text;
 import net.minecraft.text.TextColor;
 import net.minecraft.util.math.Box;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 
 import java.util.ArrayList;
@@ -93,6 +92,10 @@ public class MobHighlight {
     public static double witherExtraWidth = 0;
     @ConfigValue
     public static boolean highlightMimicChests = true;
+    @ConfigValue
+    public static boolean highlightSheep = false;
+    @ConfigValue
+    public static boolean hideSheep = false;
 
     @ConfigValue
     public static int outlineWidth = 4;
@@ -113,6 +116,8 @@ public class MobHighlight {
     public static int witherFilledColor = 0x88222222;
     @ConfigValue
     public static int mimicFilledColor = 0xffffffff;
+    @ConfigValue
+    public static int sheepFilledColor = 0xffffffff;
 
     @ConfigValue
     public static int starOutlineColor = 0xff00ff00;
@@ -130,6 +135,9 @@ public class MobHighlight {
     public static int witherOutlineColor = 0x88222222;
     @ConfigValue
     public static int mimicOutlineColor = 0xffffffff;
+    @ConfigValue
+    public static int sheepOutlineColor = 0xffffffff;
+
 
 
     public static void init() {
@@ -392,9 +400,9 @@ public class MobHighlight {
         return currentHighlight == HighlightType.BOTH || currentHighlight == HighlightType.OUTLINE;
     }
 
-    private static Box getBox(Entity entity, double x, double y, double z) {
+    private static Box getBox(Entity entity, Vec3d pos) {
         EntityDimensions dimension = entity.getDimensions(entity.getPose());
-        Box box = dimension.getBoxAt(x, y, z);
+        Box box = dimension.getBoxAt(pos);
 
         if (entity instanceof WitherEntity) {
             box = box.expand(MobHighlight.witherExtraWidth, 0, MobHighlight.witherExtraWidth);
@@ -434,11 +442,9 @@ public class MobHighlight {
 
             if (entity.isInvisible() && MobHighlight.dontShowInvisibleMobs && entity instanceof PlayerEntity) return;
 
-            double x = MathHelper.lerp(tickProgress, entity.lastRenderX, entity.getX());
-            double y = MathHelper.lerp(tickProgress, entity.lastRenderY, entity.getY());
-            double z = MathHelper.lerp(tickProgress, entity.lastRenderZ, entity.getZ());
+            Vec3d pos = Misc.getPos(entity, tickProgress);
 
-            Box box = getBox(entity, x, y, z);
+            Box box = getBox(entity, pos);
 
 
             int filledColor = MobHighlight.getFilledColor(entity);
@@ -472,12 +478,8 @@ public class MobHighlight {
 
             if (entity.isInvisible() && MobHighlight.dontShowInvisibleMobs && entity instanceof PlayerEntity) return;
 
-            double x = MathHelper.lerp(tickProgress, entity.lastRenderX, entity.getX());
-            double y = MathHelper.lerp(tickProgress, entity.lastRenderY, entity.getY());
-            double z = MathHelper.lerp(tickProgress, entity.lastRenderZ, entity.getZ());
-
-            Box box = getBox(entity, x, y, z);
-
+            Vec3d pos = Misc.getPos(entity, tickProgress);
+            Box box = getBox(entity, pos);
 
             int outlineColor = MobHighlight.getOutlineColor(entity);
             float[] rgba = RenderUtils.toFloats(outlineColor);

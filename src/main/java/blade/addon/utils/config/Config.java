@@ -189,7 +189,6 @@ public class Config {
         highlight.add(new ConfigDouble(Text.literal("Extra Wither Width"), () -> MobHighlight.witherExtraWidth, num -> MobHighlight.witherExtraWidth = num, 0.1, 0, 1.5));
         highlight.add(new ConfigInt(Text.literal("Outline Width"), () -> MobHighlight.outlineWidth, num -> MobHighlight.outlineWidth = num, 1, 1, 10));
         highlight.add(new ConfigOptions<>(Text.literal("Highlight mode"), MobHighlight.HighlightType.values(), () -> MobHighlight.currentHighlight, type -> MobHighlight.currentHighlight = type));
-        highlight.add(new ConfigBool(Text.literal("Highlight mimic chests"), () -> MobHighlight.highlightMimicChests, bool -> MobHighlight.highlightMimicChests = bool));
         highlight.add(new ConfigColor(Text.literal("Star mob filled color"), () -> MobHighlight.starFilledColor, color -> MobHighlight.starFilledColor = color, "star-filled", true));
         highlight.add(new ConfigColor(Text.literal("Star mob outline color"), () -> MobHighlight.starOutlineColor, color -> MobHighlight.starOutlineColor = color, "star-outline", true));
         highlight.add(new ConfigColor(Text.literal("Tank mob filled color"), () -> MobHighlight.tankFilledColor, color -> MobHighlight.tankFilledColor = color, "tank-filled", true));
@@ -202,10 +201,22 @@ public class Config {
         highlight.add(new ConfigColor(Text.literal("Shadow Assassin outline color"), () -> MobHighlight.assassinOutlineColor, color -> MobHighlight.assassinOutlineColor = color, "assassin-outline", true));
         highlight.add(new ConfigColor(Text.literal("Bat filled color"), () -> MobHighlight.batFilledColor, color -> MobHighlight.batFilledColor = color, "bat-filled", true));
         highlight.add(new ConfigColor(Text.literal("Bat outline color"), () -> MobHighlight.batOutlineColor, color -> MobHighlight.batOutlineColor = color, "bat-outline", true));
-        highlight.add(new ConfigColor(Text.literal("Wither color"), () -> MobHighlight.witherFilledColor, color -> MobHighlight.witherFilledColor = color, "wither-filled", true));
-        highlight.add(new ConfigColor(Text.literal("Wither outline"), () -> MobHighlight.witherOutlineColor, color -> MobHighlight.witherOutlineColor = color, "wither-outline", true));
-        highlight.add(new ConfigColor(Text.literal("Mimic color"), () -> MobHighlight.mimicFilledColor, color -> MobHighlight.mimicFilledColor = color, "mimic-filled", true));
-        highlight.add(new ConfigColor(Text.literal("Mimic outline"), () -> MobHighlight.mimicOutlineColor, color -> MobHighlight.mimicOutlineColor = color, "mimic-outline", true));
+        highlight.add(new ConfigColor(Text.literal("Wither filled color"), () -> MobHighlight.witherFilledColor, color -> MobHighlight.witherFilledColor = color, "wither-filled", true));
+        highlight.add(new ConfigColor(Text.literal("Wither outline color"), () -> MobHighlight.witherOutlineColor, color -> MobHighlight.witherOutlineColor = color, "wither-outline", true));
+
+        ConfigSection mimic = new ConfigSection(Text.literal("Mimic"));
+        mimic.add(new ConfigBool(Text.literal("Highlight mimic chests"), () -> MobHighlight.highlightMimicChests, bool -> MobHighlight.highlightMimicChests = bool));
+        mimic.add(new ConfigColor(Text.literal("Mimic filled color"), () -> MobHighlight.mimicFilledColor, color -> MobHighlight.mimicFilledColor = color, "mimic-filled", true));
+        mimic.add(new ConfigColor(Text.literal("Mimic outline color"), () -> MobHighlight.mimicOutlineColor, color -> MobHighlight.mimicOutlineColor = color, "mimic-outline", true));
+        highlight.add(mimic);
+
+        ConfigSection sheep = new ConfigSection(Text.literal("Sheep"));
+        sheep.add(new ConfigBool(Text.literal("Highlight sheep in dungeon"), () -> MobHighlight.highlightSheep, bool -> MobHighlight.highlightSheep = bool));
+        sheep.add(new ConfigBool(Text.literal("Hide sheep in dungeons"), () -> MobHighlight.hideSheep, bool -> MobHighlight.hideSheep = bool));
+        sheep.add(new ConfigColor(Text.literal("Sheep filled color"), () -> MobHighlight.sheepFilledColor, color -> MobHighlight.sheepFilledColor = color, "sheep-filled", true));
+        sheep.add(new ConfigColor(Text.literal("Sheep outline color"), () -> MobHighlight.sheepOutlineColor, color -> MobHighlight.sheepOutlineColor = color, "sheep-outline", true));
+        highlight.add(sheep);
+
         screen.addCategory(highlight);
 
         ConfigCategory extra = new ConfigCategory("Extra options");
