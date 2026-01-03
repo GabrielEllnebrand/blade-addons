@@ -14,7 +14,6 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
 
 import java.util.List;
 import java.util.regex.Matcher;
@@ -75,9 +74,6 @@ public class Section {
                 currentSection = 1;
                 splits[0].start();
             } else if (Phase.inGoldorTunnel()) {
-                if (TitleHider.shouldHideTitle()) {
-                    Misc.forceTitle(Text.empty(), Text.literal("The Core entrance is opening!").formatted(Formatting.GREEN));
-                }
                 if (Debug.termInfo) {
                     Misc.addChatMessage(Text.literal("Terminals ended"));
                 }
@@ -170,18 +166,11 @@ public class Section {
             Events.ON_TERMINAL.invoke(terminalEvent -> terminalEvent.onComplete(name, action, objective, currentCompleted, totalNeeded));
 
 
-            int recentlyCompleted = currentCompleted;
-            if ((recentlyCompleted == total && gateBlownUp) || (recentlyCompleted < completed)) {
+            if (shouldIncrement(currentCompleted)) {
                 incrementSection();
-                if (TitleHider.shouldHideTitle()) {
-                    Misc.forceTitle(Text.empty(), message);
-                }
             } else {
-                if (Misc.isClientPlayer(name) && TitleHider.shouldHideTitle()) {
-                    Misc.forceTitle(Text.empty(), message);
-                }
                 total = totalNeeded;
-                completed = recentlyCompleted;
+                completed = currentCompleted;
             }
 
             if (Floor7.terminalTimeStamps) {
@@ -253,6 +242,10 @@ public class Section {
         }
 
         return false;
+    }
+
+    public static boolean shouldIncrement(int recentlyCompleted) {
+        return (recentlyCompleted == total && gateBlownUp) || (recentlyCompleted < completed);
     }
 
     public static void render(HUDComponent component, DrawContext context) {
