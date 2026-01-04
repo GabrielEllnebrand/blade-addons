@@ -26,16 +26,8 @@ public class TitleHider {
             String name = matcher.group(1);
             if (Misc.isClientPlayer(name)) {
                 Misc.forceTitle(Text.empty(), packet.text());
-            } else {
-                try {
-                    int currentCompleted = Integer.parseInt(matcher.group(4));
-                    if (Section.shouldIncrement(currentCompleted)) {
-                        Misc.forceTitle(Text.empty(), packet.text());
-
-                    }
-                } catch (Exception ignored) {
-                }
             }
+            //end of section msg is handled by the Section class currently
         } else {
             Misc.forceTitle(Text.empty(), packet.text());
         }

@@ -3,6 +3,7 @@ package blade.addon.features.dungeon;
 import blade.addon.utils.Location;
 import blade.addon.utils.Scheduler;
 import blade.addon.utils.config.values.Dungeons;
+import blade.addon.utils.data.PartyUtil;
 import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.events.Events;
 import blade.addon.utils.rendering.RenderUtils;
@@ -33,12 +34,15 @@ public class RunStartValidator {
     private static boolean hasDupeClasses = false;
     private static boolean notEnoughPlayers = false;
 
+    private static boolean hasTicked = false;
+
     public static void init() {
         ClientReceiveMessageEvents.GAME.register((message, overlay) -> {
             if (!Location.inDungeon() || Phase.runStarted() || !Dungeons.detectDuplicateClass) return;
 
             Matcher matcher = STARTING_PATTERN.matcher(message.getString());
             if (!matcher.find()) return;
+            hasTicked = true;
 
             if (validate()) {
                 Scheduler.scheduleSound(SoundEvents.BLOCK_NOTE_BLOCK_PLING.value(), 2, 1);
@@ -47,6 +51,7 @@ public class RunStartValidator {
 
         Events.ON_LOCATION_CHANGE.register(location -> {
             if (Location.inDungeon()) {
+                PartyUtil.sendPacket();
                 reset();
             }
 
@@ -54,6 +59,8 @@ public class RunStartValidator {
         });
 
         Events.ON_PLAYER_ENTRY.register(receivedEntry -> {
+            //will only check after the first game message in case of false positives
+            if (!hasTicked) return false;
             if (!Location.inDungeon() || Phase.runStarted() || (!Dungeons.detectDuplicateClass && !Dungeons.detectPlayerCount)) return false;
             validate();
             return false;
@@ -98,12 +105,13 @@ public class RunStartValidator {
             count += num;
         }
 
-        notEnoughPlayers = count < Dungeons.playersNeeded;
+        notEnoughPlayers = count < PartyUtil.getPlayerCount();
     }
 
     private static void reset() {
         hasDupeClasses = false;
         notEnoughPlayers = false;
+        hasTicked = false;
     }
 
     private static HashMap<String, Integer> readScoreBoard(Scoreboard scoreboard) {

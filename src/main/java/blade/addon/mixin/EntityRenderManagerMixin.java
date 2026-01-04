@@ -29,8 +29,9 @@ public class EntityRenderManagerMixin {
             if (clientPlayer != null) {
                 if (player.getId() == clientPlayer.getId()) return;
             }
-            cir.setReturnValue(!HidePlayers.shouldHidePlayers(player));
-
+            if (HidePlayers.shouldHidePlayers(player)) {
+                cir.setReturnValue(false);
+            }
         }
 
         if (!entity.isAlive() && ExtraOptions.hideDeadEntities) {

@@ -5,6 +5,7 @@ import blade.addon.utils.Scheduler;
 import blade.addon.utils.config.values.Dungeons;
 import blade.addon.utils.dungeon.DungeonClass;
 import blade.addon.utils.events.Events;
+import blade.addon.utils.rendering.RenderUtils;
 import config.practical.hud.HUDComponent;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 import net.minecraft.client.MinecraftClient;
@@ -82,6 +83,6 @@ public class KeyNotifier {
         int y = component.getScaledY();
 
         Text text = isBloodKey ? BLOOD_KEY : WITHER_KEY;
-        context.drawText(MinecraftClient.getInstance().textRenderer, text, x, y, 0xffffffff, true);
+        RenderUtils.drawCenteredText(context, MinecraftClient.getInstance().textRenderer, text, x, y, component.getWidth(), 0xffffffff);
     }
 }

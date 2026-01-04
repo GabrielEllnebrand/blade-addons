@@ -92,4 +92,22 @@ public class ExtraOptions {
 
     @ConfigValue
     public static SoundData ragSound = new SoundData(SoundEvents.BLOCK_NOTE_BLOCK_PLING.value(), 1, 1);
+
+    @ConfigValue
+    public static boolean sendOnPetSound = false;
+
+    @ConfigValue
+    public static  SoundData petSound = new SoundData(SoundEvents.BLOCK_NOTE_BLOCK_PLING.value(), 1, 1);
+
+    @ConfigValue
+    public static boolean copyChat = false;
+
+    @ConfigValue
+    public static boolean removeColorCodes = false;
+
+    @ConfigValue
+    public static boolean replaceColorChars = false;
+
+    @ConfigValue
+    public static boolean copyLineOnly = false;
 }

@@ -2,6 +2,7 @@ package blade.addon.features.other;
 
 import blade.addon.utils.Constants;
 import blade.addon.utils.Debug;
+import blade.addon.utils.Scheduler;
 import blade.addon.utils.config.values.ExtraOptions;
 import blade.addon.utils.events.Events;
 import config.practical.hud.HUDComponent;
@@ -46,7 +47,7 @@ public class SelectedPet {
 
                 String name = matcher.group(2).replace(" ✦", "");
                 Style style = getStyle(message, name);
-                summonPet(name, Text.literal(name).setStyle(style));
+                summonPet(name, Text.literal(name).setStyle(style), false);
                 return;
             }
 
@@ -60,7 +61,7 @@ public class SelectedPet {
                     textName = string.substring(index - COLOR_OFFSET, index) + textName;
                 }
 
-                summonPet(name, Text.literal(textName));
+                summonPet(name, Text.literal(textName), true);
             }
         });
 
@@ -79,7 +80,7 @@ public class SelectedPet {
             if (matcher.find()) {
                 String petName = matcher.group(1).replace(" ✦", "");
                 Style style = getStyle(text, petName);
-                summonPet(petName, Text.literal(petName).setStyle(style));
+                summonPet(petName, Text.literal(petName).setStyle(style), false);
             }
 
             return false;
@@ -94,7 +95,7 @@ public class SelectedPet {
 
     }
 
-    private static void summonPet(String stringName, Text textName) {
+    private static void summonPet(String stringName, Text textName, boolean sendSound) {
         if (stringName.equals(currentPetString)) {
             return;
         }
@@ -104,6 +105,10 @@ public class SelectedPet {
 
         Events.ON_PET.invoke(petEvent -> petEvent.onPet(currentPetString));
         updateSprite(stringName);
+
+        if (sendSound && ExtraOptions.sendOnPetSound) {
+            Scheduler.scheduleSound(ExtraOptions.petSound);
+        }
     }
 
     private static Style getStyle(Text text, String name) {

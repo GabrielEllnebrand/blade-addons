@@ -45,6 +45,7 @@ import blade.addon.utils.config.Config;
 import blade.addon.utils.config.FolderUtility;
 import blade.addon.utils.config.components.Components;
 import blade.addon.utils.config.values.Buttons;
+import blade.addon.utils.data.PartyUtil;
 import blade.addon.utils.dungeon.DungeonClass;
 import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.dungeon.Section;
@@ -66,6 +67,8 @@ public class Bladeaddons implements ModInitializer {
         Phase.init();
         Section.init();
         DungeonClass.init();
+        PartyUtil.init();
+
         StormTickTimer.init();
         GoldorTickTimer.init();
         TermStartTimer.init();

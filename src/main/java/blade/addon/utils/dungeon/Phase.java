@@ -47,6 +47,9 @@ public class Phase {
     @ConfigValue
     public static boolean sendSplitInChat = false;
 
+    @ConfigValue
+    public static boolean onlyShowActivatedSplits = false;
+
     public static void init() {
         Events.ON_SERVER_TICK.register(() -> {
             if (currentSplits == null || runOver) return false;
@@ -230,9 +233,13 @@ public class Phase {
                     int splitCount = currentSplits.size();
                     if (!includeTotalTime) splitCount--;
 
-                    for (int i = 0; i < splitCount; i++) {
-                        currentSplits.get(i).drawSplit(drawContext, textRenderer, x, y + Constants.TEXT_HEIGHT * i, SPLIT_LENGTH);
+                    int height = 0;
 
+                    for (int i = 0; i < splitCount; i++) {
+                        Split split = currentSplits.get(i);
+                        if (Phase.onlyShowActivatedSplits && !(split.started() || split.ended())) continue;
+                        split.drawSplit(drawContext, textRenderer, x, y + Constants.TEXT_HEIGHT * height, SPLIT_LENGTH);
+                        height++;
                     }
                 } else {
                     for (int i = 0; i < DUMMY_SIZE; i++) {

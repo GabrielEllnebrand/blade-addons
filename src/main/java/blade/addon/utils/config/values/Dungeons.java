@@ -97,7 +97,4 @@ public class Dungeons {
 
     @ConfigValue
     public static boolean detectPlayerCount = false;
-
-    @ConfigValue
-    public static int playersNeeded = 5;
 }

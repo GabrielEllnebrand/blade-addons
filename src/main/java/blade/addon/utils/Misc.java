@@ -1,9 +1,11 @@
 package blade.addon.utils;
 
+import blade.addon.mixin.ChatHudInvoker;
 import blade.addon.utils.config.values.ExtraOptions;
 import blade.addon.utils.interfaces.GameHud;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.hud.ChatHud;
+import net.minecraft.client.gui.hud.ChatHudLine;
 import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.ClientPlayerEntity;
@@ -103,11 +105,52 @@ public class Misc {
         return false;
     }
 
-    private static void forceMainThread(Runnable runnable) {
+    public static void forceMainThread(Runnable runnable) {
         if (INSTANCE.isOnThread()) {
             runnable.run();
         } else {
             INSTANCE.executeSync(runnable);
         }
+    }
+
+    public static String copyChat(ChatHudInvoker hudInvoker, double x, double y) {
+        List<ChatHudLine.Visible> messages = hudInvoker.getVisibleMessages();
+        int endIndex = hudInvoker.getLineIndex(x, y);
+
+        if (messages == null || endIndex < 0 || endIndex >= messages.size()) return null;
+
+        StringBuilder tempBuilder = new StringBuilder();
+
+        int startIndex = endIndex;
+
+        //find start of msg
+        for (int i = endIndex; i >= 0; i--) {
+            ChatHudLine.Visible chatHudLine = messages.get(i);
+            if (chatHudLine.endOfEntry()) {
+                startIndex = i;
+                break;
+            }
+        }
+
+        if (!messages.get(endIndex).endOfEntry()) {
+            //find end of msg
+            for (int i = endIndex + 1; i < messages.size(); i++) {
+                ChatHudLine.Visible chatHudLine = messages.get(i);
+                if (chatHudLine.endOfEntry()) {
+                    endIndex = i - 1;
+                    break;
+                }
+            }
+        }
+        StringBuilder builder = new StringBuilder();
+        for (int i = endIndex; i >= startIndex; i--) {
+            ChatHudLine.Visible chatHudLine = messages.get(i);
+
+            chatHudLine.content().accept((index, style, codePoint) -> {
+                builder.appendCodePoint(codePoint);
+                return true;
+            });
+        }
+        return builder.toString();
     }
 }

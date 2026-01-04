@@ -19,6 +19,8 @@
     "requireAnnotations": true
   },
   "client": [
+    "ChatHudInvoker",
+    "ChatScreenMixin",
     "ClientPlayerEntityMixin",
     "ClientPlayNetworkHandlerMixin",
     "EntityRendererMixin",

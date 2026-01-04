@@ -40,7 +40,6 @@ public enum Location {
 
         instance.subscribeToEventPacket(ClientboundLocationPacket.class);
 
-
     }
 
     public static boolean in(Location location) {

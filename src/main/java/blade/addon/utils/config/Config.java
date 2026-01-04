@@ -47,7 +47,6 @@ public class Config {
         start.add(new ConfigBool(Text.literal("Dupe class warning"), () -> Dungeons.detectDuplicateClass, bool -> Dungeons.detectDuplicateClass = bool));
         start.add(new ConfigBool(Text.literal("Ignore dupe mage"), () -> Dungeons.ignoreDupeMage, bool -> Dungeons.ignoreDupeMage = bool));
         start.add(new ConfigBool(Text.literal("Player count warning"), () -> Dungeons.detectPlayerCount, bool -> Dungeons.detectPlayerCount = bool));
-        start.add(new ConfigInt(Text.literal("Players needed"), () -> Dungeons.playersNeeded, count -> Dungeons.playersNeeded = count, 1, 1, 5));
         dungeons.add(start);
 
         ConfigSection invincibility = new ConfigSection(Text.literal("Invincibility Timer"));
@@ -169,6 +168,8 @@ public class Config {
         splits.add(new ConfigBool(Text.literal("Include total time"), () -> Phase.includeTotalTime, bool -> Phase.includeTotalTime = bool));
         splits.add(new ConfigBool(Text.literal("Send split in chat when over"), () -> Phase.sendSplitInChat, bool -> Phase.sendSplitInChat = bool));
         splits.add(new ConfigOptions<>(Text.literal("Tick timer type"), Split.TimerType.values(), () -> Split.timerType, type -> Split.timerType = type));
+        splits.add(new ConfigBool(Text.literal("Only show activated splits"), () -> Phase.onlyShowActivatedSplits, bool -> Phase.onlyShowActivatedSplits = bool));
+
 
         splits.add(new ConfigColor(Text.literal("Real time color (Inactive)"), () -> Split.realTimeColorInactive, color -> Split.realTimeColorInactive = color, "real-time-inactive", false));
         splits.add(new ConfigColor(Text.literal("Real time color (Ongoing)"), () -> Split.realTimeColorOngoing, color -> Split.realTimeColorOngoing = color, "real-time-ongoing", false));
@@ -239,10 +240,19 @@ public class Config {
         extra.add(new ConfigBool(Text.literal("Compact hoppity messages"), () -> ExtraOptions.compactHoppityMsgs, bool -> ExtraOptions.compactHoppityMsgs = bool));
         extra.add(new ConfigBool(Text.literal("Disable recipe book"), () -> ExtraOptions.disableRecipeBook, bool -> ExtraOptions.disableRecipeBook = bool));
 
+        ConfigSection copyChat = new ConfigSection(Text.literal("Copy chat"));
+        copyChat.add(new ConfigBool(Text.literal("Copy with right click"), () -> ExtraOptions.copyChat, bool -> ExtraOptions.copyChat = bool));
+        copyChat.add(new ConfigBool(Text.literal("remove color codes"), () -> ExtraOptions.removeColorCodes, bool -> ExtraOptions.removeColorCodes = bool));
+        copyChat.add(new ConfigBool(Text.literal("replace format char with &"), () -> ExtraOptions.replaceColorChars, bool -> ExtraOptions.replaceColorChars = bool));
+        copyChat.add(new ConfigBool(Text.literal("copy line only"), () -> ExtraOptions.copyLineOnly, bool -> ExtraOptions.copyLineOnly = bool));
+        extra.add(copyChat);
+
         ConfigSection pets = new ConfigSection(Text.literal("Pets"));
-        pets.add(new ConfigBool(Text.literal("Highlight selected pet"), () -> ExtraOptions.highlightSelectedPet, bool -> ExtraOptions.highlightSelectedPet = bool));
+        pets.add(new ConfigBool(Text.literal("Highlight selected pet in menu"), () -> ExtraOptions.highlightSelectedPet, bool -> ExtraOptions.highlightSelectedPet = bool));
         pets.add(new ConfigBool(Text.literal("Draw selected pet"), () -> ExtraOptions.drawPetHUD, bool -> ExtraOptions.drawPetHUD = bool));
         pets.add(new ConfigBool(Text.literal("Draw the pets sprite"), () -> ExtraOptions.includePetSprite, bool -> ExtraOptions.includePetSprite = bool));
+        pets.add(new ConfigBool(Text.literal("Send sound on petswap"), () -> ExtraOptions.sendOnPetSound, bool -> ExtraOptions.sendOnPetSound = bool));
+        pets.add(new ConfigSound(Text.literal("Pet swap sound"), ExtraOptions.petSound));
         extra.add(pets);
 
         ConfigSection diana = new ConfigSection(Text.literal("Diana notifications"));
