@@ -5,6 +5,7 @@ import blade.addon.utils.Misc;
 import blade.addon.utils.Waypoint;
 import blade.addon.utils.config.FolderUtility;
 import blade.addon.utils.config.values.Floor7;
+import blade.addon.utils.data.EntityUtil;
 import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.rendering.RenderLayers;
 import blade.addon.utils.rendering.RenderUtils;
@@ -115,7 +116,7 @@ public class BossWaypoints {
     }
 
     private static ActionResult onBlock(PlayerEntity playerEntity, World world, Hand hand, BlockHitResult blockHitResult) {
-        if (!isInValidArea() || !Misc.isClientPlayer(playerEntity)) return ActionResult.PASS;
+        if (!isInValidArea() || !EntityUtil.isClientPlayer(playerEntity)) return ActionResult.PASS;
         if (hand == Hand.OFF_HAND) return ActionResult.PASS;
 
         BlockPos pos = blockHitResult.getBlockPos();

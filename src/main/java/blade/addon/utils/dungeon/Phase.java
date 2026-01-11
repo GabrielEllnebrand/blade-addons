@@ -161,10 +161,9 @@ public class Phase {
         Events.ON_RUN_END.invoke(RunEndEvent::onRunEnd);
     }
 
-    public static double getPhase() {
+    public static int getPhase() {
         return currentPhase;
     }
-
 
     public static boolean isInFloor7() {
         return inFloor7;

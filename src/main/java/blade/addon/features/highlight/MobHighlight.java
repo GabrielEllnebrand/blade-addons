@@ -2,6 +2,7 @@ package blade.addon.features.highlight;
 
 import blade.addon.utils.Location;
 import blade.addon.utils.Misc;
+import blade.addon.utils.data.EntityUtil;
 import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.events.Events;
 import blade.addon.utils.rendering.RenderLayers;
@@ -315,7 +316,7 @@ public class MobHighlight {
     private static boolean isARealPlayer(Entity entity) {
         if (entity instanceof PlayerEntity player) {
 
-            if (Misc.isClientPlayer(player)) return true;
+            if (EntityUtil.isClientPlayer(player)) return true;
 
             ClientPlayNetworkHandler networkHandler = MinecraftClient.getInstance().getNetworkHandler();
             if (networkHandler == null) return false;

@@ -1,6 +1,6 @@
 package blade.addon.utils.events;
 
-import blade.addon.utils.Debug;
+import blade.addon.utils.debug.Debug;
 import blade.addon.utils.Location;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 

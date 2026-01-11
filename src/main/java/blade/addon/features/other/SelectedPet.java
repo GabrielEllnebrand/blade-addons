@@ -1,7 +1,7 @@
 package blade.addon.features.other;
 
 import blade.addon.utils.Constants;
-import blade.addon.utils.Debug;
+import blade.addon.utils.debug.Debug;
 import blade.addon.utils.Scheduler;
 import blade.addon.utils.config.values.ExtraOptions;
 import blade.addon.utils.events.Events;

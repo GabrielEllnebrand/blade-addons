@@ -103,6 +103,10 @@ public class Split {
         started = true;
     }
 
+    public String getName() {
+        return name;
+    }
+
     public boolean started() {
         return started;
     }

@@ -2,7 +2,7 @@ package blade.addon.features.dungeon.f7.terms;
 
 import blade.addon.utils.Location;
 import blade.addon.utils.config.values.Floor7;
-import blade.addon.utils.detection.Detection;
+import blade.addon.utils.data.EntityUtil;
 import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.rendering.RenderUtils;
 import config.practical.hud.HUDComponent;
@@ -65,7 +65,7 @@ public class LeapNotification {
             List<Entity> entities = world.getOtherEntities(player, box);
             int currentCount = 0;
             for (Entity entity : entities) {
-                if (Detection.isARealPlayer(entity)) {
+                if (EntityUtil.isARealPlayer(entity)) {
                     currentCount++;
                 }
             }

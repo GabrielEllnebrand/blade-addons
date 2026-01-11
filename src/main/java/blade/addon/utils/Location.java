@@ -1,5 +1,6 @@
 package blade.addon.utils;
 
+import blade.addon.utils.debug.Debug;
 import blade.addon.utils.events.Events;
 import net.hypixel.data.type.ServerType;
 import net.hypixel.modapi.HypixelModAPI;

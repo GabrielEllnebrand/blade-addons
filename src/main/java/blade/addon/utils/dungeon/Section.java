@@ -2,7 +2,7 @@ package blade.addon.utils.dungeon;
 
 import blade.addon.features.dungeon.f7.terms.TitleHider;
 import blade.addon.utils.Constants;
-import blade.addon.utils.Debug;
+import blade.addon.utils.debug.Debug;
 import blade.addon.utils.Location;
 import blade.addon.utils.Misc;
 import blade.addon.utils.config.values.Floor7;

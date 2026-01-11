@@ -1,9 +1,8 @@
 package blade.addon.features.dungeon;
 
 import blade.addon.utils.Location;
-import blade.addon.utils.Misc;
 import blade.addon.utils.config.values.Dungeons;
-import blade.addon.utils.detection.Detection;
+import blade.addon.utils.data.EntityUtil;
 import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.events.Events;
 import net.minecraft.client.MinecraftClient;
@@ -61,7 +60,7 @@ public class HidePlayers {
     }
 
     public static boolean shouldHidePlayers(PlayerEntity player) {
-        if (!Location.inDungeon() || !Detection.isARealPlayer(player) || Misc.isClientPlayer(player)) return false;
+        if (!Location.inDungeon() || !EntityUtil.isARealPlayer(player) || EntityUtil.isClientPlayer(player)) return false;
 
         if (testHideAtLeap()) {
             return true;

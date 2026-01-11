@@ -1,8 +1,8 @@
 package blade.addon.mixin;
 
-import blade.addon.utils.Misc;
 import blade.addon.utils.config.values.Dungeons;
 import blade.addon.utils.config.values.ExtraOptions;
+import blade.addon.utils.data.EntityUtil;
 import net.minecraft.client.render.command.OrderedRenderCommandQueue;
 import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.render.entity.state.EntityRenderState;
@@ -32,7 +32,7 @@ public class EntityRendererMixin<T extends Entity, S extends EntityRenderState> 
     public void hideFire(T entity, S state, float tickProgress, CallbackInfo ci) {
 
         if (entity instanceof PlayerEntity player && ExtraOptions.hideFireInf5) {
-            if (Misc.isClientPlayer(player)) {
+            if (EntityUtil.isClientPlayer(player)) {
                 state.onFire = false;
             }
         }

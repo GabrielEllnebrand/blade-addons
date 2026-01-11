@@ -1,15 +1,19 @@
 package blade.addon.features.dungeon.f7.location;
 
+import blade.addon.utils.Constants;
 import blade.addon.utils.Location;
-import blade.addon.utils.Misc;
 import blade.addon.utils.Scheduler;
+import blade.addon.utils.config.values.Dungeons;
 import blade.addon.utils.config.values.Floor7;
+import blade.addon.utils.data.EntityUtil;
+import blade.addon.utils.dungeon.DungeonClass;
 import blade.addon.utils.events.Events;
 import blade.addon.utils.rendering.RenderUtils;
 import config.practical.hud.HUDComponent;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 
 import java.util.regex.Matcher;
@@ -29,10 +33,10 @@ public class LocationNotifier {
             if (!matcher.find()) return false;
             String action = matcher.group(1);
 
-            if (Floor7.dontNotifiyForYourself && Misc.isClientPlayer(username)) return false;
-            String screenNotification = (username + " is " + action + message.substring(action.length()) + "!").replaceAll("§.", "");
-            if (PositionMessages.hasBeenSent(screenNotification)) return false;
-            startNotification(screenNotification);
+            if (Floor7.dontNotifiyForYourself && EntityUtil.isClientPlayer(username)) return false;
+            String location =message.substring(action.length()) .replaceAll("§.", "");
+            if (PositionMessages.hasBeenSent(location)) return false;
+            startNotification(username, " is " + action + location + "!");
 
             return false;
         });
@@ -40,8 +44,13 @@ public class LocationNotifier {
         ClientTickEvents.END_CLIENT_TICK.register(client -> ticks = Math.max(ticks - 1, 0));
     }
 
-    public static void startNotification(String message) {
-        notification = Text.literal("§6"+message);
+    public static void startNotification(String username, String message) {
+        int color = Constants.GOLD;
+        if (Dungeons.useClassColors) {
+            color = DungeonClass.getColor(username);
+        }
+
+        notification = Text.literal(username).withColor(color).append(Text.literal("§6" + message).setStyle(Style.EMPTY));
         ticks = Floor7.notificationDuration;
 
         for (int i = 0; i < Floor7.notificationRepetitions; i++) {

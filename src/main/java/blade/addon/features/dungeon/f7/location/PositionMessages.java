@@ -1,6 +1,6 @@
 package blade.addon.features.dungeon.f7.location;
 
-import blade.addon.utils.Debug;
+import blade.addon.utils.debug.Debug;
 import blade.addon.utils.Location;
 import blade.addon.utils.config.values.Floor7;
 import blade.addon.utils.dungeon.Phase;

@@ -1,4 +1,4 @@
-package blade.addon.utils.detection;
+package blade.addon.utils.interfaces;
 
 public interface PlayerDataHolder {
 

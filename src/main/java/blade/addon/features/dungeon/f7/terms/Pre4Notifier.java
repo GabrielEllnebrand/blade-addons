@@ -1,8 +1,8 @@
 package blade.addon.features.dungeon.f7.terms;
 
-import blade.addon.utils.Misc;
 import blade.addon.utils.Scheduler;
 import blade.addon.utils.config.values.Floor7;
+import blade.addon.utils.data.EntityUtil;
 import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.events.Events;
 import blade.addon.utils.rendering.RenderUtils;
@@ -25,7 +25,7 @@ public class Pre4Notifier {
         Events.ON_TERMINAL.register((name, action, objective, current, total) -> {
             if (!Floor7.notifyPre4Completion) return true;
 
-            if (objective.equals("device") && Misc.isClientPlayer(name) && atDev()) {
+            if (objective.equals("device") && EntityUtil.isClientPlayer(name) && atDev()) {
                 completedTime = System.currentTimeMillis();
                 showNotification = true;
                 Scheduler.scheduleSound(SoundEvents.BLOCK_NOTE_BLOCK_PLING.value(), 1, 1);

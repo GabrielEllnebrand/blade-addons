@@ -2,12 +2,12 @@ package blade.addon;
 
 import blade.addon.features.dungeon.AutoRequeue;
 import blade.addon.features.dungeon.ChestCounter;
-import blade.addon.features.dungeon.RunStartValidator;
 import blade.addon.features.dungeon.ExplosiveShot;
 import blade.addon.features.dungeon.HidePlayers;
 import blade.addon.features.dungeon.ItemHighlight;
 import blade.addon.features.dungeon.KeyNotifier;
 import blade.addon.features.dungeon.LeapMessage;
+import blade.addon.features.dungeon.RunStartValidator;
 import blade.addon.features.dungeon.SecretSpawnTimer;
 import blade.addon.features.dungeon.WarpCooldown;
 import blade.addon.features.dungeon.f7.BossWaypoints;
@@ -30,6 +30,7 @@ import blade.addon.features.highlight.MimicHighlight;
 import blade.addon.features.highlight.MobHighlight;
 import blade.addon.features.highlight.SheepHighlight;
 import blade.addon.features.item.DropAnimation;
+import blade.addon.features.notifications.Notifications;
 import blade.addon.features.other.CompactHoppity;
 import blade.addon.features.other.DianaNotifier;
 import blade.addon.features.other.KickedTimer;
@@ -37,7 +38,6 @@ import blade.addon.features.other.PracticeSS;
 import blade.addon.features.other.RagDisplay;
 import blade.addon.features.other.SelectedPet;
 import blade.addon.utils.Commands;
-import blade.addon.utils.Debug;
 import blade.addon.utils.Keybinds;
 import blade.addon.utils.Location;
 import blade.addon.utils.Scheduler;
@@ -46,6 +46,7 @@ import blade.addon.utils.config.FolderUtility;
 import blade.addon.utils.config.components.Components;
 import blade.addon.utils.config.values.Buttons;
 import blade.addon.utils.data.PartyUtil;
+import blade.addon.utils.debug.Debug;
 import blade.addon.utils.dungeon.DungeonClass;
 import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.dungeon.Section;
@@ -106,5 +107,6 @@ public class Bladeaddons implements ModInitializer {
         DropAnimation.init();
         MimicHighlight.init();
         SheepHighlight.init();
+        Notifications.init();
     }
 }

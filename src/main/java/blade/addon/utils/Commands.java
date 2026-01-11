@@ -12,7 +12,6 @@ import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.DoubleArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
-import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
@@ -26,7 +25,6 @@ import org.jetbrains.annotations.NotNull;
 public class Commands {
 
     private static final String[] COMMAND_ALIASES = {"ba", "blade", "bladeaddons"};
-    private static final LiteralArgumentBuilder<FabricClientCommandSource> devRoot = ClientCommandManager.literal("badev");
 
     public static void init() {
         ClientCommandRegistrationCallback.EVENT.register(Commands::registerCommands);
@@ -34,8 +32,6 @@ public class Commands {
 
     public static void registerCommands(@NotNull CommandDispatcher<FabricClientCommandSource> dispatcher,
                                         CommandRegistryAccess registryAccess) {
-
-        dispatcher.register(devRoot);
 
 
         //prob not a good solution but I don't use that many commands currently
@@ -204,9 +200,5 @@ public class Commands {
                 return Constants.SUCCESS;
             }));
         }
-    }
-
-    public static void registerDevCommand(LiteralArgumentBuilder<FabricClientCommandSource> commandManager) {
-        devRoot.then(commandManager);
     }
 }

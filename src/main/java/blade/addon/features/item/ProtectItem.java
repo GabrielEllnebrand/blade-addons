@@ -1,7 +1,7 @@
 package blade.addon.features.item;
 
 import blade.addon.utils.Constants;
-import blade.addon.utils.Debug;
+import blade.addon.utils.debug.Debug;
 import blade.addon.utils.Location;
 import blade.addon.utils.Misc;
 import blade.addon.utils.config.FolderUtility;
@@ -113,7 +113,7 @@ public class ProtectItem {
             Slot slot = slots.get(49);
             ItemStack stack = slot.getStack();
             Text itemName = stack.getName();
-            if (itemName != null && itemName.getString().contains("Sell Item") || Misc.containsLore(stack, "Click to buyback!")) {
+            if (itemName != null && itemName.getString().contains("Sell Item") || ItemUtil.containsLore(stack, "Click to buyback!")) {
                 Misc.addChatMessage(Text.literal("Protected ").append(item.getName()).append(" From being sold"));
                 return true;
             }

@@ -1,6 +1,6 @@
 package blade.addon.features.dungeon;
 
-import blade.addon.utils.Debug;
+import blade.addon.utils.debug.Debug;
 import blade.addon.utils.Misc;
 import blade.addon.utils.dungeon.DungeonClass;
 import net.minecraft.client.MinecraftClient;

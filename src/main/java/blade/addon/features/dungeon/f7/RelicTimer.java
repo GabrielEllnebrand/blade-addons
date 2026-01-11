@@ -4,12 +4,16 @@ import blade.addon.utils.Constants;
 import blade.addon.utils.Location;
 import blade.addon.utils.Misc;
 import blade.addon.utils.config.values.Floor7;
+import blade.addon.utils.data.EntityUtil;
+import blade.addon.utils.data.ItemUtil;
+import blade.addon.utils.debug.Debug;
 import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.events.Events;
 import blade.addon.utils.rendering.RenderLayers;
 import blade.addon.utils.rendering.RenderUtils;
 import blade.addon.utils.times.PersonalBests;
 import config.practical.hud.HUDComponent;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderEvents;
 import net.minecraft.client.MinecraftClient;
@@ -19,9 +23,9 @@ import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.VertexRendering;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.decoration.ArmorStandEntity;
-import net.minecraft.item.ItemStack;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
@@ -34,7 +38,7 @@ import java.util.regex.Pattern;
 
 public class RelicTimer {
 
-    enum Relic {
+    public enum Relic {
         GREEN(new Box(49, 7, 44, 50, 8, 45), 0xff55ff55, "§cRed"),
         RED(new Box(51, 7, 42, 52, 8, 43), 0xffff5555, "§aGreen"),
         PURPLE(new Box(54, 7, 41, 55, 8, 42), 0xffff55ff, "§5Purple"),
@@ -52,6 +56,8 @@ public class RelicTimer {
             this.name = name;
         }
     }
+
+    private static boolean ignoreChecks = false;
 
     private static final int GREEN_COLOR = 0xff00ff00;
     private static final int RED_COLOR = 0xffff0000;
@@ -82,26 +88,22 @@ public class RelicTimer {
 
         Events.ON_LOCATION_CHANGE.register(newLocation -> {
             if (Location.inDungeon()) {
-                tick = Floor7.relicSpawnTicks;
-                pickedupRelic = null;
-                for (Relic relic : Relic.values()) {
-                    relic.placedTime = 0;
-                }
+               reset();
             }
-
             return false;
         });
 
         Events.ON_PHASE_CHANGE.register(() -> {
             if (Phase.inP5()) {
                 phaseStartTime = System.currentTimeMillis();
+                tick = Floor7.relicSpawnTicks;
             }
             return false;
         });
 
         ClientReceiveMessageEvents.GAME.register((message, overlay) -> {
-            if (!Location.inDungeon() || !Phase.inP5() || !Floor7.enableRelicPlaceTime) return;
-
+            if (!Location.inDungeon() || !Phase.inP5()) return;
+            Debug.sendDebugMessage(Text.literal("Debug: ").append(message));
             String str = message.getString().replaceAll("§.", "");
             Matcher matcher = PATTERN.matcher(str);
             if (matcher.find()) {
@@ -112,48 +114,61 @@ public class RelicTimer {
                 if (player == null) return;
                 if (name.equals(player.getName().getString())) {
                     pickedupRelic = Relic.valueOf(relicString.toUpperCase());
+                    Debug.sendDebugMessage(Text.literal("Picked up relic " + relicString));
                 }
             }
         });
 
-        Events.ON_ENTITY_SPAWNED.register((entity, world) -> {
-            if (!Location.inDungeon() || !Phase.inP5() || !Floor7.showAllRelicTimes) return false;
 
+        ClientTickEvents.END_WORLD_TICK.register(world -> {
+            if (!Location.inDungeon() || !Phase.inP5() || !Floor7.showAllRelicTimes) return;
 
-            if (entity instanceof ArmorStandEntity armorStand) {
-                ItemStack helmet = armorStand.getEquippedStack(EquipmentSlot.HEAD);
-                Text text = helmet.getName();
-                if (text == null) return false;
-                String name = text.getString();
-                if (!name.contains("Relic")) return false;
+            Iterable<Entity> entities = world.getEntities();
+            if (allRelicsPlaced()) return;
 
-                double ax = armorStand.getX();
-                double az = armorStand.getZ();
+            for (Entity entity : entities) {
+                if (entity instanceof ArmorStandEntity armorStand) {
+                    if (!EntityUtil.isWearing(armorStand, EquipmentSlot.HEAD, "Relic")) return;
 
-                for (Relic relic : Relic.values()) {
-                    if (Misc.getDistance(relic.box.maxX, ax, relic.box.maxZ, az) < 1) {
-                        relic.placedTime = System.currentTimeMillis();
-                        break;
-                    }
-                }
+                    double ax = armorStand.getX();
+                    double az = armorStand.getZ();
 
-                if (allRelicsPlaced()) {
                     for (Relic relic : Relic.values()) {
-                        long time = relic.placedTime - phaseStartTime;
-                        Misc.addChatMessage(Text.literal(relic.name + " &aRelic placed in &e" + Constants.DECIMAL_FORMAT.format(time) + "s&a."));
+                        if (relic.placedTime != 0 && Misc.getDistance(relic.box.maxX, ax, relic.box.maxZ, az) < 1) {
+                            relic.placedTime = System.currentTimeMillis();
+                            break;
+                        }
                     }
                 }
             }
-            return false;
+
+            if (allRelicsPlaced()) {
+                for (Relic relic : Relic.values()) {
+                    long time = relic.placedTime - phaseStartTime;
+                    Misc.addChatMessage(Text.literal(relic.name + " &aRelic placed in &e" + Constants.DECIMAL_FORMAT.format(time) + "s&a."));
+                }
+            }
         });
+
 
         Events.ON_BLOCK_INTERACTION.register((result, itemStack) -> {
-            if (!Location.inDungeon() || !Phase.inP5() || pickedupRelic == null) return false;
+            if (!ignoreChecks) {
+                if ((!Location.inDungeon() || !Phase.inP5())) return false;
+            }
+
+            if (pickedupRelic == null) return false;
+
             BlockPos pos = result.getBlockPos();
 
-            Text name = itemStack.getCustomName();
-            if (name == null) return false;
-            if (!name.getString().contains("Relic")) return false;
+            if (!ItemUtil.itemHasName(itemStack, "Relic")) {
+                if (Floor7.blockIncorrectRelicPlace) {
+                    Debug.sendDebugMessage(Text.literal("Item: " + itemStack.getName()));
+                    Misc.addChatMessage(Text.literal("Blocked a weird click"));
+                    return true;
+                } else {
+                    return false;
+                }
+            }
 
             if (pos.getX() == pickedupRelic.box.minX && (pos.getY() == pickedupRelic.box.minY || pos.getY() == pickedupRelic.box.minY - 1) && pos.getZ() == pickedupRelic.box.minZ) {
                 if (Floor7.enableRelicPlaceTime) {
@@ -204,9 +219,12 @@ public class RelicTimer {
 
     }
 
-    public static void testRelicGUI() {
-        forceGUI = true;
+    private static void reset() {
         tick = Floor7.relicSpawnTicks;
+        pickedupRelic = null;
+        for (Relic relic : Relic.values()) {
+            relic.placedTime = 0;
+        }
     }
 
     private static boolean allRelicsPlaced() {
@@ -214,6 +232,27 @@ public class RelicTimer {
             if (relic.placedTime == 0) return false;
         }
         return true;
+    }
+
+    public static void testRelicGUI() {
+        forceGUI = true;
+        tick = Floor7.relicSpawnTicks;
+    }
+
+    public static boolean testSetRelic(String name) {
+        try {
+            pickedupRelic = RelicTimer.Relic.valueOf(name);
+            Misc.addChatMessage(Text.literal("Relic is now: " + name));
+            return true;
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
+    }
+
+    public static void testIgnoreChecks() {
+        ignoreChecks = !ignoreChecks;
+        Misc.addChatMessage(Text.literal("Ignore relic checks: ").append(Misc.getStatusText(ignoreChecks)));
+
     }
 
     public static boolean display() {
@@ -242,8 +281,7 @@ public class RelicTimer {
                 if (i < tick) {
                     if (tick > 2) message.append("§a|");
                     else message.append("§c|");
-                }
-                else message.append("§7|");
+                } else message.append("§7|");
             }
             message.append("§8]");
         } else {

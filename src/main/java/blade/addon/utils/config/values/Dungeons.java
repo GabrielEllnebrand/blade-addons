@@ -97,4 +97,22 @@ public class Dungeons {
 
     @ConfigValue
     public static boolean detectPlayerCount = false;
+
+    @ConfigValue
+    public static boolean useClassColors = false;
+
+    @ConfigValue
+    public static int archerColor = 0xffffaa00;
+
+    @ConfigValue
+    public static int berserkColor = 0xffaa0000;
+
+    @ConfigValue
+    public static int healerColor = 0xffff55ff;
+
+    @ConfigValue
+    public static int tankColor = 0xff00aa00;
+
+    @ConfigValue
+    public static int mageColor = 0xff55ffff;
 }

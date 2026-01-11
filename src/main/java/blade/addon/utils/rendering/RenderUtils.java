@@ -34,6 +34,12 @@ public class RenderUtils {
         drawCenteredText(context, textRenderer, Text.literal(string), x, y, maxWidth, 0xffffffff);
     }
 
+    public static void drawCenteredText(DrawContext context, HUDComponent component, Text text) {
+        TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
+        if (textRenderer == null) return;
+        drawCenteredText(context, textRenderer, text, component.getScaledX(), component.getScaledY(), component.getWidth());
+    }
+
     public static void drawTimer(HUDComponent component, DrawContext context, int tick, int color) {
         double num = tick * Constants.TICK_DURATION;
         drawTimer(component, context, num, color);

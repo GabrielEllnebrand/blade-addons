@@ -1,6 +1,6 @@
 package blade.addon.features.other;
 
-import blade.addon.utils.Debug;
+import blade.addon.utils.debug.Debug;
 import blade.addon.utils.Location;
 import blade.addon.utils.Misc;
 import blade.addon.utils.Scheduler;

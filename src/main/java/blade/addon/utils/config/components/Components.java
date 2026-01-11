@@ -21,6 +21,7 @@ import blade.addon.features.dungeon.f7.terms.TermStartTimer;
 import blade.addon.features.other.KickedTimer;
 import blade.addon.features.other.RagDisplay;
 import blade.addon.features.other.SelectedPet;
+import blade.addon.features.notifications.Notifications;
 import blade.addon.utils.config.values.Dungeons;
 import blade.addon.utils.config.values.ExtraOptions;
 import blade.addon.utils.config.values.Floor7;
@@ -112,4 +113,7 @@ public class Components {
 
     @ConfigValue
     public static HUDComponent leapedDisplay = new HUDComponent(0, 0, 110, 10, 1, "Leaped displayed", LeapNotification::display, LeapNotification::render, () -> Floor7.leapNotifications);
+
+    @ConfigValue
+    public static HUDComponent chatNotification = new HUDComponent(0, 0, NOTIFICATION_WIDTH, 10, 1, "Chat notification", Notifications::display, Notifications::render, () -> !Dungeons.combineScreenNotifications);
 }

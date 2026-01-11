@@ -1,6 +1,6 @@
 package blade.addon.utils.data;
 
-import blade.addon.utils.Debug;
+import blade.addon.utils.debug.Debug;
 import net.hypixel.modapi.HypixelModAPI;
 import net.hypixel.modapi.packet.impl.clientbound.ClientboundPartyInfoPacket;
 import net.hypixel.modapi.packet.impl.serverbound.ServerboundPartyInfoPacket;

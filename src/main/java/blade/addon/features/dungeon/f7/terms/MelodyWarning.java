@@ -1,8 +1,10 @@
 package blade.addon.features.dungeon.f7.terms;
 
+import blade.addon.utils.Constants;
 import blade.addon.utils.Location;
-import blade.addon.utils.Misc;
+import blade.addon.utils.config.values.Dungeons;
 import blade.addon.utils.config.values.Floor7;
+import blade.addon.utils.data.EntityUtil;
 import blade.addon.utils.dungeon.DungeonClass;
 import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.events.Events;
@@ -10,6 +12,8 @@ import blade.addon.utils.rendering.RenderUtils;
 import config.practical.hud.HUDComponent;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -39,7 +43,7 @@ public class MelodyWarning {
                     melodyStarted = true;
                     name = username;
                     furthestProgress = progress;
-                    ownUsername = Misc.isClientPlayer(username);
+                    ownUsername = EntityUtil.isClientPlayer(username);
                     if (!names.contains(username)) {
                         names.add(username);
                     }
@@ -84,7 +88,17 @@ public class MelodyWarning {
 
         DungeonClass dungeonClass = DungeonClass.getClass(name);
         int num = Math.min(furthestProgress / 25, 3);
-        Text text = Text.literal("§5§l" + (dungeonClass != null ? dungeonClass.name() : name != null? name: "Someone") + " §r§dhas melody! " + num + "/4");
+
+        int color = Constants.DARK_PURPLE;
+        if (Dungeons.useClassColors) {
+            color = DungeonClass.getColor(name);
+        }
+
+
+        MutableText nameText = Text.literal(dungeonClass != null ? dungeonClass.name() : name != null? name: "Someone").setStyle(Style.EMPTY.withColor(color).withBold(true));
+        MutableText infoText = Text.literal(" §r§dhas melody! " + num + "/4").setStyle(Style.EMPTY);
+
+        Text text = nameText.append(infoText);
 
         RenderUtils.drawCenteredText(context, MinecraftClient.getInstance().textRenderer, text, x, y, component.getWidth());
     }

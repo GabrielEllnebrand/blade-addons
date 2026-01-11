@@ -3,6 +3,7 @@ package blade.addon.utils.dungeon;
 import blade.addon.features.dungeon.f7.DragSpawnTimer;
 import blade.addon.utils.Location;
 import blade.addon.utils.Scheduler;
+import blade.addon.utils.config.values.Dungeons;
 import blade.addon.utils.config.values.Floor7;
 import blade.addon.utils.events.Events;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
@@ -99,6 +100,22 @@ public enum DungeonClass {
             return nameClassMap.get(playerName);
         }
         return null;
+    }
+
+    public static int getColor(DungeonClass dungeonClass) {
+        if (dungeonClass == null) return 0xffff55ff;
+
+        return switch (dungeonClass) {
+            case ARCHER -> Dungeons.archerColor;
+            case BERSERK -> Dungeons.berserkColor;
+            case HEALER -> Dungeons.healerColor;
+            case MAGE -> Dungeons.mageColor;
+            case TANK -> Dungeons.tankColor;
+        };
+    }
+
+    public static int getColor(String name) {
+        return getColor(getClass(name));
     }
 
     public static boolean isClass(DungeonClass dungeonClass) {

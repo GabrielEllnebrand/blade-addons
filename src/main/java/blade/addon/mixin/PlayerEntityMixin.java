@@ -1,6 +1,6 @@
 package blade.addon.mixin;
 
-import blade.addon.utils.detection.PlayerDataHolder;
+import blade.addon.utils.interfaces.PlayerDataHolder;
 import net.minecraft.entity.player.PlayerEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;

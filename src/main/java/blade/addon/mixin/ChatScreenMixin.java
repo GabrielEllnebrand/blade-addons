@@ -1,13 +1,12 @@
 package blade.addon.mixin;
 
-import blade.addon.utils.Misc;
 import blade.addon.utils.config.values.ExtraOptions;
+import blade.addon.utils.data.TextUtil;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.hud.ChatHudLine;
 import net.minecraft.client.gui.screen.ChatScreen;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
 import org.lwjgl.glfw.GLFW;
 import org.spongepowered.asm.mixin.Mixin;
@@ -43,9 +42,9 @@ public class ChatScreenMixin extends Screen {
             if (visibleMessages == null || index < 0 || index >= visibleMessages.size()) return;
 
             ChatHudLine.Visible msg = visibleMessages.get(index);
-            string = orderedTextToString(msg.content());
+            string = TextUtil.orderedTextToString(msg.content());
         } else {
-            string = Misc.copyChat(hudInvoker, x, y);
+            string = copyChat(hudInvoker, x, y);
         }
 
         if (string == null) return;
@@ -62,14 +61,38 @@ public class ChatScreenMixin extends Screen {
     }
 
     @Unique
-    private static String orderedTextToString(OrderedText text) {
+    private static String copyChat(ChatHudInvoker hudInvoker, double x, double y) {
+        List<ChatHudLine.Visible> messages = hudInvoker.getVisibleMessages();
+        int endIndex = hudInvoker.getLineIndex(x, y);
+
+        if (messages == null || endIndex < 0 || endIndex >= messages.size()) return null;
+
+        int startIndex = endIndex;
+
+        //find start of msg
+        for (int i = endIndex; i >= 0; i--) {
+            ChatHudLine.Visible chatHudLine = messages.get(i);
+            if (chatHudLine.endOfEntry()) {
+                startIndex = i;
+                break;
+            }
+        }
+
+        if (!messages.get(endIndex).endOfEntry()) {
+            //find end of msg
+            for (int i = endIndex + 1; i < messages.size(); i++) {
+                ChatHudLine.Visible chatHudLine = messages.get(i);
+                if (chatHudLine.endOfEntry()) {
+                    endIndex = i - 1;
+                    break;
+                }
+            }
+        }
         StringBuilder builder = new StringBuilder();
-
-        text.accept((index, style, codePoint) -> {
-            builder.appendCodePoint(codePoint);
-            return true;
-        });
-
+        for (int i = endIndex; i >= startIndex; i--) {
+            ChatHudLine.Visible chatHudLine = messages.get(i);
+            TextUtil.acceptOrderedText(builder, chatHudLine.content());
+        }
         return builder.toString();
     }
 }

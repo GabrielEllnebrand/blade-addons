@@ -6,6 +6,7 @@ import blade.addon.features.dungeon.f7.invincibility.InvincibilityTimer;
 import blade.addon.features.dungeon.f7.location.LocationNotifier;
 import blade.addon.features.highlight.MobHighlight;
 import blade.addon.features.other.DianaNotifier;
+import blade.addon.features.notifications.NotificationList;
 import blade.addon.utils.config.components.Components;
 import blade.addon.utils.config.values.Buttons;
 import blade.addon.utils.config.values.Dungeons;
@@ -27,6 +28,7 @@ import config.practical.widgets.options.ConfigOptions;
 import config.practical.widgets.sliders.ConfigDouble;
 import config.practical.widgets.sliders.ConfigInt;
 import config.practical.widgets.sound.ConfigSound;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
 
@@ -56,6 +58,16 @@ public class Config {
         invincibility.add(new ConfigBool(Text.literal("Show title on proc"), () -> Dungeons.showProcTitle, bool -> Dungeons.showProcTitle = bool));
 
         dungeons.add(invincibility);
+
+        ConfigSection classColors = new ConfigSection(Text.literal("Class Colors"));
+        classColors.add(new ConfigBool(Text.literal("Use class colors"), () -> Dungeons.useClassColors, bool -> Dungeons.useClassColors = bool));
+        classColors.add(new ConfigColor(Text.literal("Archer color"), () -> Dungeons.archerColor, color -> Dungeons.archerColor = color, "archer-color", false));
+        classColors.add(new ConfigColor(Text.literal("Berserk color"), () -> Dungeons.berserkColor, color -> Dungeons.berserkColor = color, "berserk-color", false));
+        classColors.add(new ConfigColor(Text.literal("Healer color"), () -> Dungeons.healerColor, color -> Dungeons.healerColor = color, "healer-color", false));
+        classColors.add(new ConfigColor(Text.literal("Tank color"), () -> Dungeons.tankColor, color -> Dungeons.tankColor = color, "tank-color", false));
+        classColors.add(new ConfigColor(Text.literal("Mage color"), () -> Dungeons.mageColor, color -> Dungeons.mageColor = color, "mage-color", false));
+
+        dungeons.add(classColors);
 
         ConfigSection hidePlayers = new ConfigSection(Text.literal("Hide Players"));
         hidePlayers.add(new ConfigBool(Text.literal("Hide after leap"), () -> Dungeons.hideAfterLeap, bool -> Dungeons.hideAfterLeap = bool));
@@ -142,7 +154,7 @@ public class Config {
         locationNotifier.add(new ConfigInt(Text.literal("Display duration (in client ticks)"), () -> Floor7.notificationDuration, num -> Floor7.notificationDuration = num, 1, 1, 20));
         locationNotifier.add(new ConfigSound(Text.literal("Notification sound"), Floor7.atLocationSound, 2, 2, false));
         locationNotifier.add(new ConfigInt(Text.literal("Sound repetitions"), () -> Floor7.notificationRepetitions, num -> Floor7.notificationRepetitions = num, 1, 0, 20));
-        locationNotifier.add(new ConfigButton(Text.literal("Test notification"), () -> LocationNotifier.startNotification("Someone At <location>!!")));
+        locationNotifier.add(new ConfigButton(Text.literal("Test notification"), () -> LocationNotifier.startNotification("Someone", " At <location>!!")));
 
         floor7.add(locationNotifier);
 
@@ -220,25 +232,38 @@ public class Config {
 
         screen.addCategory(highlight);
 
+
         ConfigCategory extra = new ConfigCategory("Extra options");
         extra.add(new ConfigString(Text.literal("Message prefix"), () -> ExtraOptions.textPrefix, str -> ExtraOptions.textPrefix = str));
-        extra.add(new ConfigBool(Text.literal("Disable fire in f5"), () -> ExtraOptions.hideFireInf5, bool -> ExtraOptions.hideFireInf5 = bool));
-        extra.add(new ConfigBool(Text.literal("Hide arrows stuck to entities"), () -> ExtraOptions.hideStuckArrows, bool -> ExtraOptions.hideStuckArrows = bool));
-        extra.add(new ConfigBool(Text.literal("Disable ability on cooldown sound"), () -> ExtraOptions.disableAbilityCooldownSound, bool -> ExtraOptions.disableAbilityCooldownSound = bool));
-        extra.add(new ConfigBool(Text.literal("Hide dead entities"), () -> ExtraOptions.hideDeadEntities, bool -> ExtraOptions.hideDeadEntities = bool));
-        extra.add(new ConfigBool(Text.literal("Item rarity background"), () -> ExtraOptions.itemRarityBackground, bool -> ExtraOptions.itemRarityBackground = bool));
-        extra.add(new ConfigBool(Text.literal("Hide potion effects overlay"), () -> ExtraOptions.hideStatusOverLay, bool -> ExtraOptions.hideStatusOverLay = bool));
-        extra.add(new ConfigBool(Text.literal("Disable glowing"), () -> ExtraOptions.disableGlowing, bool -> ExtraOptions.disableGlowing = bool));
-        extra.add(new ConfigBool(Text.literal("Draw item starCount"), () -> ExtraOptions.drawStarCount, bool -> ExtraOptions.drawStarCount = bool));
-        extra.add(new ConfigBool(Text.literal("Highlight protected items"), () -> ExtraOptions.highlightProtectedItem, bool -> ExtraOptions.highlightProtectedItem = bool));
+        extra.add(new ConfigButton(Text.literal("Edit Notifications"), () -> MinecraftClient.getInstance().setScreen(new NotificationList())));
         extra.add(new ConfigBool(Text.literal("Show pbs in chat"), () -> ExtraOptions.showPbs, bool -> ExtraOptions.showPbs = bool));
         extra.add(new ConfigBool(Text.literal("Disable scroll wheel in hotbar"), () -> ExtraOptions.disableScrollHotbar, bool -> ExtraOptions.disableScrollHotbar = bool));
         extra.add(new ConfigBool(Text.literal("Display kicked time"), () -> ExtraOptions.enableKickedTimer, bool -> ExtraOptions.enableKickedTimer = bool));
-        extra.add(new ConfigBool(Text.literal("Display rag axe duration"), () -> ExtraOptions.enableRagaxeDisplay, bool -> ExtraOptions.enableRagaxeDisplay = bool));
-        extra.add(new ConfigBool(Text.literal("Use custom rag sound"), () -> ExtraOptions.useCustomRagSound, bool -> ExtraOptions.useCustomRagSound = bool));
-        extra.add(new ConfigSound(Text.literal("Custom Rag sound"), ExtraOptions.ragSound));
-        extra.add(new ConfigBool(Text.literal("Compact hoppity messages"), () -> ExtraOptions.compactHoppityMsgs, bool -> ExtraOptions.compactHoppityMsgs = bool));
         extra.add(new ConfigBool(Text.literal("Disable recipe book"), () -> ExtraOptions.disableRecipeBook, bool -> ExtraOptions.disableRecipeBook = bool));
+
+        ConfigSection sound = new ConfigSection(Text.literal("Sound options"));
+        sound.add(new ConfigBool(Text.literal("Disable ability on cooldown sound"), () -> ExtraOptions.disableAbilityCooldownSound, bool -> ExtraOptions.disableAbilityCooldownSound = bool));
+        sound.add(new ConfigBool(Text.literal("Disable bonzo sound"), () -> ExtraOptions.disableBonzoSound, bool -> ExtraOptions.disableBonzoSound = bool));
+        extra.add(sound);
+
+        ConfigSection visual = new ConfigSection(Text.literal("Visual changes"));
+        visual.add(new ConfigBool(Text.literal("Disable fire in f5"), () -> ExtraOptions.hideFireInf5, bool -> ExtraOptions.hideFireInf5 = bool));
+        visual.add(new ConfigBool(Text.literal("Hide arrows stuck to entities"), () -> ExtraOptions.hideStuckArrows, bool -> ExtraOptions.hideStuckArrows = bool));
+        visual.add(new ConfigBool(Text.literal("Hide dead entities"), () -> ExtraOptions.hideDeadEntities, bool -> ExtraOptions.hideDeadEntities = bool));
+        visual.add(new ConfigBool(Text.literal("Item rarity background"), () -> ExtraOptions.itemRarityBackground, bool -> ExtraOptions.itemRarityBackground = bool));
+        visual.add(new ConfigBool(Text.literal("Hide potion effects overlay"), () -> ExtraOptions.hideStatusOverLay, bool -> ExtraOptions.hideStatusOverLay = bool));
+        visual.add(new ConfigBool(Text.literal("Disable glowing"), () -> ExtraOptions.disableGlowing, bool -> ExtraOptions.disableGlowing = bool));
+        visual.add(new ConfigBool(Text.literal("Draw item starCount"), () -> ExtraOptions.drawStarCount, bool -> ExtraOptions.drawStarCount = bool));
+        visual.add(new ConfigBool(Text.literal("Highlight protected items"), () -> ExtraOptions.highlightProtectedItem, bool -> ExtraOptions.highlightProtectedItem = bool));
+        visual.add(new ConfigBool(Text.literal("Compact hoppity messages"), () -> ExtraOptions.compactHoppityMsgs, bool -> ExtraOptions.compactHoppityMsgs = bool));
+        extra.add(visual);
+
+        ConfigSection rag = new ConfigSection(Text.literal("Ragnarock"));
+        rag.add(new ConfigBool(Text.literal("Display rag axe duration"), () -> ExtraOptions.enableRagaxeDisplay, bool -> ExtraOptions.enableRagaxeDisplay = bool));
+        rag.add(new ConfigBool(Text.literal("Use 1.8.9 rag sound"), () -> ExtraOptions.useOldRagSound, bool -> ExtraOptions.useOldRagSound = bool));
+        rag.add(new ConfigBool(Text.literal("Use custom rag sound"), () -> ExtraOptions.useCustomRagSound, bool -> ExtraOptions.useCustomRagSound = bool));
+        rag.add(new ConfigSound(Text.literal("Custom Rag sound"), ExtraOptions.ragSound));
+        extra.add(rag);
 
         ConfigSection copyChat = new ConfigSection(Text.literal("Copy chat"));
         copyChat.add(new ConfigBool(Text.literal("Copy with right click"), () -> ExtraOptions.copyChat, bool -> ExtraOptions.copyChat = bool));
@@ -274,8 +299,8 @@ public class Config {
         ss.add(new ConfigBool(Text.literal("Block unlucky button click"), () -> ExtraOptions.blockUnluckyButtonClick, bool -> ExtraOptions.blockUnluckyButtonClick = bool));
         ss.add(new ConfigDouble(Text.literal("Lucky button rng (0.1)"), () -> ExtraOptions.luckyButtonRng, num -> ExtraOptions.luckyButtonRng = num, 0.01, 0, 1));
         ss.add(new ConfigColor(Text.literal("Lucky button color"), () -> ExtraOptions.luckyButtonColor, color -> ExtraOptions.luckyButtonColor = color, "lucky-button-color", true));
-
         extra.add(ss);
+
         screen.addCategory(extra);
 
         ConfigCategory inventory = new ConfigCategory("Inventory buttons");

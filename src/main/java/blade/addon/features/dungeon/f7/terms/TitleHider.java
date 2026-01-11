@@ -3,6 +3,7 @@ package blade.addon.features.dungeon.f7.terms;
 import blade.addon.utils.Location;
 import blade.addon.utils.Misc;
 import blade.addon.utils.config.values.Floor7;
+import blade.addon.utils.data.EntityUtil;
 import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.dungeon.Section;
 import net.minecraft.network.packet.s2c.play.SubtitleS2CPacket;
@@ -24,7 +25,7 @@ public class TitleHider {
         Matcher matcher = TERMINALS_DONE_PATTERN.matcher(string);
         if (matcher.find()) {
             String name = matcher.group(1);
-            if (Misc.isClientPlayer(name)) {
+            if (EntityUtil.isClientPlayer(name)) {
                 Misc.forceTitle(Text.empty(), packet.text());
             }
             //end of section msg is handled by the Section class currently

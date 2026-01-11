@@ -4,6 +4,7 @@ import blade.addon.utils.Constants;
 import blade.addon.utils.Location;
 import blade.addon.utils.Misc;
 import blade.addon.utils.config.values.Floor7;
+import blade.addon.utils.data.EntityUtil;
 import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.events.Events;
 import blade.addon.utils.rendering.RenderUtils;
@@ -50,7 +51,7 @@ public class CrystalSpawn {
             matcher = RELIC_PICK_UP.matcher(text.getString());
             if (matcher.find()) {
                 String name = matcher.group(1);
-                if (Misc.isClientPlayer(name)) {
+                if (EntityUtil.isClientPlayer(name)) {
                     pickupTime = System.currentTimeMillis();
                     pickedUp = true;
                 }

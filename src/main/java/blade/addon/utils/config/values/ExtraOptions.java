@@ -110,4 +110,10 @@ public class ExtraOptions {
 
     @ConfigValue
     public static boolean copyLineOnly = false;
+
+    @ConfigValue
+    public static boolean disableBonzoSound = false;
+
+    @ConfigValue
+    public static boolean useOldRagSound = false;
 }

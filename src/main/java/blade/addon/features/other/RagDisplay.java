@@ -11,17 +11,20 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.entity.passive.WolfSoundVariants;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.util.Identifier;
 
 public class RagDisplay {
 
     private static final SoundEvent SOUND = SoundEvents.WOLF_SOUNDS.get(WolfSoundVariants.Type.CLASSIC).deathSound().value();
+    private static final SoundEvent OLD_RAG_SOUND = SoundEvent.of(Identifier.of(Constants.NAMESPACE, "wolf-howl"));
     private static final int TOTAL_TICKS = 200;
 
     private static int tick = 0;
 
     public static void init() {
         Events.ON_SOUND.register((soundEvent, volume, pitch) -> {
-            if (!ExtraOptions.enableRagaxeDisplay && !ExtraOptions.useCustomRagSound) return false;
+            if (!ExtraOptions.enableRagaxeDisplay && !ExtraOptions.useCustomRagSound && !ExtraOptions.useOldRagSound)
+                return false;
             if (soundEvent != SOUND) return false;
             if (volume != 1 && pitch != 1.4920635223388672) return false;
             if (!ItemUtil.isHolding("Ragnarock")) return false;
@@ -30,7 +33,10 @@ public class RagDisplay {
                 tick = TOTAL_TICKS;
             }
 
-            if (ExtraOptions.useCustomRagSound) {
+            if (ExtraOptions.useOldRagSound) {
+                Scheduler.scheduleSound(OLD_RAG_SOUND, 1, 1.4920635223388672f);
+                return true;
+            } else if (ExtraOptions.useCustomRagSound) {
                 Scheduler.scheduleSound(ExtraOptions.ragSound);
                 return true;
             }

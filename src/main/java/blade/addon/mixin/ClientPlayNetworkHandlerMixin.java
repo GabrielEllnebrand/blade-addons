@@ -1,10 +1,11 @@
 package blade.addon.mixin;
 
 import blade.addon.features.dungeon.f7.terms.TitleHider;
-import blade.addon.utils.Debug;
+import blade.addon.utils.data.EntityUtil;
+import blade.addon.utils.debug.Debug;
 import blade.addon.utils.Misc;
 import blade.addon.utils.config.values.ExtraOptions;
-import blade.addon.utils.detection.PlayerDataHolder;
+import blade.addon.utils.interfaces.PlayerDataHolder;
 import blade.addon.utils.events.Events;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;
@@ -16,6 +17,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
 import net.minecraft.network.packet.s2c.play.EntityTrackerUpdateS2CPacket;
+import net.minecraft.network.packet.s2c.play.PlaySoundFromEntityS2CPacket;
 import net.minecraft.network.packet.s2c.play.PlaySoundS2CPacket;
 import net.minecraft.network.packet.s2c.play.PlayerListS2CPacket;
 import net.minecraft.network.packet.s2c.play.SubtitleS2CPacket;
@@ -68,12 +70,31 @@ public class ClientPlayNetworkHandlerMixin {
         float pitch = packet.getPitch();
         SoundEvent event = packet.getSound().value();
 
-        if (pitch == 0.0 && volume == 8.0 && event == SoundEvents.ENTITY_ENDERMAN_TELEPORT && ExtraOptions.disableAbilityCooldownSound) {
+        if (ExtraOptions.disableAbilityCooldownSound && pitch == 0.0 && volume == 8.0 && event == SoundEvents.ENTITY_ENDERMAN_TELEPORT) {
+            ci.cancel();
+        }
+
+        if (ExtraOptions.disableBonzoSound && volume == 1.0 && event == SoundEvents.ENTITY_GHAST_WARN) {
             ci.cancel();
         }
 
         if (Debug.sendSound) {
-            Misc.addChatMessage(Text.literal("Sound: " + event.id()));
+            Misc.addChatMessage(Text.literal("Sound: " + event.id() + " Volume: " + volume + " Pitch: " + pitch));
+        }
+
+        if (Events.ON_SOUND.invoke(soundEvent -> soundEvent.onSound(event, volume, pitch))) {
+            ci.cancel();
+        }
+    }
+
+    @Inject(method = "onPlaySoundFromEntity", at = @At(value = "HEAD"), cancellable = true)
+    private void onLocationSound(PlaySoundFromEntityS2CPacket packet, CallbackInfo ci) {
+        float volume = packet.getVolume();
+        float pitch = packet.getPitch();
+        SoundEvent event = packet.getSound().value();
+
+        if (Debug.sendSound) {
+            Misc.addChatMessage(Text.literal("Sound: " + event.id() + " Volume: " + volume + " Pitch: " + pitch));
         }
 
         if (Events.ON_SOUND.invoke(soundEvent -> soundEvent.onSound(event, volume, pitch))) {
@@ -85,7 +106,6 @@ public class ClientPlayNetworkHandlerMixin {
     public void onTitle(SubtitleS2CPacket packet, CallbackInfo ci) {
         TitleHider.processSubtitle(packet);
     }
-
 
 
     @Inject(method = "onEntitySpawn", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayNetworkHandler;playSpawnSound(Lnet/minecraft/entity/Entity;)V"))
@@ -102,7 +122,7 @@ public class ClientPlayNetworkHandlerMixin {
     private static boolean isARealPlayer(Entity entity) {
         if (entity instanceof PlayerEntity player) {
 
-            if (Misc.isClientPlayer(player)) return true;
+            if (EntityUtil.isClientPlayer(player)) return true;
 
             ClientPlayNetworkHandler networkHandler = MinecraftClient.getInstance().getNetworkHandler();
             if (networkHandler == null) return false;

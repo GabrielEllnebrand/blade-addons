@@ -17,6 +17,8 @@ public class Constants {
     public static final int LIGHT_PURPLE = 0xffff55ff;
     public static final int DARK_PURPLE = 0xffaa00aa;
 
+    public static final int GOLD = 0xffffaa00;
+
 
 
     public static final int FAIL = 0;
