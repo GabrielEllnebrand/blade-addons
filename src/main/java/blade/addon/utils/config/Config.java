@@ -12,6 +12,7 @@ import blade.addon.utils.config.values.Buttons;
 import blade.addon.utils.config.values.Dungeons;
 import blade.addon.utils.config.values.ExtraOptions;
 import blade.addon.utils.config.values.Floor7;
+import blade.addon.utils.config.values.Visual;
 import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.dungeon.Section;
 import blade.addon.utils.dungeon.Split;
@@ -38,11 +39,29 @@ public class Config {
 
     private static final Text TITLE = Text.literal("Blade Addons");
     public static final ConfigManager manager = new ConfigManager(FolderUtility.OLD_PATH + FolderUtility.ADDONS_NAME,
-            List.of(Phase.class, Section.class, Split.class, MobHighlight.class, ExtraOptions.class, DianaNotifier.class, Components.class, Dungeons.class, Floor7.class, Buttons.class));
+            List.of(Phase.class, Section.class, Split.class, MobHighlight.class, ExtraOptions.class, DianaNotifier.class, Components.class, Dungeons.class, Floor7.class, Buttons.class, Visual.class));
 
     public static Screen createScreen(Screen parent) {
         ConfigurableScreen screen = new ConfigurableScreen(TITLE, parent, manager);
+        screen.addCategory(general());
+        screen.addCategory(dungeons());
+        screen.addCategory(floor7());
+        screen.addCategory(splits());
+        screen.addCategory(highlight());
+        screen.addCategory(extra());
+        screen.addCategory(visual());
+        screen.addCategory(buttons());
+        return screen;
+    }
 
+    private static ConfigCategory general() {
+        ConfigCategory general = new ConfigCategory("General");
+        general.add(new ConfigString(Text.literal("Message prefix"), () -> ExtraOptions.textPrefix, str -> ExtraOptions.textPrefix = str));
+        general.add(new ConfigButton(Text.literal("Edit Notifications"), () -> MinecraftClient.getInstance().setScreen(new NotificationList())));
+        return general;
+    }
+
+    private static ConfigCategory dungeons() {
         ConfigCategory dungeons = new ConfigCategory("Dungeons");
         ConfigSection start = new ConfigSection(Text.literal("Start of run"));
         start.add(new ConfigBool(Text.literal("Warp cooldown"), () -> Dungeons.enableWarpCooldown, bool -> Dungeons.enableWarpCooldown = bool));
@@ -103,9 +122,10 @@ public class Config {
         dungeons.add(new ConfigBool(Text.literal("Hide blaze nametags"), () -> Dungeons.hideBlazeNameTag, bool -> Dungeons.hideBlazeNameTag = bool));
         dungeons.add(new ConfigBool(Text.literal("Disable drop animation"), () -> Dungeons.disableDropAnimation, bool -> Dungeons.disableDropAnimation = bool));
         dungeons.add(new ConfigBool(Text.literal("Mask cooldown highlight"), () -> Dungeons.maskHighlight, bool -> Dungeons.maskHighlight = bool));
+        return dungeons;
+    }
 
-        screen.addCategory(dungeons);
-
+    private static ConfigCategory floor7() {
         ConfigCategory floor7 = new ConfigCategory("Floor 7");
         floor7.add(new ConfigBool(Text.literal("Combine tick timers"), () -> Floor7.combineTickTimers, bool -> Floor7.combineTickTimers = bool));
         floor7.add(new ConfigBool(Text.literal("Enable player leap count"), () -> Floor7.leapNotifications, bool -> Floor7.leapNotifications = bool));
@@ -173,8 +193,10 @@ public class Config {
 
         floor7.add(phase5);
 
-        screen.addCategory(floor7);
+        return floor7;
+    }
 
+    private static ConfigCategory splits() {
         ConfigCategory splits = new ConfigCategory("Splits");
         splits.add(new ConfigBool(Text.literal("Enable Splits"), () -> Phase.enableSplits, bool -> Phase.enableSplits = bool));
         splits.add(new ConfigBool(Text.literal("Include total time"), () -> Phase.includeTotalTime, bool -> Phase.includeTotalTime = bool));
@@ -194,8 +216,10 @@ public class Config {
         splits.add(new ConfigColor(Text.literal("Parentheses color (Inactive)"), () -> Split.parenthesesColorInactive, color -> Split.parenthesesColorInactive = color, "parentheses-inactive", false));
         splits.add(new ConfigColor(Text.literal("Parentheses color (Ongoing)"), () -> Split.parenthesesColorOngoing, color -> Split.parenthesesColorOngoing = color, "parentheses-ongoing", false));
         splits.add(new ConfigColor(Text.literal("Parentheses color (Complete)"), () -> Split.parenthesesColorComplete, color -> Split.parenthesesColorComplete = color, "parentheses-complete", false));
-        screen.addCategory(splits);
+        return splits;
+    }
 
+    private static ConfigCategory highlight() {
         ConfigCategory highlight = new ConfigCategory("Mob Highlight");
         highlight.add(new ConfigBool(Text.literal("Enable mob highlight"), () -> MobHighlight.mobHighlight, bool -> MobHighlight.mobHighlight = bool));
         highlight.add(new ConfigBool(Text.literal("Don't highlight invisible mobs"), () -> MobHighlight.dontShowInvisibleMobs, bool -> MobHighlight.dontShowInvisibleMobs = bool));
@@ -229,13 +253,12 @@ public class Config {
         sheep.add(new ConfigColor(Text.literal("Sheep filled color"), () -> MobHighlight.sheepFilledColor, color -> MobHighlight.sheepFilledColor = color, "sheep-filled", true));
         sheep.add(new ConfigColor(Text.literal("Sheep outline color"), () -> MobHighlight.sheepOutlineColor, color -> MobHighlight.sheepOutlineColor = color, "sheep-outline", true));
         highlight.add(sheep);
+        return highlight;
+    }
 
-        screen.addCategory(highlight);
-
+    private static ConfigCategory extra() {
 
         ConfigCategory extra = new ConfigCategory("Extra options");
-        extra.add(new ConfigString(Text.literal("Message prefix"), () -> ExtraOptions.textPrefix, str -> ExtraOptions.textPrefix = str));
-        extra.add(new ConfigButton(Text.literal("Edit Notifications"), () -> MinecraftClient.getInstance().setScreen(new NotificationList())));
         extra.add(new ConfigBool(Text.literal("Show pbs in chat"), () -> ExtraOptions.showPbs, bool -> ExtraOptions.showPbs = bool));
         extra.add(new ConfigBool(Text.literal("Disable scroll wheel in hotbar"), () -> ExtraOptions.disableScrollHotbar, bool -> ExtraOptions.disableScrollHotbar = bool));
         extra.add(new ConfigBool(Text.literal("Display kicked time"), () -> ExtraOptions.enableKickedTimer, bool -> ExtraOptions.enableKickedTimer = bool));
@@ -245,18 +268,6 @@ public class Config {
         sound.add(new ConfigBool(Text.literal("Disable ability on cooldown sound"), () -> ExtraOptions.disableAbilityCooldownSound, bool -> ExtraOptions.disableAbilityCooldownSound = bool));
         sound.add(new ConfigBool(Text.literal("Disable bonzo sound"), () -> ExtraOptions.disableBonzoSound, bool -> ExtraOptions.disableBonzoSound = bool));
         extra.add(sound);
-
-        ConfigSection visual = new ConfigSection(Text.literal("Visual changes"));
-        visual.add(new ConfigBool(Text.literal("Disable fire in f5"), () -> ExtraOptions.hideFireInf5, bool -> ExtraOptions.hideFireInf5 = bool));
-        visual.add(new ConfigBool(Text.literal("Hide arrows stuck to entities"), () -> ExtraOptions.hideStuckArrows, bool -> ExtraOptions.hideStuckArrows = bool));
-        visual.add(new ConfigBool(Text.literal("Hide dead entities"), () -> ExtraOptions.hideDeadEntities, bool -> ExtraOptions.hideDeadEntities = bool));
-        visual.add(new ConfigBool(Text.literal("Item rarity background"), () -> ExtraOptions.itemRarityBackground, bool -> ExtraOptions.itemRarityBackground = bool));
-        visual.add(new ConfigBool(Text.literal("Hide potion effects overlay"), () -> ExtraOptions.hideStatusOverLay, bool -> ExtraOptions.hideStatusOverLay = bool));
-        visual.add(new ConfigBool(Text.literal("Disable glowing"), () -> ExtraOptions.disableGlowing, bool -> ExtraOptions.disableGlowing = bool));
-        visual.add(new ConfigBool(Text.literal("Draw item starCount"), () -> ExtraOptions.drawStarCount, bool -> ExtraOptions.drawStarCount = bool));
-        visual.add(new ConfigBool(Text.literal("Highlight protected items"), () -> ExtraOptions.highlightProtectedItem, bool -> ExtraOptions.highlightProtectedItem = bool));
-        visual.add(new ConfigBool(Text.literal("Compact hoppity messages"), () -> ExtraOptions.compactHoppityMsgs, bool -> ExtraOptions.compactHoppityMsgs = bool));
-        extra.add(visual);
 
         ConfigSection rag = new ConfigSection(Text.literal("Ragnarock"));
         rag.add(new ConfigBool(Text.literal("Display rag axe duration"), () -> ExtraOptions.enableRagaxeDisplay, bool -> ExtraOptions.enableRagaxeDisplay = bool));
@@ -299,10 +310,29 @@ public class Config {
         ss.add(new ConfigBool(Text.literal("Block unlucky button click"), () -> ExtraOptions.blockUnluckyButtonClick, bool -> ExtraOptions.blockUnluckyButtonClick = bool));
         ss.add(new ConfigDouble(Text.literal("Lucky button rng (0.1)"), () -> ExtraOptions.luckyButtonRng, num -> ExtraOptions.luckyButtonRng = num, 0.01, 0, 1));
         ss.add(new ConfigColor(Text.literal("Lucky button color"), () -> ExtraOptions.luckyButtonColor, color -> ExtraOptions.luckyButtonColor = color, "lucky-button-color", true));
+        ss.add(new ConfigSound(Text.literal("Button sound"), ExtraOptions.ssSound));
+
         extra.add(ss);
+        return extra;
+    }
 
-        screen.addCategory(extra);
+    private static ConfigCategory visual() {
+        ConfigCategory visual = new ConfigCategory("Visual changes");
+        visual.add(new ConfigBool(Text.literal("Disable fire in f5"), () -> Visual.hideFireInf5, bool -> Visual.hideFireInf5 = bool));
+        visual.add(new ConfigBool(Text.literal("Hide all entity on fire"), () -> Visual.hideEntityFire, bool -> Visual.hideEntityFire = bool));
+        visual.add(new ConfigBool(Text.literal("Hide arrows stuck to entities"), () -> Visual.hideStuckArrows, bool -> Visual.hideStuckArrows = bool));
+        visual.add(new ConfigBool(Text.literal("Hide dead entities"), () -> Visual.hideDeadEntities, bool -> Visual.hideDeadEntities = bool));
+        visual.add(new ConfigBool(Text.literal("Item rarity background"), () -> Visual.itemRarityBackground, bool -> Visual.itemRarityBackground = bool));
+        visual.add(new ConfigBool(Text.literal("Hide potion effects overlay"), () -> Visual.hideStatusOverLay, bool -> Visual.hideStatusOverLay = bool));
+        visual.add(new ConfigBool(Text.literal("Disable glowing"), () -> Visual.disableGlowing, bool -> Visual.disableGlowing = bool));
+        visual.add(new ConfigBool(Text.literal("Draw item starCount"), () -> Visual.drawStarCount, bool -> Visual.drawStarCount = bool));
+        visual.add(new ConfigBool(Text.literal("Highlight protected items"), () -> Visual.highlightProtectedItem, bool -> Visual.highlightProtectedItem = bool));
+        visual.add(new ConfigBool(Text.literal("Compact hoppity messages"), () -> Visual.compactHoppityMsgs, bool -> Visual.compactHoppityMsgs = bool));
+        visual.add(new ConfigBool(Text.literal("Hide cooldown"), () -> Visual.hideCooldown, bool -> Visual.hideCooldown = bool));
+        return visual;
+    }
 
+    private static ConfigCategory buttons() {
         ConfigCategory inventory = new ConfigCategory("Inventory buttons");
         inventory.add(new ConfigString(Text.literal("Button 1"), () -> Buttons.command1, str -> Buttons.command1 = str));
         inventory.add(new ConfigString(Text.literal("Button 2"), () -> Buttons.command2, str -> Buttons.command2 = str));
@@ -311,10 +341,7 @@ public class Config {
         inventory.add(new ConfigString(Text.literal("Button 5"), () -> Buttons.command5, str -> Buttons.command5 = str));
         inventory.add(new ConfigString(Text.literal("Button 6"), () -> Buttons.command6, str -> Buttons.command6 = str));
         inventory.add(new ConfigString(Text.literal("Button 7"), () -> Buttons.command7, str -> Buttons.command7 = str));
-
-        screen.addCategory(inventory);
-
-        return screen;
+        return inventory;
     }
 
 }

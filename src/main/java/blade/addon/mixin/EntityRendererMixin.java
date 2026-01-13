@@ -1,7 +1,7 @@
 package blade.addon.mixin;
 
 import blade.addon.utils.config.values.Dungeons;
-import blade.addon.utils.config.values.ExtraOptions;
+import blade.addon.utils.config.values.Visual;
 import blade.addon.utils.data.EntityUtil;
 import net.minecraft.client.render.command.OrderedRenderCommandQueue;
 import net.minecraft.client.render.entity.EntityRenderer;
@@ -31,7 +31,12 @@ public class EntityRendererMixin<T extends Entity, S extends EntityRenderState> 
     @Inject(method = "updateRenderState", at = @At("TAIL"))
     public void hideFire(T entity, S state, float tickProgress, CallbackInfo ci) {
 
-        if (entity instanceof PlayerEntity player && ExtraOptions.hideFireInf5) {
+        if (Visual.hideEntityFire) {
+            state.onFire = false;
+            return;
+        }
+
+        if (entity instanceof PlayerEntity player && Visual.hideFireInf5) {
             if (EntityUtil.isClientPlayer(player)) {
                 state.onFire = false;
             }

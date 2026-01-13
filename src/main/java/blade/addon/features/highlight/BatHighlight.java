@@ -14,39 +14,45 @@ import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.VertexRendering;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.EntityDimensions;
-import net.minecraft.entity.passive.SheepEntity;
+import net.minecraft.entity.passive.BatEntity;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-public class SheepHighlight {
+public class BatHighlight {
 
-    private static final ConcurrentLinkedQueue<SheepEntity> sheepList = new ConcurrentLinkedQueue<>();
+    private static final float[] BAT_HEALTHS = {100.0f, 200.0f, 400.0f, 800.0f};
+
+    private static final ConcurrentLinkedQueue<BatEntity> bats = new ConcurrentLinkedQueue<>();
 
     public static void init() {
 
-        Events.ON_ENTITY_SPAWNED.register((entity, world) -> {
-            if (!Location.inDungeon()) return false;
-            if (entity instanceof SheepEntity sheep) {
-                sheepList.add(sheep);
+        Events.ON_ENTITY_TRACKED.register((entity, world) -> {
+            if (!Location.inDungeon() || !MobHighlight.mobHighlight) return false;
+            if (entity instanceof BatEntity bat) {
+                for (float health : BAT_HEALTHS) {
+                    if (health == bat.getHealth()) {
+                        bats.add(bat);
+                    }
+                }
             }
             return false;
         });
 
         Events.ON_LOCATION_CHANGE.register(location -> {
-            sheepList.clear();
+            bats.clear();
             return false;
         });
 
-        ClientTickEvents.END_CLIENT_TICK.register(client -> sheepList.removeIf(sheep -> sheep.isRemoved() || sheep.isDead()));
+        ClientTickEvents.END_CLIENT_TICK.register(client -> bats.removeIf(bat -> bat.isRemoved() ||bat.isDead()));
 
-        WorldRenderEvents.AFTER_ENTITIES.register(SheepHighlight::renderFilled);
-        WorldRenderEvents.AFTER_ENTITIES.register(SheepHighlight::renderOutline);
+        WorldRenderEvents.AFTER_ENTITIES.register(BatHighlight::renderFilled);
+        WorldRenderEvents.AFTER_ENTITIES.register(BatHighlight::renderOutline);
     }
 
     private static void renderFilled(WorldRenderContext context) {
-        if (!MobHighlight.highlightSheep) return;
+        if (!MobHighlight.mobHighlight) return;
         if (!MobHighlight.renderFilled()) return;
         Vec3d camera = context.worldState().cameraRenderState.pos;
         MatrixStack matrices = context.matrices();
@@ -60,8 +66,8 @@ public class SheepHighlight {
 
         double tickProgress = MinecraftClient.getInstance().getRenderTickCounter().getTickProgress(false);
 
-        float[] rgba = RenderUtils.toFloats(MobHighlight.sheepFilledColor);
-        sheepList.forEach(entity -> {
+        float[] rgba = RenderUtils.toFloats(MobHighlight.batFilledColor);
+        bats.forEach(entity -> {
 
             Vec3d pos = Misc.getPos(entity, tickProgress);
 
@@ -76,7 +82,7 @@ public class SheepHighlight {
     }
 
     private static void renderOutline(WorldRenderContext context) {
-        if (!MobHighlight.highlightSheep) return;
+        if (!MobHighlight.mobHighlight) return;
         if (!MobHighlight.renderOutline()) return;
         Vec3d camera = context.worldState().cameraRenderState.pos;
         MatrixStack matrices = context.matrices();
@@ -91,9 +97,9 @@ public class SheepHighlight {
         double tickProgress = MinecraftClient.getInstance().getRenderTickCounter().getTickProgress(false);
 
         MatrixStack.Entry entry = matrices.peek();
-        float[] rgba = RenderUtils.toFloats(MobHighlight.sheepOutlineColor);
+        float[] rgba = RenderUtils.toFloats(MobHighlight.batOutlineColor);
 
-        sheepList.forEach(entity -> {
+        bats.forEach(entity -> {
 
             Vec3d pos = Misc.getPos(entity, tickProgress);
 

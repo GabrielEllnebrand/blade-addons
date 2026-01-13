@@ -45,5 +45,4 @@ public class Events {
 
     public static final EventHandler<BlockEntityEvent> ON_BLOCK_ENTITY = new EventHandler<>();
 
-
 }

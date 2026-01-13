@@ -5,7 +5,7 @@ import blade.addon.features.dungeon.f7.terms.TitleHider;
 import blade.addon.features.item.ItemRarityHighlight;
 import blade.addon.features.item.ProtectItem;
 import blade.addon.features.item.StarCountHighlight;
-import blade.addon.utils.config.values.ExtraOptions;
+import blade.addon.utils.config.values.Visual;
 import blade.addon.utils.interfaces.GameHud;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.hud.InGameHud;
@@ -38,11 +38,11 @@ public class InGameHudMixin implements GameHud {
 
     @Inject(method = "renderHotbarItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/DrawContext;drawItem(Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/item/ItemStack;III)V"), order = 2000)
     public void drawBackground(DrawContext context, int x, int y, RenderTickCounter tickCounter, PlayerEntity player, ItemStack stack, int seed, CallbackInfo ci) {
-        if (ExtraOptions.itemRarityBackground) {
+        if (Visual.itemRarityBackground) {
             ItemRarityHighlight.draw(context, stack, x, y);
         }
 
-        if (ExtraOptions.highlightProtectedItem) {
+        if (Visual.highlightProtectedItem) {
             ProtectItem.draw(context, stack, x, y);
         }
 
@@ -50,14 +50,14 @@ public class InGameHudMixin implements GameHud {
 
     @Inject(method = "renderHotbarItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/DrawContext;drawItem(Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/item/ItemStack;III)V", shift = At.Shift.AFTER), order = 2000)
     public void drawStar(DrawContext context, int x, int y, RenderTickCounter tickCounter, PlayerEntity player, ItemStack stack, int seed, CallbackInfo ci) {
-        if (ExtraOptions.drawStarCount) {
+        if (Visual.drawStarCount) {
             StarCountHighlight.draw(context, stack, x, y);
         }
     }
 
     @Inject(method = "renderStatusEffectOverlay", at = @At("HEAD"), cancellable = true, order = 2000)
     public void renderStatusEffectsOverLay(DrawContext context, RenderTickCounter tickCounter, CallbackInfo ci) {
-        if (ExtraOptions.hideStatusOverLay) {
+        if (Visual.hideStatusOverLay) {
             ci.cancel();
         }
     }

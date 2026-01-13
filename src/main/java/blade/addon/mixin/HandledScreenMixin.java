@@ -7,6 +7,7 @@ import blade.addon.features.item.SelectedPetHighlight;
 import blade.addon.features.item.StarCountHighlight;
 import blade.addon.utils.config.values.Dungeons;
 import blade.addon.utils.config.values.ExtraOptions;
+import blade.addon.utils.config.values.Visual;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.GenericContainerScreen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
@@ -51,11 +52,11 @@ public class HandledScreenMixin<T extends ScreenHandler> {
             }
         }
 
-        if (ExtraOptions.highlightProtectedItem) {
+        if (Visual.highlightProtectedItem) {
             ProtectItem.draw(context, stack, x, y);
         }
 
-        if (ExtraOptions.itemRarityBackground) {
+        if (Visual.itemRarityBackground) {
             ItemRarityHighlight.draw(context, stack, x, y);
         }
     }
@@ -70,7 +71,7 @@ public class HandledScreenMixin<T extends ScreenHandler> {
             MaskHighlight.draw(context, stack, x, y);
         }
 
-        if (ExtraOptions.drawStarCount) {
+        if (Visual.drawStarCount) {
             StarCountHighlight.draw(context, stack, x, y);
         }
     }

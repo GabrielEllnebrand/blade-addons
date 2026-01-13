@@ -1,7 +1,7 @@
 package blade.addon.features.other;
 
 import blade.addon.utils.Misc;
-import blade.addon.utils.config.values.ExtraOptions;
+import blade.addon.utils.config.values.Visual;
 import blade.addon.utils.events.Events;
 import net.minecraft.text.Text;
 
@@ -17,7 +17,7 @@ public class CompactHoppity {
     public static void init() {
 
         Events.ON_GAME_MESSAGE.register(text -> {
-            if (!ExtraOptions.compactHoppityMsgs) return false;
+            if (!Visual.compactHoppityMsgs) return false;
 
             String string = text.getString();
             if (string.equals("HOPPITY'S HUNT You found a Hitman Egg!")) {

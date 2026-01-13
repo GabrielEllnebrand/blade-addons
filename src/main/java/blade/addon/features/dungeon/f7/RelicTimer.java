@@ -14,7 +14,6 @@ import blade.addon.utils.rendering.RenderUtils;
 import blade.addon.utils.times.PersonalBests;
 import config.practical.hud.HUDComponent;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
@@ -57,7 +56,6 @@ public class RelicTimer {
         }
     }
 
-    private static boolean ignoreChecks = false;
 
     private static final int GREEN_COLOR = 0xff00ff00;
     private static final int RED_COLOR = 0xffff0000;
@@ -68,7 +66,9 @@ public class RelicTimer {
     private static Relic pickedupRelic = null;
 
     private static int tick = Floor7.relicSpawnTicks;
+    private static boolean sentRelicTimes = false;
 
+    private static boolean ignoreChecks = false;
     //only here to test the relic progress bar
     private static boolean forceGUI = false;
 
@@ -101,9 +101,8 @@ public class RelicTimer {
             return false;
         });
 
-        ClientReceiveMessageEvents.GAME.register((message, overlay) -> {
-            if (!Location.inDungeon() || !Phase.inP5()) return;
-            Debug.sendDebugMessage(Text.literal("Debug: ").append(message));
+        Events.ON_GAME_MESSAGE.register(message -> {
+            if (!Location.inDungeon() || !Phase.inP5()) return false;
             String str = message.getString().replaceAll("§.", "");
             Matcher matcher = PATTERN.matcher(str);
             if (matcher.find()) {
@@ -111,24 +110,24 @@ public class RelicTimer {
                 String relicString = matcher.group(2);
 
                 ClientPlayerEntity player = MinecraftClient.getInstance().player;
-                if (player == null) return;
+                if (player == null) return false;
                 if (name.equals(player.getName().getString())) {
                     pickedupRelic = Relic.valueOf(relicString.toUpperCase());
                     Debug.sendDebugMessage(Text.literal("Picked up relic " + relicString));
                 }
             }
+
+            return false;
         });
 
-
         ClientTickEvents.END_WORLD_TICK.register(world -> {
-            if (!Location.inDungeon() || !Phase.inP5() || !Floor7.showAllRelicTimes) return;
+            if (!Location.inDungeon() || !Phase.inP5() || !Floor7.showAllRelicTimes ||sentRelicTimes) return;
 
             Iterable<Entity> entities = world.getEntities();
-            if (allRelicsPlaced()) return;
 
             for (Entity entity : entities) {
                 if (entity instanceof ArmorStandEntity armorStand) {
-                    if (!EntityUtil.isWearing(armorStand, EquipmentSlot.HEAD, "Relic")) return;
+                    if (!EntityUtil.isWearing(armorStand, EquipmentSlot.HEAD, "Relic")) continue;
 
                     double ax = armorStand.getX();
                     double az = armorStand.getZ();
@@ -146,6 +145,7 @@ public class RelicTimer {
                 for (Relic relic : Relic.values()) {
                     long time = relic.placedTime - phaseStartTime;
                     Misc.addChatMessage(Text.literal(relic.name + " &aRelic placed in &e" + Constants.DECIMAL_FORMAT.format(time) + "s&a."));
+                    sentRelicTimes = true;
                 }
             }
         });
@@ -225,6 +225,7 @@ public class RelicTimer {
         for (Relic relic : Relic.values()) {
             relic.placedTime = 0;
         }
+        sentRelicTimes = false;
     }
 
     private static boolean allRelicsPlaced() {

@@ -5,7 +5,7 @@ import blade.addon.features.dungeon.ItemHighlight;
 import blade.addon.features.highlight.MobHighlight;
 import blade.addon.utils.Location;
 import blade.addon.utils.config.values.Dungeons;
-import blade.addon.utils.config.values.ExtraOptions;
+import blade.addon.utils.config.values.Visual;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.render.Frustum;
@@ -34,7 +34,7 @@ public class EntityRenderManagerMixin {
             }
         }
 
-        if (!entity.isAlive() && ExtraOptions.hideDeadEntities) {
+        if (!entity.isAlive() && Visual.hideDeadEntities) {
             cir.setReturnValue(false);
             return;
         }

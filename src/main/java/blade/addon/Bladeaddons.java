@@ -26,9 +26,11 @@ import blade.addon.features.dungeon.f7.terms.LeapNotification;
 import blade.addon.features.dungeon.f7.terms.MelodyWarning;
 import blade.addon.features.dungeon.f7.terms.Pre4Notifier;
 import blade.addon.features.dungeon.f7.terms.TermStartTimer;
+import blade.addon.features.highlight.BatHighlight;
 import blade.addon.features.highlight.MimicHighlight;
 import blade.addon.features.highlight.MobHighlight;
 import blade.addon.features.highlight.SheepHighlight;
+import blade.addon.features.highlight.WitherHighlight;
 import blade.addon.features.item.DropAnimation;
 import blade.addon.features.notifications.Notifications;
 import blade.addon.features.other.CompactHoppity;
@@ -108,5 +110,7 @@ public class Bladeaddons implements ModInitializer {
         MimicHighlight.init();
         SheepHighlight.init();
         Notifications.init();
+        BatHighlight.init();
+        WitherHighlight.init();
     }
 }

@@ -7,25 +7,7 @@ import net.minecraft.util.math.BlockPos;
 
 public class ExtraOptions {
     @ConfigValue
-    public static boolean hideFireInf5 = false;
-
-    @ConfigValue
-    public static boolean hideStuckArrows = false;
-
-    @ConfigValue
     public static boolean disableAbilityCooldownSound = true;
-
-    @ConfigValue
-    public static boolean hideDeadEntities = false;
-
-    @ConfigValue
-    public static boolean itemRarityBackground = false;
-
-    @ConfigValue
-    public static boolean hideStatusOverLay = false;
-
-    @ConfigValue
-    public static boolean disableGlowing = false;
 
     @ConfigValue
     public static String textPrefix = "";
@@ -38,12 +20,6 @@ public class ExtraOptions {
 
     @ConfigValue
     public static boolean includePetSprite = true;
-
-    @ConfigValue
-    public static boolean drawStarCount = false;
-
-    @ConfigValue
-    public static boolean highlightProtectedItem = false;
 
     @ConfigValue
     public static boolean showPbs = true;
@@ -77,9 +53,6 @@ public class ExtraOptions {
 
     @ConfigValue
     public static boolean blockUnluckyButtonClick = false;
-
-    @ConfigValue
-    public static boolean compactHoppityMsgs = false;
 
     @ConfigValue
     public static BlockPos startButton = new BlockPos(2, 2, 2);
@@ -116,4 +89,7 @@ public class ExtraOptions {
 
     @ConfigValue
     public static boolean useOldRagSound = false;
+
+    @ConfigValue
+    public static SoundData ssSound = new SoundData(SoundEvents.BLOCK_NOTE_BLOCK_PLING.value(), 0, 1);
 }

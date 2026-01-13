@@ -128,13 +128,20 @@ public class PracticeSS {
         if (started && ExtraOptions.autoSkip) {
             start(world, state, pos);
             startPos = pos;
+            Misc.sendSound(ExtraOptions.ssSound);
         } else if (inSkipPhase || System.currentTimeMillis() - skippedTime < SKIP_TIME_MS) {
             clicks++;
             if (clicks >= 2 && inSkipPhase) {
                 skipped = true;
                 skippedTime = System.currentTimeMillis();
             }
+
+            if (clicks < 3) {
+                Misc.sendSound(ExtraOptions.ssSound);
+            }
+
         } else {
+            Misc.sendSound(ExtraOptions.ssSound);
             start(world, state, pos);
             startPos = pos;
         }
@@ -148,6 +155,8 @@ public class PracticeSS {
         BlockPos nextButton = buttons.get(currentIndex);
         if (samePosition(pos, nextButton)) {
             currentIndex++;
+            Misc.sendSound(ExtraOptions.ssSound);
+
 
             if (currentIndex == 5) {
                 recordTime();

@@ -1,6 +1,6 @@
 package blade.addon.mixin;
 
-import blade.addon.utils.config.values.ExtraOptions;
+import blade.addon.utils.config.values.Visual;
 import net.minecraft.client.render.entity.feature.StuckArrowsFeatureRenderer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -12,7 +12,7 @@ public class StuckArrowsFeatureRendererMixin {
 
     @Inject(method = "getObjectCount", at=@At("TAIL"), cancellable = true)
     public void shouldRender(CallbackInfoReturnable<Integer> cir) {
-        if (ExtraOptions.hideStuckArrows) {
+        if (Visual.hideStuckArrows) {
             cir.setReturnValue(0);
         }
 
