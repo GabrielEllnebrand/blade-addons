@@ -11,6 +11,7 @@ import blade.addon.features.dungeon.f7.DragSpawnTimer;
 import blade.addon.features.dungeon.f7.PillarExplode;
 import blade.addon.features.dungeon.f7.RelicTimer;
 import blade.addon.features.dungeon.f7.StormTickTimer;
+import blade.addon.features.dungeon.f7.invincibility.InvincibilityDuration;
 import blade.addon.features.dungeon.f7.invincibility.InvincibilityTimer;
 import blade.addon.features.dungeon.f7.location.LocationNotifier;
 import blade.addon.features.dungeon.f7.terms.GoldorTickTimer;
@@ -18,6 +19,7 @@ import blade.addon.features.dungeon.f7.terms.LeapNotification;
 import blade.addon.features.dungeon.f7.terms.MelodyWarning;
 import blade.addon.features.dungeon.f7.terms.Pre4Notifier;
 import blade.addon.features.dungeon.f7.terms.TermStartTimer;
+import blade.addon.features.item.HeldItemToolTip;
 import blade.addon.features.other.KickedTimer;
 import blade.addon.features.other.RagDisplay;
 import blade.addon.features.other.SelectedPet;
@@ -116,4 +118,10 @@ public class Components {
 
     @ConfigValue
     public static HUDComponent chatNotification = new HUDComponent(0, 0, NOTIFICATION_WIDTH, 10, 1, "Chat notification", Notifications::display, Notifications::render, () -> !Dungeons.combineScreenNotifications);
+
+    @ConfigValue
+    public static HUDComponent toolTipDisplay = new HUDComponent(0, 0, 110, 10, 1, "Tool Tip", HeldItemToolTip::display, HeldItemToolTip::render, () -> ExtraOptions.moveToolTip);
+
+    @ConfigValue
+    public static HUDComponent invincibilityDurationDisplay = new HUDComponent(0, 0, TICK_TIMER_WIDTH, 10, 1, "Invincibility duration", InvincibilityDuration::display, InvincibilityDuration::render, () -> Dungeons.InvincibilityDuration);
 }

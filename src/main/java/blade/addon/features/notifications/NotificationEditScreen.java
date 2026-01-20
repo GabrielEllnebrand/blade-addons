@@ -30,6 +30,7 @@ public class NotificationEditScreen extends Screen {
 
     private void initScrollWidgets() {
         scroll.children().clear();
+        scroll.add(new ConfigBool(Text.literal("Enabled"), notification::isEnabled, notification::setEnabled));
         scroll.add(new ConfigString(Text.literal("Trigger on message"), notification::getMatchString, notification::setMatchString, false));
         scroll.add(new ConfigString(Text.literal("Notification message"), notification::getNotificationString, notification::setNotificationString));
         scroll.add(new ConfigBool(Text.literal("Use regex"), notification::useRegex, notification::setUseRegex));

@@ -9,17 +9,16 @@ import blade.addon.utils.data.ItemUtil;
 import blade.addon.utils.debug.Debug;
 import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.events.Events;
-import blade.addon.utils.rendering.RenderLayers;
 import blade.addon.utils.rendering.RenderUtils;
+import blade.addon.utils.rendering.RenderingEvents;
 import blade.addon.utils.times.PersonalBests;
 import config.practical.hud.HUDComponent;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderEvents;
+import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderContext;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.VertexRendering;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
@@ -30,7 +29,6 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Vec3d;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -133,7 +131,7 @@ public class RelicTimer {
                     double az = armorStand.getZ();
 
                     for (Relic relic : Relic.values()) {
-                        if (relic.placedTime != 0 && Misc.getDistance(relic.box.maxX, ax, relic.box.maxZ, az) < 1) {
+                        if (relic.placedTime != 0 && Misc.getDistance(relic.box.maxX, relic.box.maxZ, ax, az) < 1) {
                             relic.placedTime = System.currentTimeMillis();
                             break;
                         }
@@ -195,27 +193,7 @@ public class RelicTimer {
             return false;
         });
 
-        WorldRenderEvents.BEFORE_DEBUG_RENDER.register(context -> {
-            if (pickedupRelic == null || !Floor7.renderRelicHighlight) return;
-
-            Vec3d camera = context.worldState().cameraRenderState.pos;
-            MatrixStack matrices = context.matrices();
-            if (matrices == null) return;
-            matrices.push();
-            matrices.translate(-camera.x, -camera.y, -camera.z);
-
-            VertexConsumerProvider consumers = context.consumers();
-            if (consumers == null) return;
-            VertexConsumer buffer = consumers.getBuffer(RenderLayers.FILLED_LAYER);
-
-
-            Box box = pickedupRelic.box;
-            float[] color = RenderUtils.toFloats(pickedupRelic.color);
-            VertexRendering.drawFilledBox(matrices, buffer, box.minX, box.minY, box.minZ, box.maxX, box.maxY, box.maxZ, color[0], color[1], color[2], color[3]);
-
-
-            matrices.pop();
-        });
+        RenderingEvents.FILLED_BLOCK.register(RelicTimer::worldRender);
 
     }
 
@@ -254,6 +232,14 @@ public class RelicTimer {
         ignoreChecks = !ignoreChecks;
         Misc.addChatMessage(Text.literal("Ignore relic checks: ").append(Misc.getStatusText(ignoreChecks)));
 
+    }
+
+    private static void worldRender(WorldRenderContext context, MatrixStack matrixStack, VertexConsumer consumer) {
+        if (pickedupRelic == null || !Floor7.renderRelicHighlight) return;
+
+        Box box = pickedupRelic.box;
+        float[] color = RenderUtils.toFloats(pickedupRelic.color);
+        VertexRendering.drawFilledBox(matrixStack, consumer, box.minX, box.minY, box.minZ, box.maxX, box.maxY, box.maxZ, color[0], color[1], color[2], color[3]);
     }
 
     public static boolean display() {

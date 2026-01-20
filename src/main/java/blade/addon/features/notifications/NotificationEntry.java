@@ -4,19 +4,25 @@ import config.practical.utilities.Constants;
 import config.practical.utilities.DrawHelper;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.Pair;
 
 class NotificationEntry extends ClickableWidget {
 
-    private static final int PADDING = 5;
-    private static final int TEXT_SPACE = 100;
-    private static final int MAX_TEXT_WIDTH = 75;
-    private static final int BUTTON_WIDTH = 60;
+    private static final Identifier CROSS = Identifier.of(blade.addon.utils.Constants.NAMESPACE, "cross");
 
+    private static final int PADDING = 5;
+    private static final int TEXT_SPACE = 125;
+    private static final int MAX_TEXT_WIDTH = 100;
+
+    private static final int SPRITE_SIZE = 16;
+    private static final int SPRITE_WIDTH_AREA = SPRITE_SIZE + 10;
 
     private final NotificationList parent ;
     private final Notification notification;
@@ -33,7 +39,7 @@ class NotificationEntry extends ClickableWidget {
         int y = getY();
         int width = getWidth();
         int height = getHeight();
-        DrawHelper.drawBackground(context, x, y, width, height);
+        DrawHelper.drawBackground(context, x, y, width - SPRITE_WIDTH_AREA, height);
 
         MinecraftClient mc = MinecraftClient.getInstance();
         TextRenderer textRenderer = mc.textRenderer;
@@ -41,11 +47,8 @@ class NotificationEntry extends ClickableWidget {
         drawText(context, textRenderer, notification.getMatchString(), x + PADDING, y);
         drawText(context, textRenderer, notification.getNotificationString(), x + PADDING * 2 + TEXT_SPACE, y);
 
-        int buttonWidth = 60;
-        String remove = "Remove";
-        textRenderer.trimToWidth(remove, TEXT_SPACE - 2);
-        DrawHelper.drawBackground(context, x + width - buttonWidth - PADDING, y + 4, buttonWidth, height - 8);
-        context.drawText(textRenderer, remove, x + width - buttonWidth, y + (30 - Constants.TEXT_HEIGHT) / 2, 0xffffffff, true);
+        Pair<Integer, Integer> pos = getRemovePos();
+        context.drawGuiTexture(RenderPipelines.GUI_TEXTURED, CROSS, pos.getLeft(), pos.getRight(), SPRITE_SIZE, SPRITE_SIZE, 0xffffffff);
     }
 
     private void drawText(DrawContext context, TextRenderer textRenderer, String string, int x, int y) {
@@ -64,15 +67,27 @@ class NotificationEntry extends ClickableWidget {
         context.disableScissor();
     }
 
+    private Pair<Integer, Integer> getRemovePos() {
+        return new Pair<>(getX() + width - SPRITE_SIZE - 5, getY() + (height - SPRITE_SIZE) / 2);
+    }
+
+    private boolean inRemovalBounds(double x, double y) {
+        Pair<Integer, Integer> pos = getRemovePos();
+        return x >= pos.getLeft() && x <=  pos.getLeft() + SPRITE_SIZE && y >= pos.getRight() && y <= pos.getRight() + SPRITE_SIZE;
+    }
+
     @Override
     public void onClick(Click click, boolean doubled) {
         double x = click.x();
         double y = click.y();
 
-        if (x >= getX() + width - BUTTON_WIDTH - PADDING && x <= getX() + width + BUTTON_WIDTH && y >= getY() + 4 && y <= getY() + height - 4) {
+        if (inRemovalBounds(x, y)) {
             parent.removeNotification(notification);
             return;
         }
+
+        //make sure you cant click around the button accidentally
+        if (width + getX() - SPRITE_WIDTH_AREA < x) return;
 
         MinecraftClient.getInstance().setScreen(new NotificationEditScreen(notification));
     }

@@ -92,4 +92,7 @@ public class ExtraOptions {
 
     @ConfigValue
     public static SoundData ssSound = new SoundData(SoundEvents.BLOCK_NOTE_BLOCK_PLING.value(), 0, 1);
+
+    @ConfigValue
+    public static boolean moveToolTip = false;
 }

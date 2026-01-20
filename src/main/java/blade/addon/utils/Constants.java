@@ -9,7 +9,7 @@ public class Constants {
     public static final double TICK_DURATION = 0.05;
     public static final int TEXT_HEIGHT = 10;
 
-    public static final int GREEN_COLOR = 0xff00ff00;
+    public static final int GREEN_COLOR = 0xff55ff55;
     public static final int ORANGE_COLOR = 0xffffaa00;
     public static final int RED_COLOR = 0xffff5555;
 

@@ -1,22 +1,19 @@
 package blade.addon.features.dungeon.f7.location;
 
-import blade.addon.utils.debug.Debug;
 import blade.addon.utils.Location;
 import blade.addon.utils.config.values.Floor7;
+import blade.addon.utils.debug.Debug;
 import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.events.Events;
-import blade.addon.utils.rendering.RenderLayers;
+import blade.addon.utils.rendering.RenderingEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderContext;
-import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.VertexRendering;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Vec3d;
 
 import java.util.ArrayList;
 
@@ -37,7 +34,7 @@ public class PositionMessages {
 
     public static void init() {
         ClientTickEvents.END_CLIENT_TICK.register(PositionMessages::tick);
-        WorldRenderEvents.BEFORE_ENTITIES.register(PositionMessages::render);
+        RenderingEvents.FILLED_BLOCK.register(PositionMessages::render);
         Events.ON_LOCATION_CHANGE.register(newLocation -> {
             disableAll();
             return false;
@@ -98,19 +95,10 @@ public class PositionMessages {
         }
     }
 
-    private static void render(WorldRenderContext context) {
+    private static void render(WorldRenderContext context, MatrixStack matrixStack, VertexConsumer consumer) {
         if (!Location.inDungeon() || !Debug.renderPositions) return;
 
-        Vec3d camera = context.worldState().cameraRenderState.pos;
-        MatrixStack matrices = context.matrices();
-        if (matrices == null) return;
-        matrices.push();
-        matrices.translate(-camera.x, -camera.y, -camera.z);
-
-        VertexConsumerProvider consumers = context.consumers();
-        if (consumers == null) return;
-        VertexConsumer consumer = consumers.getBuffer(RenderLayers.OUTLINE_LAYER);
-        MatrixStack.Entry entry = matrices.peek();
+        MatrixStack.Entry entry = matrixStack.peek();
         for (PositionMessage positionMessage : positionMessages) {
             Box box = positionMessage.getBox();
             if (positionMessage.sent()) {
@@ -119,9 +107,5 @@ public class PositionMessages {
                 VertexRendering.drawBox(entry, consumer, box, 1, 0, 0, 1);
             }
         }
-
-
-        matrices.pop();
-
     }
 }

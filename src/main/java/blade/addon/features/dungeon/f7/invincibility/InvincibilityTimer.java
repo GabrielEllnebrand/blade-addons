@@ -114,18 +114,21 @@ public class InvincibilityTimer {
             if (Dungeons.showProcTitle && !Pre4Notifier.atDev()) {
                 Misc.setTitle(Text.literal("Bonzo"));
             }
+            InvincibilityDuration.proc();
         }
         if (string.equals("Second Wind Activated! Your Spirit Mask saved your life!")) {
             spiritMaskTicks = SPIRIT_MASK_COOLDOWN;
             if (Dungeons.showProcTitle && !Pre4Notifier.atDev()) {
                 Misc.setTitle(Text.literal("Spirit"));
             }
+            InvincibilityDuration.proc();
         }
         if (string.equals("Your Phoenix Pet saved you from certain death!")) {
             phoenixTicks = PHOENIX_COOLDOWN;
             if (Dungeons.showProcTitle && !Pre4Notifier.atDev()) {
                 Misc.setTitle(Text.literal("Phoenix"));
             }
+            InvincibilityDuration.proc();
         }
     }
 

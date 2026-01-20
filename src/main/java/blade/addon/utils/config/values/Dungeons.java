@@ -115,4 +115,7 @@ public class Dungeons {
 
     @ConfigValue
     public static int mageColor = 0xff55ffff;
+
+    @ConfigValue
+    public static boolean InvincibilityDuration = false;
 }

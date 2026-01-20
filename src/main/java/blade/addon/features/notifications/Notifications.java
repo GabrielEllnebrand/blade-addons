@@ -36,7 +36,6 @@ public class Notifications {
     public static void init() {
         notifications = new CopyOnWriteArrayList<>();
         load();
-        System.out.println("Noti: " + notifications);
         Events.ON_GAME_MESSAGE.register(text -> {
             String message = text.getString();
             for (Notification notification : notifications) {
@@ -46,9 +45,7 @@ public class Notifications {
             return false;
         });
 
-        ClientTickEvents.END_CLIENT_TICK.register(event -> {
-            tick = Math.max(tick - 1, 0);
-        });
+        ClientTickEvents.END_CLIENT_TICK.register(event -> tick = Math.max(tick - 1, 0));
     }
 
     public static void addNotification(Notification notification) {
@@ -129,6 +126,9 @@ public class Notifications {
                 if (!notification.has("sendCommand")) continue;
                 boolean sendCommand = notification.get("sendCommand").getAsBoolean();
 
+                if (!notification.has("enabled")) continue;
+                boolean enabled = notification.get("enabled").getAsBoolean();
+
                 if (!notification.has("ticks")) continue;
                 int ticks = notification.get("ticks").getAsInt();
 
@@ -136,7 +136,7 @@ public class Notifications {
                 SoundData sound = loadSoundData(notification.get("sound"));
                 if  (sound == null) continue;
 
-                notifications.add(new Notification(matchString, notificationString, command, useRegex, sendCommand, ticks, sound));
+                notifications.add(new Notification(matchString, notificationString, command, useRegex, sendCommand, enabled, ticks, sound));
             } catch (NumberFormatException e) {
                 System.out.println("msg: " + e.getMessage());
             }

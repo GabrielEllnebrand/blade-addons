@@ -7,17 +7,15 @@ import blade.addon.utils.config.FolderUtility;
 import blade.addon.utils.config.values.Floor7;
 import blade.addon.utils.data.EntityUtil;
 import blade.addon.utils.dungeon.Phase;
-import blade.addon.utils.rendering.RenderLayers;
 import blade.addon.utils.rendering.RenderUtils;
+import blade.addon.utils.rendering.RenderingEvents;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderContext;
-import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.Text;
@@ -25,7 +23,6 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 import java.io.FileWriter;
@@ -47,8 +44,8 @@ public class BossWaypoints {
     public static void init() {
         load();
         //needs separate consumers because of depth checking or smth
-        WorldRenderEvents.BEFORE_ENTITIES.register(BossWaypoints::renderThroughWall);
-        WorldRenderEvents.BEFORE_ENTITIES.register(BossWaypoints::render);
+        RenderingEvents.FILLED_BLOCK.register(BossWaypoints::render);
+        RenderingEvents.NO_DEPTH_FILLED.register(BossWaypoints::renderThroughWall);
         UseBlockCallback.EVENT.register(BossWaypoints::onBlock);
     }
 
@@ -138,48 +135,24 @@ public class BossWaypoints {
         return ActionResult.PASS;
     }
 
-    private static void renderThroughWall(WorldRenderContext context) {
+    private static void render(WorldRenderContext context, MatrixStack matrixStack, VertexConsumer consumer) {
         if (!isInValidArea()) return;
-
-        Vec3d camera = context.worldState().cameraRenderState.pos;
-        MatrixStack matrices = context.matrices();
-        if (matrices == null) return;
-        matrices.push();
-        matrices.translate(-camera.x, -camera.y, -camera.z);
-
-        VertexConsumerProvider consumers = context.consumers();
-        if (consumers == null) return;
-        VertexConsumer consumer = consumers.getBuffer(RenderLayers.FILLED_LAYER);
 
         waypoints.forEach(waypoint -> {
             if (waypoint.isThroughWall()) {
-                waypoint.Render(consumer, matrices);
+                waypoint.Render(consumer, matrixStack);
             }
         });
-        matrices.pop();
-
     }
 
-    private static void render(WorldRenderContext context) {
+    private static void renderThroughWall(WorldRenderContext context, MatrixStack matrixStack, VertexConsumer consumer) {
         if (!isInValidArea()) return;
-        Vec3d camera = context.worldState().cameraRenderState.pos;
-
-        MatrixStack matrices = context.matrices();
-        if (matrices == null) return;
-        matrices.push();
-        matrices.translate(-camera.x, -camera.y, -camera.z);
-
-        VertexConsumerProvider consumers = context.consumers();
-        if (consumers == null) return;
-        VertexConsumer consumer = consumers.getBuffer(RenderLayers.THROUGH_WALL_FILLED_LAYER);
 
         waypoints.forEach(waypoint -> {
             if (!waypoint.isThroughWall()) {
-                waypoint.Render(consumer, matrices);
+                waypoint.Render(consumer, matrixStack);
             }
         });
-        matrices.pop();
-
     }
 
     public static boolean waypointExists(double x, double y, double z) {

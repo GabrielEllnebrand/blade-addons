@@ -7,6 +7,7 @@ import blade.addon.utils.config.values.ExtraOptions;
 import blade.addon.utils.events.Events;
 import blade.addon.utils.rendering.RenderLayers;
 import blade.addon.utils.rendering.RenderUtils;
+import blade.addon.utils.rendering.RenderingEvents;
 import blade.addon.utils.times.PersonalBests;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderContext;
@@ -116,7 +117,7 @@ public class PracticeSS {
             }
         });
 
-        WorldRenderEvents.BEFORE_DEBUG_RENDER.register(PracticeSS::render);
+        RenderingEvents.FILLED_BLOCK.register(PracticeSS::render);
         Events.ON_LOCATION_CHANGE.register(location -> {
             reset();
             return false;
@@ -351,34 +352,21 @@ public class PracticeSS {
         return endIndex - ticksLeft / getDelay();
     }
 
-    private static void render(WorldRenderContext context) {
+    private static void render(WorldRenderContext context, MatrixStack matrixStack, VertexConsumer consumer) {
         if (!started) return;
-        Vec3d camera = context.worldState().cameraRenderState.pos;
-        MatrixStack matrices = context.matrices();
-        if (matrices == null) return;
-        matrices.push();
-        matrices.translate(-camera.x, -camera.y, -camera.z);
-
-        VertexConsumerProvider consumers = context.consumers();
-        if (consumers == null) return;
-        VertexConsumer buffer = consumers.getBuffer(RenderLayers.FILLED_LAYER);
-
 
         if (showingPattern) {
             if (!ExtraOptions.realisticDelay || totalTicks - ticksLeft > START_WAIT_DURATION || endIndex != 2) {
                 int lastIndex = getLastDisplayIndex();
-                renderButtons(matrices, buffer, 0, lastIndex);
-                renderBackground(matrices, buffer, lastIndex - 1);
+                renderButtons(matrixStack, consumer, 0, lastIndex);
+                renderBackground(matrixStack, consumer, lastIndex - 1);
             }
         } else {
-            renderButtons(matrices, buffer, currentIndex, endIndex);
+            renderButtons(matrixStack, consumer, currentIndex, endIndex);
         }
-
-
-        matrices.pop();
     }
 
-    private static void renderButtons(MatrixStack matrixStack, VertexConsumer buffer, int start, int end) {
+    private static void renderButtons(MatrixStack matrixStack, VertexConsumer consumer, int start, int end) {
         Box directionBox = getBox(direction);
         if (directionBox == null) return;
 
@@ -387,7 +375,7 @@ public class PracticeSS {
             BlockPos pos = buttons.get(i);
             Box box = directionBox.offset(pos.getX(), pos.getY(), pos.getZ());
             float[] color = RenderUtils.toFloats(getColor(i));
-            VertexRendering.drawFilledBox(matrixStack, buffer, box.minX, box.minY, box.minZ, box.maxX, box.maxY, box.maxZ, color[0], color[1], color[2], color[3]);
+            RenderUtils.renderFilled(matrixStack, consumer, box, color);
         }
     }
 
@@ -401,7 +389,7 @@ public class PracticeSS {
         };
     }
 
-    private static void renderBackground(MatrixStack matrixStack, VertexConsumer buffer, int backgroundIndex) {
+    private static void renderBackground(MatrixStack matrixStack, VertexConsumer consumer, int backgroundIndex) {
         if (buttons.size() > backgroundIndex && backgroundIndex >= 0) {
             Box box = Box.of(buttons.get(backgroundIndex).toCenterPos(), 1, 1, 1);
             int dx, dz;
@@ -426,7 +414,7 @@ public class PracticeSS {
                     return;
                 }
             }
-            VertexRendering.drawFilledBox(matrixStack, buffer, box.minX + dx, box.minY, box.minZ + dz, box.maxX + dx, box.maxY, box.maxZ + dz, 0, 0.5f, 1, 1);
+            RenderUtils.renderFilled(matrixStack, consumer, box.offset(dx, 0, dz), new float[]{0, 0.5f, 1, 1});
         }
     }
 }

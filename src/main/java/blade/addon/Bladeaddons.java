@@ -18,6 +18,7 @@ import blade.addon.features.dungeon.f7.PillarExplode;
 import blade.addon.features.dungeon.f7.PredevTimer;
 import blade.addon.features.dungeon.f7.RelicTimer;
 import blade.addon.features.dungeon.f7.StormTickTimer;
+import blade.addon.features.dungeon.f7.invincibility.InvincibilityDuration;
 import blade.addon.features.dungeon.f7.invincibility.InvincibilityTimer;
 import blade.addon.features.dungeon.f7.location.LocationNotifier;
 import blade.addon.features.dungeon.f7.location.PositionMessages;
@@ -53,6 +54,7 @@ import blade.addon.utils.dungeon.DungeonClass;
 import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.dungeon.Section;
 import blade.addon.utils.events.CustomEvents;
+import blade.addon.utils.rendering.RenderingEvents;
 import net.fabricmc.api.ModInitializer;
 
 public class Bladeaddons implements ModInitializer {
@@ -71,6 +73,8 @@ public class Bladeaddons implements ModInitializer {
         Section.init();
         DungeonClass.init();
         PartyUtil.init();
+
+        RenderingEvents.init();
 
         StormTickTimer.init();
         GoldorTickTimer.init();
@@ -112,5 +116,6 @@ public class Bladeaddons implements ModInitializer {
         Notifications.init();
         BatHighlight.init();
         WitherHighlight.init();
+        InvincibilityDuration.init();
     }
 }

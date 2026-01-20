@@ -5,7 +5,11 @@ import config.practical.hud.HUDComponent;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.render.VertexConsumer;
+import net.minecraft.client.render.VertexRendering;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
+import net.minecraft.util.math.Box;
 
 public class RenderUtils {
     public static float[] toFloats(int argb) {
@@ -40,6 +44,12 @@ public class RenderUtils {
         drawCenteredText(context, textRenderer, text, component.getScaledX(), component.getScaledY(), component.getWidth());
     }
 
+    public static void drawCenteredText(DrawContext context, HUDComponent component, Text text, int color) {
+        TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
+        if (textRenderer == null) return;
+        drawCenteredText(context, textRenderer, text, component.getScaledX(), component.getScaledY(), component.getWidth(), color);
+    }
+
     public static void drawTimer(HUDComponent component, DrawContext context, int tick, int color) {
         double num = tick * Constants.TICK_DURATION;
         drawTimer(component, context, num, color);
@@ -50,5 +60,13 @@ public class RenderUtils {
         int y = component.getScaledY();
 
         RenderUtils.drawCenteredText(context, MinecraftClient.getInstance().textRenderer, Text.literal(Constants.DECIMAL_FORMAT.format(num)), x, y, component.getWidth(), color);
+    }
+
+    public static void renderFilled(MatrixStack matrixStack, VertexConsumer consumer, Box box, float[] rgba) {
+        VertexRendering.drawFilledBox(matrixStack, consumer, box.minX, box.minY, box.minZ, box.maxX, box.maxY, box.maxZ, rgba[0], rgba[1], rgba[2], rgba[3]);
+    }
+
+    public static void renderOutline(MatrixStack matrixStack, VertexConsumer consumer, Box box, float[] rgba) {
+        VertexRendering.drawBox(matrixStack.peek(), consumer, box, rgba[0], rgba[1], rgba[2], rgba[3]);
     }
 }

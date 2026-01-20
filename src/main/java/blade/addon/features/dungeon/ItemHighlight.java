@@ -4,15 +4,14 @@ import blade.addon.utils.Constants;
 import blade.addon.utils.Location;
 import blade.addon.utils.config.values.Dungeons;
 import blade.addon.utils.dungeon.Phase;
-import blade.addon.utils.rendering.RenderLayers;
 import blade.addon.utils.rendering.RenderUtils;
+import blade.addon.utils.rendering.RenderingEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientEntityEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderEvents;
+import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderContext;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.VertexRendering;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.world.ClientWorld;
@@ -21,7 +20,6 @@ import net.minecraft.entity.ItemEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
 
 import java.util.HashSet;
 import java.util.List;
@@ -57,32 +55,23 @@ public class ItemHighlight {
             }
         });
 
-        WorldRenderEvents.BEFORE_DEBUG_RENDER.register(context -> {
-            if (!Dungeons.highlightItems) return;
-            Vec3d camera = context.worldState().cameraRenderState.pos;
-            MatrixStack matrices = context.matrices();
-            if (matrices == null) return;
-            matrices.push();
-            matrices.translate(-camera.x, -camera.y, -camera.z);
+        RenderingEvents.NO_DEPTH_FILLED.register(ItemHighlight::render);
+    }
 
-            VertexConsumerProvider consumers = context.consumers();
-            if (consumers == null) return;
-            VertexConsumer buffer = consumers.getBuffer(RenderLayers.THROUGH_WALL_FILLED_LAYER);
+    private static void render(WorldRenderContext context, MatrixStack matrixStack, VertexConsumer consumer) {
+        if (!Dungeons.highlightItems) return;
+        double tickProgress = MinecraftClient.getInstance().getRenderTickCounter().getTickProgress(false);
 
-            double tickProgress = MinecraftClient.getInstance().getRenderTickCounter().getTickProgress(false);
 
-            trackedItems.forEach((itemEntity, integer) -> {
-                double x =  MathHelper.lerp(tickProgress, itemEntity.lastRenderX, itemEntity.getX());
-                double y =  MathHelper.lerp(tickProgress, itemEntity.lastRenderY, itemEntity.getY());
-                double z =  MathHelper.lerp(tickProgress, itemEntity.lastRenderZ, itemEntity.getZ());
+        trackedItems.forEach((itemEntity, integer) -> {
+            double x =  MathHelper.lerp(tickProgress, itemEntity.lastRenderX, itemEntity.getX());
+            double y =  MathHelper.lerp(tickProgress, itemEntity.lastRenderY, itemEntity.getY());
+            double z =  MathHelper.lerp(tickProgress, itemEntity.lastRenderZ, itemEntity.getZ());
 
-                EntityDimensions dimension = itemEntity.getDimensions(itemEntity.getPose());
-                Box box = dimension.getBoxAt(x, y, z).expand(0.1).offset(0, 0.05, 0);
-                float[] color = RenderUtils.toFloats(getColor(itemEntity));
-                VertexRendering.drawFilledBox(matrices, buffer, box.minX, box.minY, box.minZ, box.maxX, box.maxY, box.maxZ, color[0], color[1], color[2], color[3]);
-            });
-
-            matrices.pop();
+            EntityDimensions dimension = itemEntity.getDimensions(itemEntity.getPose());
+            Box box = dimension.getBoxAt(x, y, z).expand(0.1).offset(0, 0.05, 0);
+            float[] color = RenderUtils.toFloats(getColor(itemEntity));
+            VertexRendering.drawFilledBox(matrixStack, consumer, box.minX, box.minY, box.minZ, box.maxX, box.maxY, box.maxZ, color[0], color[1], color[2], color[3]);
         });
     }
 

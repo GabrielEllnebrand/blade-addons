@@ -1,25 +1,20 @@
 package blade.addon.features.highlight;
 
 import blade.addon.utils.Location;
-import blade.addon.utils.Misc;
 import blade.addon.utils.data.EntityUtil;
 import blade.addon.utils.events.Events;
 import blade.addon.utils.interfaces.ArmourStandHolder;
-import blade.addon.utils.rendering.RenderLayers;
 import blade.addon.utils.rendering.RenderUtils;
+import blade.addon.utils.rendering.RenderingEvents;
 import config.practical.manager.ConfigValue;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderContext;
-import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.VertexRendering;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.EndermanEntity;
@@ -33,7 +28,6 @@ import net.minecraft.item.Items;
 import net.minecraft.text.Text;
 import net.minecraft.text.TextColor;
 import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Vec3d;
 
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -69,7 +63,7 @@ public class MobHighlight {
     private static final ConcurrentLinkedQueue<DataHolder> savedEntities = new ConcurrentLinkedQueue<>();
 
 
-    private static boolean dontRenderHighlight = false;
+    public static boolean dontRenderHighlight = false;
     @ConfigValue
     public static boolean mobHighlight = false;
     @ConfigValue
@@ -169,8 +163,8 @@ public class MobHighlight {
             dontRenderHighlight = player.hasStatusEffect(StatusEffects.BLINDNESS);
         });
 
-        WorldRenderEvents.AFTER_ENTITIES.register(MobHighlight::renderFilled);
-        WorldRenderEvents.AFTER_ENTITIES.register(MobHighlight::renderOutline);
+        RenderingEvents.FILLED_ENTITY.register(MobHighlight::renderFilled);
+        RenderingEvents.OUTLINE_ENTITY.register(MobHighlight::renderOutline);
     }
 
     public static void testArmourStand(ArmorStandEntity armorStand, MinecraftClient client) {
@@ -331,9 +325,8 @@ public class MobHighlight {
         return currentHighlight == HighlightType.BOTH || currentHighlight == HighlightType.OUTLINE;
     }
 
-    public static Box getBox(Entity entity, Vec3d pos) {
-        EntityDimensions dimension = entity.getDimensions(entity.getPose());
-        Box box = dimension.getBoxAt(pos);
+    public static Box getBox(Entity entity) {
+        Box box = EntityUtil.getBox(entity);
 
         //only shows the head
         if (entity instanceof EndermanEntity && entity.isInvisible() && MobHighlight.dontShowInvisibleMobs) {
@@ -350,77 +343,38 @@ public class MobHighlight {
         return box;
     }
 
-    private static void renderFilled(WorldRenderContext context) {
-        if (!mobHighlight || dontRenderHighlight) return;
-        if (!renderFilled()) return;
-        Vec3d camera = context.worldState().cameraRenderState.pos;
-        MatrixStack matrices = context.matrices();
-        if (matrices == null) return;
-        matrices.push();
-        matrices.translate(-camera.x, -camera.y, -camera.z);
+    private static void renderFilled(WorldRenderContext context, MatrixStack matrixStack, VertexConsumer consumer) {
+        if (!MobHighlight.mobHighlight || dontRenderHighlight || !MobHighlight.renderFilled()) return;
 
-        VertexConsumerProvider consumers = context.consumers();
-        if (consumers == null) return;
-        VertexConsumer filledConsumer = consumers.getBuffer(RenderLayers.FILLED_ENTITY_LAYER);
-
-        double tickProgress = MinecraftClient.getInstance().getRenderTickCounter().getTickProgress(false);
-
-        savedEntities.forEach(dataHolder -> {
-
-            Entity entity = dataHolder.entity;
-            MobType type = dataHolder.type;
+        for (DataHolder savedEntity : savedEntities) {
+            Entity entity = savedEntity.entity;
+            MobType type = savedEntity.type;
 
             if (entity.isInvisible() && MobHighlight.dontShowInvisibleMobs && entity instanceof PlayerEntity) return;
 
-            Vec3d pos = Misc.getPos(entity, tickProgress);
-
-            Box box = getBox(entity, pos);
-
-
+            Box box = getBox(entity);
             int filledColor = getFilledColor(type);
             float[] rgba = RenderUtils.toFloats(filledColor);
-            VertexRendering.drawFilledBox(matrices, filledConsumer, box.minX, box.minY, box.minZ, box.maxX, box.maxY, box.maxZ, rgba[0], rgba[1], rgba[2], rgba[3]);
-        });
 
+            RenderUtils.renderFilled(matrixStack, consumer, box, rgba);
 
-        matrices.pop();
-
+        }
     }
 
-    private static void renderOutline(WorldRenderContext context) {
-        if (!mobHighlight || dontRenderHighlight) return;
-        if (!renderOutline()) return;
-        Vec3d camera = context.worldState().cameraRenderState.pos;
-        MatrixStack matrices = context.matrices();
-        if (matrices == null) return;
-        matrices.push();
-        matrices.translate(-camera.x, -camera.y, -camera.z);
+    private static void renderOutline(WorldRenderContext context, MatrixStack matrixStack, VertexConsumer consumer) {
+        if (!MobHighlight.mobHighlight || dontRenderHighlight || !MobHighlight.renderOutline()) return;
 
-        VertexConsumerProvider consumers = context.consumers();
-        if (consumers == null) return;
-        VertexConsumer outlineConsumer = consumers.getBuffer(RenderLayers.getOutline(outlineWidth));
-
-        double tickProgress = MinecraftClient.getInstance().getRenderTickCounter().getTickProgress(false);
-
-        MatrixStack.Entry entry = matrices.peek();
-
-        savedEntities.forEach(dataHolder -> {
-
-            Entity entity = dataHolder.entity;
-            MobType type = dataHolder.type;
+        for (DataHolder savedEntity : savedEntities) {
+            Entity entity = savedEntity.entity;
+            MobType type = savedEntity.type;
 
             if (entity.isInvisible() && MobHighlight.dontShowInvisibleMobs && entity instanceof PlayerEntity) return;
 
-            Vec3d pos = Misc.getPos(entity, tickProgress);
-            Box box = getBox(entity, pos);
-
+            Box box = getBox(entity);
             int outlineColor = getOutlineColor(type);
             float[] rgba = RenderUtils.toFloats(outlineColor);
-            VertexRendering.drawBox(entry, outlineConsumer, box, rgba[0], rgba[1], rgba[2], rgba[3]);
-        });
 
-
-        matrices.pop();
-
+            RenderUtils.renderOutline(matrixStack, consumer, box, rgba);
+        }
     }
 }
