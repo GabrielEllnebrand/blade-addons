@@ -18,11 +18,15 @@ import blade.addon.utils.events.interfaces.SectionEvent;
 import blade.addon.utils.events.interfaces.ServerTickEvent;
 import blade.addon.utils.events.interfaces.SlotChangeEvent;
 import blade.addon.utils.events.interfaces.TerminalEvent;
+import blade.addon.utils.events.interfaces.WorldEvent;
 
 public class Events {
     public static final EventHandler<ServerTickEvent> ON_SERVER_TICK = new EventHandler<>();
     public static final EventHandler<SlotChangeEvent> ON_SLOT_CHANGE = new EventHandler<>();
+
     public static final EventHandler<LocationChangeEvent> ON_LOCATION_CHANGE = new EventHandler<>();
+    public static final EventHandler<WorldEvent> ON_WORLD_CHANGE = new EventHandler<>();
+
     public static final EventHandler<LeapEvent> ON_LEAP = new EventHandler<>();
     public static final EventHandler<RunEndEvent> ON_RUN_END = new EventHandler<>();
     public static final EventHandler<PlayerListEvent> ON_PLAYER_ENTRY = new EventHandler<>();

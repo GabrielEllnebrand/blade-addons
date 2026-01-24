@@ -1,11 +1,13 @@
 package blade.addon.features.other;
 
 import blade.addon.utils.Constants;
-import blade.addon.utils.debug.Debug;
-import blade.addon.utils.Scheduler;
+import blade.addon.utils.Misc;
 import blade.addon.utils.config.values.ExtraOptions;
+import blade.addon.utils.debug.Debug;
 import blade.addon.utils.events.Events;
+import blade.addon.utils.rendering.RenderUtils;
 import config.practical.hud.HUDComponent;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
@@ -27,12 +29,15 @@ public class SelectedPet {
     private static final Pattern MANUAL_EQUIP_PET_PATTERN = Pattern.compile("^You (summoned|despawned) your (?:\\[Lvl \\d+] )?(?:\\[[^\\]]+\\] )?(.+)!$");
     private static final Pattern RULE_EQUIP_PET_PATTERN = Pattern.compile("^Autopet equipped your \\[Lvl \\d+] (?:\\[[^\\]]+\\] )?(.+)! VIEW RULE$");
 
+    private static final int TOTAL_TICKS = 20;
+
     private static final Text NO_PET = Text.literal("§cNo pet");
     private static final String identifierPrefix = "pets/";
 
     private static Text currentPetText = NO_PET;
     private static String currentPetString = "";
     private static Identifier spriteId = null;
+    private static int tick = 0;
 
     public static void init() {
         ClientReceiveMessageEvents.GAME.register((message, overlay) -> {
@@ -85,6 +90,11 @@ public class SelectedPet {
 
             return false;
         });
+
+        ClientTickEvents.END_WORLD_TICK.register((world -> {
+            tick = Math.max(tick - 1, 0);
+        }));
+
     }
 
     private static void despawnPet() {
@@ -107,7 +117,8 @@ public class SelectedPet {
         updateSprite(stringName);
 
         if (sendSound && ExtraOptions.sendOnPetSound) {
-            Scheduler.scheduleSound(ExtraOptions.petSound);
+            Misc.sendSound(ExtraOptions.petSound);
+            tick = TOTAL_TICKS;
         }
     }
 
@@ -152,7 +163,14 @@ public class SelectedPet {
         TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
 
         context.drawText(textRenderer, currentPetText, x + (ExtraOptions.includePetSprite ? 18 : 0), y + component.getHeight() - textRenderer.fontHeight, 0xffffffff, true);
+    }
 
+    public static boolean displayNotification() {
+        return ExtraOptions.sendPetSwapNotification && tick > 0;
+    }
+
+    public static void renderNotification(HUDComponent component, DrawContext context) {
+        RenderUtils.drawCenteredText(context, component, currentPetText);
     }
 
 }

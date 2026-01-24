@@ -1,6 +1,6 @@
 package blade.addon.features.dungeon.f7.invincibility;
 
-import blade.addon.features.dungeon.f7.terms.Pre4Notifier;
+import blade.addon.features.dungeon.f7.terms.DeviceNotifier;
 import blade.addon.utils.Constants;
 import blade.addon.utils.Location;
 import blade.addon.utils.Misc;
@@ -111,21 +111,21 @@ public class InvincibilityTimer {
         Matcher matcher = BONZO_PATTERN.matcher(string);
         if (matcher.matches()) {
             bonzoMaskTicks = BONZO_MASK_COOLDOWN;
-            if (Dungeons.showProcTitle && !Pre4Notifier.atDev()) {
+            if (Dungeons.showProcTitle && !DeviceNotifier.at4thDev()) {
                 Misc.setTitle(Text.literal("Bonzo"));
             }
             InvincibilityDuration.proc();
         }
         if (string.equals("Second Wind Activated! Your Spirit Mask saved your life!")) {
             spiritMaskTicks = SPIRIT_MASK_COOLDOWN;
-            if (Dungeons.showProcTitle && !Pre4Notifier.atDev()) {
+            if (Dungeons.showProcTitle && !DeviceNotifier.at4thDev()) {
                 Misc.setTitle(Text.literal("Spirit"));
             }
             InvincibilityDuration.proc();
         }
         if (string.equals("Your Phoenix Pet saved you from certain death!")) {
             phoenixTicks = PHOENIX_COOLDOWN;
-            if (Dungeons.showProcTitle && !Pre4Notifier.atDev()) {
+            if (Dungeons.showProcTitle && !DeviceNotifier.at4thDev()) {
                 Misc.setTitle(Text.literal("Phoenix"));
             }
             InvincibilityDuration.proc();

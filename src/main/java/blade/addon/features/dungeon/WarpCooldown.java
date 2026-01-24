@@ -1,12 +1,10 @@
 package blade.addon.features.dungeon;
 
-import blade.addon.utils.Constants;
 import blade.addon.utils.config.values.Dungeons;
+import blade.addon.utils.rendering.RenderUtils;
 import config.practical.hud.HUDComponent;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.text.Text;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -43,10 +41,7 @@ public class WarpCooldown {
     }
 
     public static void render(HUDComponent component, DrawContext context) {
-        int x = component.getScaledX();
-        int y = component.getScaledY();
-
         double timeRemaining = Math.max((endTime - System.currentTimeMillis()) / 1000.0, 0);
-        context.drawText(MinecraftClient.getInstance().textRenderer, Text.literal("§5Warp Cooldown: §f" + Constants.DECIMAL_FORMAT.format(timeRemaining)), x, y, 0xffffffff, true);
+        RenderUtils.drawPrefixedTimer(component, context, timeRemaining, "Warp Cooldown");
     }
 }

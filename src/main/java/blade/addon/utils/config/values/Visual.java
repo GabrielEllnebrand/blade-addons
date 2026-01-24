@@ -37,4 +37,10 @@ public class Visual {
     @ConfigValue
     public static boolean hideEntityFire = false;
 
+    @ConfigValue
+    public static boolean oldPlayerHead = false;
+
+    @ConfigValue
+    public static boolean fixWitherEssence = false;
+
 }

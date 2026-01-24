@@ -7,7 +7,6 @@ import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.rendering.RenderUtils;
 import config.practical.hud.HUDComponent;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
@@ -89,14 +88,10 @@ public class LeapNotification {
     }
 
     public static void render(HUDComponent component, DrawContext context) {
-        int x = component.getScaledX();
-        int y = component.getScaledY();
-
         String start;
         if (currentSpot == 3) start = (count > 2 ? "§9" : "§4");
         else start = (count > 3 ? "§9" : "§4");
 
-        RenderUtils.drawCenteredText(context, MinecraftClient.getInstance().textRenderer, Text.literal(start + count + "§9/4 Players Leaped"), x, y, component.getWidth());
-
+        RenderUtils.drawCenteredText(context, component, Text.literal(start + count + "§9/4 Players Leaped"));
     }
 }

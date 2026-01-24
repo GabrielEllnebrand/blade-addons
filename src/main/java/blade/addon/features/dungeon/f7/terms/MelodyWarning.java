@@ -10,7 +10,6 @@ import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.events.Events;
 import blade.addon.utils.rendering.RenderUtils;
 import config.practical.hud.HUDComponent;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
@@ -83,9 +82,6 @@ public class MelodyWarning {
     }
 
     public static void render(HUDComponent component, DrawContext context) {
-        int x = component.getScaledX();
-        int y = component.getScaledY();
-
         DungeonClass dungeonClass = DungeonClass.getClass(name);
         int num = Math.min(furthestProgress / 25, 3);
 
@@ -94,13 +90,12 @@ public class MelodyWarning {
             color = DungeonClass.getColor(name);
         }
 
-
         MutableText nameText = Text.literal(dungeonClass != null ? dungeonClass.name() : name != null? name: "Someone").setStyle(Style.EMPTY.withColor(color).withBold(true));
         MutableText infoText = Text.literal(" §r§dhas melody! " + num + "/4").setStyle(Style.EMPTY);
 
         Text text = nameText.append(infoText);
 
-        RenderUtils.drawCenteredText(context, MinecraftClient.getInstance().textRenderer, text, x, y, component.getWidth());
+        RenderUtils.drawCenteredText(context, component, text);
     }
 
 }

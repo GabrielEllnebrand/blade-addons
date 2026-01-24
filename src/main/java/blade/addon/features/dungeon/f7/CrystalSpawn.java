@@ -21,34 +21,35 @@ import java.util.regex.Pattern;
 
 public class CrystalSpawn {
 
-    private static final Pattern PATTERN_1 = Pattern.compile("^\\[BOSS] Maxor: THAT BEAM! IT HURTS! IT HURTS!!$");
-    private static final Pattern PATTERN_2 = Pattern.compile("^\\[BOSS] Maxor: YOU TRICKED ME!$");
     private static final Pattern RELIC_PICK_UP = Pattern.compile("(\\w+) picked up an Energy Crystal!$");
+
+    private static final int REMINDER_TICK = 240;
+    private static final int TICK_SPAWN = 34;
 
     private static long pickupTime = 0;
     private static boolean pickedUp = false;
 
-    private static final int TICK_SPAWN = 34;
     private static int tick = 0;
+    private static int tickSincePicked = 0;
 
     public static void init() {
 
         Events.ON_GAME_MESSAGE.register(text -> {
-            if (!Location.inDungeon() || !Phase.inP1() || !Floor7.enableCrystalSpawnTime) return false;
+            if (!Location.inDungeon() || !Phase.inP1() || (!Floor7.enableCrystalSpawnTime && !Floor7.crystalPlaceReminder))
+                return false;
+            String string = text.getString();
 
-            Matcher matcher = PATTERN_1.matcher(text.getString());
-            if (matcher.find()) {
+            if (string.equals("[BOSS] Maxor: THAT BEAM! IT HURTS! IT HURTS!!")) {
                 tick = TICK_SPAWN;
                 return false;
             }
 
-            matcher = PATTERN_2.matcher(text.getString());
-            if (matcher.find()) {
+            if (string.equals("[BOSS] Maxor: YOU TRICKED ME!")) {
                 tick = TICK_SPAWN;
                 return false;
             }
 
-            matcher = RELIC_PICK_UP.matcher(text.getString());
+            Matcher matcher = RELIC_PICK_UP.matcher(text.getString());
             if (matcher.find()) {
                 String name = matcher.group(1);
                 if (EntityUtil.isClientPlayer(name)) {
@@ -61,11 +62,15 @@ public class CrystalSpawn {
         });
         Events.ON_SERVER_TICK.register(() -> {
             tick = Math.max(tick - 1, 0);
+            if (pickedUp) {
+                tickSincePicked++;
+            }
             return false;
         });
 
         Events.ON_LOCATION_CHANGE.register(newLocation -> {
             tick = 0;
+            tickSincePicked = 0;
             pickedUp = false;
             return false;
         });
@@ -82,6 +87,7 @@ public class CrystalSpawn {
                 if (distance < 6 && crystal.getY() == 224.375) {
                     PersonalBests.crystalTime.testNewTime(Text.literal("§aCrystal placed in "), pickupTime);
                     pickedUp = false;
+                    tickSincePicked = 0;
                 }
 
             }
@@ -90,10 +96,20 @@ public class CrystalSpawn {
     }
 
     public static boolean display() {
-        return tick > 0 && Location.inDungeon() && Floor7.enableCrystalSpawnTime;
+        return tick > 0 && Location.inDungeon() && Phase.inP1() && Floor7.enableCrystalSpawnTime;
     }
 
     public static void render(HUDComponent component, DrawContext context) {
         RenderUtils.drawTimer(component, context, tick, Constants.LIGHT_PURPLE);
     }
+
+    public static boolean displayNotification() {
+        return tickSincePicked > REMINDER_TICK && Location.inDungeon() && Phase.inP1() && Floor7.crystalPlaceReminder && pickedUp;
+    }
+
+    public static void renderNotification(HUDComponent component, DrawContext context) {
+        RenderUtils.drawCenteredText(context, component, Text.literal("§bPlace Crystal!"));
+    }
+
+
 }

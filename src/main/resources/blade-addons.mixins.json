@@ -9,7 +9,6 @@
     "ClientPlayNetworkHandlerMixin",
     "EntityMixin",
     "ItemStackMixin",
-    "PlayerEntityMixin",
     "PlayerInventoryMixin",
     "StuckArrowsFeatureRendererMixin"
   ],
@@ -35,6 +34,7 @@
     "MouseMixin",
     "RecipeBookScreenMixin",
     "RecipeBookWidgetMixin",
+    "SkullBlockEntityRendererMixin",
     "StatusEffectsDisplayMixin"
   ]
 }

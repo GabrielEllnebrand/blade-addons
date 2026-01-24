@@ -41,6 +41,10 @@ public enum Location {
 
         instance.subscribeToEventPacket(ClientboundLocationPacket.class);
 
+        Events.ON_WORLD_CHANGE.register(() -> {
+            detectedNewLocation = false;
+            return false;
+        });
     }
 
     public static boolean in(Location location) {
@@ -55,10 +59,6 @@ public enum Location {
 
     public static boolean inSkyblock() {
         return inSkyblock;
-    }
-
-    public static void swapWorld() {
-        detectedNewLocation = false;
     }
 
     public static boolean hasRecivedLocation() {

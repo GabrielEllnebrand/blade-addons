@@ -7,7 +7,6 @@ import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.events.Events;
 import blade.addon.utils.rendering.RenderUtils;
 import config.practical.hud.HUDComponent;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
 
@@ -34,11 +33,7 @@ public class TermStartTimer {
     }
 
     public static void render(HUDComponent component, DrawContext context) {
-        int x = component.getScaledX();
-        int y = component.getScaledY();
-
         double num = tick * Constants.TICK_DURATION;
-        RenderUtils.drawCenteredText(context, MinecraftClient.getInstance().textRenderer, Text.literal(Constants.DECIMAL_FORMAT.format(num)), x, y, component.getWidth(), Constants.YELLOW_COLOR);
-
+        RenderUtils.drawCenteredText(context, component, Text.literal(Constants.DECIMAL_FORMAT.format(num)), Constants.YELLOW_COLOR);
     }
 }

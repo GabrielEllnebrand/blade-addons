@@ -1,6 +1,6 @@
 package blade.addon.mixin;
 
-import blade.addon.features.dungeon.f7.terms.Pre4Notifier;
+import blade.addon.features.dungeon.f7.terms.DeviceNotifier;
 import blade.addon.features.dungeon.f7.terms.TitleHider;
 import blade.addon.features.item.HeldItemToolTip;
 import blade.addon.features.item.ItemRarityHighlight;
@@ -73,13 +73,13 @@ public class InGameHudMixin implements GameHud {
     @Inject(method = "setTitle", at = @At("HEAD"), cancellable = true, order = 2000)
     public void renderStatusEffectsOverLay(Text title, CallbackInfo ci) {
         if (TitleHider.shouldHideTitle()) ci.cancel();
-        else if (Pre4Notifier.disableTitles()) ci.cancel();
+        else if (DeviceNotifier.disableTitles()) ci.cancel();
     }
 
     @Inject(method = "setSubtitle", at = @At("HEAD"), cancellable = true, order = 2000)
     public void setSubtitle(Text subtitle, CallbackInfo ci) {
         if (TitleHider.shouldHideTitle()) ci.cancel();
-        else if (Pre4Notifier.disableTitles()) ci.cancel();
+        else if (DeviceNotifier.disableTitles()) ci.cancel();
     }
 
     @Inject(method = "renderHeldItemTooltip", at=@At("HEAD"))

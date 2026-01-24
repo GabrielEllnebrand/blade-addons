@@ -17,7 +17,6 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderContext;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexRendering;
 import net.minecraft.client.util.math.MatrixStack;
@@ -66,7 +65,6 @@ public class RelicTimer {
     private static int tick = Floor7.relicSpawnTicks;
     private static boolean sentRelicTimes = false;
 
-    private static boolean ignoreChecks = false;
     //only here to test the relic progress bar
     private static boolean forceGUI = false;
 
@@ -86,7 +84,7 @@ public class RelicTimer {
 
         Events.ON_LOCATION_CHANGE.register(newLocation -> {
             if (Location.inDungeon()) {
-               reset();
+                reset();
             }
             return false;
         });
@@ -107,9 +105,7 @@ public class RelicTimer {
                 String name = matcher.group(1);
                 String relicString = matcher.group(2);
 
-                ClientPlayerEntity player = MinecraftClient.getInstance().player;
-                if (player == null) return false;
-                if (name.equals(player.getName().getString())) {
+                if (EntityUtil.isClientPlayer(name)) {
                     pickedupRelic = Relic.valueOf(relicString.toUpperCase());
                     Debug.sendDebugMessage(Text.literal("Picked up relic " + relicString));
                 }
@@ -119,7 +115,7 @@ public class RelicTimer {
         });
 
         ClientTickEvents.END_WORLD_TICK.register(world -> {
-            if (!Location.inDungeon() || !Phase.inP5() || !Floor7.showAllRelicTimes ||sentRelicTimes) return;
+            if (!Location.inDungeon() || !Phase.inP5() || !Floor7.showAllRelicTimes || sentRelicTimes) return;
 
             Iterable<Entity> entities = world.getEntities();
 
@@ -133,7 +129,6 @@ public class RelicTimer {
                     for (Relic relic : Relic.values()) {
                         if (relic.placedTime != 0 && Misc.getDistance(relic.box.maxX, relic.box.maxZ, ax, az) < 1) {
                             relic.placedTime = System.currentTimeMillis();
-                            break;
                         }
                     }
                 }
@@ -150,15 +145,14 @@ public class RelicTimer {
 
 
         Events.ON_BLOCK_INTERACTION.register((result, itemStack) -> {
-            if (!ignoreChecks) {
-                if ((!Location.inDungeon() || !Phase.inP5())) return false;
-            }
+            if ((!Location.inDungeon() || !Phase.inP5())) return false;
 
             if (pickedupRelic == null) return false;
 
             BlockPos pos = result.getBlockPos();
 
-            if (!ItemUtil.itemHasName(itemStack, "Relic")) {
+            //skyblock menu check is there incase the item doesnt get updated
+            if (!ItemUtil.itemHasName(itemStack, "Relic") && !ItemUtil.itemHasName(itemStack, "Skyblock Menu")) {
                 if (Floor7.blockIncorrectRelicPlace) {
                     Debug.sendDebugMessage(Text.literal("Item: " + itemStack.getName()));
                     Misc.addChatMessage(Text.literal("Blocked a weird click"));
@@ -186,6 +180,7 @@ public class RelicTimer {
                 pickedupRelic = null;
             } else {
                 if (Floor7.blockIncorrectRelicPlace) {
+                    Debug.sendDebugMessage(Text.literal("Relic: " + pickedupRelic));
                     Misc.addChatMessage(Text.literal("incorrect click!"));
                     return true;
                 }
@@ -228,9 +223,12 @@ public class RelicTimer {
         }
     }
 
-    public static void testIgnoreChecks() {
-        ignoreChecks = !ignoreChecks;
-        Misc.addChatMessage(Text.literal("Ignore relic checks: ").append(Misc.getStatusText(ignoreChecks)));
+    public static void printRelic() {
+        Misc.addChatMessage(Text.literal("Relic: " + pickedupRelic));
+
+    }
+
+    public static void debugCommands() {
 
     }
 

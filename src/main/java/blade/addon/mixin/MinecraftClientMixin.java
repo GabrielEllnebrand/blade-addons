@@ -1,8 +1,8 @@
 package blade.addon.mixin;
 
 import blade.addon.features.item.DropAnimation;
-import blade.addon.utils.Location;
 import blade.addon.utils.events.Events;
+import blade.addon.utils.events.interfaces.WorldEvent;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.world.ClientWorld;
@@ -38,8 +38,8 @@ public class MinecraftClientMixin {
         DropAnimation.clearData();
     }
 
-    @Inject(method = "setWorld", at=@At(value = "TAIL"))
+    @Inject(method = "setWorld", at = @At(value = "TAIL"))
     private void onWorld(ClientWorld world, CallbackInfo ci) {
-        Location.swapWorld();
+        Events.ON_WORLD_CHANGE.invoke(WorldEvent::onWorldSwap);
     }
 }

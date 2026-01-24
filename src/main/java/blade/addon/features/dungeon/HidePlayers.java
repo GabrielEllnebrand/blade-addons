@@ -1,5 +1,6 @@
 package blade.addon.features.dungeon;
 
+import blade.addon.features.dungeon.f7.terms.DeviceNotifier;
 import blade.addon.utils.Location;
 import blade.addon.utils.config.values.Dungeons;
 import blade.addon.utils.data.EntityUtil;
@@ -8,14 +9,10 @@ import blade.addon.utils.events.Events;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.math.Vec3d;
 
 public class HidePlayers {
 
     private static final int HIDE_DURATION = 3 * 1000;
-    private static final double DISTANCE = 3;
-
-    private static final Vec3d SS_POSITION = new Vec3d(108, 119, 94);
 
     private static long startTime;
     private static boolean justLeapt = false;
@@ -45,7 +42,7 @@ public class HidePlayers {
         if (!Dungeons.hideAtSS || !Phase.inBoss()) return false;
         if (Dungeons.hideBeforeTermsOnly && Phase.inP3()) return false;
 
-        return SS_POSITION.distanceTo(player.getEntityPos()) <= DISTANCE;
+        return DeviceNotifier.atSS(player);
     }
 
     public static boolean testHideInRange(PlayerEntity player) {

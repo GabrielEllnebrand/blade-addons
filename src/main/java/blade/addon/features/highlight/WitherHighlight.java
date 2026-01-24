@@ -55,14 +55,14 @@ public class WitherHighlight {
     private static void renderFilled(WorldRenderContext context, MatrixStack matrixStack, VertexConsumer consumer) {
         if (!MobHighlight.mobHighlight || !MobHighlight.renderFilled() || MobHighlight.dontRenderHighlight) return;
 
-        float[] rgba = RenderUtils.toFloats(MobHighlight.batFilledColor);
+        float[] rgba = RenderUtils.toFloats(MobHighlight.witherFilledColor);
         withers.forEach(entity -> RenderUtils.renderFilled(matrixStack, consumer, getBox(entity), rgba));
     }
 
     private static void renderOutline(WorldRenderContext context, MatrixStack matrixStack, VertexConsumer consumer) {
         if (!MobHighlight.mobHighlight || !MobHighlight.renderOutline() || MobHighlight.dontRenderHighlight) return;
 
-        float[] rgba = RenderUtils.toFloats(MobHighlight.batOutlineColor);
+        float[] rgba = RenderUtils.toFloats(MobHighlight.witherOutlineColor);
         withers.forEach(entity -> RenderUtils.renderOutline(matrixStack, consumer, getBox(entity), rgba));
     }
 

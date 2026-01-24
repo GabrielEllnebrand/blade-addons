@@ -17,7 +17,8 @@ import blade.addon.features.dungeon.f7.location.LocationNotifier;
 import blade.addon.features.dungeon.f7.terms.GoldorTickTimer;
 import blade.addon.features.dungeon.f7.terms.LeapNotification;
 import blade.addon.features.dungeon.f7.terms.MelodyWarning;
-import blade.addon.features.dungeon.f7.terms.Pre4Notifier;
+import blade.addon.features.dungeon.f7.terms.DeviceNotifier;
+import blade.addon.features.dungeon.f7.terms.SectionProgress;
 import blade.addon.features.dungeon.f7.terms.TermStartTimer;
 import blade.addon.features.item.HeldItemToolTip;
 import blade.addon.features.other.KickedTimer;
@@ -99,7 +100,7 @@ public class Components {
     public static HUDComponent kickedTimer = new HUDComponent(0, 0, 100, 10, 1, "Kicked timer", KickedTimer::display, KickedTimer::render, () -> ExtraOptions.enableKickedTimer);
 
     @ConfigValue
-    public static HUDComponent pre4Notification = new HUDComponent(0, 0, NOTIFICATION_WIDTH, 10, 1, "pre4 done notification", Pre4Notifier::display, Pre4Notifier::render, () -> Floor7.notifyPre4Completion && !Dungeons.combineScreenNotifications);
+    public static HUDComponent pre4Notification = new HUDComponent(0, 0, NOTIFICATION_WIDTH, 10, 1, "Device done notification", DeviceNotifier::display, DeviceNotifier::render, () -> Floor7.notifyPre4Completion && !Dungeons.combineScreenNotifications);
 
     @ConfigValue
     public static HUDComponent pillarExplodeTimer = new HUDComponent(0, 0, TICK_TIMER_WIDTH, 10, 1, "Pillar explode timer", PillarExplode::displayTimer, PillarExplode::renderTimer, () -> Floor7.timePillarExplosion);
@@ -124,4 +125,13 @@ public class Components {
 
     @ConfigValue
     public static HUDComponent invincibilityDurationDisplay = new HUDComponent(0, 0, TICK_TIMER_WIDTH, 10, 1, "Invincibility duration", InvincibilityDuration::display, InvincibilityDuration::render, () -> Dungeons.InvincibilityDuration);
+
+    @ConfigValue
+    public static HUDComponent petTitleNotification = new HUDComponent(0, 0, NOTIFICATION_WIDTH, 10, 1, "Pet swap notification", SelectedPet::displayNotification, SelectedPet::renderNotification, () -> ExtraOptions.sendPetSwapNotification && !Dungeons.combineScreenNotifications);
+
+    @ConfigValue
+    public static HUDComponent crystalReminderNotification = new HUDComponent(0, 0, NOTIFICATION_WIDTH, 10, 1, "Crystal reminder notification", CrystalSpawn::displayNotification,CrystalSpawn::renderNotification, () -> Floor7.crystalPlaceReminder && !Dungeons.combineScreenNotifications);
+
+    @ConfigValue
+    public static HUDComponent sectionProgressDisplay = new HUDComponent(0, 0, 30, 10, 1, "Section progress", SectionProgress::display,  SectionProgress::render, () -> Floor7.showSectionProgress);
 }

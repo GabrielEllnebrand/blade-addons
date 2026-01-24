@@ -25,12 +25,14 @@ import blade.addon.features.dungeon.f7.location.PositionMessages;
 import blade.addon.features.dungeon.f7.terms.GoldorTickTimer;
 import blade.addon.features.dungeon.f7.terms.LeapNotification;
 import blade.addon.features.dungeon.f7.terms.MelodyWarning;
-import blade.addon.features.dungeon.f7.terms.Pre4Notifier;
+import blade.addon.features.dungeon.f7.terms.DeviceNotifier;
+import blade.addon.features.dungeon.f7.terms.SectionProgress;
 import blade.addon.features.dungeon.f7.terms.TermStartTimer;
 import blade.addon.features.highlight.BatHighlight;
 import blade.addon.features.highlight.MimicHighlight;
 import blade.addon.features.highlight.MobHighlight;
 import blade.addon.features.highlight.SheepHighlight;
+import blade.addon.features.highlight.TeammateHighlight;
 import blade.addon.features.highlight.WitherHighlight;
 import blade.addon.features.item.DropAnimation;
 import blade.addon.features.notifications.Notifications;
@@ -48,6 +50,7 @@ import blade.addon.utils.config.Config;
 import blade.addon.utils.config.FolderUtility;
 import blade.addon.utils.config.components.Components;
 import blade.addon.utils.config.values.Buttons;
+import blade.addon.utils.data.EntityUtil;
 import blade.addon.utils.data.PartyUtil;
 import blade.addon.utils.debug.Debug;
 import blade.addon.utils.dungeon.DungeonClass;
@@ -72,7 +75,9 @@ public class Bladeaddons implements ModInitializer {
         Phase.init();
         Section.init();
         DungeonClass.init();
+
         PartyUtil.init();
+        EntityUtil.init();
 
         RenderingEvents.init();
 
@@ -103,7 +108,7 @@ public class Bladeaddons implements ModInitializer {
         LocationNotifier.init();
         PredevTimer.init();
         KickedTimer.init();
-        Pre4Notifier.init();
+        DeviceNotifier.init();
         PillarExplode.init();
         MelodyWarning.init();
         RagDisplay.init();
@@ -117,5 +122,7 @@ public class Bladeaddons implements ModInitializer {
         BatHighlight.init();
         WitherHighlight.init();
         InvincibilityDuration.init();
+        TeammateHighlight.init();
+        SectionProgress.init();
     }
 }

@@ -1,20 +1,16 @@
 package blade.addon.mixin;
 
 import blade.addon.features.dungeon.f7.terms.TitleHider;
-import blade.addon.utils.data.EntityUtil;
-import blade.addon.utils.debug.Debug;
 import blade.addon.utils.Misc;
 import blade.addon.utils.config.values.ExtraOptions;
-import blade.addon.utils.interfaces.PlayerDataHolder;
+import blade.addon.utils.debug.Debug;
 import blade.addon.utils.events.Events;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.PlayerListEntry;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
 import net.minecraft.network.packet.s2c.play.EntityTrackerUpdateS2CPacket;
 import net.minecraft.network.packet.s2c.play.PlaySoundFromEntityS2CPacket;
@@ -28,7 +24,6 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -110,32 +105,8 @@ public class ClientPlayNetworkHandlerMixin {
 
     @Inject(method = "onEntitySpawn", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayNetworkHandler;playSpawnSound(Lnet/minecraft/entity/Entity;)V"))
     public void onEntitySpawn(EntitySpawnS2CPacket packet, CallbackInfo ci, @Local Entity entity) {
-        if (entity instanceof PlayerEntity player) {
-            PlayerDataHolder dataHolder = (PlayerDataHolder) (Object) player;
-            boolean isRealPlayer = isARealPlayer(player);
-            dataHolder.blade_addons$setIsRealPlayer(isRealPlayer);
-        }
         Events.ON_ENTITY_SPAWNED.invoke(entityTrackEvent -> entityTrackEvent.onEntity(entity, world));
     }
 
-    @Unique
-    private static boolean isARealPlayer(Entity entity) {
-        if (entity instanceof PlayerEntity player) {
-
-            if (EntityUtil.isClientPlayer(player)) return true;
-
-            ClientPlayNetworkHandler networkHandler = MinecraftClient.getInstance().getNetworkHandler();
-            if (networkHandler == null) return false;
-
-            PlayerListEntry entry = networkHandler.getPlayerListEntry(player.getUuid());
-
-            //this is a hack which will fail if someone has a really old bugged ign that includes a space
-            if (entry != null) {
-                String name = entry.getProfile().name();
-                return !name.isEmpty() && !name.contains(" ");
-            }
-        }
-        return false;
-    }
 
 }

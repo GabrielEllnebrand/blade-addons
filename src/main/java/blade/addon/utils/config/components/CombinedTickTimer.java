@@ -1,16 +1,16 @@
 package blade.addon.utils.config.components;
 
 import blade.addon.features.dungeon.f7.CrystalSpawn;
-import blade.addon.features.dungeon.f7.terms.GoldorTickTimer;
 import blade.addon.features.dungeon.f7.RelicTimer;
 import blade.addon.features.dungeon.f7.StormTickTimer;
+import blade.addon.features.dungeon.f7.terms.GoldorTickTimer;
 import blade.addon.features.dungeon.f7.terms.TermStartTimer;
 import blade.addon.utils.Constants;
 import blade.addon.utils.config.values.Floor7;
 import blade.addon.utils.rendering.RenderUtils;
 import config.practical.hud.HUDComponent;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.text.Text;
 
 public class CombinedTickTimer {
 
@@ -43,10 +43,7 @@ public class CombinedTickTimer {
         } else if (RelicTimer.display()) {
             RelicTimer.render(component, context);
         } else {
-            int x = component.getScaledX();
-            int y = component.getScaledY();
-
-            RenderUtils.drawCenteredText(context, MinecraftClient.getInstance().textRenderer, Constants.DECIMAL_FORMAT.format(0.0), x, y, component.getWidth());
+            RenderUtils.drawCenteredText(context, component, Text.literal(Constants.DECIMAL_FORMAT.format(0.0)));
         }
 
     }

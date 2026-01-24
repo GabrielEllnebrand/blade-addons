@@ -129,4 +129,17 @@ public class Floor7 {
 
     @ConfigValue
     public static boolean terminalTimeStamps = false;
+
+    @ConfigValue
+    public static boolean crystalPlaceReminder = false;
+
+    @ConfigValue
+    public static boolean showSectionProgress = false;
+
+    @ConfigValue
+    public static boolean notifySSCompletion = false;
+
+    @ConfigValue
+    public static boolean disableTitlesAtSS = false;
+
 }

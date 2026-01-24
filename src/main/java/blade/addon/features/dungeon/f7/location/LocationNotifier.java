@@ -11,7 +11,6 @@ import blade.addon.utils.events.Events;
 import blade.addon.utils.rendering.RenderUtils;
 import config.practical.hud.HUDComponent;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
@@ -63,9 +62,6 @@ public class LocationNotifier {
     }
 
     public static void render(HUDComponent component, DrawContext context) {
-        int x = component.getScaledX();
-        int y = component.getScaledY();
-
-        RenderUtils.drawCenteredText(context, MinecraftClient.getInstance().textRenderer, notification, x, y, component.getWidth());
+        RenderUtils.drawCenteredText(context, component, notification);
     }
 }

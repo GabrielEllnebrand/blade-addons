@@ -1,5 +1,6 @@
 package blade.addon.utils.config.values;
 
+import blade.addon.utils.Constants;
 import config.practical.data.SoundData;
 import config.practical.manager.ConfigValue;
 import net.minecraft.sound.SoundEvents;
@@ -95,4 +96,10 @@ public class ExtraOptions {
 
     @ConfigValue
     public static boolean moveToolTip = false;
+
+    @ConfigValue
+    public static boolean sendPetSwapNotification = false;
+
+    @ConfigValue
+    public static int timerPrefixColor = Constants.DARK_PURPLE;
 }

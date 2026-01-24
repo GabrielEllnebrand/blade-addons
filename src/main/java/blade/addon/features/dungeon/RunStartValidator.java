@@ -61,7 +61,8 @@ public class RunStartValidator {
         Events.ON_PLAYER_ENTRY.register(receivedEntry -> {
             //will only check after the first game message in case of false positives
             if (!hasTicked) return false;
-            if (!Location.inDungeon() || Phase.runStarted() || (!Dungeons.detectDuplicateClass && !Dungeons.detectPlayerCount)) return false;
+            if (!Location.inDungeon() || Phase.runStarted() || (!Dungeons.detectDuplicateClass && !Dungeons.detectPlayerCount))
+                return false;
             validate();
             return false;
         });
@@ -135,14 +136,12 @@ public class RunStartValidator {
     }
 
     public static void render(HUDComponent component, DrawContext context) {
-        int x = component.getScaledX();
-        int y = component.getScaledY();
         if (hasDupeClasses) {
-            RenderUtils.drawCenteredText(context, MinecraftClient.getInstance().textRenderer, DUPE_CLASS_TEXT, x, y, component.getWidth());
+            RenderUtils.drawCenteredText(context, component, DUPE_CLASS_TEXT);
         } else if (notEnoughPlayers) {
-            RenderUtils.drawCenteredText(context, MinecraftClient.getInstance().textRenderer, PLAYER_COUNT_TEXT, x, y, component.getWidth());
+            RenderUtils.drawCenteredText(context, component, PLAYER_COUNT_TEXT);
         } else {
-            RenderUtils.drawCenteredText(context, MinecraftClient.getInstance().textRenderer, Text.literal("§cSome warning text"), x, y, component.getWidth());
+            RenderUtils.drawCenteredText(context, component, Text.literal("§cSome warning text"));
         }
     }
 }

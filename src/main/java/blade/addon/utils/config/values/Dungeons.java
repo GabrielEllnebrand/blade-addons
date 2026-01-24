@@ -118,4 +118,13 @@ public class Dungeons {
 
     @ConfigValue
     public static boolean InvincibilityDuration = false;
+
+    @ConfigValue
+    public static boolean highlightTeammates = false;
+
+    @ConfigValue
+    public static boolean renderClassName = false;
+
+    @ConfigValue
+    public static boolean dontHighlightHiddenTeammates = false;
 }

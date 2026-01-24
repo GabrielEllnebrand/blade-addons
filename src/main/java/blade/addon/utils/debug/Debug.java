@@ -86,8 +86,8 @@ public class Debug {
                             return Constants.SUCCESS;
                         }))
 
-                        .then(ClientCommandManager.literal("ignoreChecks").executes(context -> {
-                            RelicTimer.testIgnoreChecks();
+                        .then(ClientCommandManager.literal("getRelic").executes(context -> {
+                            RelicTimer.printRelic();
                             return Constants.SUCCESS;
                         }))
 

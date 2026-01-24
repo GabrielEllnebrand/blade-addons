@@ -96,6 +96,8 @@ public class Config {
         hidePlayers.add(new ConfigBool(Text.literal("SS only hides before terms"), () -> Dungeons.hideBeforeTermsOnly, bool -> Dungeons.hideBeforeTermsOnly = bool));
         hidePlayers.add(new ConfigBool(Text.literal("Hide players in range"), () -> Dungeons.hidePlayersInRange, bool -> Dungeons.hidePlayersInRange = bool));
         hidePlayers.add(new ConfigDouble(Text.literal("Hiding range"), () -> Dungeons.hidePlayerRange, num -> Dungeons.hidePlayerRange = num, 1, 0, 7));
+        hidePlayers.add(new ConfigBool(Text.literal("Hide teammate highlight"), () -> Dungeons.dontHighlightHiddenTeammates, bool -> Dungeons.dontHighlightHiddenTeammates = bool));
+
 
         dungeons.add(hidePlayers);
 
@@ -123,6 +125,8 @@ public class Config {
         dungeons.add(new ConfigBool(Text.literal("Hide blaze nametags"), () -> Dungeons.hideBlazeNameTag, bool -> Dungeons.hideBlazeNameTag = bool));
         dungeons.add(new ConfigBool(Text.literal("Disable drop animation"), () -> Dungeons.disableDropAnimation, bool -> Dungeons.disableDropAnimation = bool));
         dungeons.add(new ConfigBool(Text.literal("Mask cooldown highlight"), () -> Dungeons.maskHighlight, bool -> Dungeons.maskHighlight = bool));
+        dungeons.add(new ConfigBool(Text.literal("Highlight teammates"), () -> Dungeons.highlightTeammates, bool -> Dungeons.highlightTeammates = bool));
+        dungeons.add(new ConfigBool(Text.literal("Render class names"), () -> Dungeons.renderClassName, bool -> Dungeons.renderClassName = bool));
         return dungeons;
     }
 
@@ -140,6 +144,7 @@ public class Config {
 
         ConfigSection maxor = new ConfigSection(Text.literal("Maxor"));
         maxor.add(new ConfigBool(Text.literal("Crystal Spawn Time"), () -> Floor7.enableCrystalSpawnTime, bool -> Floor7.enableCrystalSpawnTime = bool));
+        maxor.add(new ConfigBool(Text.literal("Crystal place reminder"), () -> Floor7.crystalPlaceReminder, bool -> Floor7.crystalPlaceReminder = bool));
         floor7.add(maxor);
 
         ConfigSection storm = new ConfigSection(Text.literal("Storm"));
@@ -162,12 +167,17 @@ public class Config {
         goldor.add(new ConfigBool(Text.literal("Terminal splits"), () -> Section.enableTerminalSplits, bool -> Section.enableTerminalSplits = bool));
         goldor.add(new ConfigOptions<>(Text.literal("Display when"), Section.DisplayTerminalSplitsWhen.values(), () -> Section.displayTerminalSplitsWhen, when -> Section.displayTerminalSplitsWhen = when));
         goldor.add(new ConfigBool(Text.literal("Pre4 completion notification"), () -> Floor7.notifyPre4Completion, bool -> Floor7.notifyPre4Completion = bool));
-        goldor.add(new ConfigBool(Text.literal("Disable titles on pre4"), () -> Floor7.disableTitlesAtPre4, bool -> Floor7.disableTitlesAtPre4 = bool));
+        goldor.add(new ConfigBool(Text.literal("SS completion notification"), () -> Floor7.notifySSCompletion, bool -> Floor7.notifySSCompletion = bool));
         goldor.add(new ConfigBool(Text.literal("Melody warning notification"), () -> Floor7.notifiyMelody, bool -> Floor7.notifiyMelody = bool));
-        goldor.add(new ConfigBool(Text.literal("Hide most titles in terminals"), () -> Floor7.hideTerminalTitles, bool -> Floor7.hideTerminalTitles = bool));
         goldor.add(new ConfigBool(Text.literal("Send terminal time stamps"), () -> Floor7.terminalTimeStamps, bool -> Floor7.terminalTimeStamps = bool));
-
+        goldor.add(new ConfigBool(Text.literal("Display section progress"), () -> Floor7.showSectionProgress, bool -> Floor7.showSectionProgress = bool));
         floor7.add(goldor);
+
+        ConfigSection titles = new ConfigSection(Text.literal("Terminal titles"));
+        titles.add(new ConfigBool(Text.literal("Disable titles on pre4"), () -> Floor7.disableTitlesAtPre4, bool -> Floor7.disableTitlesAtPre4 = bool));
+        titles.add(new ConfigBool(Text.literal("Disable titles on ss"), () -> Floor7.disableTitlesAtSS, bool -> Floor7.disableTitlesAtSS = bool));
+        titles.add(new ConfigBool(Text.literal("Hide most titles in terminals"), () -> Floor7.hideTerminalTitles, bool -> Floor7.hideTerminalTitles = bool));
+        floor7.add(titles);
 
         ConfigSection locationNotifier = new ConfigSection(Text.literal("At location notifier"));
         locationNotifier.add(new ConfigBool(Text.literal("Display Location messages on screen"), () -> Floor7.displayLocationNotification, bool -> Floor7.displayLocationNotification = bool));
@@ -265,9 +275,10 @@ public class Config {
         extra.add(new ConfigBool(Text.literal("Display kicked time"), () -> ExtraOptions.enableKickedTimer, bool -> ExtraOptions.enableKickedTimer = bool));
         extra.add(new ConfigBool(Text.literal("Disable recipe book"), () -> ExtraOptions.disableRecipeBook, bool -> ExtraOptions.disableRecipeBook = bool));
         extra.add(new ConfigBool(Text.literal("Enable moveable held item tooltip"), () -> ExtraOptions.moveToolTip, bool -> ExtraOptions.moveToolTip = bool));
+        extra.add(new ConfigColor(Text.literal("Timer text color prefix"), () -> ExtraOptions.timerPrefixColor, color -> ExtraOptions.timerPrefixColor = color, "timer-prefix", false));
 
         ConfigSection sound = new ConfigSection(Text.literal("Sound options"));
-        sound.add(new ConfigBool(Text.literal("Disable ability on cooldown sound"), () -> ExtraOptions.disableAbilityCooldownSound, bool -> ExtraOptions.disableAbilityCooldownSound = bool));
+        sound.add(new ConfigBool(Text.literal("Disable \"on cooldown\" sound"), () -> ExtraOptions.disableAbilityCooldownSound, bool -> ExtraOptions.disableAbilityCooldownSound = bool));
         sound.add(new ConfigBool(Text.literal("Disable bonzo sound"), () -> ExtraOptions.disableBonzoSound, bool -> ExtraOptions.disableBonzoSound = bool));
         extra.add(sound);
 
@@ -291,6 +302,7 @@ public class Config {
         pets.add(new ConfigBool(Text.literal("Draw the pets sprite"), () -> ExtraOptions.includePetSprite, bool -> ExtraOptions.includePetSprite = bool));
         pets.add(new ConfigBool(Text.literal("Send sound on petswap"), () -> ExtraOptions.sendOnPetSound, bool -> ExtraOptions.sendOnPetSound = bool));
         pets.add(new ConfigSound(Text.literal("Pet swap sound"), ExtraOptions.petSound));
+        pets.add(new ConfigBool(Text.literal("Swap pet notification"), () -> ExtraOptions.sendPetSwapNotification, bool -> ExtraOptions.sendPetSwapNotification = bool));
         extra.add(pets);
 
         ConfigSection diana = new ConfigSection(Text.literal("Diana notifications"));
@@ -331,11 +343,14 @@ public class Config {
         visual.add(new ConfigBool(Text.literal("Highlight protected items"), () -> Visual.highlightProtectedItem, bool -> Visual.highlightProtectedItem = bool));
         visual.add(new ConfigBool(Text.literal("Compact hoppity messages"), () -> Visual.compactHoppityMsgs, bool -> Visual.compactHoppityMsgs = bool));
         visual.add(new ConfigBool(Text.literal("Hide cooldown"), () -> Visual.hideCooldown, bool -> Visual.hideCooldown = bool));
+        visual.add(new ConfigBool(Text.literal("Old player head size"), () -> Visual.oldPlayerHead, bool -> Visual.oldPlayerHead = bool));
+        visual.add(new ConfigBool(Text.literal("Fix wither essence"), () -> Visual.fixWitherEssence, bool -> Visual.fixWitherEssence = bool));
         return visual;
     }
 
     private static ConfigCategory buttons() {
         ConfigCategory inventory = new ConfigCategory("Inventory buttons");
+        inventory.add(new ConfigTextArea("To add a command just input it with out the /, like \"ba ep\" "));
         inventory.add(new ConfigString(Text.literal("Button 1"), () -> Buttons.command1, str -> Buttons.command1 = str));
         inventory.add(new ConfigString(Text.literal("Button 2"), () -> Buttons.command2, str -> Buttons.command2 = str));
         inventory.add(new ConfigString(Text.literal("Button 3"), () -> Buttons.command3, str -> Buttons.command3 = str));

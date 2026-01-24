@@ -18,7 +18,7 @@ public class TitleHider {
 
     public static void processSubtitle(SubtitleS2CPacket packet) {
         if (!shouldHideTitle()) return;
-        if (Section.inSection(1) && Pre4Notifier.atDev()) return;
+        if (Section.inSection(1) && DeviceNotifier.at4thDev()) return;
         String string = packet.text().getString().replaceAll("§.", "");
 
 

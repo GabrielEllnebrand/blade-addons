@@ -47,11 +47,8 @@ public class ClientConnectionMixin {
 
     @Inject(method = "sendImmediately", at = @At("HEAD"))
     private void sendImmediately(Packet<?> packet, ChannelFutureListener channelFutureListener, boolean flush, CallbackInfo ci) {
-        if (packet instanceof CommonPingS2CPacket common) {
-            if (common.getParameter() == 0) return;
-            Events.ON_SERVER_TICK.invoke(ServerTickEvent::onServerTick);
-        }
-
-
+        // for some reason this just being here
+        // fixes player tracking and I don't know why
+        // will hopefully look into it later
     }
 }

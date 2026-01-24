@@ -1,11 +1,9 @@
 package blade.addon.features.other;
 
-import blade.addon.utils.Constants;
 import blade.addon.utils.config.values.ExtraOptions;
 import blade.addon.utils.events.Events;
 import blade.addon.utils.rendering.RenderUtils;
 import config.practical.hud.HUDComponent;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 
 public class KickedTimer {
@@ -35,12 +33,8 @@ public class KickedTimer {
     public static void render(HUDComponent component, DrawContext context) {
         long diff = System.currentTimeMillis() - kickedTime;
         if (diff > 60 * 1000) isKicked = false;
-
-        int x = component.getScaledX();
-        int y = component.getScaledY();
-
-        RenderUtils.drawCenteredText(context, MinecraftClient.getInstance().textRenderer, "§5Time kicked: §f" + Constants.DECIMAL_FORMAT.format(Math.min(diff / 1000.0, 60)) + "s", x, y, component.getWidth());
-
+        double drawnTime = Math.min(diff / 1000.0, 60.0);
+        RenderUtils.drawPrefixedTimer(component, context, drawnTime, "Time kicked");
     }
 
 }

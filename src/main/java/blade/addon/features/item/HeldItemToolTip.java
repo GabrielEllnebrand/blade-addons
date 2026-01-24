@@ -30,7 +30,8 @@ public class HeldItemToolTip {
     }
 
     public static void render(HUDComponent component, DrawContext context) {
-        RenderUtils.drawCenteredText(context, component, tooltip, color);
+        int currentColor = heldItemFade > 0? color: 0xffffffff;
+        RenderUtils.drawCenteredText(context, component, tooltip, currentColor);
     }
 
 }

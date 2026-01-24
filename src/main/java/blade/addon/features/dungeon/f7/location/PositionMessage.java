@@ -1,5 +1,6 @@
 package blade.addon.features.dungeon.f7.location;
 
+import blade.addon.utils.Misc;
 import blade.addon.utils.config.values.Floor7;
 import blade.addon.utils.dungeon.Section;
 import net.minecraft.client.network.ClientPlayerEntity;
@@ -37,7 +38,7 @@ public class PositionMessage {
         if (sent || !inAValidSection() || !inRange(player.getEntityPos())) return;
         sent = true;
         if (Floor7.enablePositionalMessages) {
-            player.networkHandler.sendChatCommand("pc " + message);
+            Misc.executeCommand("pc " + message);
         }
     }
 

@@ -30,6 +30,7 @@ import net.minecraft.text.TextColor;
 import net.minecraft.util.math.Box;
 
 import java.util.ArrayList;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Predicate;
 
@@ -61,7 +62,6 @@ public class MobHighlight {
     private static final int LEATHER_BOOTS_ID = Item.getRawId(Items.LEATHER_BOOTS);
 
     private static final ConcurrentLinkedQueue<DataHolder> savedEntities = new ConcurrentLinkedQueue<>();
-
 
     public static boolean dontRenderHighlight = false;
     @ConfigValue
@@ -136,7 +136,6 @@ public class MobHighlight {
                     testArmourStand(armorStand, client);
                 }
             }
-
             savedEntities.removeIf(dataHolder -> dataHolder.entity.isRemoved());
         });
 
@@ -271,7 +270,7 @@ public class MobHighlight {
             case ZombieEntity ignored -> true;
             case SkeletonEntity ignored -> true;
             case WitherSkeletonEntity ignored -> true;
-            case PlayerEntity ignored -> !isMiniBoss(entity);
+            case PlayerEntity ignored -> !EntityUtil.isARealPlayer(entity) && !EntityUtil.isClientPlayer(entity) && !isMiniBoss(entity);
             default -> false;
         };
     }

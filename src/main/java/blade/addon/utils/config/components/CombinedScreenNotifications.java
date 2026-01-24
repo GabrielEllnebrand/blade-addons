@@ -2,15 +2,17 @@ package blade.addon.utils.config.components;
 
 import blade.addon.features.dungeon.RunStartValidator;
 import blade.addon.features.dungeon.KeyNotifier;
+import blade.addon.features.dungeon.f7.CrystalSpawn;
 import blade.addon.features.dungeon.f7.terms.MelodyWarning;
 import blade.addon.features.dungeon.f7.PillarExplode;
-import blade.addon.features.dungeon.f7.terms.Pre4Notifier;
+import blade.addon.features.dungeon.f7.terms.DeviceNotifier;
 import blade.addon.features.notifications.Notifications;
+import blade.addon.features.other.SelectedPet;
 import blade.addon.utils.config.values.Dungeons;
 import blade.addon.utils.rendering.RenderUtils;
 import config.practical.hud.HUDComponent;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.text.Text;
 
 public class CombinedScreenNotifications {
 
@@ -21,13 +23,17 @@ public class CombinedScreenNotifications {
             return true;
         } else if (KeyNotifier.display()) {
             return true;
-        } else if (Pre4Notifier.display()) {
+        } else if (DeviceNotifier.display()) {
             return true;
         } else if (MelodyWarning.display()) {
             return true;
         } else if (PillarExplode.display()) {
             return true;
+        }else if (CrystalSpawn.displayNotification()) {
+            return true;
         } else if (Notifications.display()) {
+            return true;
+        } else if (SelectedPet.displayNotification()) {
             return true;
         }
         return false;
@@ -38,20 +44,20 @@ public class CombinedScreenNotifications {
             RunStartValidator.render(component, context);
         } else if (KeyNotifier.display()) {
             KeyNotifier.render(component, context);
-        } else if (Pre4Notifier.display()) {
-            Pre4Notifier.render(component, context);
+        } else if (DeviceNotifier.display()) {
+            DeviceNotifier.render(component, context);
         } else if (MelodyWarning.display()) {
             MelodyWarning.render(component, context);
-        }else if (PillarExplode.display()) {
+        } else if (PillarExplode.display()) {
             PillarExplode.render(component, context);
+        } else if (CrystalSpawn.displayNotification()) {
+            CrystalSpawn.renderNotification(component, context);
         }else if (Notifications.display()) {
             Notifications.render(component, context);
-        }
-        else {
-            int x = component.getScaledX();
-            int y = component.getScaledY();
-
-            RenderUtils.drawCenteredText(context, MinecraftClient.getInstance().textRenderer, "Some notification", x, y, component.getWidth());
+        } else if (SelectedPet.displayNotification()) {
+            SelectedPet.renderNotification(component, context);
+        }  else {
+            RenderUtils.drawCenteredText(context, component, Text.literal("Some notification"));
         }
 
     }
