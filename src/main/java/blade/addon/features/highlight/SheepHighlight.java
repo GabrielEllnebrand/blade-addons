@@ -21,7 +21,7 @@ public class SheepHighlight {
 
         Events.ON_ENTITY_SPAWNED.register((entity, world) -> {
             if (!Location.inDungeon()) return false;
-            if (entity instanceof SheepEntity sheep) {
+            if (entity instanceof SheepEntity sheep && !sheeps.contains(sheep)) {
                 sheeps.add(sheep);
             }
             return false;

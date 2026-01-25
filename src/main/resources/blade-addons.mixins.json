@@ -3,7 +3,6 @@
   "package": "blade.addon.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "ArmorStandEntityMixin",
     "ChunkMixin",
     "ClientConnectionMixin",
     "ClientPlayNetworkHandlerMixin",

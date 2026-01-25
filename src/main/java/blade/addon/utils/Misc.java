@@ -67,7 +67,7 @@ public class Misc {
     }
 
     public static void sendSound(SoundEvent soundEvent, float volume, float pitch) {
-       ClientPlayerEntity player = INSTANCE.player;
+        ClientPlayerEntity player = INSTANCE.player;
         if (player == null) return;
         forceMainThread(() -> player.playSound(soundEvent, volume, pitch));
     }
@@ -75,7 +75,8 @@ public class Misc {
     public static void sendSound(SoundData soundData) {
         sendSound(SoundEvent.of(soundData.getSound()), soundData.getVolume(), soundData.getPitch());
     }
-        public static void forceMainThread(Runnable runnable) {
+
+    public static void forceMainThread(Runnable runnable) {
         if (INSTANCE.isOnThread()) {
             runnable.run();
         } else {

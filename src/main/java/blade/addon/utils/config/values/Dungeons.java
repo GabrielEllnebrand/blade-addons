@@ -48,9 +48,6 @@ public class Dungeons {
     public static int chestWarningCount = 55;
 
     @ConfigValue
-    public static int chestCountColor = 0xffffffff;
-
-    @ConfigValue
     public static boolean enableLeapMessages = false;
 
     @ConfigValue
@@ -120,6 +117,9 @@ public class Dungeons {
     public static boolean InvincibilityDuration = false;
 
     @ConfigValue
+    public static boolean useStatusColorForInvincibility = false;
+
+    @ConfigValue
     public static boolean highlightTeammates = false;
 
     @ConfigValue
@@ -127,4 +127,10 @@ public class Dungeons {
 
     @ConfigValue
     public static boolean dontHighlightHiddenTeammates = false;
+
+    @ConfigValue
+    public static boolean displayKeyForAllClasses = false;
+
+    @ConfigValue
+    public static boolean quizTimer = false;
 }

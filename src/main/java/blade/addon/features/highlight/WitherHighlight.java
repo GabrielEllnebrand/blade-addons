@@ -28,7 +28,7 @@ public class WitherHighlight {
 
             if (Phase.inBoss()) {
                 if (entity instanceof WitherEntity wither) {
-                    if (wither.getHealth() != WITHER_BORN_HEALTH) {
+                    if (wither.getHealth() != WITHER_BORN_HEALTH && !withers.contains(wither)) {
                         withers.add(wither);
                     }
                 }
@@ -42,7 +42,7 @@ public class WitherHighlight {
             return false;
         });
 
-        ClientTickEvents.END_CLIENT_TICK.register(client -> withers.removeIf(wither -> wither.isRemoved() || wither.isDead()));
+        ClientTickEvents.END_CLIENT_TICK.register(client -> {withers.removeIf(wither -> wither.isRemoved() || wither.isDead());});
 
         RenderingEvents.FILLED_ENTITY.register(WitherHighlight::renderFilled);
         RenderingEvents.OUTLINE_ENTITY.register(WitherHighlight::renderOutline);

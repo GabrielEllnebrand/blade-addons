@@ -69,10 +69,6 @@ public class ClientPlayNetworkHandlerMixin {
             ci.cancel();
         }
 
-        if (ExtraOptions.disableBonzoSound && volume == 1.0 && event == SoundEvents.ENTITY_GHAST_WARN) {
-            ci.cancel();
-        }
-
         if (Debug.sendSound) {
             Misc.addChatMessage(Text.literal("Sound: " + event.id() + " Volume: " + volume + " Pitch: " + pitch));
         }

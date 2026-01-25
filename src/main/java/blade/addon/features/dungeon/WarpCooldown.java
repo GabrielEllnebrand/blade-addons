@@ -42,6 +42,6 @@ public class WarpCooldown {
 
     public static void render(HUDComponent component, DrawContext context) {
         double timeRemaining = Math.max((endTime - System.currentTimeMillis()) / 1000.0, 0);
-        RenderUtils.drawPrefixedTimer(component, context, timeRemaining, "Warp Cooldown");
+        RenderUtils.drawPrefixedTimer(component, context, "Warp Cooldown", timeRemaining);
     }
 }

@@ -34,7 +34,7 @@ public class KickedTimer {
         long diff = System.currentTimeMillis() - kickedTime;
         if (diff > 60 * 1000) isKicked = false;
         double drawnTime = Math.min(diff / 1000.0, 60.0);
-        RenderUtils.drawPrefixedTimer(component, context, drawnTime, "Time kicked");
+        RenderUtils.drawPrefixedTimer(component, context, "Time kicked", drawnTime);
     }
 
 }

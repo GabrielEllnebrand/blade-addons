@@ -151,6 +151,8 @@ public class RelicTimer {
 
             BlockPos pos = result.getBlockPos();
 
+            if (!isARelicPos(pos)) return false;
+
             //skyblock menu check is there incase the item doesnt get updated
             if (!ItemUtil.itemHasName(itemStack, "Relic") && !ItemUtil.itemHasName(itemStack, "Skyblock Menu")) {
                 if (Floor7.blockIncorrectRelicPlace) {
@@ -162,7 +164,7 @@ public class RelicTimer {
                 }
             }
 
-            if (pos.getX() == pickedupRelic.box.minX && (pos.getY() == pickedupRelic.box.minY || pos.getY() == pickedupRelic.box.minY - 1) && pos.getZ() == pickedupRelic.box.minZ) {
+            if (clickedRelic(pickedupRelic, pos)) {
                 if (Floor7.enableRelicPlaceTime) {
                     MutableText text = Text.literal("The ").formatted(Formatting.GREEN)
                             .append(Text.literal(pickedupRelic.name().toLowerCase()).withColor(pickedupRelic.color))
@@ -190,6 +192,22 @@ public class RelicTimer {
 
         RenderingEvents.FILLED_BLOCK.register(RelicTimer::worldRender);
 
+    }
+
+    private static boolean isARelicPos(BlockPos pos) {
+        try {
+            for (Relic relic : Relic.values()) {
+                if (clickedRelic(relic, pos)) return true;
+            }
+        } catch (Exception e) {
+            Misc.addChatMessage(Text.literal("Relic not found!"));
+        }
+        return false;
+    }
+
+    private static boolean clickedRelic(Relic relic, BlockPos pos) {
+        if (relic == null) return false;
+        return (pos.getX() == relic.box.minX && (pos.getY() == relic.box.minY || pos.getY() == relic.box.minY - 1) && pos.getZ() == relic.box.minZ);
     }
 
     private static void reset() {
@@ -225,11 +243,6 @@ public class RelicTimer {
 
     public static void printRelic() {
         Misc.addChatMessage(Text.literal("Relic: " + pickedupRelic));
-
-    }
-
-    public static void debugCommands() {
-
     }
 
     private static void worldRender(WorldRenderContext context, MatrixStack matrixStack, VertexConsumer consumer) {

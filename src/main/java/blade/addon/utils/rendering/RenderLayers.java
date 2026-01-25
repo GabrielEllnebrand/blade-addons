@@ -26,7 +26,6 @@ public class RenderLayers {
                     .layering(RenderPhase.VIEW_OFFSET_Z_LAYERING)
                     .build(false));
 
-
     public static RenderLayer getOutline(int width, boolean depthCheck) {
         if (depthCheck) {
             if (OUTLINE_WIDTHS.containsKey(width)) {

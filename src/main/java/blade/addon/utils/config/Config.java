@@ -75,8 +75,8 @@ public class Config {
         invincibility.add(new ConfigOptions<>(Text.literal("Display when"), InvincibilityTimer.DisplayWhen.values(), () -> Dungeons.displayWhen, when -> Dungeons.displayWhen = when));
         invincibility.add(new ConfigBool(Text.literal("Use sprites"), () -> Dungeons.useSprites, bool -> Dungeons.useSprites = bool));
         invincibility.add(new ConfigBool(Text.literal("Show title on proc"), () -> Dungeons.showProcTitle, bool -> Dungeons.showProcTitle = bool));
-        invincibility.add(new ConfigBool(Text.literal("invincibility duration"), () -> Dungeons.InvincibilityDuration, bool -> Dungeons.InvincibilityDuration = bool));
-
+        invincibility.add(new ConfigBool(Text.literal("Invincibility duration"), () -> Dungeons.InvincibilityDuration, bool -> Dungeons.InvincibilityDuration = bool));
+        invincibility.add(new ConfigBool(Text.literal("Duration changing color"), () -> Dungeons.useStatusColorForInvincibility, bool -> Dungeons.useStatusColorForInvincibility = bool));
         dungeons.add(invincibility);
 
         ConfigSection classColors = new ConfigSection(Text.literal("Class Colors"));
@@ -106,7 +106,6 @@ public class Config {
         chests.add(new ConfigBool(Text.literal("Only display after run is over"), () -> Dungeons.onlyAfterRunOver, bool -> Dungeons.onlyAfterRunOver = bool));
         chests.add(new ConfigBool(Text.literal("Send chest count warning"), () -> Dungeons.sendChestWarning, bool -> Dungeons.sendChestWarning = bool));
         chests.add(new ConfigInt(Text.literal("Warning at chest"), () -> Dungeons.chestWarningCount, num -> Dungeons.chestWarningCount = num, 1, 1, 60));
-        chests.add(new ConfigColor(Text.literal("Widget color"), () -> Dungeons.chestCountColor, color -> Dungeons.chestCountColor = color, "chest-color", false));
 
         dungeons.add(chests);
         dungeons.add(new ConfigBool(Text.literal("Leap message"), () -> Dungeons.enableLeapMessages, bool -> Dungeons.enableLeapMessages = bool));
@@ -118,6 +117,7 @@ public class Config {
         dungeons.add(expo);
 
         dungeons.add(new ConfigBool(Text.literal("Notification on key spawn"), () -> Dungeons.enableKeyNotifier, bool -> Dungeons.enableKeyNotifier = bool));
+        dungeons.add(new ConfigBool(Text.literal("Display key noti for all classes"), () -> Dungeons.displayKeyForAllClasses, bool -> Dungeons.displayKeyForAllClasses = bool));
         dungeons.add(new ConfigBool(Text.literal("Secret spawn timer"), () -> Dungeons.enableSecretSpawnTimer, bool -> Dungeons.enableSecretSpawnTimer = bool));
         dungeons.add(new ConfigBool(Text.literal("Item highlight"), () -> Dungeons.highlightItems, bool -> Dungeons.highlightItems = bool));
         dungeons.add(new ConfigBool(Text.literal("Combine screen notifications"), () -> Dungeons.combineScreenNotifications, bool -> Dungeons.combineScreenNotifications = bool));
@@ -127,6 +127,7 @@ public class Config {
         dungeons.add(new ConfigBool(Text.literal("Mask cooldown highlight"), () -> Dungeons.maskHighlight, bool -> Dungeons.maskHighlight = bool));
         dungeons.add(new ConfigBool(Text.literal("Highlight teammates"), () -> Dungeons.highlightTeammates, bool -> Dungeons.highlightTeammates = bool));
         dungeons.add(new ConfigBool(Text.literal("Render class names"), () -> Dungeons.renderClassName, bool -> Dungeons.renderClassName = bool));
+        dungeons.add(new ConfigBool(Text.literal("Time until quiz question"), () -> Dungeons.quizTimer, bool -> Dungeons.quizTimer = bool));
         return dungeons;
     }
 
@@ -138,6 +139,7 @@ public class Config {
         ConfigSection waypoints = new ConfigSection(Text.literal("Waypoints"));
         waypoints.add(new ConfigBool(Text.literal("Enable boss waypoints"), () -> Floor7.enableBossWaypoints, bool -> Floor7.enableBossWaypoints = bool));
         waypoints.add(new ConfigBool(Text.literal("Enable placing waypoints"), BossWaypoints::getPlace, BossWaypoints::setPlace));
+        waypoints.add(new ConfigBool(Text.literal("temporarily ignore boss"), BossWaypoints::getIgnoreBoss, BossWaypoints::setIgnoreBoss));
         waypoints.add(new ConfigColor(Text.literal("Next waypoint color"), () -> Floor7.nextWaypointColor, color -> Floor7.nextWaypointColor = color, "next-waypoint-color", true));
         waypoints.add(new ConfigBool(Text.literal("Next waypoint no depth check"), () -> Floor7.nextWaypointThroughWall, bool -> Floor7.nextWaypointThroughWall = bool));
         floor7.add(waypoints);
@@ -145,6 +147,7 @@ public class Config {
         ConfigSection maxor = new ConfigSection(Text.literal("Maxor"));
         maxor.add(new ConfigBool(Text.literal("Crystal Spawn Time"), () -> Floor7.enableCrystalSpawnTime, bool -> Floor7.enableCrystalSpawnTime = bool));
         maxor.add(new ConfigBool(Text.literal("Crystal place reminder"), () -> Floor7.crystalPlaceReminder, bool -> Floor7.crystalPlaceReminder = bool));
+        maxor.add(new ConfigBool(Text.literal("Display reminder instantly"), () -> Floor7.instantlyDisplayCrystalReminder, bool -> Floor7.instantlyDisplayCrystalReminder = bool));
         floor7.add(maxor);
 
         ConfigSection storm = new ConfigSection(Text.literal("Storm"));
@@ -275,11 +278,12 @@ public class Config {
         extra.add(new ConfigBool(Text.literal("Display kicked time"), () -> ExtraOptions.enableKickedTimer, bool -> ExtraOptions.enableKickedTimer = bool));
         extra.add(new ConfigBool(Text.literal("Disable recipe book"), () -> ExtraOptions.disableRecipeBook, bool -> ExtraOptions.disableRecipeBook = bool));
         extra.add(new ConfigBool(Text.literal("Enable moveable held item tooltip"), () -> ExtraOptions.moveToolTip, bool -> ExtraOptions.moveToolTip = bool));
-        extra.add(new ConfigColor(Text.literal("Timer text color prefix"), () -> ExtraOptions.timerPrefixColor, color -> ExtraOptions.timerPrefixColor = color, "timer-prefix", false));
+        extra.add(new ConfigColor(Text.literal("Prefix text color"), () -> ExtraOptions.timerPrefixColor, color -> ExtraOptions.timerPrefixColor = color, "timer-prefix", false));
 
         ConfigSection sound = new ConfigSection(Text.literal("Sound options"));
         sound.add(new ConfigBool(Text.literal("Disable \"on cooldown\" sound"), () -> ExtraOptions.disableAbilityCooldownSound, bool -> ExtraOptions.disableAbilityCooldownSound = bool));
         sound.add(new ConfigBool(Text.literal("Disable bonzo sound"), () -> ExtraOptions.disableBonzoSound, bool -> ExtraOptions.disableBonzoSound = bool));
+        sound.add(new ConfigBool(Text.literal("Old bonzo sound"), () -> ExtraOptions.oldBonzoSound, bool -> ExtraOptions.oldBonzoSound = bool));
         extra.add(sound);
 
         ConfigSection rag = new ConfigSection(Text.literal("Ragnarock"));
@@ -302,7 +306,7 @@ public class Config {
         pets.add(new ConfigBool(Text.literal("Draw the pets sprite"), () -> ExtraOptions.includePetSprite, bool -> ExtraOptions.includePetSprite = bool));
         pets.add(new ConfigBool(Text.literal("Send sound on petswap"), () -> ExtraOptions.sendOnPetSound, bool -> ExtraOptions.sendOnPetSound = bool));
         pets.add(new ConfigSound(Text.literal("Pet swap sound"), ExtraOptions.petSound));
-        pets.add(new ConfigBool(Text.literal("Swap pet notification"), () -> ExtraOptions.sendPetSwapNotification, bool -> ExtraOptions.sendPetSwapNotification = bool));
+        pets.add(new ConfigBool(Text.literal("Pet swap notification"), () -> ExtraOptions.sendPetSwapNotification, bool -> ExtraOptions.sendPetSwapNotification = bool));
         extra.add(pets);
 
         ConfigSection diana = new ConfigSection(Text.literal("Diana notifications"));

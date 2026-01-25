@@ -43,7 +43,6 @@ public class KeyNotifier {
     public static void init() {
         ClientTickEvents.END_WORLD_TICK.register((world) -> {
             if (!Location.inDungeon() || hasKey || !Dungeons.enableKeyNotifier) return;
-            if (!DungeonClass.isClass(DungeonClass.ARCHER) && !DungeonClass.isClass(DungeonClass.MAGE)) return;
 
             for (Entity entity : world.getEntities()) {
                 if (entity instanceof ArmorStandEntity armorStand && !foundKeys.contains(entity)) {
@@ -56,7 +55,9 @@ public class KeyNotifier {
                     if (uuid.equals(WITHER_UUID)) {
                         foundKeys.add(entity);
                         hasKey = true;
-                        Scheduler.scheduleSound(SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP, 2, 0.5f);
+                        if (isValidClass()) {
+                            Scheduler.scheduleSound(SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP, 2, 0.5f);
+                        }
                         return;
                     }
 
@@ -64,7 +65,10 @@ public class KeyNotifier {
                         foundKeys.add(entity);
                         isBloodKey = true;
                         hasKey = true;
-                        Scheduler.scheduleSound(SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP, 2, 0.5f);
+
+                        if (isValidClass()) {
+                            Scheduler.scheduleSound(SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP, 2, 0.5f);
+                        }
                         return;
                     }
                 }
@@ -73,7 +77,7 @@ public class KeyNotifier {
 
         Events.ON_GAME_MESSAGE.register(message -> {
             if (!Location.inDungeon() || !hasKey || !Dungeons.enableKeyNotifier) return false;
-            if (!DungeonClass.isClass(DungeonClass.ARCHER) && !DungeonClass.isClass(DungeonClass.MAGE)) return false;
+            if (!isValidClass()) return false;
 
             Matcher matcher = AUTOMATIC_PICKUP_PATTERN.matcher(message.getString());
             if (matcher.find()) {
@@ -101,8 +105,12 @@ public class KeyNotifier {
         });
     }
 
+    private static boolean isValidClass() {
+       return Dungeons.displayKeyForAllClasses || DungeonClass.isClass(DungeonClass.ARCHER) || DungeonClass.isClass(DungeonClass.MAGE);
+    }
+
     public static boolean display() {
-        return Location.inDungeon() && hasKey;
+        return Location.inDungeon() && hasKey && isValidClass();
     }
 
     public static void render(HUDComponent component, DrawContext context) {

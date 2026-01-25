@@ -17,8 +17,8 @@ public class RenderingEvents {
     public static RenderHandler NO_DEPTH_OUTLINE_ENTITY = new RenderHandler();
 
     public static void init() {
-        WorldRenderEvents.BEFORE_ENTITIES.register(RenderingEvents::filled);
-        WorldRenderEvents.BEFORE_ENTITIES.register(RenderingEvents::filledNoDepth);
+        WorldRenderEvents.BEFORE_DEBUG_RENDER.register(RenderingEvents::filled);
+        WorldRenderEvents.BEFORE_DEBUG_RENDER.register(RenderingEvents::filledNoDepth);
         WorldRenderEvents.AFTER_ENTITIES.register(RenderingEvents::entityFilled);
         WorldRenderEvents.AFTER_ENTITIES.register(RenderingEvents::entityOutline);
         WorldRenderEvents.AFTER_ENTITIES.register(RenderingEvents::entityOutlineNoDepth);

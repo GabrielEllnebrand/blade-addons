@@ -26,6 +26,10 @@ public class RenderUtils {
         return new float[]{r, g, b, a};
     }
 
+    public static int getStatusColor(int lastGreenTick, int lastOrangeTick, int currentTick) {
+        return currentTick >= lastGreenTick ? Constants.GREEN_COLOR : currentTick >= lastOrangeTick ? Constants.ORANGE_COLOR : Constants.RED_COLOR;
+    }
+
     public static void drawCenteredText(DrawContext context, TextRenderer textRenderer, Text text, int x, int y, int maxWidth, int color) {
         if (textRenderer == null) return;
         int centered = (maxWidth - textRenderer.getWidth(text)) / 2;
@@ -57,16 +61,29 @@ public class RenderUtils {
         RenderUtils.drawCenteredText(context, MinecraftClient.getInstance().textRenderer, Text.literal(Constants.DECIMAL_FORMAT.format(num)), x, y, component.getWidth(), color);
     }
 
-    public static void drawPrefixedTimer(HUDComponent component, DrawContext context, double num, String text) {
-        Text drawnText = Text.literal(text + ": ").withColor(ExtraOptions.timerPrefixColor).append(Text.literal(Constants.DECIMAL_FORMAT.format(num) + "s").withColor(0xffffffff));
-        RenderUtils.drawCenteredText(context, component, drawnText);
+    public static void drawPrefixedTimer(HUDComponent component, DrawContext context,  String prefix, int num) {
+        drawPrefixedText(component, context, prefix, Constants.DECIMAL_FORMAT.format(num * Constants.TICK_DURATION) + "s");
+    }
+
+    public static void drawPrefixedTimer(HUDComponent component, DrawContext context, String prefix, double num) {
+        drawPrefixedText(component, context, prefix, Constants.DECIMAL_FORMAT.format(num) + "s");
+    }
+
+    public static void drawPrefixedText(HUDComponent component, DrawContext context, String prefix, String text) {
+        TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
+        if (textRenderer == null) return;
+
+        Text drawnText = Text.literal(prefix + ": ").withColor(ExtraOptions.timerPrefixColor).append(Text.literal(text).withColor(0xffffffff));
+        context.drawText(textRenderer, drawnText, component.getScaledX(), component.getScaledY(), 0xffffffff, true);
     }
 
     public static void renderFilled(MatrixStack matrixStack, VertexConsumer consumer, Box box, float[] rgba) {
+        if (rgba[3] == 0) return;
         VertexRendering.drawFilledBox(matrixStack, consumer, box.minX, box.minY, box.minZ, box.maxX, box.maxY, box.maxZ, rgba[0], rgba[1], rgba[2], rgba[3]);
     }
 
     public static void renderOutline(MatrixStack matrixStack, VertexConsumer consumer, Box box, float[] rgba) {
+        if (rgba[3] == 0) return;
         VertexRendering.drawBox(matrixStack.peek(), consumer, box, rgba[0], rgba[1], rgba[2], rgba[3]);
     }
 

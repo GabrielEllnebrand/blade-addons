@@ -23,7 +23,7 @@ public class BatHighlight {
 
         Events.ON_ENTITY_TRACKED.register((entity, world) -> {
             if (!Location.inDungeon() || !MobHighlight.mobHighlight) return false;
-            if (entity instanceof BatEntity bat) {
+            if (entity instanceof BatEntity bat && !bats.contains(bat)) {
                 for (float health : BAT_HEALTHS) {
                     if (health == bat.getHealth()) {
                         bats.add(bat);

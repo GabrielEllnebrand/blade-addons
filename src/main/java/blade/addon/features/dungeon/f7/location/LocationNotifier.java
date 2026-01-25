@@ -49,7 +49,7 @@ public class LocationNotifier {
             color = DungeonClass.getColor(username);
         }
 
-        notification = Text.literal(username).withColor(color).append(Text.literal("§6" + message).setStyle(Style.EMPTY));
+        notification = Text.literal(username).withColor(color).append(Text.literal("§e" + message).setStyle(Style.EMPTY));
         ticks = Floor7.notificationDuration;
 
         for (int i = 0; i < Floor7.notificationRepetitions; i++) {

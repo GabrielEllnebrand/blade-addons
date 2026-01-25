@@ -7,6 +7,7 @@ import blade.addon.utils.Scheduler;
 import blade.addon.utils.config.values.Dungeons;
 import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.events.Events;
+import blade.addon.utils.rendering.RenderUtils;
 import config.practical.hud.HUDComponent;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
@@ -71,7 +72,7 @@ public class ChestCounter {
         int y = component.getScaledY();
 
         if (hasUpdatedData) {
-            context.drawText(MinecraftClient.getInstance().textRenderer, Text.literal("Chests: " + Math.min(chestDisplayCount + countedChests, 60)), x, y, Dungeons.chestCountColor , true);
+            RenderUtils.drawPrefixedText(component, context, "Chests", Math.min(chestDisplayCount + countedChests, 60) + "");
         } else {
             context.drawText(MinecraftClient.getInstance().textRenderer, Text.literal("go to the dungeon hub"), x, y, Constants.RED_COLOR, true);
 

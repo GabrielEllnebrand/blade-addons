@@ -29,7 +29,7 @@ public class MimicHighlight {
 
        Events.ON_BLOCK_ENTITY.register(blockEntity -> {
           if (!Location.inDungeon()) return false;
-          if (blockEntity instanceof TrappedChestBlockEntity mimic) {
+          if (blockEntity instanceof TrappedChestBlockEntity mimic && !mimics.contains(mimic)) {
               mimics.add(mimic);
           }
            return false;

@@ -1,7 +1,7 @@
 package blade.addon.features.other;
 
 import blade.addon.utils.Constants;
-import blade.addon.utils.Scheduler;
+import blade.addon.utils.Misc;
 import blade.addon.utils.config.values.ExtraOptions;
 import blade.addon.utils.data.ItemUtil;
 import blade.addon.utils.events.Events;
@@ -34,10 +34,10 @@ public class RagDisplay {
             }
 
             if (ExtraOptions.useOldRagSound) {
-                Scheduler.scheduleSound(OLD_RAG_SOUND, 1, 1.4920635223388672f);
+                Misc.sendSound(OLD_RAG_SOUND, volume, pitch);
                 return true;
             } else if (ExtraOptions.useCustomRagSound) {
-                Scheduler.scheduleSound(ExtraOptions.ragSound);
+                Misc.sendSound(ExtraOptions.ragSound);
                 return true;
             }
             return false;

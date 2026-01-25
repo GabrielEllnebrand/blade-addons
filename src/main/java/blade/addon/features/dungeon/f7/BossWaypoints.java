@@ -60,6 +60,10 @@ public class BossWaypoints {
         return place;
     }
 
+    public static boolean getIgnoreBoss() {
+        return ignoreBoss;
+    }
+
     public static void setPlace(boolean shouldPlace) {
         place = shouldPlace;
         Misc.addChatMessage(Text.literal("Edit mode: ").append(Misc.getStatusText(place)));
@@ -85,7 +89,7 @@ public class BossWaypoints {
 
     private static void addWaypoint(double x, double y, double z, double dx, double dy, double dz) {
         float[] colorAsFloat = RenderUtils.toFloats(Floor7.nextWaypointColor);
-        waypoints.add(new Waypoint(x, y, z, dx, dy, dz, colorAsFloat[0], colorAsFloat[1], colorAsFloat[2], colorAsFloat[3],Floor7.nextWaypointThroughWall));
+        waypoints.add(new Waypoint(x, y, z, dx, dy, dz, colorAsFloat[0], colorAsFloat[1], colorAsFloat[2], colorAsFloat[3], Floor7.nextWaypointThroughWall));
         save();
     }
 

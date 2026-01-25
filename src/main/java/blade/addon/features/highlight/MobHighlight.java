@@ -3,23 +3,19 @@ package blade.addon.features.highlight;
 import blade.addon.utils.Location;
 import blade.addon.utils.data.EntityUtil;
 import blade.addon.utils.events.Events;
-import blade.addon.utils.interfaces.ArmourStandHolder;
 import blade.addon.utils.rendering.RenderUtils;
 import blade.addon.utils.rendering.RenderingEvents;
 import config.practical.manager.ConfigValue;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientEntityEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderContext;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.EndermanEntity;
-import net.minecraft.entity.mob.SkeletonEntity;
-import net.minecraft.entity.mob.WitherSkeletonEntity;
 import net.minecraft.entity.mob.ZombieEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -29,10 +25,8 @@ import net.minecraft.text.Text;
 import net.minecraft.text.TextColor;
 import net.minecraft.util.math.Box;
 
-import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.function.Predicate;
 
 public class MobHighlight {
 
@@ -40,7 +34,8 @@ public class MobHighlight {
         STAR, TANK, MINI, FEL, ASSASSIN, MIMIC
     }
 
-    record DataHolder(Entity entity, MobHighlight.MobType type) {}
+    public record DataHolder(Entity entity, MobHighlight.MobType type) {
+    }
 
     public enum HighlightType {
         FILLED("Filled"), OUTLINE("Outline"), BOTH("Both");
@@ -57,11 +52,10 @@ public class MobHighlight {
         }
     }
 
-    private static final int DIAMOND_HELMET_ID = Item.getRawId(Items.DIAMOND_HELMET);
-    private static final int PLAYER_HEAD_ID = Item.getRawId(Items.PLAYER_HEAD);
     private static final int LEATHER_BOOTS_ID = Item.getRawId(Items.LEATHER_BOOTS);
 
-    private static final ConcurrentLinkedQueue<DataHolder> savedEntities = new ConcurrentLinkedQueue<>();
+    private static final ConcurrentHashMap<Integer, Entity> foundEntities = new ConcurrentHashMap<>();
+    public static final ConcurrentLinkedQueue<DataHolder> savedEntities = new ConcurrentLinkedQueue<>();
 
     public static boolean dontRenderHighlight = false;
     @ConfigValue
@@ -121,22 +115,12 @@ public class MobHighlight {
     public static int sheepOutlineColor = 0xffffffff;
 
 
-
     public static void init() {
-        ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            if (!Location.inDungeon()) return;
 
-            ClientWorld world = client.world;
-            if (world == null) return;
-            for (Entity entity: world.getEntities()) {
-                if (entity instanceof ArmorStandEntity armorStand) {
-                    ArmourStandHolder holder = (ArmourStandHolder) armorStand;
-                    if (holder.blade_addons$hasBeenScanned()) continue;
-                    holder.blade_addons$setScanned(true);
-                    testArmourStand(armorStand, client);
-                }
-            }
-            savedEntities.removeIf(dataHolder -> dataHolder.entity.isRemoved());
+        Events.ON_ENTITY_SPAWNED.register((entity, world) -> {
+            if (entity instanceof ArmorStandEntity) return false;
+            foundEntities.put(entity.getId(), entity);
+            return false;
         });
 
         Events.ON_ENTITY_TRACKED.register((entity, world) -> {
@@ -146,6 +130,10 @@ public class MobHighlight {
                 if (MobHighlight.isShadowAssassin(player)) {
                     savedEntities.add(new DataHolder(player, MobType.ASSASSIN));
                 }
+            }
+
+            if (entity instanceof ArmorStandEntity armorStand) {
+                testArmorStand(armorStand);
             }
 
             return false;
@@ -162,35 +150,51 @@ public class MobHighlight {
             dontRenderHighlight = player.hasStatusEffect(StatusEffects.BLINDNESS);
         });
 
+        ClientEntityEvents.ENTITY_UNLOAD.register((entity, world) -> {
+            if (entity == null) return;
+            int id = entity.getId();
+            savedEntities.removeIf(dataHolder -> dataHolder.entity == entity);
+            foundEntities.remove(id);
+        });
+
         RenderingEvents.FILLED_ENTITY.register(MobHighlight::renderFilled);
         RenderingEvents.OUTLINE_ENTITY.register(MobHighlight::renderOutline);
     }
 
-    public static void testArmourStand(ArmorStandEntity armorStand, MinecraftClient client) {
+    private static void testArmorStand(ArmorStandEntity armorStand) {
+        MobType type = getType(armorStand);
+        if (type == null) return;
+
+        int idOffset = getIdOffset(armorStand);
+        if (idOffset < 0) return;
+
+        int id = armorStand.getId() - idOffset;
+        Entity entity = foundEntities.getOrDefault(id, null);
+        if (entity == null) return;
+        foundEntities.remove(id);
+        savedEntities.add(new DataHolder(entity, type));
+    }
+
+    public static MobType getType(ArmorStandEntity armorStand) {
         Text text = armorStand.getCustomName();
-        if (text == null) return;
+        if (text == null) return null;
+        String name = text.getString();
+        if (name.contains("King Midas")) return MobType.MINI;
+        if (name.contains("Mimic")) return MobType.MIMIC;
+        if (!MobHighlight.containsStarText(text)) return null;
+        if (name.contains("Fel")) return MobType.FEL;
+        if (isMiniBoss(name)) return MobType.MINI;
+        if (isTankMob(name)) return MobType.TANK;
+        return MobType.STAR;
+    }
+
+    public static int getIdOffset(ArmorStandEntity armorStand) {
+        Text text = armorStand.getCustomName();
+        if (text == null) return -1;
         String name = text.getString();
 
-        ClientWorld world = client.world;
-        if (world == null) return;
-
-        if (name.contains("Mimic")) {
-            attemptAddMob(armorStand, MobHighlight::isAPossibleMimic, 3.5, MobHighlight.MobType.MIMIC, world);
-            return;
-        }
-
-        if (!MobHighlight.containsStarText(text)) return;
-
-        if (name.contains("Fel")) {
-            attemptAddMob(armorStand, entity -> entity instanceof EndermanEntity, 4, MobHighlight.MobType.FEL, world);
-        } else if (isMiniBoss(name)) {
-            attemptAddMob(armorStand, MobHighlight::isMiniBoss, 4, MobHighlight.MobType.MINI, world);
-        } else if (isTankMob(name)) {
-            attemptAddMob(armorStand, MobHighlight::isAPossibleStaredMob, 3, MobHighlight.MobType.TANK, world);
-        } else {
-            attemptAddMob(armorStand, MobHighlight::isAPossibleStaredMob, 3, MobHighlight.MobType.STAR, world);
-        }
-
+        if (name.toLowerCase().contains("withermancer")) return 3;
+        return 1;
     }
 
     public static boolean containsStarText(Text text) {
@@ -201,56 +205,17 @@ public class MobHighlight {
             if (color.getRgb() == 0xFFAA00 && sib.getString().equals("✯ ")) {
                 return true;
             }
-
         }
 
         return false;
     }
 
     public static boolean isTankMob(String name) {
-        return name.contains("Zombie Commander") || name.contains("Zombie Lord") || name.contains("Skeleton Lord")|| name.contains("Withermancer") || name.contains("Super Archer");
+        return name.contains("Zombie Commander") || name.contains("Zombie Lord") || name.contains("Skeleton Lord") || name.contains("Withermancer") || name.contains("Super Archer");
     }
 
     public static boolean isMiniBoss(String name) {
         return name.contains("Lost Adventurer") || name.contains("Angry Archaeologist") || name.contains("Frozen Adventurer");
-    }
-
-    public static void attemptAddMob(ArmorStandEntity armorStand, Predicate<Entity> requirements, double maxDistance, MobHighlight.MobType mobType, ClientWorld world) {
-        Entity closest = null;
-        double smallestDistance = maxDistance;
-        double maxY = armorStand.getY();
-        Box boundingBox = Box.of(armorStand.getEntityPos().subtract(0, 0.5, 0), 2, 3, 2);
-
-
-        ArrayList<Entity> meetsRequirements = new ArrayList<>();
-
-        Iterable<Entity> entities = world.getEntities();
-        entities.forEach(entity -> {
-            if (!entity.getBoundingBox().intersects(boundingBox)) return;
-            if (!requirements.test(entity)) return;
-            if (entity.getY() > maxY) return;
-
-            meetsRequirements.add(entity);
-        });
-
-        for (Entity current : meetsRequirements) {
-            if (!current.getBoundingBox().intersects(boundingBox)) continue;
-            if (!requirements.test(current)) continue;
-            if (current.getY() > maxY) continue;
-
-            double distance = armorStand.getEntityPos().distanceTo(current.getEntityPos());
-            if (smallestDistance > distance) {
-                closest = current;
-                smallestDistance = distance;
-            }
-
-        }
-
-        if (closest == null) {
-            return;
-        }
-
-        savedEntities.add(new DataHolder(closest, mobType));
     }
 
     public static boolean isShadowAssassin(PlayerEntity player) {
@@ -263,34 +228,6 @@ public class MobHighlight {
         if (!text.getString().equals("Silent Death")) return false;
 
         return Item.getRawId(boots.getItem()) == LEATHER_BOOTS_ID;
-    }
-
-    public static boolean isAPossibleStaredMob(Entity entity) {
-        return switch (entity) {
-            case ZombieEntity ignored -> true;
-            case SkeletonEntity ignored -> true;
-            case WitherSkeletonEntity ignored -> true;
-            case PlayerEntity ignored -> !EntityUtil.isARealPlayer(entity) && !EntityUtil.isClientPlayer(entity) && !isMiniBoss(entity);
-            default -> false;
-        };
-    }
-
-    public static boolean isAPossibleMimic(Entity entity) {
-        if (entity instanceof ZombieEntity zombie) {
-            return zombie.isBaby();
-        }
-        return false;
-    }
-
-    public static boolean isMiniBoss(Entity entity) {
-        if (entity instanceof PlayerEntity player) {
-            if (EntityUtil.isARealPlayer(player)) return false;
-            ItemStack helmet = player.getInventory().getStack(39);
-            int id = Item.getRawId(helmet.getItem());
-            return id == DIAMOND_HELMET_ID || id == PLAYER_HEAD_ID;
-        }
-
-        return false;
     }
 
     public static int getFilledColor(MobType mob) {
@@ -341,6 +278,7 @@ public class MobHighlight {
 
         return box;
     }
+
 
     private static void renderFilled(WorldRenderContext context, MatrixStack matrixStack, VertexConsumer consumer) {
         if (!MobHighlight.mobHighlight || dontRenderHighlight || !MobHighlight.renderFilled()) return;

@@ -7,6 +7,7 @@ import blade.addon.features.dungeon.HidePlayers;
 import blade.addon.features.dungeon.ItemHighlight;
 import blade.addon.features.dungeon.KeyNotifier;
 import blade.addon.features.dungeon.LeapMessage;
+import blade.addon.features.dungeon.QuizTimer;
 import blade.addon.features.dungeon.RunStartValidator;
 import blade.addon.features.dungeon.SecretSpawnTimer;
 import blade.addon.features.dungeon.WarpCooldown;
@@ -42,6 +43,7 @@ import blade.addon.features.other.KickedTimer;
 import blade.addon.features.other.PracticeSS;
 import blade.addon.features.other.RagDisplay;
 import blade.addon.features.other.SelectedPet;
+import blade.addon.features.sound.BonzoSound;
 import blade.addon.utils.Commands;
 import blade.addon.utils.Keybinds;
 import blade.addon.utils.Location;
@@ -59,6 +61,7 @@ import blade.addon.utils.dungeon.Section;
 import blade.addon.utils.events.CustomEvents;
 import blade.addon.utils.rendering.RenderingEvents;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.message.v1.ServerMessageEvents;
 
 public class Bladeaddons implements ModInitializer {
     @Override
@@ -124,5 +127,7 @@ public class Bladeaddons implements ModInitializer {
         InvincibilityDuration.init();
         TeammateHighlight.init();
         SectionProgress.init();
+        BonzoSound.init();
+        QuizTimer.init();
     }
 }

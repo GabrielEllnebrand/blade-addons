@@ -104,7 +104,7 @@ public class CrystalSpawn {
     }
 
     public static boolean displayNotification() {
-        return tickSincePicked > REMINDER_TICK && Location.inDungeon() && Phase.inP1() && Floor7.crystalPlaceReminder && pickedUp;
+        return (Floor7.instantlyDisplayCrystalReminder || tickSincePicked > REMINDER_TICK) && Location.inDungeon() && Phase.inP1() && Floor7.crystalPlaceReminder && pickedUp;
     }
 
     public static void renderNotification(HUDComponent component, DrawContext context) {

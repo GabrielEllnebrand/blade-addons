@@ -102,4 +102,7 @@ public class ExtraOptions {
 
     @ConfigValue
     public static int timerPrefixColor = Constants.DARK_PURPLE;
+
+    @ConfigValue
+    public static boolean oldBonzoSound = false;
 }

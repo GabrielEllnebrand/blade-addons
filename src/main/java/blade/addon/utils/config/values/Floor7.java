@@ -142,4 +142,7 @@ public class Floor7 {
     @ConfigValue
     public static boolean disableTitlesAtSS = false;
 
+    @ConfigValue
+    public static boolean instantlyDisplayCrystalReminder = false;
+
 }

@@ -31,7 +31,6 @@ public class RenderPipelines {
             .withDepthWrite(true)
             .build());
 
-
     public static final RenderPipeline OUTLINE_ENTITY_PIPELINE_NO_DEPTH = net.minecraft.client.gl.RenderPipelines.register(RenderPipeline.builder(net.minecraft.client.gl.RenderPipelines.RENDERTYPE_LINES_SNIPPET)
             .withLocation(Identifier.of(Constants.NAMESPACE, "outline-entity-no-depth"))
             .withDepthTestFunction(DepthTestFunction.NO_DEPTH_TEST)

@@ -3,5 +3,16 @@
     "sounds": [
       "blade-addons:wolf-howl"
     ]
+  },
+  "ghast-moan": {
+    "sounds": [
+      { "name": "blade-addons:ghast-moan-1", "weight": 1 },
+      { "name": "blade-addons:ghast-moan-2", "weight": 1 },
+      { "name": "blade-addons:ghast-moan-3", "weight": 1 },
+      { "name": "blade-addons:ghast-moan-4", "weight": 1 },
+      { "name": "blade-addons:ghast-moan-5", "weight": 1 },
+      { "name": "blade-addons:ghast-moan-6", "weight": 1 },
+      { "name": "blade-addons:ghast-moan-7", "weight": 1 }
+    ]
   }
 }

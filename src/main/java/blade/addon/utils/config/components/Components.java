@@ -1,6 +1,7 @@
 package blade.addon.utils.config.components;
 
 import blade.addon.features.dungeon.ChestCounter;
+import blade.addon.features.dungeon.QuizTimer;
 import blade.addon.features.dungeon.RunStartValidator;
 import blade.addon.features.dungeon.KeyNotifier;
 import blade.addon.features.dungeon.SecretSpawnTimer;
@@ -134,4 +135,7 @@ public class Components {
 
     @ConfigValue
     public static HUDComponent sectionProgressDisplay = new HUDComponent(0, 0, 30, 10, 1, "Section progress", SectionProgress::display,  SectionProgress::render, () -> Floor7.showSectionProgress);
+
+    @ConfigValue
+    public static HUDComponent quizTimerDisplay = new HUDComponent(0, 0, 60, 10, 1, "Quiz timer", QuizTimer::display,  QuizTimer::render, () -> Dungeons.quizTimer);
 }

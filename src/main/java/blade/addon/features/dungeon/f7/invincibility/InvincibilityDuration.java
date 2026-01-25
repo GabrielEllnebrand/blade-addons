@@ -27,6 +27,10 @@ public class InvincibilityDuration {
     }
 
     public static void render(HUDComponent component, DrawContext context) {
-        RenderUtils.drawTimer(component, context, ticks, 0xffffffff);
+        int color = 0xffffffff;
+        if (Dungeons.useStatusColorForInvincibility) {
+            color = RenderUtils.getStatusColor(40, 20, ticks);
+        }
+        RenderUtils.drawTimer(component, context, ticks, color);
     }
 }
