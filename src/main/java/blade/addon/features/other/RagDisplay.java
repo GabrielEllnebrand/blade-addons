@@ -54,7 +54,7 @@ public class RagDisplay {
     }
 
     public static void render(HUDComponent component, DrawContext context) {
-        RenderUtils.drawTimer(component, context, tick, Constants.YELLOW_COLOR);
+        RenderUtils.drawTimer(component, context, tick, Constants.YELLOW);
     }
 
 }

@@ -1,4 +1,4 @@
-package blade.addon.features.dungeon.f7;
+package blade.addon.features.dungeon.f7.storm;
 
 import blade.addon.utils.Constants;
 import blade.addon.utils.Location;
@@ -44,7 +44,7 @@ public class PillarExplode {
     }
 
     public static void renderTimer(HUDComponent component, DrawContext context) {
-        int color = tick < 6 ? Constants.GREEN_COLOR : Constants.RED_COLOR;
+        int color = tick < 6 ? Constants.GREEN : Constants.RED;
         RenderUtils.drawTimer(component, context, tick, color);
     }
 

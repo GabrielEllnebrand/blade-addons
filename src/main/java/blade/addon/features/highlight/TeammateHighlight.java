@@ -62,7 +62,7 @@ public class TeammateHighlight {
             }
 
             if (Dungeons.renderClassName) {
-                Text text = Text.literal(player.getName().getString()).withColor(color).append(Text.literal(" [" + DungeonClass.getChar(clazz) + "]").withColor(Constants.YELLOW_COLOR));
+                Text text = Text.literal(player.getName().getString()).withColor(color).append(Text.literal(" [" + DungeonClass.getChar(clazz) + "]").withColor(Constants.YELLOW));
                 Vec3d pos = EntityUtil.getLerpedPos(player);
                 RenderUtils.renderText(context, matrixStack, text, pos.getX(), pos.getY() + 2.75, pos.getZ(), 2);
             }

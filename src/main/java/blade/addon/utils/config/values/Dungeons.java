@@ -133,4 +133,7 @@ public class Dungeons {
 
     @ConfigValue
     public static boolean quizTimer = false;
+
+    @ConfigValue
+    public static boolean bossHealthNumbers = false;
 }

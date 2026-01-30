@@ -1,11 +1,11 @@
 package blade.addon.features.dungeon.f7;
 
-import blade.addon.utils.Constants;
 import blade.addon.utils.Location;
 import blade.addon.utils.Misc;
 import blade.addon.utils.config.values.Floor7;
 import blade.addon.utils.data.EntityUtil;
 import blade.addon.utils.data.ItemUtil;
+import blade.addon.utils.data.TextUtil;
 import blade.addon.utils.debug.Debug;
 import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.events.Events;
@@ -21,8 +21,8 @@ import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexRendering;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.decoration.ArmorStandEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
@@ -44,7 +44,7 @@ public class RelicTimer {
         final Box box;
         final int color;
         final String name;
-        long placedTime = 0;
+        int placedTick = 0;
 
         Relic(Box box, int color, String name) {
             this.box = box;
@@ -63,6 +63,7 @@ public class RelicTimer {
     private static Relic pickedupRelic = null;
 
     private static int tick = Floor7.relicSpawnTicks;
+    private static int placeTick = 0;
     private static boolean sentRelicTimes = false;
 
     //only here to test the relic progress bar
@@ -79,6 +80,10 @@ public class RelicTimer {
                 forceGUI = false;
             }
 
+            if (Phase.inP5()) {
+                placeTick++;
+            }
+
             return false;
         });
 
@@ -93,6 +98,7 @@ public class RelicTimer {
             if (Phase.inP5()) {
                 phaseStartTime = System.currentTimeMillis();
                 tick = Floor7.relicSpawnTicks;
+                placeTick = 0;
             }
             return false;
         });
@@ -121,14 +127,19 @@ public class RelicTimer {
 
             for (Entity entity : entities) {
                 if (entity instanceof ArmorStandEntity armorStand) {
-                    if (!EntityUtil.isWearing(armorStand, EquipmentSlot.HEAD, "Relic")) continue;
+                    ItemStack item = armorStand.getWeaponStack();
+                    String id = ItemUtil.getId(item);
+
+                    if (id == null || !id.contains("RELIC")) continue;
+                    Debug.sendDebugMessage(Text.literal("item id is " + id));
 
                     double ax = armorStand.getX();
                     double az = armorStand.getZ();
 
                     for (Relic relic : Relic.values()) {
-                        if (relic.placedTime != 0 && Misc.getDistance(relic.box.maxX, relic.box.maxZ, ax, az) < 1) {
-                            relic.placedTime = System.currentTimeMillis();
+                        if (relic.placedTick != 0 && Misc.getDistance(relic.box.maxX, relic.box.maxZ, ax, az) < 1.5) {
+                            relic.placedTick = placeTick;
+                            Debug.sendDebugMessage(Text.literal("Set" + relic.name + " time to " + relic.placedTick + ", item id is " + id));
                         }
                     }
                 }
@@ -136,8 +147,7 @@ public class RelicTimer {
 
             if (allRelicsPlaced()) {
                 for (Relic relic : Relic.values()) {
-                    long time = relic.placedTime - phaseStartTime;
-                    Misc.addChatMessage(Text.literal(relic.name + " &aRelic placed in &e" + Constants.DECIMAL_FORMAT.format(time) + "s&a."));
+                    Misc.addChatMessage(Text.literal(relic.name + " &aRelic placed in &e" + TextUtil.formatTicks(relic.placedTick) + "s&a."));
                     sentRelicTimes = true;
                 }
             }
@@ -214,14 +224,15 @@ public class RelicTimer {
         tick = Floor7.relicSpawnTicks;
         pickedupRelic = null;
         for (Relic relic : Relic.values()) {
-            relic.placedTime = 0;
+            relic.placedTick = 0;
         }
         sentRelicTimes = false;
+        placeTick = 0;
     }
 
     private static boolean allRelicsPlaced() {
         for (Relic relic : Relic.values()) {
-            if (relic.placedTime == 0) return false;
+            if (relic.placedTick == 0) return false;
         }
         return true;
     }

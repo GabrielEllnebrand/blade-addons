@@ -105,4 +105,10 @@ public class ExtraOptions {
 
     @ConfigValue
     public static boolean oldBonzoSound = false;
+
+    @ConfigValue
+    public static boolean displayCurrentArrow = false;
+
+    @ConfigValue
+    public static boolean arrowSwapNotification = false;
 }

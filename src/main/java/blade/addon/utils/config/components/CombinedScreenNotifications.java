@@ -2,11 +2,12 @@ package blade.addon.utils.config.components;
 
 import blade.addon.features.dungeon.RunStartValidator;
 import blade.addon.features.dungeon.KeyNotifier;
-import blade.addon.features.dungeon.f7.CrystalSpawn;
+import blade.addon.features.dungeon.f7.maxor.CrystalSpawn;
 import blade.addon.features.dungeon.f7.terms.MelodyWarning;
-import blade.addon.features.dungeon.f7.PillarExplode;
+import blade.addon.features.dungeon.f7.storm.PillarExplode;
 import blade.addon.features.dungeon.f7.terms.DeviceNotifier;
 import blade.addon.features.notifications.Notifications;
+import blade.addon.features.other.ArrowSwapper;
 import blade.addon.features.other.SelectedPet;
 import blade.addon.utils.config.values.Dungeons;
 import blade.addon.utils.rendering.RenderUtils;
@@ -35,6 +36,8 @@ public class CombinedScreenNotifications {
             return true;
         } else if (SelectedPet.displayNotification()) {
             return true;
+        } else if (ArrowSwapper.displayNotification()) {
+            return true;
         }
         return false;
     }
@@ -56,7 +59,9 @@ public class CombinedScreenNotifications {
             Notifications.render(component, context);
         } else if (SelectedPet.displayNotification()) {
             SelectedPet.renderNotification(component, context);
-        }  else {
+        }   else if (ArrowSwapper.displayNotification()) {
+            ArrowSwapper.renderNotification(component, context);
+        }else {
             RenderUtils.drawCenteredText(context, component, Text.literal("Some notification"));
         }
 

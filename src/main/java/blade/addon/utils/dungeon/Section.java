@@ -169,15 +169,6 @@ public class Section {
 
             Events.ON_TERMINAL.invoke(terminalEvent -> terminalEvent.onComplete(name, action, objective, currentCompleted, totalNeeded));
 
-
-            if (shouldIncrement(currentCompleted)) {
-                incrementSection();
-                Misc.forceTitle(Text.empty(), message);
-            } else {
-                total = totalNeeded;
-                completed = currentCompleted;
-            }
-
             if (Floor7.terminalTimeStamps) {
                 //have to do it like this because for some reason they have the color in the
                 //Style object and not in the string literal
@@ -186,6 +177,14 @@ public class Section {
                     Misc.addChatMessage(Text.literal(name).setStyle(texts.getFirst().getStyle()).append(Text.literal(" §a" + action + " " + objective + "! (§c" + currentCompleted + "§a/" + totalNeeded + ") §8(§7" + getSectionTime() + "s §8| §7" + Phase.getPhaseTime(TERM_PHASE_INDEX) + "s§8)")));
                     return true;
                 }
+            }
+
+            if (shouldIncrement(currentCompleted)) {
+                incrementSection();
+                Misc.forceTitle(Text.empty(), message);
+            } else {
+                total = totalNeeded;
+                completed = currentCompleted;
             }
 
 

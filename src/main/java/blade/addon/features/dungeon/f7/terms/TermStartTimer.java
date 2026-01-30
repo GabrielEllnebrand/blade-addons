@@ -34,6 +34,6 @@ public class TermStartTimer {
 
     public static void render(HUDComponent component, DrawContext context) {
         double num = tick * Constants.TICK_DURATION;
-        RenderUtils.drawCenteredText(context, component, Text.literal(Constants.DECIMAL_FORMAT.format(num)), Constants.YELLOW_COLOR);
+        RenderUtils.drawCenteredText(context, component, Text.literal(Constants.DECIMAL_FORMAT.format(num)), Constants.YELLOW);
     }
 }

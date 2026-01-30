@@ -18,6 +18,7 @@
     "requireAnnotations": true
   },
   "client": [
+    "BossBarHudMixin",
     "ChatHudInvoker",
     "ChatScreenMixin",
     "ClientPlayerEntityMixin",

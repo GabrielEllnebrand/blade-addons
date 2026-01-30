@@ -52,6 +52,12 @@ public class EntityUtil {
         return clientPlayer.getName().getString().equals(name);
     }
 
+    public static boolean isClientPlayer(int id) {
+        ClientPlayerEntity clientPlayer = MinecraftClient.getInstance().player;
+        if (clientPlayer == null) return false;
+        return clientPlayer.getId() == id;
+    }
+
     public static boolean isARealPlayer(Entity entity) {
         if (entity instanceof PlayerEntity player) {
             if (playerMap.containsKey(player)) {

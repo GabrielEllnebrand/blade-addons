@@ -9,14 +9,15 @@ import net.minecraft.util.math.Vec3d;
 
 public class PositionMessage {
 
-    private final String message, check;
+    private final String message;
+    private final String[] checks;
     private final Box box;
     private boolean sent;
     private final int[] sections;
 
-    public PositionMessage(String message, String check, Box box, int[] sections) {
+    public PositionMessage(String message, String[] checks, Box box, int[] sections) {
         this.message = message;
-        this.check = check;
+        this.checks = checks;
         this.box = box;
         this.sent = true;
         this.sections = sections;
@@ -42,8 +43,15 @@ public class PositionMessage {
         }
     }
 
+    private boolean matchesACheck(String string) {
+        for (String check : checks) {
+            if (string.contains(check)) return true;
+        }
+        return false;
+    }
+
     public boolean hasBeenSent(String string) {
-        if (!string.toLowerCase().contains(check)) return false;
+        if (!matchesACheck(string.toLowerCase())) return false;
 
         if (sent) {
             return true;

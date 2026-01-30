@@ -79,7 +79,6 @@ public class Keybinds {
                 GLFW.GLFW_KEY_UNKNOWN,
                 category));
 
-
         ClientTickEvents.END_CLIENT_TICK.register(Keybinds::checkInputs);
     }
 
@@ -111,7 +110,7 @@ public class Keybinds {
             }
 
             List<Text> lines = lore.lines();
-            for(Text line: lines) {
+            for (Text line : lines) {
                 Misc.addChatMessage(line);
             }
 
@@ -163,9 +162,6 @@ public class Keybinds {
                     }
                 }
             }
-
-
-
 
             //wither essence uuid
             //e0f3e929-869e-3dca-9504-54c666ee6f23

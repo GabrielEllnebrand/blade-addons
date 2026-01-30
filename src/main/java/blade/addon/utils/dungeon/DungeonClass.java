@@ -1,6 +1,6 @@
 package blade.addon.utils.dungeon;
 
-import blade.addon.features.dungeon.f7.DragSpawnTimer;
+import blade.addon.features.dungeon.f7.dragons.DragSpawnTimer;
 import blade.addon.utils.Location;
 import blade.addon.utils.config.values.Dungeons;
 import blade.addon.utils.config.values.Floor7;

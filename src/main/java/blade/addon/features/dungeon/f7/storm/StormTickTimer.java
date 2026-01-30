@@ -1,4 +1,4 @@
-package blade.addon.features.dungeon.f7;
+package blade.addon.features.dungeon.f7.storm;
 
 import blade.addon.features.dungeon.f7.invincibility.InvincibilityTimer;
 import blade.addon.utils.Constants;

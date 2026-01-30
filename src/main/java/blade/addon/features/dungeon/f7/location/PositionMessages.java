@@ -21,16 +21,16 @@ public class PositionMessages {
 
     static final ArrayList<PositionMessage> positionMessages = new ArrayList<>();
 
-    static PositionMessage SS = new PositionMessage("At SS!", "ss", new Box(107, 120, 93, 110, 121, 95), new int[]{0, 1});
-    static PositionMessage EE2 = new PositionMessage("At EE2!", "ee2", new Box(57, 109, 130, 59, 110, 132), new int[]{1, 2});
-    static PositionMessage HEE2 = new PositionMessage("At High EE2!", "ee2", new Box(59, 132, 138, 62, 133, 140), new int[]{1, 2});
-    static PositionMessage EE3 = new PositionMessage("At EE3!", "ee3", new Box(1, 109, 103, 3, 110, 106), new int[]{2, 3});
-    static PositionMessage CORE = new PositionMessage("At Core!", "core", new Box(53, 115, 51, 56, 116, 54), new int[]{2, 3, 4});
-    static PositionMessage TUNNEL = new PositionMessage("Inside Goldor Tunnel!", "tunnel", new Box(52, 114, 55, 57, 116, 58), new int[]{4, 5});
-    static PositionMessage SAFE_2 = new PositionMessage("At 2 Safespot!", "2 safespot", new Box(46, 109, 121.987, 49, 110, 121.988), new int[]{1, 2});
-    static PositionMessage SAFE_3 = new PositionMessage("At 3 Safespot!", "3 safespot", new Box(18, 121, 91, 19, 126, 99), new int[]{2, 3});
-    static PositionMessage SPLIT_2 = new PositionMessage("At Split ee2!", "split ee2", new Box(58, 119, 124, 60, 123, 126), new int[]{1, 2});
-    static PositionMessage SAFE_2_HIGH = new PositionMessage("At High 2 Safespot!", "2 safespot", new Box(70, 127, 143.7, 57, 133, 146.7), new int[]{1, 2});
+    static PositionMessage SS = new PositionMessage("At SS!", new String[]{"ss"}, new Box(107, 120, 93, 110, 121, 95), new int[]{0, 1});
+    static PositionMessage EE2 = new PositionMessage("At EE2!", new String[]{"ee2", "early enter 2"}, new Box(57, 109, 130, 59, 110, 132), new int[]{1, 2});
+    static PositionMessage HEE2 = new PositionMessage("At High EE2!", new String[]{"high ee2", "highee2", "hee2"}, new Box(59, 132, 138, 62, 133, 140), new int[]{1, 2});
+    static PositionMessage EE3 = new PositionMessage("At EE3!", new String[]{"ee3", "early enter 3", "early entry 3"}, new Box(1, 109, 103, 3, 110, 106), new int[]{2, 3});
+    static PositionMessage CORE = new PositionMessage("At Core!", new String[]{"core"}, new Box(53, 115, 51, 56, 116, 54), new int[]{2, 3, 4});
+    static PositionMessage TUNNEL = new PositionMessage("Inside Goldor Tunnel!", new String[]{"tunnel"}, new Box(52, 114, 55, 57, 116, 58), new int[]{4, 5});
+    static PositionMessage SAFE_2 = new PositionMessage("At 2 Safespot!", new String[]{"2 safespot", "ee2 safespot", "safespot ee2", "s2 safespot", "safespot s2"}, new Box(46, 109, 121.987, 49, 110, 121.988), new int[]{1, 2});
+    static PositionMessage SAFE_3 = new PositionMessage("At 3 Safespot!", new String[]{"3 safespot", "ee3 safespot", "freaky ee3", "freak ee", "safespot s3", "safespot 3"}, new Box(18, 121, 91, 19, 126, 99), new int[]{2, 3});
+    static PositionMessage SPLIT_2 = new PositionMessage("At Split ee2!", new String[]{"split ee2", "splitee2", "mage term"}, new Box(58, 119, 124, 60, 123, 126), new int[]{1, 2});
+    static PositionMessage SAFE_2_HIGH = new PositionMessage("At High 2 Safespot!", new String[]{"2 safespot"}, new Box(70, 127, 143.7, 57, 133, 146.7), new int[]{1, 2});
 
     public static void init() {
         ClientTickEvents.END_CLIENT_TICK.register(PositionMessages::tick);

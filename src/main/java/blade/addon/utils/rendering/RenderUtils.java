@@ -13,6 +13,7 @@ import net.minecraft.client.render.VertexRendering;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.Box;
+import net.minecraft.util.math.Vec3d;
 
 public class RenderUtils {
 
@@ -26,8 +27,14 @@ public class RenderUtils {
         return new float[]{r, g, b, a};
     }
 
-    public static int getStatusColor(int lastGreenTick, int lastOrangeTick, int currentTick) {
-        return currentTick >= lastGreenTick ? Constants.GREEN_COLOR : currentTick >= lastOrangeTick ? Constants.ORANGE_COLOR : Constants.RED_COLOR;
+    public static int getStatusColor(int minGreen, int minOrange, int value) {
+        return value >= minGreen ? Constants.GREEN : value >= minOrange ? Constants.ORANGE : Constants.RED;
+    }
+
+    public static void drawText(DrawContext context, HUDComponent component, Text text, int color) {
+        TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
+        if (textRenderer == null) return;
+        context.drawText(textRenderer, text, component.getScaledX(), component.getScaledY(), color, true);
     }
 
     public static void drawCenteredText(DrawContext context, TextRenderer textRenderer, Text text, int x, int y, int maxWidth, int color) {
@@ -104,4 +111,18 @@ public class RenderUtils {
         context.commandQueue().submitText(matrices, -halfWidth, 0, text.asOrderedText(), true, TextRenderer.TextLayerType.SEE_THROUGH, 15728880, 0xffffffff, 0, 0);
         matrices.pop();
     }
+
+    public static void renderText(WorldRenderContext context, MatrixStack matrices, Text text, Vec3d pos, float scale) {
+        renderText(context, matrices, text, pos.x, pos.y, pos.z, scale);
+    }
+
+
+
+        public static String formatHealth(float health) {
+            if (health >= 1e9) return String.format("%.1fb", health / 1e9);
+            if (health >= 1e6) return String.format("%.1fm", health / 1e6);
+            if (health >= 1e3) return String.format("%.1fk", health / 1e3);
+            return health + "";
+        }
+
 }

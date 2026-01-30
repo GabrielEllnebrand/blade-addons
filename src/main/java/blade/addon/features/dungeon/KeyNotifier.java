@@ -4,6 +4,7 @@ import blade.addon.utils.Location;
 import blade.addon.utils.Scheduler;
 import blade.addon.utils.config.values.Dungeons;
 import blade.addon.utils.dungeon.DungeonClass;
+import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.events.Events;
 import blade.addon.utils.rendering.RenderUtils;
 import config.practical.hud.HUDComponent;
@@ -42,7 +43,7 @@ public class KeyNotifier {
 
     public static void init() {
         ClientTickEvents.END_WORLD_TICK.register((world) -> {
-            if (!Location.inDungeon() || hasKey || !Dungeons.enableKeyNotifier) return;
+            if (!Location.inDungeon() || hasKey || !Dungeons.enableKeyNotifier || Phase.inBoss()) return;
 
             for (Entity entity : world.getEntities()) {
                 if (entity instanceof ArmorStandEntity armorStand && !foundKeys.contains(entity)) {
@@ -106,11 +107,11 @@ public class KeyNotifier {
     }
 
     private static boolean isValidClass() {
-       return Dungeons.displayKeyForAllClasses || DungeonClass.isClass(DungeonClass.ARCHER) || DungeonClass.isClass(DungeonClass.MAGE);
+       return (Dungeons.displayKeyForAllClasses || DungeonClass.isClass(DungeonClass.ARCHER) || DungeonClass.isClass(DungeonClass.MAGE) && Dungeons.enableKeyNotifier);
     }
 
     public static boolean display() {
-        return Location.inDungeon() && hasKey && isValidClass();
+        return Location.inDungeon() && hasKey && isValidClass() && !Phase.inBoss();
     }
 
     public static void render(HUDComponent component, DrawContext context) {

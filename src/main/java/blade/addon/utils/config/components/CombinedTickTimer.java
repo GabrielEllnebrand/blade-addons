@@ -1,8 +1,8 @@
 package blade.addon.utils.config.components;
 
-import blade.addon.features.dungeon.f7.CrystalSpawn;
+import blade.addon.features.dungeon.f7.maxor.CrystalSpawn;
 import blade.addon.features.dungeon.f7.RelicTimer;
-import blade.addon.features.dungeon.f7.StormTickTimer;
+import blade.addon.features.dungeon.f7.storm.StormTickTimer;
 import blade.addon.features.dungeon.f7.terms.GoldorTickTimer;
 import blade.addon.features.dungeon.f7.terms.TermStartTimer;
 import blade.addon.utils.Constants;

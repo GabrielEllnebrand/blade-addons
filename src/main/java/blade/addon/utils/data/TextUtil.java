@@ -1,5 +1,6 @@
 package blade.addon.utils.data;
 
+import blade.addon.utils.Constants;
 import net.minecraft.text.OrderedText;
 import net.minecraft.text.Style;
 import net.minecraft.text.TextColor;
@@ -115,6 +116,10 @@ public class TextUtil {
         }
 
         return '0';
+    }
+
+    public static String formatTicks(int tick) {
+       return Constants.DECIMAL_FORMAT.format(tick * Constants.TICK_DURATION);
     }
 
 }

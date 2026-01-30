@@ -6,7 +6,7 @@ import blade.addon.utils.events.interfaces.EntityEvent;
 import blade.addon.utils.events.interfaces.GameMessageEvent;
 import blade.addon.utils.events.interfaces.LeapEvent;
 import blade.addon.utils.events.interfaces.LocationChangeEvent;
-import blade.addon.utils.events.interfaces.ParticleEvent;
+import blade.addon.utils.events.interfaces.PacketEvent;
 import blade.addon.utils.events.interfaces.PartyMessageEvent;
 import blade.addon.utils.events.interfaces.PetEvent;
 import blade.addon.utils.events.interfaces.PhaseEvent;
@@ -32,7 +32,6 @@ public class Events {
     public static final EventHandler<PlayerListEvent> ON_PLAYER_ENTRY = new EventHandler<>();
     public static final EventHandler<ScoreBoardEvent> ON_TEAM = new EventHandler<>();
     public static final EventHandler<PhaseEvent> ON_PHASE_CHANGE = new EventHandler<>();
-    public static final EventHandler<ParticleEvent> ON_PARTICLE = new EventHandler<>();
     public static final EventHandler<PetEvent> ON_PET = new EventHandler<>();
     public static final EventHandler<PartyMessageEvent> ON_PARTY_MESSAGE = new EventHandler<>();
 
@@ -48,5 +47,9 @@ public class Events {
     public static final EventHandler<PlaySoundEvent> ON_SOUND = new EventHandler<>();
 
     public static final EventHandler<BlockEntityEvent> ON_BLOCK_ENTITY = new EventHandler<>();
+
+
+    //    public static final EventHandler<ParticleEvent> ON_PARTICLE = new EventHandler<>();
+    public static final EventHandler<PacketEvent> ON_PACKET = new EventHandler<>();
 
 }

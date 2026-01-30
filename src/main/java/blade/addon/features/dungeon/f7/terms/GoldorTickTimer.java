@@ -34,7 +34,7 @@ public class GoldorTickTimer {
     public static void render(HUDComponent component, DrawContext context) {
         double num = tick * Constants.TICK_DURATION;
         double mod = num % 3;
-        int color = (mod < 1? Constants.GREEN_COLOR: mod < 2? Constants.ORANGE_COLOR: Constants.RED_COLOR);
+        int color = (mod < 1? Constants.GREEN: mod < 2? Constants.ORANGE: Constants.RED);
         if (Floor7.inDeathTicks) num = mod;
 
         RenderUtils.drawTimer(component, context, num, color);

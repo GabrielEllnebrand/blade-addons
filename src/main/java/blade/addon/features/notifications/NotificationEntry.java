@@ -28,7 +28,7 @@ class NotificationEntry extends ClickableWidget {
     private final Notification notification;
 
     public NotificationEntry(NotificationList parent, Notification notification) {
-        super(0, 0, Constants.WIDGET_WIDTH, 30, Text.empty());
+        super(0, 0, Constants.WIDGET_WIDTH, 28, Text.empty());
         this.parent = parent;
         this.notification = notification;
     }

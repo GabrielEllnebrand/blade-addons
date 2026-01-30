@@ -12,7 +12,25 @@ public enum Location {
     DUNGEON,
     DUNGEON_HUB,
     PRIVATE_ISLAND,
-    HUB;
+    HUB,
+    GALATEA,
+    THE_PARK,
+    THE_FARMING_ISLANDS,
+    GOLD_MINE,
+    DEEP_CAVERNS,
+    DWARVEN_MINES,
+    CRYSTAL_HOLLOWS,
+    SPIDERS_DEN,
+    THE_END,
+    CRIMSON_ISLE,
+    GARDEN,
+    THE_RIFT,
+    BACKWATER_BAYOU,
+    UNKNOWN,
+    JERRYS_WORKSHOP,
+    MINESHAFT,
+    DARK_AUCTION,
+    KUUDRA;
 
     private static Location currentLocation = Location.NONE;
     private static boolean inSkyblock = false;
@@ -29,7 +47,7 @@ public enum Location {
             }
 
             try {
-                currentLocation = Location.valueOf(map.toUpperCase().replace(" ", "_"));
+                currentLocation = Location.valueOf(map.toUpperCase().replace(" ", "_").replaceAll("'", ""));
             } catch (IllegalArgumentException ignored) {
                 currentLocation = Location.NONE;
             }

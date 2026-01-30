@@ -154,7 +154,7 @@ public class InvincibilityTimer {
     }
 
     private static void drawSprite(DrawContext context, Identifier identifier, int x, int y, boolean isOn, int ticks, Text timerText) {
-        int color = (ticks > 0? Constants.RED_COLOR: isOn? Constants.YELLOW_COLOR: Constants.GREEN_COLOR);
+        int color = (ticks > 0? Constants.RED: isOn? Constants.YELLOW: Constants.GREEN);
         context.fill(x, y, x + SPRITE_SIZE, y + SPRITE_SIZE, color);
         context.drawGuiTexture(RenderPipelines.GUI_TEXTURED, identifier, x, y, SPRITE_SIZE, SPRITE_SIZE, 0xffffffff);
         if (ticks > 0) {

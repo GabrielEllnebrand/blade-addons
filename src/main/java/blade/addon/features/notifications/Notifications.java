@@ -25,7 +25,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class Notifications {
 
     private static final String filePath = FolderUtility.CONFIG_PATH + FolderUtility.NOTIFICATIONS_NAME;
-    private static final String WAYPOINTS_NAME = "waypoints";
+    private static final String NOTIFICATIONS_NAME = "notifications";
 
     @ConfigValue
     public static CopyOnWriteArrayList<Notification> notifications;
@@ -82,7 +82,7 @@ public class Notifications {
         JsonObject obj = new JsonObject();
         Gson gson = new Gson();
 
-        obj.add(WAYPOINTS_NAME, gson.toJsonTree(notifications));
+        obj.add(NOTIFICATIONS_NAME, gson.toJsonTree(notifications));
 
         JsonElement tree = gson.toJsonTree(obj);
         try (FileWriter writer = new FileWriter(filePath)) {
@@ -101,7 +101,15 @@ public class Notifications {
         }
         Gson gson = new Gson();
         JsonObject object = gson.fromJson(jsonContent, JsonObject.class);
-        JsonElement element = object.get(WAYPOINTS_NAME);
+
+        JsonElement element;
+        if (object.has("waypoints")) {
+            //backwards compatibility because I forgot to change the name
+            //before release...
+            element = object.get("waypoints");
+        } else {
+            element = object.get(NOTIFICATIONS_NAME);
+        }
 
         if (!element.isJsonArray()) return;
         JsonArray array = element.getAsJsonArray();

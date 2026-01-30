@@ -92,11 +92,11 @@ public class ItemHighlight {
         if (distance > 20) {
             return 0;
         } else if (distance > 3.5) {
-            return Constants.RED_COLOR;
+            return Constants.RED;
         } else if (item.age > 11){
-            return Constants.GREEN_COLOR;
+            return Constants.GREEN;
         } else {
-            return Constants.ORANGE_COLOR;
+            return Constants.ORANGE;
         }
     }
 

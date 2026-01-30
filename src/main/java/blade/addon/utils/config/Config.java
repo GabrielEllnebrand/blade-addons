@@ -1,9 +1,10 @@
 package blade.addon.utils.config;
 
 import blade.addon.features.dungeon.f7.BossWaypoints;
-import blade.addon.features.dungeon.f7.DragSpawnTimer;
+import blade.addon.features.dungeon.f7.dragons.DragSpawnTimer;
 import blade.addon.features.dungeon.f7.invincibility.InvincibilityTimer;
 import blade.addon.features.dungeon.f7.location.LocationNotifier;
+import blade.addon.features.filter.FilterList;
 import blade.addon.features.highlight.MobHighlight;
 import blade.addon.features.other.DianaNotifier;
 import blade.addon.features.notifications.NotificationList;
@@ -58,6 +59,7 @@ public class Config {
         ConfigCategory general = new ConfigCategory("General");
         general.add(new ConfigString(Text.literal("Message prefix"), () -> ExtraOptions.textPrefix, str -> ExtraOptions.textPrefix = str));
         general.add(new ConfigButton(Text.literal("Edit Notifications"), () -> MinecraftClient.getInstance().setScreen(new NotificationList())));
+        general.add(new ConfigButton(Text.literal("Edit Chat filters"), () -> MinecraftClient.getInstance().setScreen(new FilterList())));
         return general;
     }
 
@@ -128,6 +130,7 @@ public class Config {
         dungeons.add(new ConfigBool(Text.literal("Highlight teammates"), () -> Dungeons.highlightTeammates, bool -> Dungeons.highlightTeammates = bool));
         dungeons.add(new ConfigBool(Text.literal("Render class names"), () -> Dungeons.renderClassName, bool -> Dungeons.renderClassName = bool));
         dungeons.add(new ConfigBool(Text.literal("Time until quiz question"), () -> Dungeons.quizTimer, bool -> Dungeons.quizTimer = bool));
+        dungeons.add(new ConfigBool(Text.literal("Draw boss health numbers"), () -> Dungeons.bossHealthNumbers, bool -> Dungeons.bossHealthNumbers = bool));
         return dungeons;
     }
 
@@ -148,6 +151,7 @@ public class Config {
         maxor.add(new ConfigBool(Text.literal("Crystal Spawn Time"), () -> Floor7.enableCrystalSpawnTime, bool -> Floor7.enableCrystalSpawnTime = bool));
         maxor.add(new ConfigBool(Text.literal("Crystal place reminder"), () -> Floor7.crystalPlaceReminder, bool -> Floor7.crystalPlaceReminder = bool));
         maxor.add(new ConfigBool(Text.literal("Display reminder instantly"), () -> Floor7.instantlyDisplayCrystalReminder, bool -> Floor7.instantlyDisplayCrystalReminder = bool));
+        maxor.add(new ConfigBool(Text.literal("Maxor stun timer"), () -> Floor7.maxorStunDuration, bool -> Floor7.maxorStunDuration = bool));
         floor7.add(maxor);
 
         ConfigSection storm = new ConfigSection(Text.literal("Storm"));
@@ -192,20 +196,23 @@ public class Config {
 
         floor7.add(locationNotifier);
 
-        ConfigSection phase5 = new ConfigSection(Text.literal("Relics and Dragons"));
-        phase5.add(new ConfigBool(Text.literal("Relic start timer"), () -> Floor7.enableRelicStartTimer, bool -> Floor7.enableRelicStartTimer = bool));
-        phase5.add(new ConfigBool(Text.literal("Replace with progress bar"), () -> Floor7.replaceWithProgressBar, bool -> Floor7.replaceWithProgressBar = bool));
-        phase5.add(new ConfigBool(Text.literal("Use valleys progress bar"), () -> Floor7.useValleyBar, bool -> Floor7.useValleyBar = bool));
-        phase5.add(new ConfigInt(Text.literal("Relic start timer ticks"), () -> Floor7.relicSpawnTicks, num -> Floor7.relicSpawnTicks = num, 1, 30, 50));
-        phase5.add(new ConfigBool(Text.literal("Enable relic placed time"), () -> Floor7.enableRelicPlaceTime, bool -> Floor7.enableRelicPlaceTime = bool));
-        phase5.add(new ConfigBool(Text.literal("Block incorrect relic place"), () -> Floor7.blockIncorrectRelicPlace, bool -> Floor7.blockIncorrectRelicPlace = bool));
-        phase5.add(new ConfigBool(Text.literal("Highlight picked up relic"), () -> Floor7.renderRelicHighlight, bool -> Floor7.renderRelicHighlight = bool));
-        phase5.add(new ConfigBool(Text.literal("Send all relic times"), () -> Floor7.showAllRelicTimes, bool -> Floor7.showAllRelicTimes = bool));
-        phase5.add(new ConfigBool(Text.literal("Enable Dragon spawn timers"), () -> Floor7.dragSpawnTimers, bool -> Floor7.dragSpawnTimers = bool));
-        phase5.add(new ConfigBool(Text.literal("Send sound on dragon spawn"), () -> Floor7.sendSoundOnDragSpawn, bool -> Floor7.sendSoundOnDragSpawn = bool));
-        phase5.add(new ConfigOptions<>(Text.literal("Healer prio"), DragSpawnTimer.Team.values(), () -> Floor7.healerTeam, team -> Floor7.healerTeam = team));
+        ConfigSection relic = new ConfigSection(Text.literal("Relics"));
+        relic.add(new ConfigBool(Text.literal("Relic start timer"), () -> Floor7.enableRelicStartTimer, bool -> Floor7.enableRelicStartTimer = bool));
+        relic.add(new ConfigBool(Text.literal("Replace with progress bar"), () -> Floor7.replaceWithProgressBar, bool -> Floor7.replaceWithProgressBar = bool));
+        relic.add(new ConfigBool(Text.literal("Use valleys progress bar"), () -> Floor7.useValleyBar, bool -> Floor7.useValleyBar = bool));
+        relic.add(new ConfigInt(Text.literal("Relic start timer ticks"), () -> Floor7.relicSpawnTicks, num -> Floor7.relicSpawnTicks = num, 1, 30, 50));
+        relic.add(new ConfigBool(Text.literal("Enable relic placed time"), () -> Floor7.enableRelicPlaceTime, bool -> Floor7.enableRelicPlaceTime = bool));
+        relic.add(new ConfigBool(Text.literal("Block incorrect relic place"), () -> Floor7.blockIncorrectRelicPlace, bool -> Floor7.blockIncorrectRelicPlace = bool));
+        relic.add(new ConfigBool(Text.literal("Highlight picked up relic"), () -> Floor7.renderRelicHighlight, bool -> Floor7.renderRelicHighlight = bool));
+        relic.add(new ConfigBool(Text.literal("Send all relic times"), () -> Floor7.showAllRelicTimes, bool -> Floor7.showAllRelicTimes = bool));
+        floor7.add(relic);
 
-        floor7.add(phase5);
+        ConfigSection dragon = new ConfigSection(Text.literal("Dragons"));
+        dragon.add(new ConfigBool(Text.literal("Enable Dragon spawn timers"), () -> Floor7.dragSpawnTimers, bool -> Floor7.dragSpawnTimers = bool));
+        dragon.add(new ConfigBool(Text.literal("Send sound on dragon spawn"), () -> Floor7.sendSoundOnDragSpawn, bool -> Floor7.sendSoundOnDragSpawn = bool));
+        dragon.add(new ConfigOptions<>(Text.literal("Healer prio"), DragSpawnTimer.Team.values(), () -> Floor7.healerTeam, team -> Floor7.healerTeam = team));
+        dragon.add(new ConfigBool(Text.literal("Render dragon health"), () -> Floor7.dragonHealth, bool -> Floor7.dragonHealth = bool));
+        floor7.add(dragon);
 
         return floor7;
     }
@@ -279,6 +286,9 @@ public class Config {
         extra.add(new ConfigBool(Text.literal("Disable recipe book"), () -> ExtraOptions.disableRecipeBook, bool -> ExtraOptions.disableRecipeBook = bool));
         extra.add(new ConfigBool(Text.literal("Enable moveable held item tooltip"), () -> ExtraOptions.moveToolTip, bool -> ExtraOptions.moveToolTip = bool));
         extra.add(new ConfigColor(Text.literal("Prefix text color"), () -> ExtraOptions.timerPrefixColor, color -> ExtraOptions.timerPrefixColor = color, "timer-prefix", false));
+        extra.add(new ConfigBool(Text.literal("Display selected arrow"), () -> ExtraOptions.displayCurrentArrow, bool -> ExtraOptions.displayCurrentArrow = bool));
+        extra.add(new ConfigBool(Text.literal("Title on arrow swap"), () -> ExtraOptions.arrowSwapNotification, bool -> ExtraOptions.arrowSwapNotification = bool));
+
 
         ConfigSection sound = new ConfigSection(Text.literal("Sound options"));
         sound.add(new ConfigBool(Text.literal("Disable \"on cooldown\" sound"), () -> ExtraOptions.disableAbilityCooldownSound, bool -> ExtraOptions.disableAbilityCooldownSound = bool));

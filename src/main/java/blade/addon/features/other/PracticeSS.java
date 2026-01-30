@@ -5,20 +5,16 @@ import blade.addon.utils.Location;
 import blade.addon.utils.Misc;
 import blade.addon.utils.config.values.ExtraOptions;
 import blade.addon.utils.events.Events;
-import blade.addon.utils.rendering.RenderLayers;
 import blade.addon.utils.rendering.RenderUtils;
 import blade.addon.utils.rendering.RenderingEvents;
 import blade.addon.utils.times.PersonalBests;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderContext;
-import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderEvents;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.VertexRendering;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.item.ItemStack;
@@ -28,7 +24,6 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Vec3d;
 
 import java.util.Collections;
 import java.util.List;
@@ -308,9 +303,9 @@ public class PracticeSS {
 
     private static int getColor(int index) {
         if (index == 1 && ticksSinceLuckyButton > 0) return ExtraOptions.luckyButtonColor;
-        if (index == currentIndex) return Constants.GREEN_COLOR;
-        if (index == currentIndex + 1) return Constants.ORANGE_COLOR;
-        return Constants.RED_COLOR;
+        if (index == currentIndex) return Constants.GREEN;
+        if (index == currentIndex + 1) return Constants.ORANGE;
+        return Constants.RED;
     }
 
     private static void setStage(int stage) {

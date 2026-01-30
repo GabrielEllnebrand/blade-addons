@@ -12,23 +12,26 @@ import blade.addon.features.dungeon.RunStartValidator;
 import blade.addon.features.dungeon.SecretSpawnTimer;
 import blade.addon.features.dungeon.WarpCooldown;
 import blade.addon.features.dungeon.f7.BossWaypoints;
-import blade.addon.features.dungeon.f7.CrystalSpawn;
-import blade.addon.features.dungeon.f7.DistanceToLedge;
-import blade.addon.features.dungeon.f7.DragSpawnTimer;
-import blade.addon.features.dungeon.f7.PillarExplode;
+import blade.addon.features.dungeon.f7.maxor.CrystalSpawn;
+import blade.addon.features.dungeon.f7.storm.DistanceToLedge;
+import blade.addon.features.dungeon.f7.dragons.DragSpawnTimer;
+import blade.addon.features.dungeon.f7.storm.PillarExplode;
 import blade.addon.features.dungeon.f7.PredevTimer;
 import blade.addon.features.dungeon.f7.RelicTimer;
-import blade.addon.features.dungeon.f7.StormTickTimer;
+import blade.addon.features.dungeon.f7.storm.StormTickTimer;
+import blade.addon.features.dungeon.f7.dragons.DragonHealth;
 import blade.addon.features.dungeon.f7.invincibility.InvincibilityDuration;
 import blade.addon.features.dungeon.f7.invincibility.InvincibilityTimer;
 import blade.addon.features.dungeon.f7.location.LocationNotifier;
 import blade.addon.features.dungeon.f7.location.PositionMessages;
+import blade.addon.features.dungeon.f7.maxor.MaxorStun;
+import blade.addon.features.dungeon.f7.terms.DeviceNotifier;
 import blade.addon.features.dungeon.f7.terms.GoldorTickTimer;
 import blade.addon.features.dungeon.f7.terms.LeapNotification;
 import blade.addon.features.dungeon.f7.terms.MelodyWarning;
-import blade.addon.features.dungeon.f7.terms.DeviceNotifier;
 import blade.addon.features.dungeon.f7.terms.SectionProgress;
 import blade.addon.features.dungeon.f7.terms.TermStartTimer;
+import blade.addon.features.filter.Filters;
 import blade.addon.features.highlight.BatHighlight;
 import blade.addon.features.highlight.MimicHighlight;
 import blade.addon.features.highlight.MobHighlight;
@@ -37,6 +40,7 @@ import blade.addon.features.highlight.TeammateHighlight;
 import blade.addon.features.highlight.WitherHighlight;
 import blade.addon.features.item.DropAnimation;
 import blade.addon.features.notifications.Notifications;
+import blade.addon.features.other.ArrowSwapper;
 import blade.addon.features.other.CompactHoppity;
 import blade.addon.features.other.DianaNotifier;
 import blade.addon.features.other.KickedTimer;
@@ -61,7 +65,6 @@ import blade.addon.utils.dungeon.Section;
 import blade.addon.utils.events.CustomEvents;
 import blade.addon.utils.rendering.RenderingEvents;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.message.v1.ServerMessageEvents;
 
 public class Bladeaddons implements ModInitializer {
     @Override
@@ -129,5 +132,9 @@ public class Bladeaddons implements ModInitializer {
         SectionProgress.init();
         BonzoSound.init();
         QuizTimer.init();
+        Filters.init();
+        DragonHealth.init();
+        MaxorStun.init();
+        ArrowSwapper.init();
     }
 }

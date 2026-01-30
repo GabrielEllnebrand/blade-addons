@@ -6,15 +6,16 @@ import blade.addon.features.dungeon.RunStartValidator;
 import blade.addon.features.dungeon.KeyNotifier;
 import blade.addon.features.dungeon.SecretSpawnTimer;
 import blade.addon.features.dungeon.WarpCooldown;
-import blade.addon.features.dungeon.f7.CrystalSpawn;
-import blade.addon.features.dungeon.f7.DistanceToLedge;
-import blade.addon.features.dungeon.f7.DragSpawnTimer;
-import blade.addon.features.dungeon.f7.PillarExplode;
+import blade.addon.features.dungeon.f7.maxor.CrystalSpawn;
+import blade.addon.features.dungeon.f7.storm.DistanceToLedge;
+import blade.addon.features.dungeon.f7.dragons.DragSpawnTimer;
+import blade.addon.features.dungeon.f7.storm.PillarExplode;
 import blade.addon.features.dungeon.f7.RelicTimer;
-import blade.addon.features.dungeon.f7.StormTickTimer;
+import blade.addon.features.dungeon.f7.storm.StormTickTimer;
 import blade.addon.features.dungeon.f7.invincibility.InvincibilityDuration;
 import blade.addon.features.dungeon.f7.invincibility.InvincibilityTimer;
 import blade.addon.features.dungeon.f7.location.LocationNotifier;
+import blade.addon.features.dungeon.f7.maxor.MaxorStun;
 import blade.addon.features.dungeon.f7.terms.GoldorTickTimer;
 import blade.addon.features.dungeon.f7.terms.LeapNotification;
 import blade.addon.features.dungeon.f7.terms.MelodyWarning;
@@ -22,6 +23,7 @@ import blade.addon.features.dungeon.f7.terms.DeviceNotifier;
 import blade.addon.features.dungeon.f7.terms.SectionProgress;
 import blade.addon.features.dungeon.f7.terms.TermStartTimer;
 import blade.addon.features.item.HeldItemToolTip;
+import blade.addon.features.other.ArrowSwapper;
 import blade.addon.features.other.KickedTimer;
 import blade.addon.features.other.RagDisplay;
 import blade.addon.features.other.SelectedPet;
@@ -138,4 +140,13 @@ public class Components {
 
     @ConfigValue
     public static HUDComponent quizTimerDisplay = new HUDComponent(0, 0, 60, 10, 1, "Quiz timer", QuizTimer::display,  QuizTimer::render, () -> Dungeons.quizTimer);
+
+    @ConfigValue
+    public static HUDComponent maxorStunDisplay = new HUDComponent(0, 0, 70, 10, 1, "Maxor stun display", MaxorStun::display,  MaxorStun::render, () -> Floor7.maxorStunDuration);
+
+    @ConfigValue
+    public static HUDComponent selectedArrowDisplay = new HUDComponent(0, 0, 100, 10, 1, "Selected arrow display", ArrowSwapper::display,  ArrowSwapper::render, () -> ExtraOptions.displayCurrentArrow);
+
+    @ConfigValue
+    public static HUDComponent arrowSwapDisplay = new HUDComponent(0, 0, 100, 10, 1, "Selected arrow title", ArrowSwapper::displayNotification,  ArrowSwapper::renderNotification, () -> ExtraOptions.arrowSwapNotification &&  !Dungeons.combineScreenNotifications);
 }

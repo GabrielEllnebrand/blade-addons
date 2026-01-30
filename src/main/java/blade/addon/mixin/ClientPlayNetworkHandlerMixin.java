@@ -55,7 +55,7 @@ public class ClientPlayNetworkHandlerMixin {
     @Inject(method = "onTeam", at = @At(value = "TAIL"))
     private void onTeam(TeamS2CPacket packet, CallbackInfo ci, @Local Team team) {
         if (team == null) return;
-        String teamStr = team.getPrefix().getString() + team.getSuffix().getString();
+        String teamStr = (team.getPrefix().getString() + team.getSuffix().getString()).replaceAll("§.", "");
         Events.ON_TEAM.invoke(scoreBoardEvent -> scoreBoardEvent.onTeam(teamStr));
     }
 
@@ -85,7 +85,7 @@ public class ClientPlayNetworkHandlerMixin {
         SoundEvent event = packet.getSound().value();
 
         if (Debug.sendSound) {
-            Misc.addChatMessage(Text.literal("Sound: " + event.id() + " Volume: " + volume + " Pitch: " + pitch));
+            Misc.addChatMessage(Text.literal("Sound: " + event.id() + " Volume: " + volume + " Pitch: " + pitch + "entitySeed: " + packet.getEntityId()));
         }
 
         if (Events.ON_SOUND.invoke(soundEvent -> soundEvent.onSound(event, volume, pitch))) {
@@ -94,15 +94,14 @@ public class ClientPlayNetworkHandlerMixin {
     }
 
     @Inject(method = "onSubtitle", at = @At("HEAD"))
-    public void onTitle(SubtitleS2CPacket packet, CallbackInfo ci) {
+    private void onTitle(SubtitleS2CPacket packet, CallbackInfo ci) {
         TitleHider.processSubtitle(packet);
     }
 
 
     @Inject(method = "onEntitySpawn", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayNetworkHandler;playSpawnSound(Lnet/minecraft/entity/Entity;)V"))
-    public void onEntitySpawn(EntitySpawnS2CPacket packet, CallbackInfo ci, @Local Entity entity) {
+    private void onEntitySpawn(EntitySpawnS2CPacket packet, CallbackInfo ci, @Local Entity entity) {
         Events.ON_ENTITY_SPAWNED.invoke(entityTrackEvent -> entityTrackEvent.onEntity(entity, world));
     }
-
 
 }

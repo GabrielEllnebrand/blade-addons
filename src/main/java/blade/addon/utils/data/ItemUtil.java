@@ -43,7 +43,7 @@ public class ItemUtil {
         return itemStack.getName().getString().contains(name);
     }
 
-    public static boolean containsLore(ItemStack item, String match) {
+    public static boolean containsLore(ItemStack item, String contain) {
         if (item ==null) return false;
         LoreComponent lore = item.get(DataComponentTypes.LORE);
         if (lore == null) return false;
@@ -53,11 +53,20 @@ public class ItemUtil {
 
         for (Text line : lines.reversed()) {
             String string = line.getString();
-            if (string.contains(match)) {
+            if (string.contains(contain)) {
                 return true;
             }
         }
         return false;
+    }
+
+    public static boolean containsNBT(ItemStack item, String contain) {
+        NbtComponent nbt = item.get(DataComponentTypes.CUSTOM_DATA);
+        if (nbt == null) {
+            return false;
+        }
+
+        return  nbt.toString().contains(contain);
     }
 
 }

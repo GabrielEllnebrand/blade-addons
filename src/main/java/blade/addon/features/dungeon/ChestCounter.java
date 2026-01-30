@@ -74,7 +74,7 @@ public class ChestCounter {
         if (hasUpdatedData) {
             RenderUtils.drawPrefixedText(component, context, "Chests", Math.min(chestDisplayCount + countedChests, 60) + "");
         } else {
-            context.drawText(MinecraftClient.getInstance().textRenderer, Text.literal("go to the dungeon hub"), x, y, Constants.RED_COLOR, true);
+            context.drawText(MinecraftClient.getInstance().textRenderer, Text.literal("go to the dungeon hub"), x, y, Constants.RED, true);
 
         }
     }

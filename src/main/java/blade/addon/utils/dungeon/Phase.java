@@ -4,6 +4,7 @@ import blade.addon.utils.Constants;
 import blade.addon.utils.JsonUtility;
 import blade.addon.utils.Location;
 import blade.addon.utils.Misc;
+import blade.addon.utils.Scheduler;
 import blade.addon.utils.events.Events;
 import blade.addon.utils.events.interfaces.PhaseEvent;
 import blade.addon.utils.events.interfaces.RunEndEvent;
@@ -114,7 +115,8 @@ public class Phase {
 
             if (currentSplit.ended()) {
                 if (sendSplitInChat) {
-                    Misc.addChatMessage(currentSplit.createNameText().append(currentSplit.createTimeText()));
+                    Scheduler.scheduleTask(() -> Misc.addChatMessage(currentSplit.createNameText().append(currentSplit.createTimeText())), 2);
+                    //Misc.addChatMessage(currentSplit.createNameText().append(currentSplit.createTimeText()));
                 }
 
                 currentPhase = i + 1;

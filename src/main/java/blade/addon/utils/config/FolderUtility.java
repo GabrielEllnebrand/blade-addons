@@ -17,6 +17,7 @@ public class FolderUtility {
     public static final String PBS_NAME = Constants.NAMESPACE + "-pbs.json";
     public static final String PROTECT_ITEMS_NAME = Constants.NAMESPACE + "-protected-items.json";
     public static final String NOTIFICATIONS_NAME = Constants.NAMESPACE + "-notifications.json";
+    public static final String FILTERS_NAME = Constants.NAMESPACE + "-filters.json";
 
     public static void init() {
         File file = new File(CONFIG_PATH);

@@ -1,4 +1,4 @@
-package blade.addon.features.dungeon.f7;
+package blade.addon.features.dungeon.f7.maxor;
 
 import blade.addon.utils.Constants;
 import blade.addon.utils.Location;
