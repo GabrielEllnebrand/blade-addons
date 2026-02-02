@@ -119,9 +119,9 @@ public class RenderUtils {
 
 
         public static String formatHealth(float health) {
-            if (health >= 1e9) return String.format("%.1fb", health / 1e9);
-            if (health >= 1e6) return String.format("%.1fm", health / 1e6);
-            if (health >= 1e3) return String.format("%.1fk", health / 1e3);
+            if (health >= 1e9) return String.format("%.1fB", health / 1e9);
+            if (health >= 1e6) return String.format("%.1fM", health / 1e6);
+            if (health >= 1e3) return String.format("%.1fK", health / 1e3);
             return health + "";
         }
 
