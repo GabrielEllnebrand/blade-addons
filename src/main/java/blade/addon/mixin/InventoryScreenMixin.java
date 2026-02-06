@@ -1,6 +1,7 @@
 package blade.addon.mixin;
 
 import blade.addon.features.other.InventoryButton;
+import blade.addon.features.other.SearchBar;
 import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
@@ -31,6 +32,7 @@ public abstract class InventoryScreenMixin extends RecipeBookScreen<PlayerScreen
         stack.translate(x, y);
         InventoryButton.renderAll(context, mouseX, mouseY, deltaTicks);
         stack.popMatrix();
+        SearchBar.render(context, mouseX, mouseY, deltaTicks);
     }
 
     @Override

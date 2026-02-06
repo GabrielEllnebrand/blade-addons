@@ -111,4 +111,16 @@ public class ExtraOptions {
 
     @ConfigValue
     public static boolean arrowSwapNotification = false;
+
+    @ConfigValue
+    public static boolean stunWaypoint = false;
+
+    @ConfigValue
+    public static int petHighlightColor = 0xffff0000;
+
+    @ConfigValue
+    public static boolean displayPetLevel = false;
+
+    @ConfigValue
+    public static boolean toggleableSearchBar = true;
 }

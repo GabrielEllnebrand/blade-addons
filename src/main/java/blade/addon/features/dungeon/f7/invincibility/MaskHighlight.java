@@ -1,6 +1,8 @@
 package blade.addon.features.dungeon.f7.invincibility;
 
+import blade.addon.utils.config.values.Dungeons;
 import blade.addon.utils.data.ItemUtil;
+import blade.addon.utils.rendering.DrawEvents;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.item.ItemStack;
 
@@ -8,7 +10,13 @@ public class MaskHighlight {
 
     private static final int COLOR = 0xbb666666;
 
-    public static void draw(DrawContext context, ItemStack stack, int x, int y) {
+    public static void init() {
+        DrawEvents.INVENTORY_SLOT_AFTER.register(MaskHighlight::draw);
+    }
+
+    private static void draw(DrawContext context, ItemStack stack, int x, int y) {
+        if (!Dungeons.maskHighlight) return;
+
         MaskHolder holder = (MaskHolder) (Object) stack;
         assert holder != null;
 

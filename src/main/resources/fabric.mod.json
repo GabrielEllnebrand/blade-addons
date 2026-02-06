@@ -3,7 +3,7 @@
 	"id": "blade-addons",
 	"version": "${version}",
 	"name": "blade-addons",
-	"description": "Just some 1.21 mod that ports mods like valley",
+	"description": "Just some 1.21 mod that ports mods like valley and other requested features",
 	"authors": [
 		"BladeMasterGabe"
 	],

@@ -1,7 +1,7 @@
 package blade.addon.utils.dungeon;
 
 import blade.addon.features.dungeon.f7.dragons.DragSpawnTimer;
-import blade.addon.utils.Location;
+import blade.addon.utils.Misc;
 import blade.addon.utils.config.values.Dungeons;
 import blade.addon.utils.config.values.Floor7;
 import blade.addon.utils.data.EntityUtil;
@@ -25,11 +25,15 @@ public enum DungeonClass {
 
     public static void init() {
 
-        Events.ON_LOCATION_CHANGE.register(newLocation -> {
-            if (Location.inDungeon()) {
-                currentClass = null;
-                nameClassMap.clear();
+        Events.ON_PHASE_CHANGE.register(() -> {
+            if (Phase.runJustStarted()) {
+                reset();
             }
+            return false;
+        });
+
+        Events.ON_RUN_END.register(() -> {
+            reset();
             return false;
         });
 
@@ -54,6 +58,11 @@ public enum DungeonClass {
                 String name = matcher.group(1).replaceAll(" .+", "");
                 DungeonClass className = parseClass(matcher.group(2));
                 if (className == null) return false;
+
+                if (EntityUtil.isClientPlayer(name)) {
+                    currentClass =  className;
+                }
+
                 nameClassMap.put(name, className);
                 return false;
             }
@@ -128,5 +137,17 @@ public enum DungeonClass {
 
     public static boolean isBersTeam() {
         return currentClass == DungeonClass.BERSERK || currentClass == DungeonClass.MAGE || (currentClass == DungeonClass.HEALER && Floor7.healerTeam == DragSpawnTimer.Team.BERS_TEAM);
+    }
+
+    private static void reset() {
+        currentClass = null;
+        nameClassMap.clear();
+    }
+
+    public static void printClasses() {
+        Misc.addChatMessage(Text.literal("Classes"));
+        nameClassMap.forEach((name, clazz) -> {
+            Misc.addChatMessage(Text.literal("Name: " + name + "Class: " + (clazz != null? clazz.name(): null)));
+        });
     }
 }

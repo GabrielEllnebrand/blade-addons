@@ -9,6 +9,7 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.util.Window;
 import net.minecraft.text.Text;
+import net.minecraft.util.Pair;
 import org.joml.Matrix3x2fStack;
 
 public class FilterList extends Screen {
@@ -18,6 +19,10 @@ public class FilterList extends Screen {
     private static final int TITLE_Y_OFFSET = 20;
 
     private static final int BUTTON_HEIGHT = 30;
+    private static final int BUTTON_WIDTH = 100;
+
+    private static final Text INFO_TEXT = Text.literal("To add a filter, input a regex which would match the word fully. I'd highly recommend using regex101.com to create them.");
+
 
     private final Screen parent;
     private final ConfigScroll scroll;
@@ -30,8 +35,9 @@ public class FilterList extends Screen {
         parent = client.currentScreen;
         Window window = client.getWindow();
 
-        addFilter = ButtonWidget.builder(Text.literal("Add Filter"), this::addFilter).position((window.getScaledWidth() - Constants.WIDGET_WIDTH) / 2,  TITLE_Y_OFFSET + 16).width(100).build();
-        scroll = new ConfigScroll(0,  BUTTON_HEIGHT + TITLE_Y_OFFSET + 16, window.getScaledWidth(), window.getScaledHeight() - BUTTON_HEIGHT, Constants.WIDGET_WIDTH);
+        Pair<Integer, Integer> pos = getButtonPos();
+        addFilter = ButtonWidget.builder(Text.literal("Add Filter"), this::addFilter).position(pos.getLeft(), pos.getRight()).width(BUTTON_WIDTH).build();
+        scroll = new ConfigScroll(0, BUTTON_HEIGHT + TITLE_Y_OFFSET + 16, window.getScaledWidth(), window.getScaledHeight() - BUTTON_HEIGHT, Constants.WIDGET_WIDTH);
     }
 
     @Override
@@ -45,6 +51,9 @@ public class FilterList extends Screen {
         stack.scale(TITLE_SCALAR, TITLE_SCALAR);
         context.drawText(this.textRenderer, this.title, 0, 0, TITLE_COLOR, true);
         stack.popMatrix();
+
+        Pair<Integer, Integer> pos = getButtonPos();
+        context.drawWrappedText(this.textRenderer, INFO_TEXT, pos.getLeft() + BUTTON_WIDTH + 5, pos.getRight(), 245, 0xffffffff, true);
     }
 
     @Override
@@ -54,6 +63,13 @@ public class FilterList extends Screen {
         this.addDrawableChild(addFilter);
         updateList();
     }
+
+    private Pair<Integer, Integer> getButtonPos() {
+        MinecraftClient client = MinecraftClient.getInstance();
+        Window window = client.getWindow();
+        return new Pair<>((window.getScaledWidth() - Constants.WIDGET_WIDTH) / 2, TITLE_Y_OFFSET + 16);
+    }
+
 
     private void updateList() {
         scroll.children().clear();

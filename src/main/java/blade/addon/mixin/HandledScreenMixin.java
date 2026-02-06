@@ -1,16 +1,13 @@
 package blade.addon.mixin;
 
-import blade.addon.features.dungeon.f7.invincibility.MaskHighlight;
-import blade.addon.features.item.ItemRarityHighlight;
 import blade.addon.features.item.ProtectItem;
-import blade.addon.features.item.SelectedPetHighlight;
-import blade.addon.features.item.StarCountHighlight;
-import blade.addon.utils.config.values.Dungeons;
-import blade.addon.utils.config.values.ExtraOptions;
-import blade.addon.utils.config.values.Visual;
+import blade.addon.features.other.SearchBar;
+import blade.addon.utils.rendering.DrawEvents;
+import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.ingame.GenericContainerScreen;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
+import net.minecraft.client.input.KeyInput;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
@@ -23,9 +20,10 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(HandledScreen.class)
-public class HandledScreenMixin<T extends ScreenHandler> {
+public abstract class HandledScreenMixin<T extends ScreenHandler> extends Screen {
 
     @Shadow
     @Final
@@ -33,32 +31,21 @@ public class HandledScreenMixin<T extends ScreenHandler> {
     @Unique
     private static final int INVALID_SLOT_ID = -999;
 
+    protected HandledScreenMixin(Text title) {
+        super(title);
+    }
+
+    @Inject(method = "render", at=@At("TAIL"))
+    private static void render(DrawContext context, int mouseX, int mouseY, float deltaTicks, CallbackInfo ci) {
+        SearchBar.render(context, mouseX, mouseY, deltaTicks);
+    }
+
     @Inject(method = "drawSlot", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/DrawContext;drawItem(Lnet/minecraft/item/ItemStack;III)V"))
     public void drawBackground(DrawContext context, Slot slot, CallbackInfo ci) {
-
         int x = slot.x;
         int y = slot.y;
         ItemStack stack = slot.getStack();
-
-        if (ExtraOptions.highlightSelectedPet) {
-            HandledScreen screen = (HandledScreen) (Object) this;
-            if (screen instanceof GenericContainerScreen containerScreen) {
-                Text title = containerScreen.getTitle();
-                if (title == null) return;
-                if (title.getString().equals("Pets")) {
-                    SelectedPetHighlight.draw(context, stack, x, y);
-                }
-
-            }
-        }
-
-        if (Visual.highlightProtectedItem) {
-            ProtectItem.draw(context, stack, x, y);
-        }
-
-        if (Visual.itemRarityBackground) {
-            ItemRarityHighlight.draw(context, stack, x, y);
-        }
+        DrawEvents.INVENTORY_SLOT_BEFORE.invoke(event -> event.draw(context, stack, x, y));
     }
 
     @Inject(method = "drawSlot", at = @At(value = "TAIL"))
@@ -66,14 +53,17 @@ public class HandledScreenMixin<T extends ScreenHandler> {
         int x = slot.x;
         int y = slot.y;
         ItemStack stack = slot.getStack();
+        DrawEvents.INVENTORY_SLOT_AFTER.invoke(event -> event.draw(context, stack, x, y));
+    }
 
-        if (Dungeons.maskHighlight) {
-            MaskHighlight.draw(context, stack, x, y);
-        }
+    @Inject(method = "keyPressed", at=@At("HEAD"), cancellable = true)
+    private void keyPressed(KeyInput input, CallbackInfoReturnable<Boolean> cir) {
+        if (SearchBar.keyPressed(input)) cir.setReturnValue(false);
+    }
 
-        if (Visual.drawStarCount) {
-            StarCountHighlight.draw(context, stack, x, y);
-        }
+    @Inject(method = "mouseClicked", at=@At("HEAD"))
+    private void onMouseClick(Click click, boolean doubled, CallbackInfoReturnable<Boolean> cir) {
+        SearchBar.onMouseClick(click);
     }
 
     @Inject(method ="onMouseClick(Lnet/minecraft/screen/slot/Slot;IILnet/minecraft/screen/slot/SlotActionType;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/ingame/HandledScreen;onMouseClick(Lnet/minecraft/screen/slot/Slot;Lnet/minecraft/screen/slot/SlotActionType;)V"), cancellable = true)

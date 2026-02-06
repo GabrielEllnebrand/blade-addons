@@ -1,0 +1,94 @@
+package blade.addon.features.other;
+
+import blade.addon.utils.config.values.ExtraOptions;
+import blade.addon.utils.rendering.DrawEvents;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.gui.Click;
+import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.widget.TextFieldWidget;
+import net.minecraft.client.input.CharInput;
+import net.minecraft.client.input.KeyInput;
+import net.minecraft.client.util.Window;
+import net.minecraft.text.Text;
+import org.lwjgl.glfw.GLFW;
+
+public class SearchBar {
+
+    private static final int SEARCH_Y = 20;
+    private static final int SEARCH_WIDTH = 150;
+    private static final int SEARCH_HEIGHT = 20;
+    private static TextFieldWidget searchBar;
+    private static boolean shouldDisplay = false;
+    private static String searchTerm = "";
+
+    public static void init() {
+        DrawEvents.INVENTORY_SLOT_AFTER.register((context, item, x, y) -> {
+            if (shouldDisplay() && !searchTerm.isEmpty() && ExtraOptions.toggleableSearchBar) {
+                String name = item.getName().getString();
+                if (!name.contains(searchTerm) || name.equals("Air")) {
+                    context.fill(x, y, x + 16, y + 16, 0xaa111111);
+                }
+            }
+        });
+    }
+
+    public static void render(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
+        if (!exists() || !shouldDisplay() || !ExtraOptions.toggleableSearchBar) return;
+        searchBar.render(context, mouseX, mouseY, deltaTicks);
+    }
+
+    public static boolean keyPressed(KeyInput input) {
+        if (!exists() || !ExtraOptions.toggleableSearchBar) return false;
+
+        boolean ctrlIsPressed = (input.modifiers() & GLFW.GLFW_MOD_CONTROL) != 0;
+
+        if (ctrlIsPressed && input.key() == GLFW.GLFW_KEY_F) {
+            shouldDisplay = !shouldDisplay;
+            return true;
+        } else if (shouldDisplay() && searchBar.isFocused() && input.key() != GLFW.GLFW_KEY_ESCAPE) {
+            searchBar.keyPressed(input);
+            return true;
+        }
+        return false;
+    }
+
+    public static void CharTyped(CharInput input) {
+        if (!exists() || !searchBar.isFocused() || !shouldDisplay() || !ExtraOptions.toggleableSearchBar) return;
+        searchBar.charTyped(input);
+    }
+
+    public static void onMouseClick(Click click) {
+        if (!exists() || !shouldDisplay() || !ExtraOptions.toggleableSearchBar) return;
+        searchBar.setFocused(inBounds(click.x(), click.y()));
+    }
+
+
+    public static boolean shouldDisplay() {
+        return shouldDisplay;
+    }
+
+    private static boolean exists() {
+        if (searchBar != null) return true;
+
+        MinecraftClient mc = MinecraftClient.getInstance();
+        TextRenderer textRenderer = mc.textRenderer;
+        Window window = mc.getWindow();
+
+        if (window == null || textRenderer == null) return false;
+
+        searchBar = new TextFieldWidget(textRenderer, (window.getScaledWidth() - SEARCH_WIDTH) / 2, SEARCH_Y, SEARCH_WIDTH, SEARCH_HEIGHT, Text.literal(""));
+        searchBar.setChangedListener(string -> searchTerm = string);
+        return true;
+    }
+
+    private static boolean inBounds(double x, double y) {
+        int sx = searchBar.getX();
+        int sy = searchBar.getY();
+        int sw = searchBar.getWidth();
+        int sh = searchBar.getHeight();
+
+        return x >= sx && x <= sx + sw && y >= sy && y <= sy + sh;
+    }
+
+}

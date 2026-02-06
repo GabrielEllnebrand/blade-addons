@@ -1,5 +1,7 @@
 package blade.addon.features.item;
 
+import blade.addon.utils.config.values.Visual;
+import blade.addon.utils.rendering.DrawEvents;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.LoreComponent;
@@ -10,7 +12,13 @@ import java.util.List;
 
 public class ItemRarityHighlight {
 
-    public static void draw(DrawContext context, ItemStack stack, int x, int y) {
+    public static void init() {
+        DrawEvents.INVENTORY_SLOT_BEFORE.register(ItemRarityHighlight::draw);
+        DrawEvents.HUD_SLOT_BEFORE.register(ItemRarityHighlight::draw);
+    }
+
+    private static void draw(DrawContext context, ItemStack stack, int x, int y) {
+        if (!Visual.itemRarityBackground) return;
         ItemRarityHolder holder = (ItemRarityHolder) (Object) stack;
         assert holder != null;
 
@@ -38,8 +46,7 @@ public class ItemRarityHighlight {
 
             for (String testString: rarityStrings) {
                 try {
-                    ItemRarity rarity = ItemRarity.valueOf(testString);
-                    return rarity;
+                    return ItemRarity.valueOf(testString);
                 } catch (IllegalArgumentException ignored) {
 
                 }

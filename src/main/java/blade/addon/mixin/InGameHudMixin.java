@@ -3,12 +3,10 @@ package blade.addon.mixin;
 import blade.addon.features.dungeon.f7.terms.DeviceNotifier;
 import blade.addon.features.dungeon.f7.terms.TitleHider;
 import blade.addon.features.item.HeldItemToolTip;
-import blade.addon.features.item.ItemRarityHighlight;
-import blade.addon.features.item.ProtectItem;
-import blade.addon.features.item.StarCountHighlight;
 import blade.addon.utils.config.values.ExtraOptions;
 import blade.addon.utils.config.values.Visual;
 import blade.addon.utils.interfaces.GameHud;
+import blade.addon.utils.rendering.DrawEvents;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.hud.InGameHud;
@@ -46,21 +44,12 @@ public class InGameHudMixin implements GameHud {
 
     @Inject(method = "renderHotbarItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/DrawContext;drawItem(Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/item/ItemStack;III)V"), order = 2000)
     public void drawBackground(DrawContext context, int x, int y, RenderTickCounter tickCounter, PlayerEntity player, ItemStack stack, int seed, CallbackInfo ci) {
-        if (Visual.itemRarityBackground) {
-            ItemRarityHighlight.draw(context, stack, x, y);
-        }
-
-        if (Visual.highlightProtectedItem) {
-            ProtectItem.draw(context, stack, x, y);
-        }
-
+        DrawEvents.HUD_SLOT_BEFORE.invoke(slotEvent -> slotEvent.draw(context, stack, x, y));
     }
 
     @Inject(method = "renderHotbarItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/DrawContext;drawItem(Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/item/ItemStack;III)V", shift = At.Shift.AFTER), order = 2000)
     public void drawStar(DrawContext context, int x, int y, RenderTickCounter tickCounter, PlayerEntity player, ItemStack stack, int seed, CallbackInfo ci) {
-        if (Visual.drawStarCount) {
-            StarCountHighlight.draw(context, stack, x, y);
-        }
+        DrawEvents.HUD_SLOT_AFTER.invoke(slotEvent -> slotEvent.draw(context, stack, x, y));
     }
 
     @Inject(method = "renderStatusEffectOverlay", at = @At("HEAD"), cancellable = true, order = 2000)

@@ -1,5 +1,7 @@
 package blade.addon.features.item;
 
+import blade.addon.utils.config.values.Visual;
+import blade.addon.utils.rendering.DrawEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
@@ -10,7 +12,15 @@ import net.minecraft.nbt.NbtCompound;
 
 public class StarCountHighlight {
 
-    public static void draw(DrawContext context, ItemStack stack, int x, int y) {
+    public static void init() {
+        DrawEvents.INVENTORY_SLOT_AFTER.register(StarCountHighlight::draw);
+        DrawEvents.HUD_SLOT_AFTER.register(StarCountHighlight::draw);
+    }
+
+    private static void draw(DrawContext context, ItemStack stack, int x, int y) {
+
+        if (!Visual.drawStarCount) return;
+
         StarCountHolder holder = (StarCountHolder) (Object) stack;
         assert holder != null;
 

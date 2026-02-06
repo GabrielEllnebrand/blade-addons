@@ -1,6 +1,8 @@
 package blade.addon.features.notifications;
 
+import blade.addon.utils.Misc;
 import blade.addon.utils.config.FolderUtility;
+import blade.addon.utils.debug.Debug;
 import blade.addon.utils.events.Events;
 import blade.addon.utils.rendering.RenderUtils;
 import com.google.gson.Gson;
@@ -38,6 +40,10 @@ public class Notifications {
         load();
         Events.ON_GAME_MESSAGE.register(text -> {
             String message = text.getString();
+            if (Debug.sendNotiDebug) {
+                Misc.addChatMessage(Text.literal(message.replaceAll("§", "&")));
+            }
+
             for (Notification notification : notifications) {
                 notification.testMessage(message);
             }

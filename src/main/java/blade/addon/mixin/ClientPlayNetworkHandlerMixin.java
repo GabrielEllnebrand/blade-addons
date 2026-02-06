@@ -6,13 +6,19 @@ import blade.addon.utils.config.values.ExtraOptions;
 import blade.addon.utils.debug.Debug;
 import blade.addon.utils.events.Events;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.PlayerListEntry;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
+import net.minecraft.network.listener.PacketListener;
+import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
 import net.minecraft.network.packet.s2c.play.EntityTrackerUpdateS2CPacket;
+import net.minecraft.network.packet.s2c.play.GameMessageS2CPacket;
+import net.minecraft.network.packet.s2c.play.ParticleS2CPacket;
 import net.minecraft.network.packet.s2c.play.PlaySoundFromEntityS2CPacket;
 import net.minecraft.network.packet.s2c.play.PlaySoundS2CPacket;
 import net.minecraft.network.packet.s2c.play.PlayerListS2CPacket;
@@ -104,4 +110,20 @@ public class ClientPlayNetworkHandlerMixin {
         Events.ON_ENTITY_SPAWNED.invoke(entityTrackEvent -> entityTrackEvent.onEntity(entity, world));
     }
 
+    @Inject(method = "onParticle", at = @At("HEAD"))
+    private void onParticle(ParticleS2CPacket packet, CallbackInfo ci) {
+        Events.ON_PARTICLE.invoke(particleEvent -> particleEvent.onParticle(packet));
+    }
+
+    @WrapOperation(method = "onBundle", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/packet/Packet;apply(Lnet/minecraft/network/listener/PacketListener;)V"))
+    private void apply(Packet<?> packet, PacketListener listener, Operation<Void> original) {
+        if (packet instanceof GameMessageS2CPacket(Text content, boolean overlay) && !overlay) {
+            if (Events.ON_GAME_MESSAGE.invoke(gameMessageEvent -> gameMessageEvent.onGameMessage(content))) {
+                return;
+            }
+        }
+
+        Events.ON_PACKET.invoke(packetEvent -> packetEvent.onPacket(packet));
+        original.call(packet, listener);
+    }
 }

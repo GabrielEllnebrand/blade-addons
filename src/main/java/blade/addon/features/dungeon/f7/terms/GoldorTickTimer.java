@@ -28,14 +28,18 @@ public class GoldorTickTimer {
     }
 
     public static boolean display() {
-        return  Floor7.enableGoldorTickTimer && Location.inDungeon() && Phase.inTerminals();
+        return Floor7.enableGoldorTickTimer && Location.inDungeon() && Phase.inTerminals();
     }
 
     public static void render(HUDComponent component, DrawContext context) {
         double num = tick * Constants.TICK_DURATION;
         double mod = num % 3;
-        int color = (mod < 1? Constants.GREEN: mod < 2? Constants.ORANGE: Constants.RED);
+        if (Floor7.inDeathTicks && !Floor7.makeGoldorTickUp) mod = 3.0 - mod;
         if (Floor7.inDeathTicks) num = mod;
+
+        System.out.println(num);
+
+        int color = (mod < 1 ? Constants.GREEN : mod < 2 ? Constants.ORANGE : Constants.RED);
 
         RenderUtils.drawTimer(component, context, num, color);
     }

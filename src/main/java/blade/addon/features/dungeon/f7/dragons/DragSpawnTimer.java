@@ -2,6 +2,7 @@ package blade.addon.features.dungeon.f7.dragons;
 
 import blade.addon.utils.Misc;
 import blade.addon.utils.config.values.Floor7;
+import blade.addon.utils.debug.Debug;
 import blade.addon.utils.events.Events;
 import blade.addon.utils.rendering.RenderUtils;
 import config.practical.hud.HUDComponent;
@@ -9,6 +10,7 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.network.packet.s2c.play.ParticleS2CPacket;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.text.Text;
 
 public class DragSpawnTimer {
 
@@ -34,13 +36,10 @@ public class DragSpawnTimer {
     private static int tick = 0;
 
     public static void init() {
-        Events.ON_PACKET.register(packet -> {
-            if (packet instanceof ParticleS2CPacket particle) {
-                if (!validParticle(particle)) return false;
-                Dragon dragon = Dragon.getDragon(particle.getX(), particle.getY(), particle.getZ());
-                testDragon(dragon);
-            }
-
+        Events.ON_PARTICLE.register(packet -> {
+            if (!validParticle(packet)) return false;
+            Dragon dragon = Dragon.getDragon(packet.getX(), packet.getY(), packet.getZ());
+            testDragon(dragon);
             return false;
         });
 
@@ -63,6 +62,7 @@ public class DragSpawnTimer {
         if (dragon == Dragon.NONE) return;
 
         if (currentDragon == Dragon.NONE) {
+            Debug.sendDebugMessage(Text.literal("Drag: " + currentDragon.name()));
             currentDragon = dragon;
             tick = SPAWN_DURATION;
 
@@ -70,7 +70,8 @@ public class DragSpawnTimer {
                 Misc.sendSound(SoundEvents.BLOCK_NOTE_BLOCK_PLING.value(), 0.75f, 1);
             }
 
-        } else if (currentDragon != dragon &&  !hasDoneSplit) {
+        } else if (currentDragon != dragon && !hasDoneSplit) {
+            Debug.sendDebugMessage(Text.literal("comparing: " + currentDragon.name() + " and " +  dragon.name()));
             currentDragon = Dragon.getPrio(dragon, currentDragon);
             hasDoneSplit = true;
         }

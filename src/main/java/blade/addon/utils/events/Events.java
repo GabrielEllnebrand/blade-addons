@@ -7,6 +7,7 @@ import blade.addon.utils.events.interfaces.GameMessageEvent;
 import blade.addon.utils.events.interfaces.LeapEvent;
 import blade.addon.utils.events.interfaces.LocationChangeEvent;
 import blade.addon.utils.events.interfaces.PacketEvent;
+import blade.addon.utils.events.interfaces.ParticleEvent;
 import blade.addon.utils.events.interfaces.PartyMessageEvent;
 import blade.addon.utils.events.interfaces.PetEvent;
 import blade.addon.utils.events.interfaces.PhaseEvent;
@@ -49,7 +50,7 @@ public class Events {
     public static final EventHandler<BlockEntityEvent> ON_BLOCK_ENTITY = new EventHandler<>();
 
 
-    //    public static final EventHandler<ParticleEvent> ON_PARTICLE = new EventHandler<>();
+    public static final EventHandler<ParticleEvent> ON_PARTICLE = new EventHandler<>();
     public static final EventHandler<PacketEvent> ON_PACKET = new EventHandler<>();
 
 }

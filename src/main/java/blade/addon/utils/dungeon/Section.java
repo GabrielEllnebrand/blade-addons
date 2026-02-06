@@ -145,6 +145,7 @@ public class Section {
 
     private static boolean parseMessage(Text message) {
         if (!Phase.inTerminals()) return false;
+        boolean shouldCancelMessage = false;
 
         String string = message.getString();
         Matcher matcher = TERMINALS_DONE_PATTERN.matcher(string);
@@ -175,7 +176,7 @@ public class Section {
                 List<Text> texts = message.getSiblings();
                 if (!texts.isEmpty()) {
                     Misc.addChatMessage(Text.literal(name).setStyle(texts.getFirst().getStyle()).append(Text.literal(" §a" + action + " " + objective + "! (§c" + currentCompleted + "§a/" + totalNeeded + ") §8(§7" + getSectionTime() + "s §8| §7" + Phase.getPhaseTime(TERM_PHASE_INDEX) + "s§8)")));
-                    return true;
+                    shouldCancelMessage = true;
                 }
             }
 
@@ -202,7 +203,7 @@ public class Section {
 
                 if (Floor7.terminalTimeStamps) {
                     Misc.addChatMessage(Text.literal("§aThe gate has been destroyed! §8(§7" + getSectionTime() + "s §8| §7" + Phase.getPhaseTime(TERM_PHASE_INDEX) + "s§8)"));
-                    return true;
+                    shouldCancelMessage = true;
                 }
             }
         } else if (string.equals("The Core entrance is opening!")) {
@@ -212,7 +213,7 @@ public class Section {
             Debug.sendDebugMessage(Text.literal("Core section"));
         }
 
-        return false;
+        return shouldCancelMessage;
     }
 
 

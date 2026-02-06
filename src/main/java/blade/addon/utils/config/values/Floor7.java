@@ -151,4 +151,7 @@ public class Floor7 {
     @ConfigValue
     public static boolean maxorStunDuration = false;
 
+    @ConfigValue
+    public static boolean makeGoldorTickUp = true;
+
 }

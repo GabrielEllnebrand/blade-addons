@@ -1,12 +1,14 @@
 package blade.addon.features.item;
 
 import blade.addon.utils.Constants;
+import blade.addon.utils.config.values.Visual;
 import blade.addon.utils.debug.Debug;
 import blade.addon.utils.Location;
 import blade.addon.utils.Misc;
 import blade.addon.utils.config.FolderUtility;
 import blade.addon.utils.data.ItemUtil;
 import blade.addon.utils.dungeon.Phase;
+import blade.addon.utils.rendering.DrawEvents;
 import config.practical.manager.ConfigManager;
 import config.practical.manager.ConfigValue;
 import net.minecraft.client.MinecraftClient;
@@ -33,6 +35,11 @@ public class ProtectItem {
 
     @ConfigValue
     public static HashSet<String> protectedItems = new HashSet<>();
+
+    public static void init() {
+        DrawEvents.INVENTORY_SLOT_BEFORE.register(ProtectItem::draw);
+        DrawEvents.HUD_SLOT_BEFORE.register(ProtectItem::draw);
+    }
 
     public static void protectSelected() {
         ClientPlayerEntity player = MinecraftClient.getInstance().player;
@@ -73,7 +80,8 @@ public class ProtectItem {
         return protectedItems.contains(uuid);
     }
 
-    public static void draw(DrawContext context, ItemStack stack, int x, int y) {
+    private static void draw(DrawContext context, ItemStack stack, int x, int y) {
+        if (!Visual.highlightProtectedItem) return;
         ProtectedItemHolder holder = (ProtectedItemHolder) (Object) stack;
         assert holder != null;
 
@@ -131,6 +139,6 @@ public class ProtectItem {
     }
 
     public static boolean isInADungeon() {
-        return Location.inDungeon() && Phase.runStarted() && !Phase.runOver() && Location.hasRecivedLocation();
+        return Location.inDungeon() && Phase.runStarted() && !Phase.runOver() && Location.hasReceivedLocation();
     }
 }

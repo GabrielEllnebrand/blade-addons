@@ -13,6 +13,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -28,13 +29,15 @@ public class SelectedPet {
     private static final Pattern TAB_PET_PATTERN = Pattern.compile(" \\[Lvl \\d+] (?:\\[[^\\]]+\\] )?(.+)");
     private static final Pattern MANUAL_EQUIP_PET_PATTERN = Pattern.compile("^You (summoned|despawned) your (?:\\[Lvl \\d+] )?(?:\\[[^\\]]+\\] )?(.+)!$");
     private static final Pattern RULE_EQUIP_PET_PATTERN = Pattern.compile("^Autopet equipped your \\[Lvl \\d+] (?:\\[[^\\]]+\\] )?(.+)! VIEW RULE$");
+    private static final Pattern LEVEL_REGEX = Pattern.compile("\\[Lvl (\\d+)]");
 
     private static final int TOTAL_TICKS = 20;
 
-    private static final Text NO_PET = Text.literal("§cNo pet");
+    private static final MutableText NO_PET = Text.literal("§cNo pet");
     private static final String identifierPrefix = "pets/";
 
-    private static Text currentPetText = NO_PET;
+    private static MutableText currentPetText = NO_PET;
+    private static int currentPetLevel = -1;
     private static String currentPetString = "";
     private static Identifier spriteId = null;
     private static int tick = 0;
@@ -52,11 +55,12 @@ public class SelectedPet {
 
                 String name = matcher.group(2).replace(" ✦", "");
                 Style style = getStyle(message, name);
-                summonPet(name, Text.literal(name).setStyle(style), false);
+                summonPet(name, Text.literal(name).setStyle(style), getLevel(string), false);
                 return;
             }
 
-            matcher = RULE_EQUIP_PET_PATTERN.matcher(string.replaceAll("§.", ""));
+            String unformattedLine = string.replaceAll("§.", "");
+            matcher = RULE_EQUIP_PET_PATTERN.matcher(unformattedLine);
             if (matcher.find()) {
                 String name = matcher.group(1).replace(" ✦", "");
 
@@ -66,7 +70,7 @@ public class SelectedPet {
                     textName = string.substring(index - COLOR_OFFSET, index) + textName;
                 }
 
-                summonPet(name, Text.literal(textName), true);
+                summonPet(name, Text.literal(textName), getLevel(unformattedLine), true);
             }
         });
 
@@ -85,7 +89,7 @@ public class SelectedPet {
             if (matcher.find()) {
                 String petName = matcher.group(1).replace(" ✦", "");
                 Style style = getStyle(text, petName);
-                summonPet(petName, Text.literal(petName).setStyle(style), false);
+                summonPet(petName, Text.literal(petName).setStyle(style), getLevel(string), false);
             }
 
             return false;
@@ -100,12 +104,14 @@ public class SelectedPet {
     private static void despawnPet() {
         Events.ON_PET.invoke(petEvent -> petEvent.onPet(""));
         currentPetText = NO_PET;
+        currentPetLevel = -1;
         currentPetString = "";
         spriteId = null;
 
     }
 
-    private static void summonPet(String stringName, Text textName, boolean sendSound) {
+    private static void summonPet(String stringName, MutableText textName, int level, boolean sendSound) {
+        currentPetLevel = level;
         if (stringName.equals(currentPetString)) {
             return;
         }
@@ -135,6 +141,15 @@ public class SelectedPet {
         return style;
     }
 
+    private static int getLevel(String line) {
+        Matcher matcher = LEVEL_REGEX.matcher(line);
+        if (matcher.find()) {
+            return Integer.parseInt(matcher.group(1));
+        }
+
+        return -1;
+    }
+
     private static void updateSprite(String petName) {
         if (petName == null) {
             spriteId = null;
@@ -162,7 +177,15 @@ public class SelectedPet {
 
         TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
 
-        context.drawText(textRenderer, currentPetText, x + (ExtraOptions.includePetSprite ? 18 : 0), y + component.getHeight() - textRenderer.fontHeight, 0xffffffff, true);
+        int textX = x + (ExtraOptions.includePetSprite ? 18 : 0);
+        int textY = y + component.getHeight() - textRenderer.fontHeight;
+
+        if (ExtraOptions.displayPetLevel && currentPetText != NO_PET) {
+            context.drawText(textRenderer, Text.literal("§7[Lvl " + (currentPetLevel != -1 ? currentPetLevel : "???") + "]"), textX, textY, 0xffffffff, true);
+            textY -= textRenderer.fontHeight;
+        }
+
+        context.drawText(textRenderer, currentPetText, textX, textY, 0xffffffff, true);
     }
 
     public static boolean displayNotification() {

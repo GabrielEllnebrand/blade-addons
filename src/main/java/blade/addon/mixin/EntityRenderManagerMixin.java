@@ -14,6 +14,8 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.passive.SheepEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.projectile.FishingBobberEntity;
+import net.minecraft.util.math.Vec3d;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -49,5 +51,18 @@ public class EntityRenderManagerMixin {
         if (entity instanceof SheepEntity) {
             if (Location.inDungeon() && MobHighlight.hideSheep) cir.setReturnValue(false);
         }
+
+        if (Visual.oldFishingRod && entity instanceof FishingBobberEntity bobber) {
+            ClientPlayerEntity clientPlayer = MinecraftClient.getInstance().player;
+            if (clientPlayer == null || bobber.getOwner() != clientPlayer) return;
+
+            //Pretty much just hides the bobber if it's too close
+            //its def not exact, but it's good enough for now
+            Vec3d pos = bobber.getInterpolator().getLerpedPos();
+            if (clientPlayer.getEntityPos().distanceTo(pos) < 2 && bobber.age < 6 && pos.y > clientPlayer.getY() + 1.2 && clientPlayer.getPitch() > -60) {
+                cir.setReturnValue(false);
+            }
+        }
+
     }
 }

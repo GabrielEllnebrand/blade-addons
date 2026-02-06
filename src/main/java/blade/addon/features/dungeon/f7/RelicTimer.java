@@ -26,6 +26,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 
@@ -154,54 +155,55 @@ public class RelicTimer {
         });
 
 
-        Events.ON_BLOCK_INTERACTION.register((result, itemStack) -> {
-            if ((!Location.inDungeon() || !Phase.inP5())) return false;
-
-            if (pickedupRelic == null) return false;
-
-            BlockPos pos = result.getBlockPos();
-
-            if (!isARelicPos(pos)) return false;
-
-            //skyblock menu check is there incase the item doesnt get updated
-            if (!ItemUtil.itemHasName(itemStack, "Relic") && !ItemUtil.itemHasName(itemStack, "Skyblock Menu")) {
-                if (Floor7.blockIncorrectRelicPlace) {
-                    Debug.sendDebugMessage(Text.literal("Item: " + itemStack.getName()));
-                    Misc.addChatMessage(Text.literal("Blocked a weird click"));
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-
-            if (clickedRelic(pickedupRelic, pos)) {
-                if (Floor7.enableRelicPlaceTime) {
-                    MutableText text = Text.literal("The ").formatted(Formatting.GREEN)
-                            .append(Text.literal(pickedupRelic.name().toLowerCase()).withColor(pickedupRelic.color))
-                            .append(" relic was placed in ").formatted(Formatting.GREEN);
-
-                    switch (pickedupRelic) {
-                        case RED -> PersonalBests.redRelicTime.testNewTime(text, phaseStartTime);
-                        case ORANGE -> PersonalBests.orangeRelicTime.testNewTime(text, phaseStartTime);
-                        case BLUE -> PersonalBests.blueRelicTime.testNewTime(text, phaseStartTime);
-                        case GREEN -> PersonalBests.greenRelicTime.testNewTime(text, phaseStartTime);
-                        case PURPLE -> PersonalBests.purpleRelicTime.testNewTime(text, phaseStartTime);
-                    }
-
-                }
-                pickedupRelic = null;
-            } else {
-                if (Floor7.blockIncorrectRelicPlace) {
-                    Debug.sendDebugMessage(Text.literal("Relic: " + pickedupRelic));
-                    Misc.addChatMessage(Text.literal("incorrect click!"));
-                    return true;
-                }
-            }
-            return false;
-        });
-
+        Events.ON_BLOCK_INTERACTION.register(RelicTimer::blockInteraction);
         RenderingEvents.FILLED_BLOCK.register(RelicTimer::worldRender);
 
+    }
+
+    private static boolean blockInteraction(BlockHitResult result, ItemStack itemStack) {
+        if ((!Location.inDungeon() || !Phase.inP5())) return false;
+
+        if (pickedupRelic == null) return false;
+
+        BlockPos pos = result.getBlockPos();
+
+        if (!isARelicPos(pos)) return false;
+
+        //skyblock menu check is there incase the item doesnt get updated
+        if (!ItemUtil.itemHasName(itemStack, "Relic") && !ItemUtil.itemHasName(itemStack, "Skyblock Menu")) {
+            if (Floor7.blockIncorrectRelicPlace) {
+                Debug.sendDebugMessage(Text.literal("Name: " + itemStack.getName() + " Item: " + itemStack));
+                Misc.addChatMessage(Text.literal("Blocked a weird click"));
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        if (clickedRelic(pickedupRelic, pos)) {
+            if (Floor7.enableRelicPlaceTime) {
+                MutableText text = Text.literal("The ").formatted(Formatting.GREEN)
+                        .append(Text.literal(pickedupRelic.name().toLowerCase()).withColor(pickedupRelic.color))
+                        .append(" relic was placed in ").formatted(Formatting.GREEN);
+
+                switch (pickedupRelic) {
+                    case RED -> PersonalBests.redRelicTime.testNewTime(text, phaseStartTime);
+                    case ORANGE -> PersonalBests.orangeRelicTime.testNewTime(text, phaseStartTime);
+                    case BLUE -> PersonalBests.blueRelicTime.testNewTime(text, phaseStartTime);
+                    case GREEN -> PersonalBests.greenRelicTime.testNewTime(text, phaseStartTime);
+                    case PURPLE -> PersonalBests.purpleRelicTime.testNewTime(text, phaseStartTime);
+                }
+
+            }
+            pickedupRelic = null;
+        } else {
+            if (Floor7.blockIncorrectRelicPlace) {
+                Debug.sendDebugMessage(Text.literal("Relic: " + pickedupRelic));
+                Misc.addChatMessage(Text.literal("incorrect click!"));
+                return true;
+            }
+        }
+        return false;
     }
 
     private static boolean isARelicPos(BlockPos pos) {

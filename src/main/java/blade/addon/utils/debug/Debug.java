@@ -3,7 +3,9 @@ package blade.addon.utils.debug;
 import blade.addon.features.dungeon.f7.RelicTimer;
 import blade.addon.features.dungeon.f7.location.LocationNotifier;
 import blade.addon.utils.Constants;
+import blade.addon.utils.Location;
 import blade.addon.utils.Misc;
+import blade.addon.utils.dungeon.DungeonClass;
 import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.dungeon.Section;
 import com.mojang.brigadier.CommandDispatcher;
@@ -24,6 +26,7 @@ public class Debug {
     public static boolean sendSound = false;
     public static boolean termInfo = false;
     public static boolean renderPositions = false;
+    public static boolean sendNotiDebug = false;
 
     public static void init() {
         ClientCommandRegistrationCallback.EVENT.register(Debug::registerCommands);
@@ -91,6 +94,50 @@ public class Debug {
                             return Constants.SUCCESS;
                         }))
 
+                )
+
+                .then(ClientCommandManager.literal("location")
+                        .then(ClientCommandManager.literal("current")
+                                .executes(context -> {
+                                    Misc.addChatMessage(Text.literal(Location.getCurrentLocation().toString()));
+                                    return Constants.SUCCESS;
+                                        }))
+
+                        .then(ClientCommandManager.literal("set")
+                                .then(ClientCommandManager.argument("name", StringArgumentType.string())
+                                        .executes(context -> {
+                                            String name = StringArgumentType.getString(context, "name").toUpperCase();
+                                            Location location =  Location.getLocation(name);
+                                            Location.changeLocation(location);
+                                            Misc.addChatMessage(Text.literal("Swapped to location: " + location.name()));
+                                            return Constants.SUCCESS;
+                                        })
+                                )
+                        )
+                )
+
+                .then(ClientCommandManager.literal("chatNoti")
+                        .then(ClientCommandManager.literal("sendDebug")
+                                .executes(context -> {
+                                    sendNotiDebug = !sendNotiDebug;
+                                    Misc.addChatMessage(Text.literal("Send notification debug: ").append(Misc.getStatusText(sendNotiDebug)));
+                                    return Constants.SUCCESS;
+                                })
+
+                        )
+                )
+
+                .then(ClientCommandManager.literal("classes")
+                        .executes(context -> {
+                            DungeonClass.printClasses();
+                            return Constants.SUCCESS;
+                        })
+                )
+                .then(ClientCommandManager.literal("currentClass")
+                        .executes(context -> {
+                            Misc.addChatMessage(Text.literal("Current class: " + DungeonClass.currentClass));
+                            return Constants.SUCCESS;
+                        })
                 )
         );
     }

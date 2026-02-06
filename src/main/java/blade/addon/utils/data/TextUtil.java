@@ -60,32 +60,12 @@ public class TextUtil {
      */
     private static void acceptStyle(StringBuilder builder, StyleTracker tracker, Style style) {
         if (style == null) return;
-        if (style.isBold() && !tracker.isBold) {
-            builder.append("§l");
-            tracker.isBold = true;
-        } else if (!style.isBold() && tracker.isBold) {
-            tracker.isBold = false;
-        }
 
-        if (style.isItalic() && !tracker.isItalic) {
-            builder.append("§o");
-            tracker.isItalic = true;
-        } else if (!style.isItalic() && tracker.isItalic) {
-            tracker.isItalic = false;
-        }
-
-        if (style.isUnderlined() && !tracker.isUnderlined) {
-            builder.append("§n");
-            tracker.isUnderlined = true;
-        }  else if (!style.isUnderlined() && tracker.isUnderlined) {
-            tracker.isUnderlined = false;
-        }
-
-        if (style.isStrikethrough() && !tracker.isStrikeThrough) {
-            builder.append("§m");
-            tracker.isStrikeThrough = true;
-        }  else if (!style.isStrikethrough() && tracker.isStrikeThrough) {
-            tracker.isStrikeThrough = false;
+        TextColor color = style.getColor();
+        if (color != null && color.getRgb() != tracker.currentColor) {
+            builder.append('§');
+            builder.append(getFormatChar(color.getRgb()));
+            tracker.currentColor = color.getRgb();
         }
 
         if (style.isObfuscated() &&  !tracker.isObfuscated) {
@@ -95,13 +75,32 @@ public class TextUtil {
             tracker.isObfuscated = false;
         }
 
-        TextColor color = style.getColor();
-        if (color == null) return;
+        if (style.isBold() && !tracker.isBold) {
+            builder.append("§l");
+            tracker.isBold = true;
+        } else if (!style.isBold() && tracker.isBold) {
+            tracker.isBold = false;
+        }
 
-        if (color.getRgb() != tracker.currentColor) {
-            builder.append('§');
-            builder.append(getFormatChar(color.getRgb()));
-            tracker.currentColor = color.getRgb();
+        if (style.isStrikethrough() && !tracker.isStrikeThrough) {
+            builder.append("§m");
+            tracker.isStrikeThrough = true;
+        }  else if (!style.isStrikethrough() && tracker.isStrikeThrough) {
+            tracker.isStrikeThrough = false;
+        }
+
+        if (style.isUnderlined() && !tracker.isUnderlined) {
+            builder.append("§n");
+            tracker.isUnderlined = true;
+        }  else if (!style.isUnderlined() && tracker.isUnderlined) {
+            tracker.isUnderlined = false;
+        }
+
+        if (style.isItalic() && !tracker.isItalic) {
+            builder.append("§o");
+            tracker.isItalic = true;
+        } else if (!style.isItalic() && tracker.isItalic) {
+            tracker.isItalic = false;
         }
     }
 

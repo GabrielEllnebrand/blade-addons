@@ -25,10 +25,10 @@ public class MinecraftClientMixin {
     public HitResult crosshairTarget;
 
     @Inject(method = "doItemUse", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/item/ItemStack;getCount()I"), cancellable = true)
-    private void testInteraction(CallbackInfo ci, @Local ItemStack itemStack) {
+    private void testInteractionBlock(CallbackInfo ci, @Local ItemStack itemStack) {
         BlockHitResult blockHitResult = (BlockHitResult) this.crosshairTarget;
         if (blockHitResult == null) return;
-        if (Events.ON_BLOCK_INTERACTION.invoke(blockInteractionEvent -> blockInteractionEvent.iteract(blockHitResult, itemStack))) {
+        if (Events.ON_BLOCK_INTERACTION.invoke(blockInteractionEvent -> blockInteractionEvent.interact(blockHitResult, itemStack))) {
             ci.cancel();
         }
     }

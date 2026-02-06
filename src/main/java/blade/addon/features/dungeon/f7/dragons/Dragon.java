@@ -2,7 +2,7 @@ package blade.addon.features.dungeon.f7.dragons;
 
 import blade.addon.utils.dungeon.DungeonClass;
 
-public     enum Dragon {
+public enum Dragon {
     PURPLE(0xffff55ff, 0, 4),
     BLUE(0xff55ffff, 1, 3),
     RED(0xffff5555, 2, 2),
@@ -43,7 +43,16 @@ public     enum Dragon {
     }
 
     public static Dragon getPrio(Dragon dragon1, Dragon dragon2) {
+
         if (DungeonClass.isArchTeam()) {
+            if (DungeonClass.isClass(DungeonClass.HEALER)) {
+                if (dragon1 == Dragon.PURPLE) {
+                    return dragon2;
+                } else if (dragon2 == Dragon.PURPLE) {
+                    return dragon1;
+                }
+            }
+
             if (dragon1.archPrio < dragon2.archPrio) {
                 return dragon1;
             } else {

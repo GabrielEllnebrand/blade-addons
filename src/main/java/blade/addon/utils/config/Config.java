@@ -169,7 +169,8 @@ public class Config {
         ConfigSection goldor = new ConfigSection(Text.literal("Goldor"));
         goldor.add(new ConfigBool(Text.literal("Goldor tick timer"), () -> Floor7.enableGoldorTickTimer, bool -> Floor7.enableGoldorTickTimer = bool));
         goldor.add(new ConfigBool(Text.literal("Term start time"), () -> Floor7.enableTermStartTimer, bool -> Floor7.enableTermStartTimer = bool));
-        goldor.add(new ConfigBool(Text.literal("Make goldor timer tick down"), () -> Floor7.inDeathTicks, bool -> Floor7.inDeathTicks = bool));
+        goldor.add(new ConfigBool(Text.literal("in 3s increments"), () -> Floor7.inDeathTicks, bool -> Floor7.inDeathTicks = bool));
+        goldor.add(new ConfigBool(Text.literal("Tick up (instead of down from 3s)"), () -> Floor7.makeGoldorTickUp, bool -> Floor7.makeGoldorTickUp = bool));
         goldor.add(new ConfigBool(Text.literal("Positional messages"), () -> Floor7.enablePositionalMessages, bool -> Floor7.enablePositionalMessages = bool));
         goldor.add(new ConfigBool(Text.literal("Terminal splits"), () -> Section.enableTerminalSplits, bool -> Section.enableTerminalSplits = bool));
         goldor.add(new ConfigOptions<>(Text.literal("Display when"), Section.DisplayTerminalSplitsWhen.values(), () -> Section.displayTerminalSplitsWhen, when -> Section.displayTerminalSplitsWhen = when));
@@ -202,7 +203,7 @@ public class Config {
         relic.add(new ConfigBool(Text.literal("Use valleys progress bar"), () -> Floor7.useValleyBar, bool -> Floor7.useValleyBar = bool));
         relic.add(new ConfigInt(Text.literal("Relic start timer ticks"), () -> Floor7.relicSpawnTicks, num -> Floor7.relicSpawnTicks = num, 1, 30, 50));
         relic.add(new ConfigBool(Text.literal("Enable relic placed time"), () -> Floor7.enableRelicPlaceTime, bool -> Floor7.enableRelicPlaceTime = bool));
-        relic.add(new ConfigBool(Text.literal("Block incorrect relic place"), () -> Floor7.blockIncorrectRelicPlace, bool -> Floor7.blockIncorrectRelicPlace = bool));
+        relic.add(new ConfigBool(Text.literal("Block incorrect relic place (right click only)"), () -> Floor7.blockIncorrectRelicPlace, bool -> Floor7.blockIncorrectRelicPlace = bool));
         relic.add(new ConfigBool(Text.literal("Highlight picked up relic"), () -> Floor7.renderRelicHighlight, bool -> Floor7.renderRelicHighlight = bool));
         relic.add(new ConfigBool(Text.literal("Send all relic times"), () -> Floor7.showAllRelicTimes, bool -> Floor7.showAllRelicTimes = bool));
         floor7.add(relic);
@@ -288,6 +289,8 @@ public class Config {
         extra.add(new ConfigColor(Text.literal("Prefix text color"), () -> ExtraOptions.timerPrefixColor, color -> ExtraOptions.timerPrefixColor = color, "timer-prefix", false));
         extra.add(new ConfigBool(Text.literal("Display selected arrow"), () -> ExtraOptions.displayCurrentArrow, bool -> ExtraOptions.displayCurrentArrow = bool));
         extra.add(new ConfigBool(Text.literal("Title on arrow swap"), () -> ExtraOptions.arrowSwapNotification, bool -> ExtraOptions.arrowSwapNotification = bool));
+        extra.add(new ConfigBool(Text.literal("Toggleable searchbar (ctrl + f)"), () -> ExtraOptions.toggleableSearchBar, bool -> ExtraOptions.toggleableSearchBar = bool));
+        //extra.add(new ConfigBool(Text.literal("Kuudra stun waypoint"), () -> ExtraOptions.stunWaypoint, bool -> ExtraOptions.stunWaypoint = bool));
 
 
         ConfigSection sound = new ConfigSection(Text.literal("Sound options"));
@@ -312,8 +315,10 @@ public class Config {
 
         ConfigSection pets = new ConfigSection(Text.literal("Pets"));
         pets.add(new ConfigBool(Text.literal("Highlight selected pet in menu"), () -> ExtraOptions.highlightSelectedPet, bool -> ExtraOptions.highlightSelectedPet = bool));
+        pets.add(new ConfigColor(Text.literal("Pet highlight color"), () -> ExtraOptions.petHighlightColor, color -> ExtraOptions.petHighlightColor = color, "pet-highlight-color", false));
         pets.add(new ConfigBool(Text.literal("Draw selected pet"), () -> ExtraOptions.drawPetHUD, bool -> ExtraOptions.drawPetHUD = bool));
         pets.add(new ConfigBool(Text.literal("Draw the pets sprite"), () -> ExtraOptions.includePetSprite, bool -> ExtraOptions.includePetSprite = bool));
+        pets.add(new ConfigBool(Text.literal("Draw pet level"), () -> ExtraOptions.displayPetLevel, bool -> ExtraOptions.displayPetLevel = bool));
         pets.add(new ConfigBool(Text.literal("Send sound on petswap"), () -> ExtraOptions.sendOnPetSound, bool -> ExtraOptions.sendOnPetSound = bool));
         pets.add(new ConfigSound(Text.literal("Pet swap sound"), ExtraOptions.petSound));
         pets.add(new ConfigBool(Text.literal("Pet swap notification"), () -> ExtraOptions.sendPetSwapNotification, bool -> ExtraOptions.sendPetSwapNotification = bool));
@@ -359,6 +364,7 @@ public class Config {
         visual.add(new ConfigBool(Text.literal("Hide cooldown"), () -> Visual.hideCooldown, bool -> Visual.hideCooldown = bool));
         visual.add(new ConfigBool(Text.literal("Old player head size"), () -> Visual.oldPlayerHead, bool -> Visual.oldPlayerHead = bool));
         visual.add(new ConfigBool(Text.literal("Fix wither essence"), () -> Visual.fixWitherEssence, bool -> Visual.fixWitherEssence = bool));
+        visual.add(new ConfigBool(Text.literal("1.8.9 like fishing bobber"), () -> Visual.oldFishingRod, bool -> Visual.oldFishingRod = bool));
         return visual;
     }
 

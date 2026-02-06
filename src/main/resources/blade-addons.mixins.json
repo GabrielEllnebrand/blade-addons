@@ -30,6 +30,7 @@
     "HeldItemRendererMixin",
     "InGameHudMixin",
     "InventoryScreenMixin",
+    "KeyboardMixin",
     "MinecraftClientMixin",
     "MouseMixin",
     "RecipeBookScreenMixin",

@@ -43,4 +43,7 @@ public class Visual {
     @ConfigValue
     public static boolean fixWitherEssence = false;
 
+    @ConfigValue
+    public static boolean oldFishingRod = false;
+
 }

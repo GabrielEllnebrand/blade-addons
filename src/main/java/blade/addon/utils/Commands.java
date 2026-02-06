@@ -199,6 +199,18 @@ public class Commands {
                 Misc.executeCommand("warp dungeon_hub");
                 return Constants.SUCCESS;
             }));
+
+            for (int i = 1; i <= 7; i++) {
+                int finalI = i;
+                dispatcher.register(ClientCommandManager.literal("f" + i).executes(context -> {
+                    Misc.executeCommand("joindungeon catacombs " + finalI);
+                    return Constants.SUCCESS;
+                }));
+                dispatcher.register(ClientCommandManager.literal("m" + i).executes(context -> {
+                    Misc.executeCommand("joindungeon master_catacombs " + finalI);
+                    return Constants.SUCCESS;
+                }));
+            }
         }
     }
 }

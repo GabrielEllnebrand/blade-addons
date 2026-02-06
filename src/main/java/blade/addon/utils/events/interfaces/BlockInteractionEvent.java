@@ -5,6 +5,6 @@ import net.minecraft.util.hit.BlockHitResult;
 
 public interface BlockInteractionEvent {
 
-    boolean iteract(BlockHitResult result, ItemStack item);
+    boolean interact(BlockHitResult result, ItemStack item);
 
 }
