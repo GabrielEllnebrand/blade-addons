@@ -138,6 +138,7 @@ public class Config {
         ConfigCategory floor7 = new ConfigCategory("Floor 7");
         floor7.add(new ConfigBool(Text.literal("Combine tick timers"), () -> Floor7.combineTickTimers, bool -> Floor7.combineTickTimers = bool));
         floor7.add(new ConfigBool(Text.literal("Enable player leap count"), () -> Floor7.leapNotifications, bool -> Floor7.leapNotifications = bool));
+        floor7.add(new ConfigBool(Text.literal("Capitalize health numbers"), () -> Floor7.capitalizeHealthNumbers, bool -> Floor7.capitalizeHealthNumbers = bool));
 
         ConfigSection waypoints = new ConfigSection(Text.literal("Waypoints"));
         waypoints.add(new ConfigBool(Text.literal("Enable boss waypoints"), () -> Floor7.enableBossWaypoints, bool -> Floor7.enableBossWaypoints = bool));
@@ -311,6 +312,7 @@ public class Config {
         copyChat.add(new ConfigBool(Text.literal("remove color codes"), () -> ExtraOptions.removeColorCodes, bool -> ExtraOptions.removeColorCodes = bool));
         copyChat.add(new ConfigBool(Text.literal("replace format char with &"), () -> ExtraOptions.replaceColorChars, bool -> ExtraOptions.replaceColorChars = bool));
         copyChat.add(new ConfigBool(Text.literal("copy line only"), () -> ExtraOptions.copyLineOnly, bool -> ExtraOptions.copyLineOnly = bool));
+        copyChat.add(new ConfigBool(Text.literal("Send feedback msg in chat on copied msg"), () -> ExtraOptions.copyChatFeedback, bool -> ExtraOptions.copyChatFeedback = bool));
         extra.add(copyChat);
 
         ConfigSection pets = new ConfigSection(Text.literal("Pets"));

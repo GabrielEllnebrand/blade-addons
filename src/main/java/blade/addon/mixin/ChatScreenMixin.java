@@ -1,5 +1,6 @@
 package blade.addon.mixin;
 
+import blade.addon.utils.Misc;
 import blade.addon.utils.config.values.ExtraOptions;
 import blade.addon.utils.data.TextUtil;
 import net.minecraft.client.MinecraftClient;
@@ -58,6 +59,10 @@ public class ChatScreenMixin extends Screen {
         }
 
         mc.keyboard.setClipboard(string);
+
+        if (ExtraOptions.copyChatFeedback) {
+            Misc.addChatMessage(Text.literal("Copied chat message"));
+        }
     }
 
     @Unique

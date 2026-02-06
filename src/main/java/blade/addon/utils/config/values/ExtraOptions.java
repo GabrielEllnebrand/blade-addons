@@ -123,4 +123,7 @@ public class ExtraOptions {
 
     @ConfigValue
     public static boolean toggleableSearchBar = true;
+
+    @ConfigValue
+    public static boolean copyChatFeedback = false;
 }

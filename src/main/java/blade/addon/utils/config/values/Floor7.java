@@ -154,4 +154,6 @@ public class Floor7 {
     @ConfigValue
     public static boolean makeGoldorTickUp = true;
 
+    @ConfigValue
+    public static boolean capitalizeHealthNumbers = true;
 }

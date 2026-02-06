@@ -2,6 +2,7 @@ package blade.addon.utils.rendering;
 
 import blade.addon.utils.Constants;
 import blade.addon.utils.config.values.ExtraOptions;
+import blade.addon.utils.config.values.Floor7;
 import config.practical.hud.HUDComponent;
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderContext;
 import net.minecraft.client.MinecraftClient;
@@ -68,7 +69,7 @@ public class RenderUtils {
         RenderUtils.drawCenteredText(context, MinecraftClient.getInstance().textRenderer, Text.literal(Constants.DECIMAL_FORMAT.format(num)), x, y, component.getWidth(), color);
     }
 
-    public static void drawPrefixedTimer(HUDComponent component, DrawContext context,  String prefix, int num) {
+    public static void drawPrefixedTimer(HUDComponent component, DrawContext context, String prefix, int num) {
         drawPrefixedText(component, context, prefix, Constants.DECIMAL_FORMAT.format(num * Constants.TICK_DURATION) + "s");
     }
 
@@ -117,12 +118,18 @@ public class RenderUtils {
     }
 
 
-
-        public static String formatHealth(float health) {
+    public static String formatHealth(float health) {
+        if (Floor7.capitalizeHealthNumbers) {
             if (health >= 1e9) return String.format("%.1fB", health / 1e9);
             if (health >= 1e6) return String.format("%.1fM", health / 1e6);
             if (health >= 1e3) return String.format("%.1fK", health / 1e3);
             return health + "";
+        } else {
+            if (health >= 1e9) return String.format("%.1fb", health / 1e9);
+            if (health >= 1e6) return String.format("%.1fm", health / 1e6);
+            if (health >= 1e3) return String.format("%.1fk", health / 1e3);
+            return health + "";
         }
+    }
 
 }
