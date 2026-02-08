@@ -17,6 +17,8 @@ public class SelectedPetHighlight {
     }
 
     private static void draw(DrawContext context, ItemStack stack, int x, int y) {
+        if (!ExtraOptions.highlightSelectedPet) return;
+
         PetHolder holder = (PetHolder) (Object) stack;
         assert holder != null;
 
