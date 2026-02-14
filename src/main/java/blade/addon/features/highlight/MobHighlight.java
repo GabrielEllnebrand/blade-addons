@@ -55,6 +55,7 @@ public class MobHighlight {
     private static final int LEATHER_BOOTS_ID = Item.getRawId(Items.LEATHER_BOOTS);
 
     private static final ConcurrentHashMap<Integer, Entity> foundEntities = new ConcurrentHashMap<>();
+    public static final ConcurrentLinkedQueue<ArmorStandEntity> nonStaredTags = new ConcurrentLinkedQueue<>();
     public static final ConcurrentLinkedQueue<DataHolder> savedEntities = new ConcurrentLinkedQueue<>();
 
     public static boolean dontRenderHighlight = false;
@@ -75,6 +76,9 @@ public class MobHighlight {
 
     @ConfigValue
     public static int outlineWidth = 4;
+
+    @ConfigValue
+    public static boolean hideNoneStaredNameTags = false;
 
     @ConfigValue
     public static int starFilledColor = 0xff00ff00;
@@ -141,6 +145,8 @@ public class MobHighlight {
 
         Events.ON_LOCATION_CHANGE.register(newLocation -> {
             savedEntities.clear();
+            foundEntities.clear();
+            nonStaredTags.clear();
             return false;
         });
 
@@ -155,6 +161,9 @@ public class MobHighlight {
             int id = entity.getId();
             savedEntities.removeIf(dataHolder -> dataHolder.entity == entity);
             foundEntities.remove(id);
+            if (entity instanceof ArmorStandEntity) {
+                nonStaredTags.remove(entity);
+            }
         });
 
         RenderingEvents.FILLED_ENTITY.register(MobHighlight::renderFilled);
@@ -163,7 +172,12 @@ public class MobHighlight {
 
     private static void testArmorStand(ArmorStandEntity armorStand) {
         MobType type = getType(armorStand);
-        if (type == null) return;
+        if (type == null) {
+            if (isGeneralStaredMob(armorStand)) {
+                nonStaredTags.add(armorStand);
+            }
+            return;
+        }
 
         int idOffset = getIdOffset(armorStand);
         if (idOffset < 0) return;
@@ -208,6 +222,14 @@ public class MobHighlight {
         }
 
         return false;
+    }
+
+    public static boolean isGeneralStaredMob(ArmorStandEntity armorStand) {
+        Text text = armorStand.getCustomName();
+        if (text == null) return false;
+        String name = text.getString();
+        return name.contains("Lurker") || name.contains("Dreadlord") || name.contains("Souleater") || name.contains("Zombie") || name.contains("Skeleton") || name.contains("Skeletor")
+                || name.contains("Sniper") || name.contains("Spider") || name.contains("Fel") || isTankMob(name) || isMiniBoss(name);
     }
 
     public static boolean isTankMob(String name) {

@@ -25,10 +25,11 @@ public class SearchBar {
     public static void init() {
         DrawEvents.INVENTORY_SLOT_AFTER.register((context, item, x, y) -> {
             if (shouldDisplay() && !searchTerm.isEmpty() && ExtraOptions.toggleableSearchBar) {
-                String name = item.getName().getString();
-                if (!name.contains(searchTerm) || name.equals("Air")) {
+                String name = item.getName().getString().toLowerCase();
+                if (!name.contains(searchTerm.toLowerCase()) || name.equals("air")) {
                     context.fill(x, y, x + 16, y + 16, 0xaa111111);
                 }
+
             }
         });
     }

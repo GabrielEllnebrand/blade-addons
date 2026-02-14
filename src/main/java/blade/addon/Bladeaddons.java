@@ -55,6 +55,7 @@ import blade.addon.features.other.SearchBar;
 import blade.addon.features.other.SelectedPet;
 import blade.addon.features.other.StunWaypoint;
 import blade.addon.features.sound.BonzoSound;
+import blade.addon.features.sound.TubaSound;
 import blade.addon.utils.Commands;
 import blade.addon.utils.Keybinds;
 import blade.addon.utils.Location;
@@ -150,5 +151,6 @@ public class Bladeaddons implements ModInitializer {
         ProtectItem.init();
         SelectedPetHighlight.init();
         SearchBar.init();
+        TubaSound.init();
     }
 }

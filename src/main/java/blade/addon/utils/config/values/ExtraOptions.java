@@ -126,4 +126,7 @@ public class ExtraOptions {
 
     @ConfigValue
     public static boolean copyChatFeedback = false;
+
+    @ConfigValue
+    public static boolean oldTubaSound = false;
 }

@@ -12,6 +12,7 @@ import net.minecraft.client.render.Frustum;
 import net.minecraft.client.render.entity.EntityRenderManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ItemEntity;
+import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.entity.passive.SheepEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.FishingBobberEntity;
@@ -60,6 +61,12 @@ public class EntityRenderManagerMixin {
             //its def not exact, but it's good enough for now
             Vec3d pos = bobber.getInterpolator().getLerpedPos();
             if (clientPlayer.getEntityPos().distanceTo(pos) < 2 && bobber.age < 6 && pos.y > clientPlayer.getY() + 1.2 && clientPlayer.getPitch() > -60) {
+                cir.setReturnValue(false);
+            }
+        }
+
+        if (entity instanceof ArmorStandEntity armorStand && MobHighlight.hideNoneStaredNameTags) {
+            if (MobHighlight.nonStaredTags.contains(armorStand)) {
                 cir.setReturnValue(false);
             }
         }

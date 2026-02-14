@@ -251,6 +251,8 @@ public class Config {
         highlight.add(new ConfigDouble(Text.literal("Extra Wither Width"), () -> MobHighlight.witherExtraWidth, num -> MobHighlight.witherExtraWidth = num, 0.1, 0, 1.5));
         highlight.add(new ConfigInt(Text.literal("Outline Width"), () -> MobHighlight.outlineWidth, num -> MobHighlight.outlineWidth = num, 1, 1, 10));
         highlight.add(new ConfigOptions<>(Text.literal("Highlight mode"), MobHighlight.HighlightType.values(), () -> MobHighlight.currentHighlight, type -> MobHighlight.currentHighlight = type));
+        highlight.add(new ConfigBool(Text.literal("Hide none stared nametags"), () -> MobHighlight.hideNoneStaredNameTags, bool -> MobHighlight.hideNoneStaredNameTags = bool));
+
         highlight.add(new ConfigColor(Text.literal("Star mob filled color"), () -> MobHighlight.starFilledColor, color -> MobHighlight.starFilledColor = color, "star-filled", true));
         highlight.add(new ConfigColor(Text.literal("Star mob outline color"), () -> MobHighlight.starOutlineColor, color -> MobHighlight.starOutlineColor = color, "star-outline", true));
         highlight.add(new ConfigColor(Text.literal("Tank mob filled color"), () -> MobHighlight.tankFilledColor, color -> MobHighlight.tankFilledColor = color, "tank-filled", true));
@@ -301,6 +303,7 @@ public class Config {
         sound.add(new ConfigBool(Text.literal("Disable \"on cooldown\" sound"), () -> ExtraOptions.disableAbilityCooldownSound, bool -> ExtraOptions.disableAbilityCooldownSound = bool));
         sound.add(new ConfigBool(Text.literal("Disable bonzo sound"), () -> ExtraOptions.disableBonzoSound, bool -> ExtraOptions.disableBonzoSound = bool));
         sound.add(new ConfigBool(Text.literal("Old bonzo sound"), () -> ExtraOptions.oldBonzoSound, bool -> ExtraOptions.oldBonzoSound = bool));
+        sound.add(new ConfigBool(Text.literal("Old tuba sound"), () -> ExtraOptions.oldTubaSound, bool -> ExtraOptions.oldTubaSound = bool));
         extra.add(sound);
 
         ConfigSection rag = new ConfigSection(Text.literal("Ragnarock"));
