@@ -28,19 +28,24 @@ public class LocationNotifier {
     public static void init() {
         Events.ON_PARTY_MESSAGE.register((username, message) -> {
             if (!Floor7.displayLocationNotification || !Location.inDungeon()) return false;
-            Matcher matcher = PATTERN.matcher(message);
+            Matcher matcher = PATTERN.matcher(format(message));
             if (!matcher.find()) return false;
             String action = matcher.group(1);
-
-            if (Floor7.dontNotifiyForYourself && EntityUtil.isClientPlayer(username)) return false;
-            String location =message.substring(action.length()) .replaceAll("§.", "");
+            String location = message.substring(message.indexOf(action) + action.length()).replaceAll("§.", "");
             if (PositionMessages.hasBeenSent(location)) return false;
+            if (Floor7.dontNotifiyForYourself && EntityUtil.isClientPlayer(username)) return false;
             startNotification(username, " is " + action + location + "!");
 
             return false;
         });
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> ticks = Math.max(ticks - 1, 0));
+    }
+
+    private static String format(String message) {
+        String strippedMessage = message.strip();
+        if (strippedMessage.length() < 2) return message;
+        return strippedMessage.substring(0, 1).toUpperCase() + strippedMessage.substring(1).toLowerCase();
     }
 
     public static void startNotification(String username, String message) {

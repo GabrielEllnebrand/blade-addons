@@ -13,6 +13,7 @@ public class PositionMessage {
     private final String[] checks;
     private final Box box;
     private boolean sent;
+    private boolean personallySent;
     private final int[] sections;
 
     public PositionMessage(String message, String[] checks, Box box, int[] sections) {
@@ -20,6 +21,7 @@ public class PositionMessage {
         this.checks = checks;
         this.box = box;
         this.sent = true;
+        this.personallySent = true;
         this.sections = sections;
         PositionMessages.positionMessages.add(this);
     }
@@ -36,10 +38,10 @@ public class PositionMessage {
     }
 
     public void tick(ClientPlayerEntity player) {
-        if (sent || !inAValidSection() || !inRange(player.getEntityPos())) return;
-        sent = true;
+        if (sent || personallySent || !inAValidSection() || !inRange(player.getEntityPos())) return;
         if (Floor7.enablePositionalMessages) {
             Misc.executeCommand("pc " + message);
+            personallySent = true;
         }
     }
 
@@ -63,6 +65,7 @@ public class PositionMessage {
 
     public void setSent(boolean sent) {
         this.sent = sent;
+        this.personallySent = sent;
     }
 
     public boolean sent() {

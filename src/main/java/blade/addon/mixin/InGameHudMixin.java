@@ -62,13 +62,13 @@ public class InGameHudMixin implements GameHud {
     @Inject(method = "setTitle", at = @At("HEAD"), cancellable = true, order = 2000)
     public void setTitle(Text title, CallbackInfo ci) {
         if (TitleHider.shouldHideTitle(title)) ci.cancel();
-        else if (DeviceNotifier.disableTitles()) ci.cancel();
+        else if (DeviceNotifier.disableTitles(title)) ci.cancel();
     }
 
     @Inject(method = "setSubtitle", at = @At("HEAD"), cancellable = true, order = 2000)
     public void setSubtitle(Text subtitle, CallbackInfo ci) {
         if (TitleHider.shouldHideTitle(subtitle)) ci.cancel();
-        else if (DeviceNotifier.disableTitles()) ci.cancel();
+        else if (DeviceNotifier.disableTitles(subtitle)) ci.cancel();
     }
 
     @Inject(method = "renderHeldItemTooltip", at=@At("HEAD"))

@@ -34,7 +34,7 @@ public class PositionMessages {
 
     public static void init() {
         ClientTickEvents.END_CLIENT_TICK.register(PositionMessages::tick);
-        RenderingEvents.FILLED_BLOCK.register(PositionMessages::render);
+        RenderingEvents.OUTLINE_ENTITY.register(PositionMessages::render);
         Events.ON_LOCATION_CHANGE.register(newLocation -> {
             disableAll();
             return false;
@@ -81,8 +81,9 @@ public class PositionMessages {
     }
 
     public static boolean hasBeenSent(String message) {
+        String lowered = message.toLowerCase();
         for (PositionMessage positionMessage : positionMessages) {
-            if (positionMessage.hasBeenSent(message)) {
+            if (positionMessage.hasBeenSent(lowered)) {
                 return true;
             }
         }

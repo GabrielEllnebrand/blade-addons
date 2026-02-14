@@ -56,8 +56,18 @@ public class DeviceNotifier {
         return (player.getX() >= 63 && player.getX() <= 64 && player.getY() == 127 && player.getZ() >= 35 && player.getZ() <= 36);
     }
 
-    public static boolean disableTitles() {
-        return ((Floor7.disableTitlesAtPre4 && at4thDev()) || (Floor7.disableTitlesAtSS && atSS())) && Phase.inTerminals();
+    public static boolean disableTitles(Text title) {
+        if (!(((Floor7.disableTitlesAtPre4 && at4thDev()) || (Floor7.disableTitlesAtSS && atSS())) && Phase.inTerminals()))
+            return false;
+
+        String string = title.getString();
+
+        if (string.equals("§eYou became a ghost!") || string.equals("§7Hopefully your teammates will be able to revive you!") || string.equals("§e§lBEING REVIVED")) {
+            return false;
+        }
+
+        return (!string.matches("§aYou will be revived in \\ds"));
+
     }
 
     public static boolean display() {

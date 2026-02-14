@@ -18,6 +18,7 @@ public class CustomEvents {
         //party event
         ClientReceiveMessageEvents.GAME.register((message, overlay) -> {
             String string = message.getString();
+
             Matcher matcher = PARTY_PATTERN.matcher(string);
             if (!matcher.find()) return;
 
@@ -29,7 +30,7 @@ public class CustomEvents {
 
             String tempUsername = string.substring(PARTY_MSG_OFFSET, index).replaceAll("§.", "");
             if (index + 2 >= string.length()) return;
-            String sentMessage = string.substring(index + 2);
+            String sentMessage = string.substring(index + 2).strip();
 
             index = tempUsername.indexOf("]") + 2;
             if (index > -1 && index < tempUsername.length()) {
