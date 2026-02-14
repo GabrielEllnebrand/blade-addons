@@ -30,6 +30,7 @@ import blade.addon.features.dungeon.f7.terms.DeviceNotifier;
 import blade.addon.features.dungeon.f7.terms.GoldorTickTimer;
 import blade.addon.features.dungeon.f7.terms.LeapNotification;
 import blade.addon.features.dungeon.f7.terms.MelodyWarning;
+import blade.addon.features.dungeon.f7.terms.SectionCompletion;
 import blade.addon.features.dungeon.f7.terms.SectionProgress;
 import blade.addon.features.dungeon.f7.terms.TermStartTimer;
 import blade.addon.features.filter.Filters;
@@ -152,5 +153,6 @@ public class Bladeaddons implements ModInitializer {
         SelectedPetHighlight.init();
         SearchBar.init();
         TubaSound.init();
+        SectionCompletion.init();
     }
 }

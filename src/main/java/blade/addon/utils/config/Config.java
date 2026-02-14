@@ -182,6 +182,9 @@ public class Config {
         goldor.add(new ConfigBool(Text.literal("Melody warning notification"), () -> Floor7.notifiyMelody, bool -> Floor7.notifiyMelody = bool));
         goldor.add(new ConfigBool(Text.literal("Send terminal time stamps"), () -> Floor7.terminalTimeStamps, bool -> Floor7.terminalTimeStamps = bool));
         goldor.add(new ConfigBool(Text.literal("Display section progress"), () -> Floor7.showSectionProgress, bool -> Floor7.showSectionProgress = bool));
+        goldor.add(new ConfigBool(Text.literal("Section completion notification"), () -> Floor7.sectionCompletionNotification, bool -> Floor7.sectionCompletionNotification = bool));
+        goldor.add(new ConfigSound(Text.literal("Section complete sound"), Floor7.sectionChangeSound, 2, 2, true));
+
         floor7.add(goldor);
 
         ConfigSection titles = new ConfigSection(Text.literal("Terminal titles"));

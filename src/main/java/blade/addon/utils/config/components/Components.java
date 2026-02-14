@@ -20,6 +20,7 @@ import blade.addon.features.dungeon.f7.terms.GoldorTickTimer;
 import blade.addon.features.dungeon.f7.terms.LeapNotification;
 import blade.addon.features.dungeon.f7.terms.MelodyWarning;
 import blade.addon.features.dungeon.f7.terms.DeviceNotifier;
+import blade.addon.features.dungeon.f7.terms.SectionCompletion;
 import blade.addon.features.dungeon.f7.terms.SectionProgress;
 import blade.addon.features.dungeon.f7.terms.TermStartTimer;
 import blade.addon.features.item.HeldItemToolTip;
@@ -149,4 +150,7 @@ public class Components {
 
     @ConfigValue
     public static HUDComponent arrowSwapDisplay = new HUDComponent(0, 0, 100, 10, 1, "Selected arrow title", ArrowSwapper::displayNotification,  ArrowSwapper::renderNotification, () -> ExtraOptions.arrowSwapNotification &&  !Dungeons.combineScreenNotifications);
+
+    @ConfigValue
+    public static HUDComponent sectionCompletionDisplay = new HUDComponent(0, 0, NOTIFICATION_WIDTH, 10, 1, "Section completion", SectionCompletion::display,  SectionCompletion::render, () -> Floor7.sectionCompletionNotification &&  !Dungeons.combineScreenNotifications);
 }

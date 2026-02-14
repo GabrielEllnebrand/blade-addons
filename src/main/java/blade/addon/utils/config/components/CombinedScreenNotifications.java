@@ -6,6 +6,7 @@ import blade.addon.features.dungeon.f7.maxor.CrystalSpawn;
 import blade.addon.features.dungeon.f7.terms.MelodyWarning;
 import blade.addon.features.dungeon.f7.storm.PillarExplode;
 import blade.addon.features.dungeon.f7.terms.DeviceNotifier;
+import blade.addon.features.dungeon.f7.terms.SectionCompletion;
 import blade.addon.features.notifications.Notifications;
 import blade.addon.features.other.ArrowSwapper;
 import blade.addon.features.other.SelectedPet;
@@ -38,6 +39,8 @@ public class CombinedScreenNotifications {
             return true;
         } else if (ArrowSwapper.displayNotification()) {
             return true;
+        } else if (SectionCompletion.display()) {
+            return true;
         }
         return false;
     }
@@ -61,6 +64,8 @@ public class CombinedScreenNotifications {
             SelectedPet.renderNotification(component, context);
         }   else if (ArrowSwapper.displayNotification()) {
             ArrowSwapper.renderNotification(component, context);
+        }   else if (SectionCompletion.display()) {
+            SectionCompletion.render(component, context);
         }else {
             RenderUtils.drawCenteredText(context, component, Text.literal("Some notification"));
         }

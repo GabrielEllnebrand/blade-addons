@@ -156,4 +156,10 @@ public class Floor7 {
 
     @ConfigValue
     public static boolean capitalizeHealthNumbers = true;
+
+    @ConfigValue
+    public static boolean sectionCompletionNotification = false;
+
+    @ConfigValue
+    public static SoundData sectionChangeSound = new SoundData(SoundEvents.BLOCK_NOTE_BLOCK_PLING.value(), 0, 1);
 }
