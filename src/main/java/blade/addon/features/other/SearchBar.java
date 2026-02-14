@@ -1,6 +1,7 @@
 package blade.addon.features.other;
 
 import blade.addon.utils.config.values.ExtraOptions;
+import blade.addon.utils.data.ItemUtil;
 import blade.addon.utils.rendering.DrawEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
@@ -10,6 +11,7 @@ import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.input.CharInput;
 import net.minecraft.client.input.KeyInput;
 import net.minecraft.client.util.Window;
+import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 import org.lwjgl.glfw.GLFW;
 
@@ -25,13 +27,19 @@ public class SearchBar {
     public static void init() {
         DrawEvents.INVENTORY_SLOT_AFTER.register((context, item, x, y) -> {
             if (shouldDisplay() && !searchTerm.isEmpty() && ExtraOptions.toggleableSearchBar) {
-                String name = item.getName().getString().toLowerCase();
-                if (!name.contains(searchTerm.toLowerCase()) || name.equals("air")) {
+                if (!matches(item)) {
                     context.fill(x, y, x + 16, y + 16, 0xaa111111);
                 }
 
             }
         });
+    }
+
+    private static boolean matches(ItemStack item) {
+        String name = item.getName().getString().toLowerCase();
+        if (name.equals("air")) return false;
+
+        return (name.contains(searchTerm) || ItemUtil.containsIgnoreCaseLore(item, searchTerm));
     }
 
     public static void render(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
@@ -79,7 +87,7 @@ public class SearchBar {
         if (window == null || textRenderer == null) return false;
 
         searchBar = new TextFieldWidget(textRenderer, (window.getScaledWidth() - SEARCH_WIDTH) / 2, SEARCH_Y, SEARCH_WIDTH, SEARCH_HEIGHT, Text.literal(""));
-        searchBar.setChangedListener(string -> searchTerm = string);
+        searchBar.setChangedListener(string -> searchTerm = string.toLowerCase());
         return true;
     }
 

@@ -8,6 +8,7 @@ import blade.addon.utils.Misc;
 import blade.addon.utils.dungeon.DungeonClass;
 import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.dungeon.Section;
+import blade.addon.utils.events.Events;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
@@ -70,6 +71,12 @@ public class Debug {
                     Misc.addChatMessage(Text.literal("Render positons: ").append(Misc.getStatusText(renderPositions)));
                     return Constants.SUCCESS;
                 }))
+
+                .then(ClientCommandManager.literal("testString").then(ClientCommandManager.argument("message", StringArgumentType.string()).executes(context -> {
+                    String message = StringArgumentType.getString(context, "message");
+                    Events.ON_GAME_MESSAGE.invoke(gameMessageEvent -> gameMessageEvent.onGameMessage(Text.literal(message)));
+                    return Constants.SUCCESS;
+                })))
 
                 .then(ClientCommandManager.literal("relic")
                         .then(ClientCommandManager.literal("set")

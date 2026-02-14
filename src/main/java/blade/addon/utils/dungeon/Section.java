@@ -1,11 +1,10 @@
 package blade.addon.utils.dungeon;
 
-import blade.addon.features.dungeon.f7.terms.TitleHider;
 import blade.addon.utils.Constants;
-import blade.addon.utils.debug.Debug;
 import blade.addon.utils.Location;
 import blade.addon.utils.Misc;
 import blade.addon.utils.config.values.Floor7;
+import blade.addon.utils.debug.Debug;
 import blade.addon.utils.events.Events;
 import blade.addon.utils.events.interfaces.SectionEvent;
 import config.practical.hud.HUDComponent;
@@ -14,7 +13,6 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
 
 import java.util.List;
 import java.util.regex.Matcher;
@@ -75,9 +73,6 @@ public class Section {
                 currentSection = 1;
                 splits[0].start();
             } else if (Phase.inGoldorTunnel()) {
-                if (TitleHider.shouldHideTitle()) {
-                    Misc.forceTitle(Text.empty(), Text.literal("The Core entrance is opening!").formatted(Formatting.GREEN));
-                }
                 if (Debug.termInfo) {
                     Misc.addChatMessage(Text.literal("Terminals ended"));
                 }
@@ -192,10 +187,6 @@ public class Section {
         } else if (!gateBlownUp) {
             if (string.equals("The gate has been destroyed!")) {
                 gateBlownUp = true;
-
-                if (TitleHider.shouldHideTitle()) {
-                    Misc.forceTitle(Text.empty(), message);
-                }
 
                 if (completed == total) {
                     incrementSection();

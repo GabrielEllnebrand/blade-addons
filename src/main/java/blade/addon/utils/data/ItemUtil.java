@@ -60,6 +60,23 @@ public class ItemUtil {
         return false;
     }
 
+    public static boolean containsIgnoreCaseLore(ItemStack item, String contain) {
+        if (item ==null) return false;
+        LoreComponent lore = item.get(DataComponentTypes.LORE);
+        if (lore == null) return false;
+
+        List<Text> lines = lore.lines();
+        if (lines.isEmpty()) return false;
+
+        for (Text line : lines.reversed()) {
+            String string = line.getString();
+            if (string.toLowerCase().contains(contain.toLowerCase())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static boolean containsNBT(ItemStack item, String contain) {
         NbtComponent nbt = item.get(DataComponentTypes.CUSTOM_DATA);
         if (nbt == null) {

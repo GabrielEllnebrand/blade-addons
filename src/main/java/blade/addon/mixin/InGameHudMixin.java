@@ -60,14 +60,14 @@ public class InGameHudMixin implements GameHud {
     }
 
     @Inject(method = "setTitle", at = @At("HEAD"), cancellable = true, order = 2000)
-    public void renderStatusEffectsOverLay(Text title, CallbackInfo ci) {
-        if (TitleHider.shouldHideTitle()) ci.cancel();
+    public void setTitle(Text title, CallbackInfo ci) {
+        if (TitleHider.shouldHideTitle(title)) ci.cancel();
         else if (DeviceNotifier.disableTitles()) ci.cancel();
     }
 
     @Inject(method = "setSubtitle", at = @At("HEAD"), cancellable = true, order = 2000)
     public void setSubtitle(Text subtitle, CallbackInfo ci) {
-        if (TitleHider.shouldHideTitle()) ci.cancel();
+        if (TitleHider.shouldHideTitle(subtitle)) ci.cancel();
         else if (DeviceNotifier.disableTitles()) ci.cancel();
     }
 
