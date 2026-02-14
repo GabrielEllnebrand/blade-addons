@@ -36,6 +36,8 @@ public class ProtectItem {
     @ConfigValue
     public static HashSet<String> protectedItems = new HashSet<>();
 
+    public static boolean stopProtectItem = false;
+
     public static void init() {
         DrawEvents.INVENTORY_SLOT_BEFORE.register(ProtectItem::draw);
         DrawEvents.HUD_SLOT_BEFORE.register(ProtectItem::draw);
@@ -69,7 +71,7 @@ public class ProtectItem {
     }
 
     public static boolean protect(ItemStack stack) {
-
+        if (stopProtectItem) return false;
         String uuid = ItemUtil.getUuid(stack);
 
         //TODO: add smth for non uuid items

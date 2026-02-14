@@ -6,6 +6,7 @@ import blade.addon.features.dungeon.f7.invincibility.InvincibilityTimer;
 import blade.addon.features.dungeon.f7.location.LocationNotifier;
 import blade.addon.features.filter.FilterList;
 import blade.addon.features.highlight.MobHighlight;
+import blade.addon.features.item.ProtectItem;
 import blade.addon.features.other.DianaNotifier;
 import blade.addon.features.notifications.NotificationList;
 import blade.addon.utils.config.components.Components;
@@ -291,6 +292,7 @@ public class Config {
         extra.add(new ConfigBool(Text.literal("Display selected arrow"), () -> ExtraOptions.displayCurrentArrow, bool -> ExtraOptions.displayCurrentArrow = bool));
         extra.add(new ConfigBool(Text.literal("Title on arrow swap"), () -> ExtraOptions.arrowSwapNotification, bool -> ExtraOptions.arrowSwapNotification = bool));
         extra.add(new ConfigBool(Text.literal("Toggleable searchbar (ctrl + f)"), () -> ExtraOptions.toggleableSearchBar, bool -> ExtraOptions.toggleableSearchBar = bool));
+        extra.add(new ConfigBool(Text.literal("Disable protect item (resets on launch)"), () -> ProtectItem.stopProtectItem, bool -> ProtectItem.stopProtectItem = bool));
         //extra.add(new ConfigBool(Text.literal("Kuudra stun waypoint"), () -> ExtraOptions.stunWaypoint, bool -> ExtraOptions.stunWaypoint = bool));
 
 
