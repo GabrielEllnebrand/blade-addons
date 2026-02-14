@@ -40,7 +40,7 @@ public class LeapOrder {
 
         Scoreboard scoreboard = world.getScoreboard();
         for (Team team : scoreboard.getTeams()) {
-            String teamStr = team.getPrefix().getString() + team.getSuffix().getString();
+            String teamStr = (team.getPrefix().getString() + team.getSuffix().getString()).replaceAll("§.", "");
             Matcher matcher = PATTERN.matcher(teamStr);
             if (matcher.find()) {
                 DungeonClass dungeonClass = getClass(matcher.group(1));

@@ -136,4 +136,7 @@ public class Dungeons {
 
     @ConfigValue
     public static boolean bossHealthNumbers = false;
+
+    @ConfigValue
+    public static boolean removeMaskPart = true;
 }

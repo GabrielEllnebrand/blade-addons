@@ -80,6 +80,7 @@ public class Config {
         invincibility.add(new ConfigBool(Text.literal("Show title on proc"), () -> Dungeons.showProcTitle, bool -> Dungeons.showProcTitle = bool));
         invincibility.add(new ConfigBool(Text.literal("Invincibility duration"), () -> Dungeons.InvincibilityDuration, bool -> Dungeons.InvincibilityDuration = bool));
         invincibility.add(new ConfigBool(Text.literal("Duration changing color"), () -> Dungeons.useStatusColorForInvincibility, bool -> Dungeons.useStatusColorForInvincibility = bool));
+        invincibility.add(new ConfigBool(Text.literal("Remove \"Mask\" in the text"), () -> Dungeons.removeMaskPart, bool -> Dungeons.removeMaskPart = bool));
         dungeons.add(invincibility);
 
         ConfigSection classColors = new ConfigSection(Text.literal("Class Colors"));

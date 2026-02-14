@@ -140,7 +140,7 @@ public class InvincibilityTimer {
         if (ticks > 0) {
             return Text.literal("§c" + string).append(formatTimer(ticks));
         } else {
-            String color  = isOn ? "§e" : "§a";
+            String color = isOn ? "§e" : "§a";
             return Text.literal(color + string);
         }
     }
@@ -154,7 +154,7 @@ public class InvincibilityTimer {
     }
 
     private static void drawSprite(DrawContext context, Identifier identifier, int x, int y, boolean isOn, int ticks, Text timerText) {
-        int color = (ticks > 0? Constants.RED: isOn? Constants.YELLOW: Constants.GREEN);
+        int color = (ticks > 0 ? Constants.RED : isOn ? Constants.YELLOW : Constants.GREEN);
         context.fill(x, y, x + SPRITE_SIZE, y + SPRITE_SIZE, color);
         context.drawGuiTexture(RenderPipelines.GUI_TEXTURED, identifier, x, y, SPRITE_SIZE, SPRITE_SIZE, 0xffffffff);
         if (ticks > 0) {
@@ -200,8 +200,13 @@ public class InvincibilityTimer {
             drawSprite(context, SPIRIT_SPRITE, x, y + SPRITE_SIZE + 1, spiritMaskOn, spiritMaskTicks, formatTimer(spiritMaskTicks));
             drawSprite(context, PHOENIX_SPRITE, x, y + (SPRITE_SIZE + 1) * 2, phoenixOn, phoenixTicks, formatTimer(phoenixTicks));
         } else {
-            context.drawText(MinecraftClient.getInstance().textRenderer, getText(bonzoMaskTicks, bonzoMaskOn, "Bonzo's Mask "), x, y, 0xffffffff, true);
-            context.drawText(MinecraftClient.getInstance().textRenderer, getText(spiritMaskTicks, spiritMaskOn, "Spirit Mask "), x, y + TEXT_HEIGHT, 0xffffffff, true);
+            if (Dungeons.removeMaskPart) {
+                context.drawText(MinecraftClient.getInstance().textRenderer, getText(bonzoMaskTicks, bonzoMaskOn, "Bonzo "), x, y, 0xffffffff, true);
+                context.drawText(MinecraftClient.getInstance().textRenderer, getText(spiritMaskTicks, spiritMaskOn, "Spirit "), x, y + TEXT_HEIGHT, 0xffffffff, true);
+            } else {
+                context.drawText(MinecraftClient.getInstance().textRenderer, getText(bonzoMaskTicks, bonzoMaskOn, "Bonzo's Mask "), x, y, 0xffffffff, true);
+                context.drawText(MinecraftClient.getInstance().textRenderer, getText(spiritMaskTicks, spiritMaskOn, "Spirit Mask "), x, y + TEXT_HEIGHT, 0xffffffff, true);
+            }
             context.drawText(MinecraftClient.getInstance().textRenderer, getText(phoenixTicks, phoenixOn, "Phoenix "), x, y + TEXT_HEIGHT * 2, 0xffffffff, true);
         }
     }
