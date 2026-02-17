@@ -139,4 +139,10 @@ public class Dungeons {
 
     @ConfigValue
     public static boolean removeMaskPart = true;
+
+    @ConfigValue
+    public static boolean alertBloodSpawns = false;
+
+    @ConfigValue
+    public static boolean alertBloodForAllClasses = false;
 }

@@ -162,4 +162,7 @@ public class Floor7 {
 
     @ConfigValue
     public static SoundData sectionChangeSound = new SoundData(SoundEvents.BLOCK_NOTE_BLOCK_PLING.value(), 0, 1);
+
+    @ConfigValue
+    public static boolean enableMaxorTickTimer = false;
 }

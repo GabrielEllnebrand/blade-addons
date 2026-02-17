@@ -1,6 +1,7 @@
 package blade.addon;
 
 import blade.addon.features.dungeon.AutoRequeue;
+import blade.addon.features.dungeon.BloodNotifier;
 import blade.addon.features.dungeon.ChestCounter;
 import blade.addon.features.dungeon.ExplosiveShot;
 import blade.addon.features.dungeon.HidePlayers;
@@ -12,20 +13,21 @@ import blade.addon.features.dungeon.RunStartValidator;
 import blade.addon.features.dungeon.SecretSpawnTimer;
 import blade.addon.features.dungeon.WarpCooldown;
 import blade.addon.features.dungeon.f7.BossWaypoints;
-import blade.addon.features.dungeon.f7.invincibility.MaskHighlight;
-import blade.addon.features.dungeon.f7.maxor.CrystalSpawn;
-import blade.addon.features.dungeon.f7.storm.DistanceToLedge;
-import blade.addon.features.dungeon.f7.dragons.DragSpawnTimer;
-import blade.addon.features.dungeon.f7.storm.PillarExplode;
 import blade.addon.features.dungeon.f7.PredevTimer;
 import blade.addon.features.dungeon.f7.RelicTimer;
-import blade.addon.features.dungeon.f7.storm.StormTickTimer;
+import blade.addon.features.dungeon.f7.dragons.DragSpawnTimer;
 import blade.addon.features.dungeon.f7.dragons.DragonHealth;
 import blade.addon.features.dungeon.f7.invincibility.InvincibilityDuration;
 import blade.addon.features.dungeon.f7.invincibility.InvincibilityTimer;
+import blade.addon.features.dungeon.f7.invincibility.MaskHighlight;
 import blade.addon.features.dungeon.f7.location.LocationNotifier;
 import blade.addon.features.dungeon.f7.location.PositionMessages;
+import blade.addon.features.dungeon.f7.maxor.CrystalSpawn;
 import blade.addon.features.dungeon.f7.maxor.MaxorStun;
+import blade.addon.features.dungeon.f7.maxor.MaxorTickTimer;
+import blade.addon.features.dungeon.f7.storm.DistanceToLedge;
+import blade.addon.features.dungeon.f7.storm.PillarExplode;
+import blade.addon.features.dungeon.f7.storm.StormTickTimer;
 import blade.addon.features.dungeon.f7.terms.DeviceNotifier;
 import blade.addon.features.dungeon.f7.terms.GoldorTickTimer;
 import blade.addon.features.dungeon.f7.terms.LeapNotification;
@@ -154,5 +156,7 @@ public class Bladeaddons implements ModInitializer {
         SearchBar.init();
         TubaSound.init();
         SectionCompletion.init();
+        MaxorTickTimer.init();
+        BloodNotifier.init();
     }
 }

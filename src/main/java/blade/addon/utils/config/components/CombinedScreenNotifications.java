@@ -1,5 +1,6 @@
 package blade.addon.utils.config.components;
 
+import blade.addon.features.dungeon.BloodNotifier;
 import blade.addon.features.dungeon.RunStartValidator;
 import blade.addon.features.dungeon.KeyNotifier;
 import blade.addon.features.dungeon.f7.maxor.CrystalSpawn;
@@ -41,6 +42,8 @@ public class CombinedScreenNotifications {
             return true;
         } else if (SectionCompletion.display()) {
             return true;
+        } else if (BloodNotifier.display()) {
+            return true;
         }
         return false;
     }
@@ -66,6 +69,8 @@ public class CombinedScreenNotifications {
             ArrowSwapper.renderNotification(component, context);
         }   else if (SectionCompletion.display()) {
             SectionCompletion.render(component, context);
+        }else if (BloodNotifier.display()) {
+            BloodNotifier.render(component, context);
         }else {
             RenderUtils.drawCenteredText(context, component, Text.literal("Some notification"));
         }

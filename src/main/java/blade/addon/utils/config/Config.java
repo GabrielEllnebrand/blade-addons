@@ -133,6 +133,8 @@ public class Config {
         dungeons.add(new ConfigBool(Text.literal("Render class names"), () -> Dungeons.renderClassName, bool -> Dungeons.renderClassName = bool));
         dungeons.add(new ConfigBool(Text.literal("Time until quiz question"), () -> Dungeons.quizTimer, bool -> Dungeons.quizTimer = bool));
         dungeons.add(new ConfigBool(Text.literal("Draw boss health numbers"), () -> Dungeons.bossHealthNumbers, bool -> Dungeons.bossHealthNumbers = bool));
+        dungeons.add(new ConfigBool(Text.literal("Blood notifier on first 4 spawned"), () -> Dungeons.alertBloodSpawns, bool -> Dungeons.alertBloodSpawns = bool));
+        dungeons.add(new ConfigBool(Text.literal("Blood notifier on all classes"), () -> Dungeons.alertBloodForAllClasses, bool -> Dungeons.alertBloodForAllClasses = bool));
         return dungeons;
     }
 
@@ -151,6 +153,7 @@ public class Config {
         floor7.add(waypoints);
 
         ConfigSection maxor = new ConfigSection(Text.literal("Maxor"));
+        maxor.add(new ConfigBool(Text.literal("Maxor tick timer"), () -> Floor7.enableMaxorTickTimer, bool -> Floor7.enableMaxorTickTimer = bool));
         maxor.add(new ConfigBool(Text.literal("Crystal Spawn Time"), () -> Floor7.enableCrystalSpawnTime, bool -> Floor7.enableCrystalSpawnTime = bool));
         maxor.add(new ConfigBool(Text.literal("Crystal place reminder"), () -> Floor7.crystalPlaceReminder, bool -> Floor7.crystalPlaceReminder = bool));
         maxor.add(new ConfigBool(Text.literal("Display reminder instantly"), () -> Floor7.instantlyDisplayCrystalReminder, bool -> Floor7.instantlyDisplayCrystalReminder = bool));
@@ -158,7 +161,7 @@ public class Config {
         floor7.add(maxor);
 
         ConfigSection storm = new ConfigSection(Text.literal("Storm"));
-        storm.add(new ConfigBool(Text.literal("Storm Tick timer"), () -> Floor7.enableStormTickTimer, bool -> Floor7.enableStormTickTimer = bool));
+        storm.add(new ConfigBool(Text.literal("Storm tick timer"), () -> Floor7.enableStormTickTimer, bool -> Floor7.enableStormTickTimer = bool));
         storm.add(new ConfigColor(Text.literal("Timer color"), () -> Floor7.stormTickTimerColor, color -> Floor7.stormTickTimerColor = color, "storm-tick-timer-color", false));
         storm.add(new ConfigBool(Text.literal("Tick down from 5"), () -> Floor7.tickDownStormTickTimer, bool -> Floor7.tickDownStormTickTimer = bool));
         storm.add(new ConfigBool(Text.literal("First Death time"), () -> Floor7.enableStormDeathTime, bool -> Floor7.enableStormDeathTime = bool));

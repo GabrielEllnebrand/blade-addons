@@ -21,6 +21,8 @@ public class WarpCooldown {
         ClientReceiveMessageEvents.GAME.register((message, overlay) -> {
             if (!Dungeons.enableWarpCooldown) return;
 
+            if ((endTime - System.currentTimeMillis()) > 0) return;
+
             Matcher matcher = PATTERN.matcher(message.getString());
             if (matcher.find()) {
                 endTime = System.currentTimeMillis() + WARP_COOLDOWN_MS;

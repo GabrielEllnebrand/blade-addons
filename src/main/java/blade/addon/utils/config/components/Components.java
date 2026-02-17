@@ -1,5 +1,6 @@
 package blade.addon.utils.config.components;
 
+import blade.addon.features.dungeon.BloodNotifier;
 import blade.addon.features.dungeon.ChestCounter;
 import blade.addon.features.dungeon.QuizTimer;
 import blade.addon.features.dungeon.RunStartValidator;
@@ -7,6 +8,7 @@ import blade.addon.features.dungeon.KeyNotifier;
 import blade.addon.features.dungeon.SecretSpawnTimer;
 import blade.addon.features.dungeon.WarpCooldown;
 import blade.addon.features.dungeon.f7.maxor.CrystalSpawn;
+import blade.addon.features.dungeon.f7.maxor.MaxorTickTimer;
 import blade.addon.features.dungeon.f7.storm.DistanceToLedge;
 import blade.addon.features.dungeon.f7.dragons.DragSpawnTimer;
 import blade.addon.features.dungeon.f7.storm.PillarExplode;
@@ -153,4 +155,10 @@ public class Components {
 
     @ConfigValue
     public static HUDComponent sectionCompletionDisplay = new HUDComponent(0, 0, NOTIFICATION_WIDTH, 10, 1, "Section completion", SectionCompletion::display,  SectionCompletion::render, () -> Floor7.sectionCompletionNotification &&  !Dungeons.combineScreenNotifications);
+
+    @ConfigValue
+    public static HUDComponent maxorTickTimer = new HUDComponent(0, 0, TICK_TIMER_WIDTH, 10, 1, "Maxor Tick Timer", MaxorTickTimer::display, MaxorTickTimer::render, () -> Floor7.enableMaxorTickTimer);
+
+    @ConfigValue
+    public static HUDComponent bloodNotificationDisplay = new HUDComponent(0, 0, NOTIFICATION_WIDTH, 10, 1, "blood notification", BloodNotifier::display,  BloodNotifier::render, () -> Dungeons.alertBloodSpawns &&  !Dungeons.combineScreenNotifications);
 }
