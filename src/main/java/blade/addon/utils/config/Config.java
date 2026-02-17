@@ -59,8 +59,17 @@ public class Config {
     private static ConfigCategory general() {
         ConfigCategory general = new ConfigCategory("General");
         general.add(new ConfigString(Text.literal("Message prefix"), () -> ExtraOptions.textPrefix, str -> ExtraOptions.textPrefix = str));
-        general.add(new ConfigButton(Text.literal("Edit Notifications"), () -> MinecraftClient.getInstance().setScreen(new NotificationList())));
-        general.add(new ConfigButton(Text.literal("Edit Chat filters"), () -> MinecraftClient.getInstance().setScreen(new FilterList())));
+
+        ConfigSection notifications = new ConfigSection(Text.literal("Chat Notifications"));
+        notifications.add(new ConfigButton(Text.literal("Edit Notifications"), () -> MinecraftClient.getInstance().setScreen(new NotificationList())));
+        notifications.add(new ConfigBool(Text.literal("Ignore color codes"), () -> ExtraOptions.ignoreColorCodesNotification, bool -> ExtraOptions.ignoreColorCodesNotification = bool));
+        general.add(notifications);
+
+
+        ConfigSection chatFilter = new ConfigSection(Text.literal("Chat filter"));
+        chatFilter.add(new ConfigButton(Text.literal("Edit"), () -> MinecraftClient.getInstance().setScreen(new FilterList())));
+        chatFilter.add(new ConfigBool(Text.literal("Ignore color codes"), () -> ExtraOptions.ignoreColorCodesFilter, bool -> ExtraOptions.ignoreColorCodesFilter = bool));
+        general.add(chatFilter);
         return general;
     }
 
@@ -132,6 +141,7 @@ public class Config {
         dungeons.add(new ConfigBool(Text.literal("Highlight teammates"), () -> Dungeons.highlightTeammates, bool -> Dungeons.highlightTeammates = bool));
         dungeons.add(new ConfigBool(Text.literal("Render class names"), () -> Dungeons.renderClassName, bool -> Dungeons.renderClassName = bool));
         dungeons.add(new ConfigBool(Text.literal("Time until quiz question"), () -> Dungeons.quizTimer, bool -> Dungeons.quizTimer = bool));
+        dungeons.add(new ConfigBool(Text.literal("append quiz progress"), () -> Dungeons.quizProgress, bool -> Dungeons.quizProgress = bool));
         dungeons.add(new ConfigBool(Text.literal("Draw boss health numbers"), () -> Dungeons.bossHealthNumbers, bool -> Dungeons.bossHealthNumbers = bool));
         dungeons.add(new ConfigBool(Text.literal("Blood notifier on first 4 spawned"), () -> Dungeons.alertBloodSpawns, bool -> Dungeons.alertBloodSpawns = bool));
         dungeons.add(new ConfigBool(Text.literal("Blood notifier on all classes"), () -> Dungeons.alertBloodForAllClasses, bool -> Dungeons.alertBloodForAllClasses = bool));
@@ -184,11 +194,17 @@ public class Config {
         goldor.add(new ConfigBool(Text.literal("SS completion notification"), () -> Floor7.notifySSCompletion, bool -> Floor7.notifySSCompletion = bool));
         goldor.add(new ConfigBool(Text.literal("Melody warning notification"), () -> Floor7.notifiyMelody, bool -> Floor7.notifiyMelody = bool));
         goldor.add(new ConfigBool(Text.literal("Send terminal time stamps"), () -> Floor7.terminalTimeStamps, bool -> Floor7.terminalTimeStamps = bool));
-        goldor.add(new ConfigBool(Text.literal("Display section progress"), () -> Floor7.showSectionProgress, bool -> Floor7.showSectionProgress = bool));
         goldor.add(new ConfigBool(Text.literal("Section completion notification"), () -> Floor7.sectionCompletionNotification, bool -> Floor7.sectionCompletionNotification = bool));
         goldor.add(new ConfigSound(Text.literal("Section complete sound"), Floor7.sectionChangeSound, 2, 2, true));
-
+        goldor.add(new ConfigBool(Text.literal("Current section display"), () -> Floor7.showCurrentSection, bool -> Floor7.showCurrentSection = bool));
         floor7.add(goldor);
+
+        ConfigSection sectionProgress = new ConfigSection(Text.literal("Section progress"));
+        sectionProgress.add(new ConfigBool(Text.literal("Display section progress"), () -> Floor7.showSectionProgress, bool -> Floor7.showSectionProgress = bool));
+        sectionProgress.add(new ConfigBool(Text.literal("Change color with progress"), () -> Floor7.sectionColorProgress, bool -> Floor7.sectionColorProgress = bool));
+        sectionProgress.add(new ConfigBool(Text.literal("Include prev objective"), () -> Floor7.sectionPrevObjective, bool -> Floor7.sectionPrevObjective = bool));
+        floor7.add(sectionProgress);
+
 
         ConfigSection titles = new ConfigSection(Text.literal("Terminal titles"));
         titles.add(new ConfigBool(Text.literal("Disable titles on pre4"), () -> Floor7.disableTitlesAtPre4, bool -> Floor7.disableTitlesAtPre4 = bool));

@@ -18,6 +18,7 @@ import blade.addon.features.dungeon.f7.invincibility.InvincibilityDuration;
 import blade.addon.features.dungeon.f7.invincibility.InvincibilityTimer;
 import blade.addon.features.dungeon.f7.location.LocationNotifier;
 import blade.addon.features.dungeon.f7.maxor.MaxorStun;
+import blade.addon.features.dungeon.f7.terms.CurrentSection;
 import blade.addon.features.dungeon.f7.terms.GoldorTickTimer;
 import blade.addon.features.dungeon.f7.terms.LeapNotification;
 import blade.addon.features.dungeon.f7.terms.MelodyWarning;
@@ -142,7 +143,7 @@ public class Components {
     public static HUDComponent sectionProgressDisplay = new HUDComponent(0, 0, 30, 10, 1, "Section progress", SectionProgress::display,  SectionProgress::render, () -> Floor7.showSectionProgress);
 
     @ConfigValue
-    public static HUDComponent quizTimerDisplay = new HUDComponent(0, 0, 60, 10, 1, "Quiz timer", QuizTimer::display,  QuizTimer::render, () -> Dungeons.quizTimer);
+    public static HUDComponent quizTimerDisplay = new HUDComponent(0, 0, 80, 10, 1, "Quiz timer", QuizTimer::display,  QuizTimer::render, () -> Dungeons.quizTimer);
 
     @ConfigValue
     public static HUDComponent maxorStunDisplay = new HUDComponent(0, 0, 70, 10, 1, "Maxor stun display", MaxorStun::display,  MaxorStun::render, () -> Floor7.maxorStunDuration);
@@ -161,4 +162,7 @@ public class Components {
 
     @ConfigValue
     public static HUDComponent bloodNotificationDisplay = new HUDComponent(0, 0, NOTIFICATION_WIDTH, 10, 1, "blood notification", BloodNotifier::display,  BloodNotifier::render, () -> Dungeons.alertBloodSpawns &&  !Dungeons.combineScreenNotifications);
+
+    @ConfigValue
+    public static HUDComponent currentSectionDisplay = new HUDComponent(0, 0, 50, 10, 1, "Current section", CurrentSection::display,  CurrentSection::render, () -> Floor7.showCurrentSection);
 }

@@ -129,4 +129,10 @@ public class ExtraOptions {
 
     @ConfigValue
     public static boolean oldTubaSound = false;
+
+    @ConfigValue
+    public static boolean ignoreColorCodesFilter = false;
+
+    @ConfigValue
+    public static boolean ignoreColorCodesNotification = false;
 }

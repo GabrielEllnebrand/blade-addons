@@ -145,4 +145,7 @@ public class Dungeons {
 
     @ConfigValue
     public static boolean alertBloodForAllClasses = false;
+
+    @ConfigValue
+    public static boolean quizProgress = false;
 }

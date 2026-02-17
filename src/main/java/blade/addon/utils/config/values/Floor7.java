@@ -165,4 +165,13 @@ public class Floor7 {
 
     @ConfigValue
     public static boolean enableMaxorTickTimer = false;
+
+    @ConfigValue
+    public static boolean showCurrentSection = false;
+
+    @ConfigValue
+    public static boolean sectionColorProgress = false;
+
+    @ConfigValue
+    public static boolean sectionPrevObjective = false;
 }

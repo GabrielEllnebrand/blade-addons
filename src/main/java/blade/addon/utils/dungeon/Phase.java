@@ -148,7 +148,11 @@ public class Phase {
     private static void endRun() {
         runOver = true;
         currentPhase = currentSplits.size();
+        Scheduler.scheduleTask(Phase::printSplits, 2);
+        Events.ON_RUN_END.invoke(RunEndEvent::onRunEnd);
+    }
 
+    private static void printSplits() {
         Misc.addChatMessage(Text.literal("§aSplits: "));
         for (Split split : currentSplits) {
             split.end();
@@ -159,8 +163,6 @@ public class Phase {
             Text timeLost = Text.literal("§aApproximately §e" + Constants.DECIMAL_FORMAT.format(time) + "s §alost to lag.");
             Misc.addChatMessage(timeLost);
         }
-
-        Events.ON_RUN_END.invoke(RunEndEvent::onRunEnd);
     }
 
     public static int getPhase() {

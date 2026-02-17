@@ -1,12 +1,16 @@
 package blade.addon.features.filter;
 
 import blade.addon.utils.config.FolderUtility;
+import blade.addon.utils.config.values.ExtraOptions;
+import blade.addon.utils.debug.Debug;
 import config.practical.manager.ConfigManager;
 import config.practical.manager.ConfigValue;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
+import net.minecraft.text.Text;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.PatternSyntaxException;
 
 public class Filters {
 
@@ -21,8 +25,17 @@ public class Filters {
         ClientReceiveMessageEvents.ALLOW_GAME.register((message, overlay) -> {
             if (overlay) return true;
             String string = message.getString();
+
+            if (ExtraOptions.ignoreColorCodesFilter) {
+                string = string.replaceAll("§.", "");
+            }
+
             for (String filter : filters) {
-                if (string.matches(filter)) return false;
+                try {
+                    if (string.matches(filter)) return false;
+                } catch (PatternSyntaxException e) {
+                    Debug.sendDebugMessage(Text.literal("Invalid regex: " + filter));
+                }
             }
             return true;
         });

@@ -28,6 +28,7 @@ import blade.addon.features.dungeon.f7.maxor.MaxorTickTimer;
 import blade.addon.features.dungeon.f7.storm.DistanceToLedge;
 import blade.addon.features.dungeon.f7.storm.PillarExplode;
 import blade.addon.features.dungeon.f7.storm.StormTickTimer;
+import blade.addon.features.dungeon.f7.terms.CurrentSection;
 import blade.addon.features.dungeon.f7.terms.DeviceNotifier;
 import blade.addon.features.dungeon.f7.terms.GoldorTickTimer;
 import blade.addon.features.dungeon.f7.terms.LeapNotification;
@@ -158,5 +159,6 @@ public class Bladeaddons implements ModInitializer {
         SectionCompletion.init();
         MaxorTickTimer.init();
         BloodNotifier.init();
+        CurrentSection.init();
     }
 }

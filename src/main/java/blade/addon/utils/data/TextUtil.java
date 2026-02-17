@@ -121,4 +121,9 @@ public class TextUtil {
        return Constants.DECIMAL_FORMAT.format(tick * Constants.TICK_DURATION);
     }
 
+    public static String capitaliseFirst(String message) {
+        String strippedMessage = message.strip();
+        if (strippedMessage.length() < 2) return message;
+        return strippedMessage.substring(0, 1).toUpperCase() + strippedMessage.substring(1).toLowerCase();
+    }
 }
