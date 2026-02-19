@@ -46,7 +46,7 @@ public class SecretSpawnTimer {
         int x = component.getScaledX();
         int y = component.getScaledY();
 
-        int color = tick > 10 ? Constants.GREEN : tick > 5 ? Constants.ORANGE : Constants.RED;
+        int color = tick > 10 ? Constants.GREEN : tick > 5 ? Constants.GOLD : Constants.RED;
 
         RenderUtils.drawCenteredText(context, MinecraftClient.getInstance().textRenderer, Text.literal(tick + ""), x, y, component.getWidth(), color);
 

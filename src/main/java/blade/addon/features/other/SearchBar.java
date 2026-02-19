@@ -1,8 +1,10 @@
 package blade.addon.features.other;
 
+import blade.addon.utils.MathParser;
 import blade.addon.utils.config.values.ExtraOptions;
 import blade.addon.utils.data.ItemUtil;
 import blade.addon.utils.rendering.DrawEvents;
+import blade.addon.utils.rendering.RenderUtils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.Click;
@@ -23,10 +25,11 @@ public class SearchBar {
     private static TextFieldWidget searchBar;
     private static boolean shouldDisplay = false;
     private static String searchTerm = "";
+    private static double parsedValue = Double.NaN;
 
     public static void init() {
         DrawEvents.INVENTORY_SLOT_AFTER.register((context, item, x, y) -> {
-            if (shouldDisplay() && !searchTerm.isEmpty() && ExtraOptions.toggleableSearchBar) {
+            if (shouldDisplay() && !searchTerm.isEmpty() && ExtraOptions.toggleableSearchBar && Double.isNaN(parsedValue)) {
                 if (!matches(item)) {
                     context.fill(x, y, x + 16, y + 16, 0xaa111111);
                 }
@@ -45,6 +48,16 @@ public class SearchBar {
     public static void render(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
         if (!exists() || !shouldDisplay() || !ExtraOptions.toggleableSearchBar) return;
         searchBar.render(context, mouseX, mouseY, deltaTicks);
+
+        if (!Double.isNaN(parsedValue)) {
+            String expression = "  §e= §2"+ RenderUtils.formatNumber((float) parsedValue);
+            TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
+            if (textRenderer == null) return;
+
+            int textX = searchBar.getX() + textRenderer.getWidth(searchTerm) + 4;
+            int textY = searchBar.getY() + (searchBar.getHeight() - 8) / 2;
+            context.drawText(textRenderer, expression, textX, textY, 0xffffffff, true);
+        }
     }
 
     public static boolean keyPressed(KeyInput input) {
@@ -87,7 +100,10 @@ public class SearchBar {
         if (window == null || textRenderer == null) return false;
 
         searchBar = new TextFieldWidget(textRenderer, (window.getScaledWidth() - SEARCH_WIDTH) / 2, SEARCH_Y, SEARCH_WIDTH, SEARCH_HEIGHT, Text.literal(""));
-        searchBar.setChangedListener(string -> searchTerm = string.toLowerCase());
+        searchBar.setChangedListener(string -> {
+            searchTerm = string.toLowerCase();
+            parsedValue = MathParser.parseExpression(searchTerm);
+        });
         return true;
     }
 

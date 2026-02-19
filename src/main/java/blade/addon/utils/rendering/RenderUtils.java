@@ -29,7 +29,7 @@ public class RenderUtils {
     }
 
     public static int getStatusColor(int minGreen, int minOrange, int value) {
-        return value >= minGreen ? Constants.GREEN : value >= minOrange ? Constants.ORANGE : Constants.RED;
+        return value >= minGreen ? Constants.GREEN : value >= minOrange ? Constants.GOLD : Constants.RED;
     }
 
     public static void drawText(DrawContext context, HUDComponent component, Text text, int color) {
@@ -117,19 +117,17 @@ public class RenderUtils {
         renderText(context, matrices, text, pos.x, pos.y, pos.z, scale);
     }
 
-
-    public static String formatHealth(float health) {
+    public static String formatNumber(float num) {
         if (Floor7.capitalizeHealthNumbers) {
-            if (health >= 1e9) return String.format("%.1fB", health / 1e9);
-            if (health >= 1e6) return String.format("%.1fM", health / 1e6);
-            if (health >= 1e3) return String.format("%.1fK", health / 1e3);
-            return health + "";
+            if (num >= 1e9) return String.format("%.1fB", num / 1e9);
+            if (num >= 1e6) return String.format("%.1fM", num / 1e6);
+            if (num >= 1e3) return String.format("%.1fK", num / 1e3);
+            return num + "";
         } else {
-            if (health >= 1e9) return String.format("%.1fb", health / 1e9);
-            if (health >= 1e6) return String.format("%.1fm", health / 1e6);
-            if (health >= 1e3) return String.format("%.1fk", health / 1e3);
-            return health + "";
+            if (num >= 1e9) return String.format("%.1fb", num / 1e9);
+            if (num >= 1e6) return String.format("%.1fm", num / 1e6);
+            if (num >= 1e3) return String.format("%.1fk", num / 1e3);
+            return num + "";
         }
     }
-
 }

@@ -78,7 +78,7 @@ public class DragonHealth {
 
             if (health == 0) return;
             Vec3d pos = EntityUtil.getLerpedPos(dragon);
-            RenderUtils.renderText(context, matrixStack, Text.literal(RenderUtils.formatHealth(health)).withColor(getColor(health)), pos, 5);
+            RenderUtils.renderText(context, matrixStack, Text.literal(RenderUtils.formatNumber(health)).withColor(getColor(health)), pos, 5);
 
         });
 

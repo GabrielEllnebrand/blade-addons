@@ -304,7 +304,7 @@ public class PracticeSS {
     private static int getColor(int index) {
         if (index == 1 && ticksSinceLuckyButton > 0) return ExtraOptions.luckyButtonColor;
         if (index == currentIndex) return Constants.GREEN;
-        if (index == currentIndex + 1) return Constants.ORANGE;
+        if (index == currentIndex + 1) return Constants.GOLD;
         return Constants.RED;
     }
 

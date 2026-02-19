@@ -37,7 +37,7 @@ public class GoldorTickTimer {
         if (Floor7.inDeathTicks && !Floor7.makeGoldorTickUp) mod = 3.0 - mod;
         if (Floor7.inDeathTicks) num = mod;
 
-        int color = (mod < 1 ? Constants.GREEN : mod < 2 ? Constants.ORANGE : Constants.RED);
+        int color = (mod < 1 ? Constants.GREEN : mod < 2 ? Constants.GOLD : Constants.RED);
 
         RenderUtils.drawTimer(component, context, num, color);
     }

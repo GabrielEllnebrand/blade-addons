@@ -96,7 +96,7 @@ public class ItemHighlight {
         } else if (item.age > 11){
             return Constants.GREEN;
         } else {
-            return Constants.ORANGE;
+            return Constants.GOLD;
         }
     }
 

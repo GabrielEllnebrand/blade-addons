@@ -45,7 +45,7 @@ public class BossBarHudMixin {
             }
 
             float currHealth = health * bossBar.getPercent();
-            return Text.literal("§c" + name + " §a" + RenderUtils.formatHealth(currHealth) + "§7/§a" + RenderUtils.formatHealth(health));
+            return Text.literal("§c" + name + " §a" + RenderUtils.formatNumber(currHealth) + "§7/§a" + RenderUtils.formatNumber(health));
         } catch (Exception e) {
             Debug.LOGGER.error("Failed to modify bossbar name!", e);
             return bossBar.getName();

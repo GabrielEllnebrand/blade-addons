@@ -273,7 +273,7 @@ public class Config {
         highlight.add(new ConfigDouble(Text.literal("Extra Wither Width"), () -> MobHighlight.witherExtraWidth, num -> MobHighlight.witherExtraWidth = num, 0.1, 0, 1.5));
         highlight.add(new ConfigInt(Text.literal("Outline Width"), () -> MobHighlight.outlineWidth, num -> MobHighlight.outlineWidth = num, 1, 1, 10));
         highlight.add(new ConfigOptions<>(Text.literal("Highlight mode"), MobHighlight.HighlightType.values(), () -> MobHighlight.currentHighlight, type -> MobHighlight.currentHighlight = type));
-        highlight.add(new ConfigBool(Text.literal("Hide none stared nametags"), () -> MobHighlight.hideNoneStaredNameTags, bool -> MobHighlight.hideNoneStaredNameTags = bool));
+        highlight.add(new ConfigBool(Text.literal("Hide none starred nametags"), () -> MobHighlight.hideNoneStaredNameTags, bool -> MobHighlight.hideNoneStaredNameTags = bool));
 
         highlight.add(new ConfigColor(Text.literal("Star mob filled color"), () -> MobHighlight.starFilledColor, color -> MobHighlight.starFilledColor = color, "star-filled", true));
         highlight.add(new ConfigColor(Text.literal("Star mob outline color"), () -> MobHighlight.starOutlineColor, color -> MobHighlight.starOutlineColor = color, "star-outline", true));

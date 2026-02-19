@@ -34,7 +34,7 @@ public class FilterEntry extends TextFieldWidget {
 
     public FilterEntry(Supplier<String> supplier, Consumer<String> consumer, int index, FilterList parent) {
         super(MinecraftClient.getInstance().textRenderer, Constants.WIDGET_WIDTH, HEIGHT, Text.empty());
-        this.setMaxLength(100);
+        this.setMaxLength(200);
         this.setText(supplier.get());
         this.setChangedListener(consumer);
         this.index = index;
