@@ -11,6 +11,7 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderContext;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.client.render.DrawStyle;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexRendering;
 import net.minecraft.client.util.math.MatrixStack;
@@ -19,7 +20,9 @@ import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.Box;
+import net.minecraft.util.math.ColorHelper;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.debug.gizmo.GizmoDrawing;
 
 import java.util.HashSet;
 import java.util.List;
@@ -71,7 +74,7 @@ public class ItemHighlight {
             EntityDimensions dimension = itemEntity.getDimensions(itemEntity.getPose());
             Box box = dimension.getBoxAt(x, y, z).expand(0.1).offset(0, 0.05, 0);
             float[] color = RenderUtils.toFloats(getColor(itemEntity));
-            VertexRendering.drawFilledBox(matrixStack, consumer, box.minX, box.minY, box.minZ, box.maxX, box.maxY, box.maxZ, color[0], color[1], color[2], color[3]);
+            GizmoDrawing.box(box, DrawStyle.filled(ColorHelper.fromFloats(color[3], color[0], color[1], color[2])));
         });
     }
 

@@ -41,7 +41,7 @@ public abstract class HandledScreenMixin<T extends ScreenHandler> extends Screen
     }
 
     @Inject(method = "drawSlot", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/DrawContext;drawItem(Lnet/minecraft/item/ItemStack;III)V"))
-    public void drawBackground(DrawContext context, Slot slot, CallbackInfo ci) {
+    public void drawBackground(DrawContext context, Slot slot, int mouseX, int mouseY, CallbackInfo ci) {
         int x = slot.x;
         int y = slot.y;
         ItemStack stack = slot.getStack();
@@ -49,7 +49,7 @@ public abstract class HandledScreenMixin<T extends ScreenHandler> extends Screen
     }
 
     @Inject(method = "drawSlot", at = @At(value = "TAIL"))
-    public void drawStarCount(DrawContext context, Slot slot, CallbackInfo ci) {
+    public void drawStarCount(DrawContext context, Slot slot, int mouseX, int mouseY, CallbackInfo ci) {
         int x = slot.x;
         int y = slot.y;
         ItemStack stack = slot.getStack();

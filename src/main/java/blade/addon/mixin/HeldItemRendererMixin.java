@@ -53,7 +53,7 @@ public abstract class HeldItemRendererMixin {
     }
 
     @Inject(method = "swingArm", at = @At("HEAD"), cancellable = true)
-    private void stopSwing(float swingProgress, float equipProgress, MatrixStack matrices, int armX, Arm arm, CallbackInfo ci) {
+    private void stopSwing(float swingProgress, MatrixStack matrices, int armX, Arm arm, CallbackInfo ci) {
         if (!DropAnimation.shouldProceed()) return;
         ItemStack prevDropped = DropAnimation.getPrevDroppedItem();
         if (prevDropped == null) return;

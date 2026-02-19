@@ -17,6 +17,7 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderContext;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.render.DrawStyle;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexRendering;
 import net.minecraft.client.util.math.MatrixStack;
@@ -29,6 +30,8 @@ import net.minecraft.util.Formatting;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
+import net.minecraft.util.math.ColorHelper;
+import net.minecraft.world.debug.gizmo.GizmoDrawing;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -263,7 +266,7 @@ public class RelicTimer {
 
         Box box = pickedupRelic.box;
         float[] color = RenderUtils.toFloats(pickedupRelic.color);
-        VertexRendering.drawFilledBox(matrixStack, consumer, box.minX, box.minY, box.minZ, box.maxX, box.maxY, box.maxZ, color[0], color[1], color[2], color[3]);
+        GizmoDrawing.box(box, DrawStyle.filled(ColorHelper.fromFloats(color[3], color[0], color[1], color[2])));
     }
 
     public static boolean display() {
