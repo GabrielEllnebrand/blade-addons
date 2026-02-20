@@ -50,7 +50,7 @@ public class SearchBar {
         searchBar.render(context, mouseX, mouseY, deltaTicks);
 
         if (!Double.isNaN(parsedValue)) {
-            String expression = "  §e= §2"+ RenderUtils.formatNumber((float) parsedValue);
+            String expression = "  §e= §2" + RenderUtils.formatNumber((float) parsedValue);
             TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
             if (textRenderer == null) return;
 
@@ -68,9 +68,15 @@ public class SearchBar {
         if (ctrlIsPressed && input.key() == GLFW.GLFW_KEY_F) {
             shouldDisplay = !shouldDisplay;
             return true;
-        } else if (shouldDisplay() && searchBar.isFocused() && input.key() != GLFW.GLFW_KEY_ESCAPE) {
-            searchBar.keyPressed(input);
-            return true;
+        } else if (shouldDisplay() && searchBar.isFocused()) {
+            if (input.key() == GLFW.GLFW_KEY_ENTER) {
+                if (!Double.isNaN(parsedValue)) {
+                    searchBar.setText(RenderUtils.formatNumber((float) parsedValue));
+                }
+            } else if (input.key() != GLFW.GLFW_KEY_ESCAPE) {
+                searchBar.keyPressed(input);
+                return true;
+            }
         }
         return false;
     }

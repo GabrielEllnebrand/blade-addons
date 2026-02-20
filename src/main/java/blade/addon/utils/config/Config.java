@@ -395,6 +395,8 @@ public class Config {
         visual.add(new ConfigBool(Text.literal("Old player head size"), () -> Visual.oldPlayerHead, bool -> Visual.oldPlayerHead = bool));
         visual.add(new ConfigBool(Text.literal("Fix wither essence"), () -> Visual.fixWitherEssence, bool -> Visual.fixWitherEssence = bool));
         visual.add(new ConfigBool(Text.literal("1.8.9 like fishing bobber"), () -> Visual.oldFishingRod, bool -> Visual.oldFishingRod = bool));
+        visual.add(new ConfigBool(Text.literal("Stop shovel swing when flattening dirt"), () -> Visual.stopShovelFlattening, bool -> Visual.stopShovelFlattening = bool));
+        visual.add(new ConfigBool(Text.literal("Stop swinging when throwing a pearl"), () -> Visual.stopPearlSwing, bool -> Visual.stopPearlSwing = bool));
         return visual;
     }
 

@@ -1,6 +1,7 @@
 package blade.addon.mixin;
 
 import blade.addon.features.item.DropAnimation;
+import blade.addon.features.other.SwingAnimation;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.render.item.HeldItemRenderer;
@@ -54,9 +55,15 @@ public abstract class HeldItemRendererMixin {
 
     @Inject(method = "swingArm", at = @At("HEAD"), cancellable = true)
     private void stopSwing(float swingProgress, float equipProgress, MatrixStack matrices, int armX, Arm arm, CallbackInfo ci) {
-        if (!DropAnimation.shouldProceed()) return;
-        ItemStack prevDropped = DropAnimation.getPrevDroppedItem();
-        if (prevDropped == null) return;
+
+        //TODO: refactor this
+        if (!SwingAnimation.shouldIgnore()) {
+            if (!DropAnimation.shouldProceed()) return;
+            ItemStack prevDropped = DropAnimation.getPrevDroppedItem();
+            if (prevDropped == null) return;
+        }
+
+
         int i = arm == Arm.RIGHT ? 1 : -1;
         matrices.translate((float) i * 0.56F, -0.52F, -0.72F);
         ci.cancel();

@@ -46,4 +46,10 @@ public class Visual {
     @ConfigValue
     public static boolean oldFishingRod = false;
 
+    @ConfigValue
+    public static boolean stopShovelFlattening = false;
+
+    @ConfigValue
+    public static boolean stopPearlSwing = false;
+
 }
