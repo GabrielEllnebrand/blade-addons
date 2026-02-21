@@ -174,4 +174,7 @@ public class Floor7 {
 
     @ConfigValue
     public static boolean sectionPrevObjective = false;
+
+    @ConfigValue
+    public static boolean dragonTracer = false;
 }

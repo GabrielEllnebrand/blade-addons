@@ -1,16 +1,22 @@
 package blade.addon.features.item;
 
+import blade.addon.utils.Constants;
 import blade.addon.utils.config.values.Visual;
 import blade.addon.utils.rendering.DrawEvents;
+import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.LoreComponent;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 
 import java.util.List;
 
 public class ItemRarityHighlight {
+
+    private static final Identifier NORMAL_BACKGROUND = Identifier.of(Constants.NAMESPACE, "rarity-background");
+    private static final Identifier CIRCLE_BACKGROUND = Identifier.of(Constants.NAMESPACE, "rarity-background-circle");
 
     public static void init() {
         DrawEvents.INVENTORY_SLOT_BEFORE.register(ItemRarityHighlight::draw);
@@ -30,7 +36,11 @@ public class ItemRarityHighlight {
         if (!holder.blade_addons$hasItemRarity()) return;
 
         ItemRarity rarity = holder.blade_addons$getItemRarity();
-        context.fill(x, y, x + 16, y + 16, rarity.getColor());
+        if (Visual.circularRarityBackground) {
+            context.drawGuiTexture(RenderPipelines.GUI_TEXTURED, CIRCLE_BACKGROUND, x, y, 16, 16, rarity.getColor());
+        } else {
+            context.drawGuiTexture(RenderPipelines.GUI_TEXTURED, NORMAL_BACKGROUND, x, y, 16, 16, rarity.getColor());
+        }
     }
 
     public static ItemRarity getRarity(ItemStack item) {

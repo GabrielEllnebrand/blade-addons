@@ -52,4 +52,7 @@ public class Visual {
     @ConfigValue
     public static boolean stopPearlSwing = false;
 
+    @ConfigValue
+    public static boolean circularRarityBackground = false;
+
 }

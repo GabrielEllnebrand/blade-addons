@@ -3,6 +3,7 @@ package blade.addon.utils.rendering;
 import blade.addon.utils.Constants;
 import blade.addon.utils.config.values.ExtraOptions;
 import blade.addon.utils.config.values.Floor7;
+import blade.addon.utils.data.EntityUtil;
 import config.practical.hud.HUDComponent;
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderContext;
 import net.minecraft.client.MinecraftClient;
@@ -15,6 +16,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
+import org.joml.Vector3f;
 
 public class RenderUtils {
 
@@ -117,7 +119,24 @@ public class RenderUtils {
         renderText(context, matrices, text, pos.x, pos.y, pos.z, scale);
     }
 
-    public static String formatNumber(float num) {
+    public static void renderLineTo(WorldRenderContext context, MatrixStack matrices, VertexConsumer consumer, double x, double y, double z, int color) {
+        ClientPlayerEntity player = MinecraftClient.getInstance().player;
+        if (player == null) return;
+
+        Vec3d playerPos = EntityUtil.getLerpedPos(player);
+        double eyeHeight = player.getStandingEyeHeight();
+        Vector3f lookat = new Vector3f(0, 0, -1f).rotate(context.worldState().cameraRenderState.orientation);
+
+        Vector3f startPos = playerPos.toVector3f().add(0f, (float)eyeHeight, 0f).add(lookat);
+        Vec3d endPos = new Vec3d(x, y, z).subtract(playerPos).subtract(lookat.x, lookat.y + eyeHeight, lookat.z);
+        VertexRendering.drawVector(matrices, consumer, startPos, endPos, color);
+    }
+
+    public static void renderLineTo(WorldRenderContext context, MatrixStack matrices, VertexConsumer consumer, Vec3d pos, int color) {
+        renderLineTo(context, matrices, consumer, pos.x, pos.y, pos.z, color);
+    }
+
+        public static String formatNumber(float num) {
         if (Floor7.capitalizeHealthNumbers) {
             if (num >= 1e9) return String.format("%.1fB", num / 1e9);
             if (num >= 1e6) return String.format("%.1fM", num / 1e6);

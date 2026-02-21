@@ -8,7 +8,6 @@ import blade.addon.utils.events.Events;
 import blade.addon.utils.rendering.RenderUtils;
 import config.practical.hud.HUDComponent;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gl.RenderPipelines;
@@ -43,20 +42,20 @@ public class SelectedPet {
     private static int tick = 0;
 
     public static void init() {
-        ClientReceiveMessageEvents.GAME.register((message, overlay) -> {
+        Events.ON_GAME_MESSAGE.register(message -> {
             String string = message.getString();
             Matcher matcher = MANUAL_EQUIP_PET_PATTERN.matcher(string);
             if (matcher.find()) {
 
                 if (matcher.group(1).equals("despawned")) {
                     despawnPet();
-                    return;
+                    return false;
                 }
 
                 String name = matcher.group(2).replace(" ✦", "");
                 Style style = getStyle(message, name);
                 summonPet(name, Text.literal(name).setStyle(style), getLevel(string), false);
-                return;
+                return false;
             }
 
             String unformattedLine = string.replaceAll("§.", "");
@@ -72,6 +71,7 @@ public class SelectedPet {
 
                 summonPet(name, Text.literal(textName), getLevel(unformattedLine), true);
             }
+            return false;
         });
 
         Events.ON_PLAYER_ENTRY.register(receivedEntry -> {

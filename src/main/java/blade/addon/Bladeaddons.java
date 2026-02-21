@@ -17,6 +17,7 @@ import blade.addon.features.dungeon.f7.PredevTimer;
 import blade.addon.features.dungeon.f7.RelicTimer;
 import blade.addon.features.dungeon.f7.dragons.DragSpawnTimer;
 import blade.addon.features.dungeon.f7.dragons.DragonHealth;
+import blade.addon.features.dungeon.f7.dragons.DragonTracer;
 import blade.addon.features.dungeon.f7.invincibility.InvincibilityDuration;
 import blade.addon.features.dungeon.f7.invincibility.InvincibilityTimer;
 import blade.addon.features.dungeon.f7.invincibility.MaskHighlight;
@@ -160,5 +161,6 @@ public class Bladeaddons implements ModInitializer {
         MaxorTickTimer.init();
         BloodNotifier.init();
         CurrentSection.init();
+        DragonTracer.init();
     }
 }

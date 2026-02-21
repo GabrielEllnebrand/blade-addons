@@ -8,7 +8,6 @@ import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.events.Events;
 import blade.addon.utils.rendering.RenderUtils;
 import config.practical.hud.HUDComponent;
-import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.network.ClientPlayerEntity;
@@ -37,16 +36,17 @@ public class RunStartValidator {
     private static boolean hasTicked = false;
 
     public static void init() {
-        ClientReceiveMessageEvents.GAME.register((message, overlay) -> {
-            if (!Location.inDungeon() || Phase.runStarted() || !Dungeons.detectDuplicateClass) return;
+        Events.ON_GAME_MESSAGE.register(message -> {
+            if (!Location.inDungeon() || Phase.runStarted() || !Dungeons.detectDuplicateClass) return false;
 
             Matcher matcher = STARTING_PATTERN.matcher(message.getString());
-            if (!matcher.find()) return;
+            if (!matcher.find()) return false;
             hasTicked = true;
 
             if (validate()) {
                 Scheduler.scheduleSound(SoundEvents.BLOCK_NOTE_BLOCK_PLING.value(), 2, 1);
             }
+            return false;
         });
 
         Events.ON_LOCATION_CHANGE.register(location -> {

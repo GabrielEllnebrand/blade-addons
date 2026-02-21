@@ -1,9 +1,9 @@
 package blade.addon.features.dungeon;
 
 import blade.addon.utils.config.values.Dungeons;
+import blade.addon.utils.events.Events;
 import blade.addon.utils.rendering.RenderUtils;
 import config.practical.hud.HUDComponent;
-import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 import net.minecraft.client.gui.DrawContext;
 
 import java.util.regex.Matcher;
@@ -18,16 +18,17 @@ public class WarpCooldown {
     private static boolean displayCooldown = false;
 
     public static void init() {
-        ClientReceiveMessageEvents.GAME.register((message, overlay) -> {
-            if (!Dungeons.enableWarpCooldown) return;
+        Events.ON_GAME_MESSAGE.register(message -> {
+            if (!Dungeons.enableWarpCooldown) return false;
 
-            if ((endTime - System.currentTimeMillis()) > 0) return;
+            if ((endTime - System.currentTimeMillis()) > 0) return false;
 
             Matcher matcher = PATTERN.matcher(message.getString());
             if (matcher.find()) {
                 endTime = System.currentTimeMillis() + WARP_COOLDOWN_MS;
                 displayCooldown = true;
             }
+            return false;
         });
     }
 

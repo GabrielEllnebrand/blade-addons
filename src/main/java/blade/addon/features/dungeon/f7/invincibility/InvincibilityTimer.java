@@ -8,7 +8,6 @@ import blade.addon.utils.config.values.Dungeons;
 import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.events.Events;
 import config.practical.hud.HUDComponent;
-import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
@@ -79,10 +78,11 @@ public class InvincibilityTimer {
         Events.ON_PET.register(name -> phoenixOn = name.equals("Phoenix"));
 
 
-        ClientReceiveMessageEvents.GAME.register((message, overlay) -> {
+        Events.ON_GAME_MESSAGE.register(text -> {
             if (Location.inDungeon()) {
-                parseMessage(message);
+                parseMessage(text);
             }
+            return false;
         });
     }
 

@@ -238,6 +238,7 @@ public class Config {
         dragon.add(new ConfigBool(Text.literal("Send sound on dragon spawn"), () -> Floor7.sendSoundOnDragSpawn, bool -> Floor7.sendSoundOnDragSpawn = bool));
         dragon.add(new ConfigOptions<>(Text.literal("Healer prio"), DragSpawnTimer.Team.values(), () -> Floor7.healerTeam, team -> Floor7.healerTeam = team));
         dragon.add(new ConfigBool(Text.literal("Render dragon health"), () -> Floor7.dragonHealth, bool -> Floor7.dragonHealth = bool));
+        dragon.add(new ConfigBool(Text.literal("Render dragon spawn tracer"), () -> Floor7.dragonTracer, bool -> Floor7.dragonTracer = bool));
         floor7.add(dragon);
 
         return floor7;
@@ -386,6 +387,7 @@ public class Config {
         visual.add(new ConfigBool(Text.literal("Hide arrows stuck to entities"), () -> Visual.hideStuckArrows, bool -> Visual.hideStuckArrows = bool));
         visual.add(new ConfigBool(Text.literal("Hide dead entities"), () -> Visual.hideDeadEntities, bool -> Visual.hideDeadEntities = bool));
         visual.add(new ConfigBool(Text.literal("Item rarity background"), () -> Visual.itemRarityBackground, bool -> Visual.itemRarityBackground = bool));
+        visual.add(new ConfigBool(Text.literal("Circular rarity background"), () -> Visual.circularRarityBackground, bool -> Visual.circularRarityBackground = bool));
         visual.add(new ConfigBool(Text.literal("Hide potion effects overlay"), () -> Visual.hideStatusOverLay, bool -> Visual.hideStatusOverLay = bool));
         visual.add(new ConfigBool(Text.literal("Disable glowing"), () -> Visual.disableGlowing, bool -> Visual.disableGlowing = bool));
         visual.add(new ConfigBool(Text.literal("Draw item starCount"), () -> Visual.drawStarCount, bool -> Visual.drawStarCount = bool));
