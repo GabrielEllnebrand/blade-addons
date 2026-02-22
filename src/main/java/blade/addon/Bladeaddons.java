@@ -56,6 +56,7 @@ import blade.addon.features.other.DianaNotifier;
 import blade.addon.features.other.KickedTimer;
 import blade.addon.features.other.PracticeSS;
 import blade.addon.features.other.RagDisplay;
+import blade.addon.features.other.ReaperDisplay;
 import blade.addon.features.other.SearchBar;
 import blade.addon.features.other.SelectedPet;
 import blade.addon.features.other.StunWaypoint;
@@ -162,5 +163,6 @@ public class Bladeaddons implements ModInitializer {
         BloodNotifier.init();
         CurrentSection.init();
         DragonTracer.init();
+        ReaperDisplay.init();
     }
 }

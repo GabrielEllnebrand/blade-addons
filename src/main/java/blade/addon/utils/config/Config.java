@@ -319,6 +319,7 @@ public class Config {
         extra.add(new ConfigBool(Text.literal("Title on arrow swap"), () -> ExtraOptions.arrowSwapNotification, bool -> ExtraOptions.arrowSwapNotification = bool));
         extra.add(new ConfigBool(Text.literal("Toggleable searchbar (ctrl + f)"), () -> ExtraOptions.toggleableSearchBar, bool -> ExtraOptions.toggleableSearchBar = bool));
         extra.add(new ConfigBool(Text.literal("Disable protect item (resets on launch)"), () -> ProtectItem.stopProtectItem, bool -> ProtectItem.stopProtectItem = bool));
+        extra.add(new ConfigBool(Text.literal("Display reaper duration"), () -> ExtraOptions.enableReaperDisplay, bool -> ExtraOptions.enableReaperDisplay = bool));
         //extra.add(new ConfigBool(Text.literal("Kuudra stun waypoint"), () -> ExtraOptions.stunWaypoint, bool -> ExtraOptions.stunWaypoint = bool));
 
 

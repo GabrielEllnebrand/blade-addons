@@ -4,11 +4,11 @@ import blade.addon.utils.dungeon.DungeonClass;
 import net.minecraft.util.math.Vec3d;
 
 public enum Dragon {
-    PURPLE(0xffff55ff, 0, 4, new Vec3d(56, 14, 125)),
-    BLUE(0xff55ffff, 1, 3, new Vec3d(84, 14, 94)),
-    RED(0xffff5555, 2, 2, new Vec3d (27, 14, 59)),
-    GREEN(0xff55ff55, 3, 1, new Vec3d(27, 14, 94)),
-    ORANGE(0xffffaa00, 4, 0, new Vec3d(84, 14, 94)),
+    PURPLE(0xffff55ff, 0, 4, new Vec3d(56.5, 14, 125.5)),
+    BLUE(0xff55ffff, 1, 3, new Vec3d(84.5, 14, 94.5)),
+    RED(0xffff5555, 2, 2, new Vec3d (27.5, 14, 59.5)),
+    GREEN(0xff55ff55, 3, 1, new Vec3d(27.5, 14, 94.5)),
+    ORANGE(0xffffaa00, 4, 0, new Vec3d(84.5, 14, 56.5)),
     NONE(0xffffffff, 99, 99, new Vec3d(0, 0, 0));
 
     final int color;

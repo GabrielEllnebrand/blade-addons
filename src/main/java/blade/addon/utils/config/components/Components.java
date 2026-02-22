@@ -30,6 +30,7 @@ import blade.addon.features.item.HeldItemToolTip;
 import blade.addon.features.other.ArrowSwapper;
 import blade.addon.features.other.KickedTimer;
 import blade.addon.features.other.RagDisplay;
+import blade.addon.features.other.ReaperDisplay;
 import blade.addon.features.other.SelectedPet;
 import blade.addon.features.notifications.Notifications;
 import blade.addon.utils.config.values.Dungeons;
@@ -165,4 +166,7 @@ public class Components {
 
     @ConfigValue
     public static HUDComponent currentSectionDisplay = new HUDComponent(0, 0, 50, 10, 1, "Current section", CurrentSection::display,  CurrentSection::render, () -> Floor7.showCurrentSection);
+
+    @ConfigValue
+    public static HUDComponent reaperDisplay = new HUDComponent(0, 0, TICK_TIMER_WIDTH, 10, 1, "reaper display", ReaperDisplay::display, ReaperDisplay::render, () -> ExtraOptions.enableReaperDisplay);
 }

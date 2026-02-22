@@ -135,4 +135,7 @@ public class ExtraOptions {
 
     @ConfigValue
     public static boolean ignoreColorCodesNotification = false;
+
+    @ConfigValue
+    public static boolean enableReaperDisplay = false;
 }
