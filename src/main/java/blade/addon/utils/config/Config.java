@@ -151,8 +151,13 @@ public class Config {
     private static ConfigCategory floor7() {
         ConfigCategory floor7 = new ConfigCategory("Floor 7");
         floor7.add(new ConfigBool(Text.literal("Combine tick timers"), () -> Floor7.combineTickTimers, bool -> Floor7.combineTickTimers = bool));
-        floor7.add(new ConfigBool(Text.literal("Enable player leap count"), () -> Floor7.leapNotifications, bool -> Floor7.leapNotifications = bool));
         floor7.add(new ConfigBool(Text.literal("Capitalize health numbers"), () -> Floor7.capitalizeHealthNumbers, bool -> Floor7.capitalizeHealthNumbers = bool));
+
+        ConfigSection leapCount = new ConfigSection(Text.literal("Leap count"));
+        leapCount.add(new ConfigBool(Text.literal("Enable player leap count"), () -> Floor7.leapNotifications, bool -> Floor7.leapNotifications = bool));
+        leapCount.add(new ConfigBool(Text.literal("Assume core (max 3 on ee3)"), () -> Floor7.assumeCore, bool -> Floor7.assumeCore = bool));
+        leapCount.add(new ConfigBool(Text.literal("Assume split ee2 (max 3 on ee2)"), () -> Floor7.assumeSplitEE2, bool -> Floor7.assumeSplitEE2 = bool));
+        floor7.add(leapCount);
 
         ConfigSection waypoints = new ConfigSection(Text.literal("Waypoints"));
         waypoints.add(new ConfigBool(Text.literal("Enable boss waypoints"), () -> Floor7.enableBossWaypoints, bool -> Floor7.enableBossWaypoints = bool));
