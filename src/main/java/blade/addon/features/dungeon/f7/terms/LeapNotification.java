@@ -58,10 +58,11 @@ public class LeapNotification {
             currentSpot = getSpot(player);
             if (currentSpot < 1) {
                 count = 0;
+                inBounds = false;
                 return;
+            } else {
+                inBounds = true;
             }
-
-            inBounds = currentSpot > 1;
 
             Box box = REGIONS[currentSpot - 1];
             count = getCount(world, player, box);
@@ -97,7 +98,7 @@ public class LeapNotification {
     }
 
     public static boolean display() {
-        return Floor7.leapNotifications && inBounds;
+        return Floor7.leapNotifications && inBounds && Phase.inBoss() && Location.inDungeon();
     }
 
     public static void render(HUDComponent component, DrawContext context) {
