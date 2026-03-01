@@ -69,6 +69,7 @@ public class Config {
         ConfigSection chatFilter = new ConfigSection(Text.literal("Chat filter"));
         chatFilter.add(new ConfigButton(Text.literal("Edit"), () -> MinecraftClient.getInstance().setScreen(new FilterList())));
         chatFilter.add(new ConfigBool(Text.literal("Ignore color codes"), () -> ExtraOptions.ignoreColorCodesFilter, bool -> ExtraOptions.ignoreColorCodesFilter = bool));
+        chatFilter.add(new ConfigBool(Text.literal("Disable all filters"), () -> ExtraOptions.disableAllFilters, bool -> ExtraOptions.disableAllFilters = bool));
         general.add(chatFilter);
         return general;
     }
@@ -200,7 +201,7 @@ public class Config {
         goldor.add(new ConfigBool(Text.literal("Melody warning notification"), () -> Floor7.notifiyMelody, bool -> Floor7.notifiyMelody = bool));
         goldor.add(new ConfigBool(Text.literal("Send terminal time stamps"), () -> Floor7.terminalTimeStamps, bool -> Floor7.terminalTimeStamps = bool));
         goldor.add(new ConfigBool(Text.literal("Section completion notification"), () -> Floor7.sectionCompletionNotification, bool -> Floor7.sectionCompletionNotification = bool));
-        goldor.add(new ConfigSound(Text.literal("Section complete sound"), Floor7.sectionChangeSound, 2, 2, true));
+        goldor.add(new ConfigSound(Text.literal("Section complete sound"), Floor7.sectionChangeSound));
         goldor.add(new ConfigBool(Text.literal("Current section display"), () -> Floor7.showCurrentSection, bool -> Floor7.showCurrentSection = bool));
         floor7.add(goldor);
 
@@ -221,7 +222,7 @@ public class Config {
         locationNotifier.add(new ConfigBool(Text.literal("Display Location messages on screen"), () -> Floor7.displayLocationNotification, bool -> Floor7.displayLocationNotification = bool));
         locationNotifier.add(new ConfigBool(Text.literal("Hide your own notifications"), () -> Floor7.dontNotifiyForYourself, bool -> Floor7.dontNotifiyForYourself = bool));
         locationNotifier.add(new ConfigInt(Text.literal("Display duration (in client ticks)"), () -> Floor7.notificationDuration, num -> Floor7.notificationDuration = num, 1, 1, 20));
-        locationNotifier.add(new ConfigSound(Text.literal("Notification sound"), Floor7.atLocationSound, 2, 2, false));
+        locationNotifier.add(new ConfigSound(Text.literal("Notification sound"), Floor7.atLocationSound, 4, 2, false));
         locationNotifier.add(new ConfigInt(Text.literal("Sound repetitions"), () -> Floor7.notificationRepetitions, num -> Floor7.notificationRepetitions = num, 1, 0, 20));
         locationNotifier.add(new ConfigButton(Text.literal("Test notification"), () -> LocationNotifier.startNotification("Someone", " At <location>!!")));
 
