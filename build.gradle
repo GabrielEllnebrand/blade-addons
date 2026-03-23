@@ -69,7 +69,7 @@ dependencies {
 	include modImplementation("net.hypixel:mod-api:${project.hypixel_api_version}")
 	include modImplementation("com.github.BladeMasterGabe:practical-config:${project.practical_config}")
 
-    modRuntimeOnly("me.djtheredstoner:DevAuth-fabric:1.2.1")
+    modRuntimeOnly("me.djtheredstoner:DevAuth-fabric:1.2.2")
 
 
 }

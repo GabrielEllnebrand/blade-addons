@@ -116,6 +116,8 @@ public class RenderingEvents {
     }
 
     private static void debugLine(WorldRenderContext context) {
+        WorldRenderState worldState = context.worldState();
+        if (worldState == null) return;
         Vec3d camera = context.worldState().cameraRenderState.pos;
         MatrixStack matrices = context.matrices();
         if (matrices == null) return;

@@ -9,6 +9,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.Arm;
+import net.minecraft.util.math.MathHelper;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -53,19 +54,21 @@ public abstract class HeldItemRendererMixin {
         this.equipProgressMainHand = 1;
     }
 
+    @Inject(method = "applyEquipOffset", at = @At("HEAD"), cancellable = true)
+    private void applyEquipOffset(MatrixStack matrices, Arm arm, float swingProgress, CallbackInfo ci) {
+        if (!SwingAnimation.shouldIgnore()) return;
+        int side = arm == Arm.RIGHT ? 1 : -1;
+        matrices.translate((float) side * 0.56F, -0.52F, -0.72F);
+        ci.cancel();
+    }
+
     @Inject(method = "swingArm", at = @At("HEAD"), cancellable = true)
-    private void stopSwing(float swingProgress, float equipProgress, MatrixStack matrices, int armX, Arm arm, CallbackInfo ci) {
-
-        //TODO: refactor this
-        if (!SwingAnimation.shouldIgnore()) {
-            if (!DropAnimation.shouldProceed()) return;
-            ItemStack prevDropped = DropAnimation.getPrevDroppedItem();
-            if (prevDropped == null) return;
-        }
-
-
-        int i = arm == Arm.RIGHT ? 1 : -1;
-        matrices.translate((float) i * 0.56F, -0.52F, -0.72F);
+    private void swingArm(float swingProgress, MatrixStack matrixStack, int i, Arm arm, CallbackInfo ci) {
+        if (!SwingAnimation.shouldIgnore()) return;
+        float f = -0.4F * MathHelper.sin(MathHelper.sqrt(1) * (float) Math.PI);
+        float g = 0.2F * MathHelper.sin(MathHelper.sqrt(1) * (float) (Math.PI * 2));
+        float h = -0.2F * MathHelper.sin(1 * (float) Math.PI);
+        matrixStack.translate(i * f, g, h);
         ci.cancel();
     }
 }

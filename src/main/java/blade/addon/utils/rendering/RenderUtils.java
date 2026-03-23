@@ -12,13 +12,13 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.render.DrawStyle;
 import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.render.VertexRendering;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.ColorHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.debug.gizmo.GizmoDrawing;
+import org.joml.Vector3f;
 
 public class RenderUtils {
 
@@ -130,10 +130,11 @@ public class RenderUtils {
         Vec3d playerPos = EntityUtil.getLerpedPos(player);
         double eyeHeight = player.getStandingEyeHeight();
         Vector3f lookat = new Vector3f(0, 0, -1f).rotate(context.worldState().cameraRenderState.orientation);
-
-        Vector3f startPos = playerPos.toVector3f().add(0f, (float)eyeHeight, 0f).add(lookat);
+        Vec3d startPos = playerPos.add(0, eyeHeight, 0).add(lookat.x, lookat.y + eyeHeight, lookat.z);
         Vec3d endPos = new Vec3d(x, y, z).subtract(playerPos).subtract(lookat.x, lookat.y + eyeHeight, lookat.z);
-        VertexRendering.drawVector(matrices, consumer, startPos, endPos, color);
+
+        //VertexRendering.drawVector(matrices, consumer, startPos, endPos, color);
+        GizmoDrawing.line(startPos, endPos, color);
     }
 
     public static void renderLineTo(WorldRenderContext context, MatrixStack matrices, VertexConsumer consumer, Vec3d pos, int color) {
@@ -145,12 +146,11 @@ public class RenderUtils {
             if (num >= 1e9) return String.format("%.1fB", num / 1e9);
             if (num >= 1e6) return String.format("%.1fM", num / 1e6);
             if (num >= 1e3) return String.format("%.1fK", num / 1e3);
-            return num + "";
         } else {
             if (num >= 1e9) return String.format("%.1fb", num / 1e9);
             if (num >= 1e6) return String.format("%.1fm", num / 1e6);
             if (num >= 1e3) return String.format("%.1fk", num / 1e3);
+        }
             return num + "";
         }
-    }
 }
