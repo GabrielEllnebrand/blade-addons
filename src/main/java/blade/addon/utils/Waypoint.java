@@ -1,8 +1,12 @@
 package blade.addon.utils;
 
+import net.minecraft.client.render.DrawStyle;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexRendering;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.util.math.Box;
+import net.minecraft.util.math.ColorHelper;
+import net.minecraft.world.debug.gizmo.GizmoDrawing;
 
 public class Waypoint {
     private final double x, y, z, dx, dy, dz;
@@ -38,7 +42,7 @@ public class Waypoint {
     }
 
     public void Render(VertexConsumer consumer, MatrixStack matrixStack) {
-        VertexRendering.drawFilledBox(matrixStack, consumer, x, y, z, x + dx, y + dy, z + dz, r, g, b, a);
+        GizmoDrawing.box(new Box(x, y, z, x + dx, y + dy, z + dz), DrawStyle.filled(ColorHelper.fromFloats(a, r, g, b)));
     }
 
     @Override

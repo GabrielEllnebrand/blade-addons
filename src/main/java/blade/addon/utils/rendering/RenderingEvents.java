@@ -5,6 +5,7 @@ import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderContext;
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderEvents;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
+import net.minecraft.client.render.state.WorldRenderState;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.Vec3d;
 
@@ -29,7 +30,9 @@ public class RenderingEvents {
     }
 
     private static void filled(WorldRenderContext context) {
-        Vec3d camera = context.worldState().cameraRenderState.pos;
+        WorldRenderState worldState = context.worldState();
+        if (worldState == null) return;
+        Vec3d camera = worldState.cameraRenderState.pos;
         MatrixStack matrices = context.matrices();
         if (matrices == null) return;
         matrices.push();
@@ -44,7 +47,9 @@ public class RenderingEvents {
     }
 
     private static void filledNoDepth(WorldRenderContext context) {
-        Vec3d camera = context.worldState().cameraRenderState.pos;
+        WorldRenderState worldState = context.worldState();
+        if (worldState == null) return;
+        Vec3d camera = worldState.cameraRenderState.pos;
         MatrixStack matrices = context.matrices();
         if (matrices == null) return;
         matrices.push();
@@ -59,7 +64,9 @@ public class RenderingEvents {
     }
 
     private static void entityFilled(WorldRenderContext context) {
-        Vec3d camera = context.worldState().cameraRenderState.pos;
+        WorldRenderState worldState = context.worldState();
+        if (worldState == null) return;
+        Vec3d camera = worldState.cameraRenderState.pos;
         MatrixStack matrices = context.matrices();
         if (matrices == null) return;
         matrices.push();
@@ -75,7 +82,9 @@ public class RenderingEvents {
 
 
     private static void entityOutline(WorldRenderContext context) {
-        Vec3d camera = context.worldState().cameraRenderState.pos;
+        WorldRenderState worldState = context.worldState();
+        if (worldState == null) return;
+        Vec3d camera = worldState.cameraRenderState.pos;
         MatrixStack matrices = context.matrices();
         if (matrices == null) return;
         matrices.push();
@@ -90,7 +99,9 @@ public class RenderingEvents {
     }
 
     private static void entityOutlineNoDepth(WorldRenderContext context) {
-        Vec3d camera = context.worldState().cameraRenderState.pos;
+        WorldRenderState worldState = context.worldState();
+        if (worldState == null) return;
+        Vec3d camera = worldState.cameraRenderState.pos;
         MatrixStack matrices = context.matrices();
         if (matrices == null) return;
         matrices.push();

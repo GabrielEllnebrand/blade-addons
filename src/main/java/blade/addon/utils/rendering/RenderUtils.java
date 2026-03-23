@@ -10,13 +10,15 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.client.render.DrawStyle;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexRendering;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.Box;
+import net.minecraft.util.math.ColorHelper;
 import net.minecraft.util.math.Vec3d;
-import org.joml.Vector3f;
+import net.minecraft.world.debug.gizmo.GizmoDrawing;
 
 public class RenderUtils {
 
@@ -89,12 +91,14 @@ public class RenderUtils {
 
     public static void renderFilled(MatrixStack matrixStack, VertexConsumer consumer, Box box, float[] rgba) {
         if (rgba[3] == 0) return;
-        VertexRendering.drawFilledBox(matrixStack, consumer, box.minX, box.minY, box.minZ, box.maxX, box.maxY, box.maxZ, rgba[0], rgba[1], rgba[2], rgba[3]);
+        GizmoDrawing.box(box, DrawStyle.filled(ColorHelper.fromFloats(rgba[3], rgba[0], rgba[1], rgba[2]))); // Could be filledAndStroked
+        //VertexRendering.drawFilledBox(matrixStack, consumer, box.minX, box.minY, box.minZ, box.maxX, box.maxY, box.maxZ, rgba[0], rgba[1], rgba[2], rgba[3]);
     }
 
     public static void renderOutline(MatrixStack matrixStack, VertexConsumer consumer, Box box, float[] rgba) {
         if (rgba[3] == 0) return;
-        VertexRendering.drawBox(matrixStack.peek(), consumer, box, rgba[0], rgba[1], rgba[2], rgba[3]);
+        GizmoDrawing.box(box, DrawStyle.stroked(ColorHelper.fromFloats(rgba[3], rgba[0], rgba[1], rgba[2]))); // Could be filledAndStroked
+        //VertexRendering.drawBox(matrixStack.peek(), consumer, box, rgba[0], rgba[1], rgba[2], rgba[3]);
     }
 
 
