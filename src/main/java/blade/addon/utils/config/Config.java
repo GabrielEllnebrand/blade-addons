@@ -69,6 +69,7 @@ public class Config {
         ConfigSection chatFilter = new ConfigSection(Text.literal("Chat filter"));
         chatFilter.add(new ConfigButton(Text.literal("Edit"), () -> MinecraftClient.getInstance().setScreen(new FilterList())));
         chatFilter.add(new ConfigBool(Text.literal("Ignore color codes"), () -> ExtraOptions.ignoreColorCodesFilter, bool -> ExtraOptions.ignoreColorCodesFilter = bool));
+        chatFilter.add(new ConfigBool(Text.literal("Disable all filters"), () -> ExtraOptions.disableAllFilters, bool -> ExtraOptions.disableAllFilters = bool));
         general.add(chatFilter);
         return general;
     }
@@ -151,8 +152,13 @@ public class Config {
     private static ConfigCategory floor7() {
         ConfigCategory floor7 = new ConfigCategory("Floor 7");
         floor7.add(new ConfigBool(Text.literal("Combine tick timers"), () -> Floor7.combineTickTimers, bool -> Floor7.combineTickTimers = bool));
-        floor7.add(new ConfigBool(Text.literal("Enable player leap count"), () -> Floor7.leapNotifications, bool -> Floor7.leapNotifications = bool));
         floor7.add(new ConfigBool(Text.literal("Capitalize health numbers"), () -> Floor7.capitalizeHealthNumbers, bool -> Floor7.capitalizeHealthNumbers = bool));
+
+        ConfigSection leapCount = new ConfigSection(Text.literal("Leap count"));
+        leapCount.add(new ConfigBool(Text.literal("Enable player leap count"), () -> Floor7.leapNotifications, bool -> Floor7.leapNotifications = bool));
+        leapCount.add(new ConfigBool(Text.literal("Assume core (max 3 on ee3)"), () -> Floor7.assumeCore, bool -> Floor7.assumeCore = bool));
+        leapCount.add(new ConfigBool(Text.literal("Assume split ee2 (max 3 on ee2)"), () -> Floor7.assumeSplitEE2, bool -> Floor7.assumeSplitEE2 = bool));
+        floor7.add(leapCount);
 
         ConfigSection waypoints = new ConfigSection(Text.literal("Waypoints"));
         waypoints.add(new ConfigBool(Text.literal("Enable boss waypoints"), () -> Floor7.enableBossWaypoints, bool -> Floor7.enableBossWaypoints = bool));
@@ -195,7 +201,7 @@ public class Config {
         goldor.add(new ConfigBool(Text.literal("Melody warning notification"), () -> Floor7.notifiyMelody, bool -> Floor7.notifiyMelody = bool));
         goldor.add(new ConfigBool(Text.literal("Send terminal time stamps"), () -> Floor7.terminalTimeStamps, bool -> Floor7.terminalTimeStamps = bool));
         goldor.add(new ConfigBool(Text.literal("Section completion notification"), () -> Floor7.sectionCompletionNotification, bool -> Floor7.sectionCompletionNotification = bool));
-        goldor.add(new ConfigSound(Text.literal("Section complete sound"), Floor7.sectionChangeSound, 2, 2, true));
+        goldor.add(new ConfigSound(Text.literal("Section complete sound"), Floor7.sectionChangeSound));
         goldor.add(new ConfigBool(Text.literal("Current section display"), () -> Floor7.showCurrentSection, bool -> Floor7.showCurrentSection = bool));
         floor7.add(goldor);
 
@@ -216,7 +222,7 @@ public class Config {
         locationNotifier.add(new ConfigBool(Text.literal("Display Location messages on screen"), () -> Floor7.displayLocationNotification, bool -> Floor7.displayLocationNotification = bool));
         locationNotifier.add(new ConfigBool(Text.literal("Hide your own notifications"), () -> Floor7.dontNotifiyForYourself, bool -> Floor7.dontNotifiyForYourself = bool));
         locationNotifier.add(new ConfigInt(Text.literal("Display duration (in client ticks)"), () -> Floor7.notificationDuration, num -> Floor7.notificationDuration = num, 1, 1, 20));
-        locationNotifier.add(new ConfigSound(Text.literal("Notification sound"), Floor7.atLocationSound, 2, 2, false));
+        locationNotifier.add(new ConfigSound(Text.literal("Notification sound"), Floor7.atLocationSound, 4, 2, false));
         locationNotifier.add(new ConfigInt(Text.literal("Sound repetitions"), () -> Floor7.notificationRepetitions, num -> Floor7.notificationRepetitions = num, 1, 0, 20));
         locationNotifier.add(new ConfigButton(Text.literal("Test notification"), () -> LocationNotifier.startNotification("Someone", " At <location>!!")));
 
@@ -238,6 +244,7 @@ public class Config {
         dragon.add(new ConfigBool(Text.literal("Send sound on dragon spawn"), () -> Floor7.sendSoundOnDragSpawn, bool -> Floor7.sendSoundOnDragSpawn = bool));
         dragon.add(new ConfigOptions<>(Text.literal("Healer prio"), DragSpawnTimer.Team.values(), () -> Floor7.healerTeam, team -> Floor7.healerTeam = team));
         dragon.add(new ConfigBool(Text.literal("Render dragon health"), () -> Floor7.dragonHealth, bool -> Floor7.dragonHealth = bool));
+        dragon.add(new ConfigBool(Text.literal("Render dragon spawn tracer"), () -> Floor7.dragonTracer, bool -> Floor7.dragonTracer = bool));
         floor7.add(dragon);
 
         return floor7;
@@ -318,6 +325,7 @@ public class Config {
         extra.add(new ConfigBool(Text.literal("Title on arrow swap"), () -> ExtraOptions.arrowSwapNotification, bool -> ExtraOptions.arrowSwapNotification = bool));
         extra.add(new ConfigBool(Text.literal("Toggleable searchbar (ctrl + f)"), () -> ExtraOptions.toggleableSearchBar, bool -> ExtraOptions.toggleableSearchBar = bool));
         extra.add(new ConfigBool(Text.literal("Disable protect item (resets on launch)"), () -> ProtectItem.stopProtectItem, bool -> ProtectItem.stopProtectItem = bool));
+        extra.add(new ConfigBool(Text.literal("Display reaper duration"), () -> ExtraOptions.enableReaperDisplay, bool -> ExtraOptions.enableReaperDisplay = bool));
         //extra.add(new ConfigBool(Text.literal("Kuudra stun waypoint"), () -> ExtraOptions.stunWaypoint, bool -> ExtraOptions.stunWaypoint = bool));
 
 
@@ -386,6 +394,7 @@ public class Config {
         visual.add(new ConfigBool(Text.literal("Hide arrows stuck to entities"), () -> Visual.hideStuckArrows, bool -> Visual.hideStuckArrows = bool));
         visual.add(new ConfigBool(Text.literal("Hide dead entities"), () -> Visual.hideDeadEntities, bool -> Visual.hideDeadEntities = bool));
         visual.add(new ConfigBool(Text.literal("Item rarity background"), () -> Visual.itemRarityBackground, bool -> Visual.itemRarityBackground = bool));
+        visual.add(new ConfigBool(Text.literal("Circular rarity background"), () -> Visual.circularRarityBackground, bool -> Visual.circularRarityBackground = bool));
         visual.add(new ConfigBool(Text.literal("Hide potion effects overlay"), () -> Visual.hideStatusOverLay, bool -> Visual.hideStatusOverLay = bool));
         visual.add(new ConfigBool(Text.literal("Disable glowing"), () -> Visual.disableGlowing, bool -> Visual.disableGlowing = bool));
         visual.add(new ConfigBool(Text.literal("Draw item starCount"), () -> Visual.drawStarCount, bool -> Visual.drawStarCount = bool));
@@ -395,6 +404,8 @@ public class Config {
         visual.add(new ConfigBool(Text.literal("Old player head size"), () -> Visual.oldPlayerHead, bool -> Visual.oldPlayerHead = bool));
         visual.add(new ConfigBool(Text.literal("Fix wither essence"), () -> Visual.fixWitherEssence, bool -> Visual.fixWitherEssence = bool));
         visual.add(new ConfigBool(Text.literal("1.8.9 like fishing bobber"), () -> Visual.oldFishingRod, bool -> Visual.oldFishingRod = bool));
+        visual.add(new ConfigBool(Text.literal("Stop shovel swing when flattening dirt"), () -> Visual.stopShovelFlattening, bool -> Visual.stopShovelFlattening = bool));
+        visual.add(new ConfigBool(Text.literal("Stop swinging when throwing a pearl"), () -> Visual.stopPearlSwing, bool -> Visual.stopPearlSwing = bool));
         return visual;
     }
 

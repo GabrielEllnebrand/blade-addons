@@ -4,7 +4,7 @@ import blade.addon.utils.Location;
 import blade.addon.utils.Misc;
 import blade.addon.utils.config.values.Dungeons;
 import blade.addon.utils.dungeon.Phase;
-import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
+import blade.addon.utils.events.Events;
 import net.minecraft.text.Text;
 
 import java.text.DecimalFormat;
@@ -19,9 +19,9 @@ public class ExplosiveShot {
 
 
     public static void init() {
-        ClientReceiveMessageEvents.GAME.register((message, overlay) -> {
-            if (!Location.inDungeon() || !Dungeons.calculateCriticalHit) return;
-            if (Dungeons.onlyInBoss && !Phase.inBoss()) return;
+        Events.ON_GAME_MESSAGE.register(message -> {
+            if (!Location.inDungeon() || !Dungeons.calculateCriticalHit) return false;
+            if (Dungeons.onlyInBoss && !Phase.inBoss()) return false;
 
             String string = message.getString();
 
@@ -42,7 +42,7 @@ public class ExplosiveShot {
                 } catch (NumberFormatException ignored) {
                 }
             }
-
+            return false;
         });
     }
 

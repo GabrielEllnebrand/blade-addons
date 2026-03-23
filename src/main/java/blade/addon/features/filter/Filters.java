@@ -23,7 +23,7 @@ public class Filters {
     public static void init() {
         filterManager.load();
         ClientReceiveMessageEvents.ALLOW_GAME.register((message, overlay) -> {
-            if (overlay) return true;
+            if (overlay || ExtraOptions.disableAllFilters) return true;
             String string = message.getString();
 
             if (ExtraOptions.ignoreColorCodesFilter) {

@@ -6,9 +6,12 @@
     "ChunkMixin",
     "ClientConnectionMixin",
     "ClientPlayNetworkHandlerMixin",
+    "EnderPearlItemMixin",
     "EntityMixin",
     "ItemStackMixin",
+    "LivingEntityMixin",
     "PlayerInventoryMixin",
+    "ShovelItemMixin",
     "StuckArrowsFeatureRendererMixin"
   ],
   "injectors": {

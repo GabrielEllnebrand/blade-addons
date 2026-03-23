@@ -174,4 +174,13 @@ public class Floor7 {
 
     @ConfigValue
     public static boolean sectionPrevObjective = false;
+
+    @ConfigValue
+    public static boolean dragonTracer = false;
+
+    @ConfigValue
+    public static boolean assumeCore = true;
+
+    @ConfigValue
+    public static boolean assumeSplitEE2 = false;
 }

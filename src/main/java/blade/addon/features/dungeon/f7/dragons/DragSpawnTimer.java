@@ -31,8 +31,8 @@ public class DragSpawnTimer {
 
     private static final int SPAWN_DURATION = 100;
 
-    private static Dragon currentDragon = Dragon.NONE;
-    private static boolean hasDoneSplit = false;
+    static Dragon currentDragon = Dragon.NONE;
+    static boolean hasDoneSplit = false;
     private static int tick = 0;
 
     public static void init() {
