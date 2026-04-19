@@ -19,6 +19,6 @@ public class DragonTracer {
         Dragon dragon = DragSpawnTimer.currentDragon;
         if (dragon == null || dragon == Dragon.NONE || !DragSpawnTimer.hasDoneSplit) return;
 
-        RenderUtils.renderLineTo(context, matrixStack, consumer, dragon.spawnPos, dragon.color);
+        RenderUtils.renderLineTo(context, dragon.spawnPos, dragon.color);
     }
 }

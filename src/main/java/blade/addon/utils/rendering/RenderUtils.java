@@ -11,7 +11,6 @@ import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.render.DrawStyle;
-import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.Box;
@@ -89,13 +88,13 @@ public class RenderUtils {
         context.drawText(textRenderer, drawnText, component.getScaledX(), component.getScaledY(), 0xffffffff, true);
     }
 
-    public static void renderFilled(MatrixStack matrixStack, VertexConsumer consumer, Box box, float[] rgba) {
+    public static void renderFilled(Box box, float[] rgba) {
         if (rgba[3] == 0) return;
         GizmoDrawing.box(box, DrawStyle.filled(ColorHelper.fromFloats(rgba[3], rgba[0], rgba[1], rgba[2]))); // Could be filledAndStroked
         //VertexRendering.drawFilledBox(matrixStack, consumer, box.minX, box.minY, box.minZ, box.maxX, box.maxY, box.maxZ, rgba[0], rgba[1], rgba[2], rgba[3]);
     }
 
-    public static void renderOutline(MatrixStack matrixStack, VertexConsumer consumer, Box box, float[] rgba) {
+    public static void renderOutline(Box box, float[] rgba) {
         if (rgba[3] == 0) return;
         GizmoDrawing.box(box, DrawStyle.stroked(ColorHelper.fromFloats(rgba[3], rgba[0], rgba[1], rgba[2]))); // Could be filledAndStroked
         //VertexRendering.drawBox(matrixStack.peek(), consumer, box, rgba[0], rgba[1], rgba[2], rgba[3]);
@@ -123,22 +122,19 @@ public class RenderUtils {
         renderText(context, matrices, text, pos.x, pos.y, pos.z, scale);
     }
 
-    public static void renderLineTo(WorldRenderContext context, MatrixStack matrices, VertexConsumer consumer, double x, double y, double z, int color) {
+    public static void renderLineTo(WorldRenderContext context, double x, double y, double z, int color) {
         ClientPlayerEntity player = MinecraftClient.getInstance().player;
         if (player == null) return;
 
         Vec3d playerPos = EntityUtil.getLerpedPos(player);
         double eyeHeight = player.getStandingEyeHeight();
-        Vector3f lookat = new Vector3f(0, 0, -1f).rotate(context.worldState().cameraRenderState.orientation);
-        Vec3d startPos = playerPos.add(0, eyeHeight, 0).add(lookat.x, lookat.y + eyeHeight, lookat.z);
-        Vec3d endPos = new Vec3d(x, y, z).subtract(playerPos).subtract(lookat.x, lookat.y + eyeHeight, lookat.z);
-
-        //VertexRendering.drawVector(matrices, consumer, startPos, endPos, color);
-        GizmoDrawing.line(startPos, endPos, color);
+        Vector3f lookAt = new Vector3f(0, 0, -1f).rotate(context.worldState().cameraRenderState.orientation);
+        Vec3d startPos = playerPos.add(0, eyeHeight, 0).add(lookAt.x, lookAt.y, lookAt.z);
+        GizmoDrawing.line(startPos, new Vec3d(x, y, z), color);
     }
 
-    public static void renderLineTo(WorldRenderContext context, MatrixStack matrices, VertexConsumer consumer, Vec3d pos, int color) {
-        renderLineTo(context, matrices, consumer, pos.x, pos.y, pos.z, color);
+    public static void renderLineTo(WorldRenderContext context, Vec3d pos, int color) {
+        renderLineTo(context, pos.x, pos.y, pos.z, color);
     }
 
         public static String formatNumber(float num) {
