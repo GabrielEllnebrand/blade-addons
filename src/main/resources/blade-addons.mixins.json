@@ -22,6 +22,8 @@
   },
   "client": [
     "BossBarHudMixin",
+    "ChatHudAccessor",
+    "ChatScreenMixin",
     "ClientPlayerEntityMixin",
     "ClientPlayNetworkHandlerMixin",
     "DrawContextMixin",
