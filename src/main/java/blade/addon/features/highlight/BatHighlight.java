@@ -48,14 +48,14 @@ public class BatHighlight {
         if (!MobHighlight.mobHighlight || !MobHighlight.renderFilled()) return;
 
         float[] rgba = RenderUtils.toFloats(MobHighlight.batFilledColor);
-        bats.forEach(entity -> RenderUtils.renderFilled(matrixStack, consumer, EntityUtil.getBox(entity), rgba));
+        bats.forEach(entity -> RenderUtils.renderFilled(EntityUtil.getBox(entity), rgba));
     }
 
     private static void renderOutline(WorldRenderContext context, MatrixStack matrixStack, VertexConsumer consumer) {
         if (!MobHighlight.mobHighlight || !MobHighlight.renderOutline()) return;
 
         float[] rgba = RenderUtils.toFloats(MobHighlight.batOutlineColor);
-        bats.forEach(entity -> RenderUtils.renderOutline(matrixStack, consumer, EntityUtil.getBox(entity), rgba));
+        bats.forEach(entity -> RenderUtils.renderOutline(EntityUtil.getBox(entity), rgba));
     }
 
 }

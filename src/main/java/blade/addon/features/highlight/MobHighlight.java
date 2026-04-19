@@ -315,7 +315,7 @@ public class MobHighlight {
             int filledColor = getFilledColor(type);
             float[] rgba = RenderUtils.toFloats(filledColor);
 
-            RenderUtils.renderFilled(matrixStack, consumer, box, rgba);
+            RenderUtils.renderFilled(box, rgba);
 
         }
     }
@@ -333,7 +333,7 @@ public class MobHighlight {
             int outlineColor = getOutlineColor(type);
             float[] rgba = RenderUtils.toFloats(outlineColor);
 
-            RenderUtils.renderOutline(matrixStack, consumer, box, rgba);
+            RenderUtils.renderOutline(box, rgba);
         }
     }
 }

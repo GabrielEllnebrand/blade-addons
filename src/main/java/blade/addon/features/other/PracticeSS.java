@@ -353,15 +353,15 @@ public class PracticeSS {
         if (showingPattern) {
             if (!ExtraOptions.realisticDelay || totalTicks - ticksLeft > START_WAIT_DURATION || endIndex != 2) {
                 int lastIndex = getLastDisplayIndex();
-                renderButtons(matrixStack, consumer, 0, lastIndex);
-                renderBackground(matrixStack, consumer, lastIndex - 1);
+                renderButtons(0, lastIndex);
+                renderBackground(lastIndex - 1);
             }
         } else {
-            renderButtons(matrixStack, consumer, currentIndex, endIndex);
+            renderButtons(currentIndex, endIndex);
         }
     }
 
-    private static void renderButtons(MatrixStack matrixStack, VertexConsumer consumer, int start, int end) {
+    private static void renderButtons(int start, int end) {
         Box directionBox = getBox(direction);
         if (directionBox == null) return;
 
@@ -370,7 +370,7 @@ public class PracticeSS {
             BlockPos pos = buttons.get(i);
             Box box = directionBox.offset(pos.getX(), pos.getY(), pos.getZ());
             float[] color = RenderUtils.toFloats(getColor(i));
-            RenderUtils.renderFilled(matrixStack, consumer, box, color);
+            RenderUtils.renderFilled(box, color);
         }
     }
 
@@ -384,7 +384,7 @@ public class PracticeSS {
         };
     }
 
-    private static void renderBackground(MatrixStack matrixStack, VertexConsumer consumer, int backgroundIndex) {
+    private static void renderBackground(int backgroundIndex) {
         if (buttons.size() > backgroundIndex && backgroundIndex >= 0) {
             Box box = Box.of(buttons.get(backgroundIndex).toCenterPos(), 1, 1, 1);
             int dx, dz;
@@ -409,7 +409,7 @@ public class PracticeSS {
                     return;
                 }
             }
-            RenderUtils.renderFilled(matrixStack, consumer, box.offset(dx, 0, dz), new float[]{0, 0.5f, 1, 1});
+            RenderUtils.renderFilled(box.offset(dx, 0, dz), new float[]{0, 0.5f, 1, 1});
         }
     }
 }

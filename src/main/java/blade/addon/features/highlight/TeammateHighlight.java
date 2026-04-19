@@ -58,7 +58,7 @@ public class TeammateHighlight {
 
             if (Dungeons.highlightTeammates) {
                 float[] rgba = RenderUtils.toFloats(color);
-                RenderUtils.renderOutline(matrixStack, consumer, EntityUtil.getBox(player), rgba);
+                RenderUtils.renderOutline(EntityUtil.getBox(player), rgba);
             }
 
             if (Dungeons.renderClassName) {

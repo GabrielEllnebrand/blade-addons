@@ -42,14 +42,14 @@ public class SheepHighlight {
         if (!MobHighlight.highlightSheep || !MobHighlight.renderFilled()) return;
 
         float[] rgba = RenderUtils.toFloats(MobHighlight.sheepFilledColor);
-        sheeps.forEach(entity -> RenderUtils.renderFilled(matrixStack, consumer, EntityUtil.getBox(entity), rgba));
+        sheeps.forEach(entity -> RenderUtils.renderFilled(EntityUtil.getBox(entity), rgba));
     }
 
     private static void renderOutline(WorldRenderContext context, MatrixStack matrixStack, VertexConsumer consumer) {
         if (!MobHighlight.highlightSheep || !MobHighlight.renderOutline()) return;
 
         float[] rgba = RenderUtils.toFloats(MobHighlight.sheepFilledColor);
-        sheeps.forEach(entity -> RenderUtils.renderOutline(matrixStack, consumer, EntityUtil.getBox(entity), rgba));
+        sheeps.forEach(entity -> RenderUtils.renderOutline(EntityUtil.getBox(entity), rgba));
     }
 
 }

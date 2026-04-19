@@ -46,13 +46,13 @@ public class MimicHighlight {
         if (!MobHighlight.highlightMimicChests || !MobHighlight.renderFilled()) return;
 
         float[] rgba = RenderUtils.toFloats(MobHighlight.mimicFilledColor);
-        mimics.forEach(mimic -> RenderUtils.renderFilled(matrixStack, consumer, box.offset(mimic.getPos()), rgba));
+        mimics.forEach(mimic -> RenderUtils.renderFilled(box.offset(mimic.getPos()), rgba));
     }
 
     private static void renderOutline(WorldRenderContext context, MatrixStack matrixStack, VertexConsumer consumer) {
         if (!MobHighlight.highlightMimicChests || !MobHighlight.renderOutline()) return;
 
         float[] rgba = RenderUtils.toFloats(MobHighlight.mimicOutlineColor);
-        mimics.forEach(mimic -> RenderUtils.renderOutline(matrixStack, consumer, box.offset(mimic.getPos()), rgba));
+        mimics.forEach(mimic -> RenderUtils.renderOutline(box.offset(mimic.getPos()), rgba));
     }
 }
