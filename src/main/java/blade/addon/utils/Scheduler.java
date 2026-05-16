@@ -3,11 +3,10 @@ package blade.addon.utils;
 import com.mojang.brigadier.Command;
 import config.practical.data.SoundData;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.sound.SoundEvent;
-
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.sounds.SoundEvent;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Scheduler {
@@ -39,9 +38,9 @@ public class Scheduler {
             }
 
             if (scheduledCommand != null) {
-                ClientPlayerEntity player = minecraftClient.player;
-                if (player != null && player.networkHandler != null) {
-                    player.networkHandler.sendChatCommand(scheduledCommand);
+                LocalPlayer player = minecraftClient.player;
+                if (player != null && player.connection != null) {
+                    player.connection.sendCommand(scheduledCommand);
                     scheduledCommand = null;
                 }
             }
@@ -67,7 +66,7 @@ public class Scheduler {
 
     public static void scheduleSound(SoundEvent soundEvent, float volume, float pitch, int delay) {
         tasks.add(new Task(() -> {
-            ClientPlayerEntity player = MinecraftClient.getInstance().player;
+            LocalPlayer player = Minecraft.getInstance().player;
             if (player == null) return;
             player.playSound(soundEvent, volume, pitch);
         }, delay));
@@ -79,7 +78,7 @@ public class Scheduler {
 
 
     public static void scheduleSound(SoundData soundData, int tick) {
-        scheduleSound(SoundEvent.of(soundData.getSound()), soundData.getVolume(), soundData.getPitch(), tick);
+        scheduleSound(SoundEvent.createVariableRangeEvent(soundData.getSound()), soundData.getVolume(), soundData.getPitch(), tick);
     }
 
     public static void scheduleSound(SoundData soundData) {

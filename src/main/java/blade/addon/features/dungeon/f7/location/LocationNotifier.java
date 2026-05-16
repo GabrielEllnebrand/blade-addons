@@ -11,10 +11,9 @@ import blade.addon.utils.events.Events;
 import blade.addon.utils.rendering.RenderUtils;
 import config.practical.hud.HUDComponent;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
-
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -22,7 +21,7 @@ public class LocationNotifier {
 
     private static final Pattern PATTERN = Pattern.compile("^(At |Inside )");
 
-    private static Text notification = Text.literal("§6Username is At Location!");
+    private static Component notification = Component.literal("§6Username is At Location!");
     private static int ticks = 0;
 
     public static void init() {
@@ -54,7 +53,7 @@ public class LocationNotifier {
             color = DungeonClass.getColor(username);
         }
 
-        notification = Text.literal(username).withColor(color).append(Text.literal("§e" + message).setStyle(Style.EMPTY));
+        notification = Component.literal(username).withColor(color).append(Component.literal("§e" + message).setStyle(Style.EMPTY));
         ticks = Floor7.notificationDuration;
 
         for (int i = 0; i < Floor7.notificationRepetitions; i++) {
@@ -66,7 +65,7 @@ public class LocationNotifier {
         return ticks > 0 && Floor7.displayLocationNotification;
     }
 
-    public static void render(HUDComponent component, DrawContext context) {
+    public static void render(HUDComponent component, GuiGraphics context) {
         RenderUtils.drawCenteredText(context, component, notification);
     }
 }

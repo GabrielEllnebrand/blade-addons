@@ -5,7 +5,7 @@ import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.events.Events;
 import blade.addon.utils.rendering.RenderUtils;
 import config.practical.hud.HUDComponent;
-import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.GuiGraphics;
 
 public class CurrentSection {
 
@@ -26,7 +26,7 @@ public class CurrentSection {
         return Floor7.showCurrentSection && Phase.inTerminals();
     }
 
-    public static void render(HUDComponent component, DrawContext context) {
+    public static void render(HUDComponent component, GuiGraphics context) {
         RenderUtils.drawPrefixedText(component, context, "Section", " " + section);
     }
 

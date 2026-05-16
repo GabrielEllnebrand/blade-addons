@@ -9,26 +9,25 @@ import blade.addon.utils.dungeon.DungeonClass;
 import blade.addon.utils.events.Events;
 import blade.addon.utils.rendering.RenderUtils;
 import blade.addon.utils.rendering.RenderingEvents;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderContext;
-import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.text.Text;
-import net.minecraft.util.math.Vec3d;
-
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.Vec3;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class TeammateHighlight {
 
-    private static final ConcurrentLinkedQueue<PlayerEntity> teammates = new ConcurrentLinkedQueue<>();
+    private static final ConcurrentLinkedQueue<Player> teammates = new ConcurrentLinkedQueue<>();
 
     public static void init() {
 
         Events.ON_ENTITY_TRACKED.register((entity, world) -> {
             if (!Location.inDungeon()) return false;
-            if (entity instanceof PlayerEntity player) {
+            if (entity instanceof Player player) {
                 if (EntityUtil.isARealPlayer(player) && !EntityUtil.isClientPlayer(player) && !teammates.contains(player)) {
                     teammates.add(player);
                 }
@@ -46,7 +45,7 @@ public class TeammateHighlight {
         RenderingEvents.NO_DEPTH_OUTLINE_ENTITY.register(TeammateHighlight::renderOutline);
     }
 
-    private static void renderOutline(WorldRenderContext context, MatrixStack matrixStack, VertexConsumer consumer) {
+    private static void renderOutline(WorldRenderContext context, PoseStack matrixStack, VertexConsumer consumer) {
         if (!Dungeons.highlightTeammates && !Dungeons.renderClassName) return;
 
         teammates.forEach(player -> {
@@ -62,9 +61,9 @@ public class TeammateHighlight {
             }
 
             if (Dungeons.renderClassName) {
-                Text text = Text.literal(player.getName().getString()).withColor(color).append(Text.literal(" [" + DungeonClass.getChar(clazz) + "]").withColor(Constants.YELLOW));
-                Vec3d pos = EntityUtil.getLerpedPos(player);
-                RenderUtils.renderText(context, matrixStack, text, pos.getX(), pos.getY() + 2.75, pos.getZ(), 2);
+                Component text = Component.literal(player.getName().getString()).withColor(color).append(Component.literal(" [" + DungeonClass.getChar(clazz) + "]").withColor(Constants.YELLOW));
+                Vec3 pos = EntityUtil.getLerpedPos(player);
+                RenderUtils.renderText(context, matrixStack, text, pos.x(), pos.y() + 2.75, pos.z(), 2);
             }
         });
     }

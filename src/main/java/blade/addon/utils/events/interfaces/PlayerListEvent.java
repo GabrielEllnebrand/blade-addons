@@ -1,7 +1,7 @@
 package blade.addon.utils.events.interfaces;
 
-import net.minecraft.network.packet.s2c.play.PlayerListS2CPacket;
+import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
 
 public interface PlayerListEvent {
-    boolean onNewPlayerEntry(PlayerListS2CPacket.Entry receivedEntry);
+    boolean onNewPlayerEntry(ClientboundPlayerInfoUpdatePacket.Entry receivedEntry);
 }

@@ -3,9 +3,9 @@ package blade.addon.utils.times;
 import blade.addon.utils.Constants;
 import blade.addon.utils.Misc;
 import blade.addon.utils.config.values.ExtraOptions;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
 
 public class PersonalBest {
 
@@ -22,7 +22,7 @@ public class PersonalBest {
      * @param text The text you want before the time
      * @param startTime The start time gotten from System.currentTimeMillis()
      */
-    public void testNewTime(MutableText text, long startTime) {
+    public void testNewTime(MutableComponent text, long startTime) {
         double diff = (System.currentTimeMillis() - startTime) / 1000.0;
         boolean isPb = false;
         newestTime = diff;
@@ -45,11 +45,11 @@ public class PersonalBest {
         return bestTime;
     }
 
-    private Text getAsText(boolean isPb) {
+    private Component getAsText(boolean isPb) {
         if (isPb) {
-            return Text.literal("§e" + Constants.DECIMAL_FORMAT.format(newestTime) + "s. §d§l(PB)").setStyle(Style.EMPTY);
+            return Component.literal("§e" + Constants.DECIMAL_FORMAT.format(newestTime) + "s. §d§l(PB)").setStyle(Style.EMPTY);
         } else {
-            return Text.literal("§e" + Constants.DECIMAL_FORMAT.format(newestTime) + "s. §8(§7" + Constants.DECIMAL_FORMAT.format(bestTime) + "§8)").setStyle(Style.EMPTY);
+            return Component.literal("§e" + Constants.DECIMAL_FORMAT.format(newestTime) + "s. §8(§7" + Constants.DECIMAL_FORMAT.format(bestTime) + "§8)").setStyle(Style.EMPTY);
         }
     }
 

@@ -2,23 +2,22 @@ package blade.addon.features.filter;
 
 import config.practical.utilities.Constants;
 import config.practical.utilities.DrawHelper;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gl.RenderPipelines;
-import net.minecraft.client.gui.Click;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.client.input.CharInput;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.Pair;
-import net.minecraft.util.math.MathHelper;
-
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.input.CharacterEvent;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.Mth;
+import net.minecraft.util.Tuple;
 
-public class FilterEntry extends TextFieldWidget {
+public class FilterEntry extends EditBox {
 
-    private static final Identifier CROSS = Identifier.of(blade.addon.utils.Constants.NAMESPACE, "cross");
+    private static final Identifier CROSS = Identifier.fromNamespaceAndPath(blade.addon.utils.Constants.NAMESPACE, "cross");
 
     private static final int HEIGHT = 20;
     private static final int INPUT_COLOR = 0xff222222;
@@ -33,28 +32,28 @@ public class FilterEntry extends TextFieldWidget {
     private final FilterList parent;
 
     public FilterEntry(Supplier<String> supplier, Consumer<String> consumer, int index, FilterList parent) {
-        super(MinecraftClient.getInstance().textRenderer, Constants.WIDGET_WIDTH, HEIGHT, Text.empty());
+        super(Minecraft.getInstance().font, Constants.WIDGET_WIDTH, HEIGHT, Component.empty());
         this.setMaxLength(200);
-        this.setText(supplier.get());
-        this.setChangedListener(consumer);
+        this.setValue(supplier.get());
+        this.setResponder(consumer);
         this.index = index;
         this.parent = parent;
     }
 
     @Override
-    public void renderWidget(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
+    public void renderWidget(GuiGraphics context, int mouseX, int mouseY, float deltaTicks) {
         DrawHelper.drawBackground(context, getX(), super.getY(), width - SPRITE_WIDTH_AREA, height, INPUT_COLOR);
-        Pair<Integer, Integer> pos = getRemovePos();
-        context.drawGuiTexture(RenderPipelines.GUI_TEXTURED, CROSS, pos.getLeft(), pos.getRight(), SPRITE_SIZE, SPRITE_SIZE, 0xffffffff);
+        Tuple<Integer, Integer> pos = getRemovePos();
+        context.blitSprite(RenderPipelines.GUI_TEXTURED, CROSS, pos.getA(), pos.getB(), SPRITE_SIZE, SPRITE_SIZE, 0xffffffff);
         super.renderWidget(context, mouseX, mouseY, deltaTicks);
     }
 
     @Override
-    public boolean charTyped(CharInput input) {
-        if (!this.isActive()) {
+    public boolean charTyped(CharacterEvent input) {
+        if (!this.canConsumeInput()) {
             return false;
-        } else if (input.isValidChar() || isValid(input)) {
-            this.write(input.asString());
+        } else if (input.isAllowedChatCharacter() || isValid(input)) {
+            this.insertText(input.codepointAsString());
             return true;
         } else {
             return false;
@@ -62,8 +61,8 @@ public class FilterEntry extends TextFieldWidget {
     }
 
 
-    private boolean isValid(CharInput input) {
-        return input.asString().contains("§");
+    private boolean isValid(CharacterEvent input) {
+        return input.codepointAsString().contains("§");
     }
 
     /**
@@ -73,10 +72,10 @@ public class FilterEntry extends TextFieldWidget {
      * @param text The text to add
      */
     @Override
-    public void write(String text) {
-        int i = Math.min(getCursor(), this.selectionEnd);
-        int j = Math.max(getCursor(), this.selectionEnd);
-        int k = this.maxLength - getText().length() - (i - j);
+    public void insertText(String text) {
+        int i = Math.min(getCursorPosition(), this.selectionEnd);
+        int j = Math.max(getCursorPosition(), this.selectionEnd);
+        int k = this.maxLength - getValue().length() - (i - j);
         if (k > 0) {
             //String string = StringHelper.stripInvalidChars(text);
             String string = text;
@@ -89,18 +88,18 @@ public class FilterEntry extends TextFieldWidget {
                 string = string.substring(0, k);
                 l = k;
             }
-            String string2 = new StringBuilder(getText()).replace(i, j, string).toString();
-            setText(string2);
-            this.setSelectionStart(i + l);
-            this.setSelectionEnd(getCursor());
-            changedListener.accept(getText());
+            String string2 = new StringBuilder(getValue()).replace(i, j, string).toString();
+            setValue(string2);
+            this.setCursorPosition(i + l);
+            this.setHighlightPos(getCursorPosition());
+            changedListener.accept(getValue());
         }
     }
 
     @Override
-    public void setSelectionEnd(int index) {
-        this.selectionEnd = MathHelper.clamp(index, 0, getText().length());
-        super.setSelectionEnd(index);
+    public void setHighlightPos(int index) {
+        this.selectionEnd = Mth.clamp(index, 0, getValue().length());
+        super.setHighlightPos(index);
     }
 
     @Override
@@ -110,9 +109,9 @@ public class FilterEntry extends TextFieldWidget {
     }
 
     @Override
-    public void setChangedListener(Consumer<String> changedListener) {
+    public void setResponder(Consumer<String> changedListener) {
         this.changedListener = changedListener;
-        super.setChangedListener(changedListener);
+        super.setResponder(changedListener);
     }
 
     @Override
@@ -126,21 +125,21 @@ public class FilterEntry extends TextFieldWidget {
     }
 
     @Override
-    public boolean drawsBackground() {
+    public boolean isBordered() {
         return false;
     }
 
-    private Pair<Integer, Integer> getRemovePos() {
-        return new Pair<>(getX() + width - SPRITE_SIZE - 5, getY() + (height - SPRITE_SIZE) / 2);
+    private Tuple<Integer, Integer> getRemovePos() {
+        return new Tuple<>(getX() + width - SPRITE_SIZE - 5, getY() + (height - SPRITE_SIZE) / 2);
     }
 
     private boolean inRemovalBounds(double x, double y) {
-        Pair<Integer, Integer> pos = getRemovePos();
-        return x >= pos.getLeft() && x <=  pos.getLeft() + SPRITE_SIZE && y >= pos.getRight() && y <= pos.getRight() + SPRITE_SIZE;
+        Tuple<Integer, Integer> pos = getRemovePos();
+        return x >= pos.getA() && x <=  pos.getA() + SPRITE_SIZE && y >= pos.getB() && y <= pos.getB() + SPRITE_SIZE;
     }
 
     @Override
-    public void onClick(Click click, boolean doubled) {
+    public void onClick(MouseButtonEvent click, boolean doubled) {
         double x = click.x();
         double y = click.y();
 

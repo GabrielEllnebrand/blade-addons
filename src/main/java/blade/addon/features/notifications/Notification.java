@@ -3,10 +3,9 @@ package blade.addon.features.notifications;
 import blade.addon.utils.Misc;
 import blade.addon.utils.debug.Debug;
 import config.practical.data.SoundData;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.Text;
-
 import java.util.regex.PatternSyntaxException;
+import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvents;
 
 public class Notification {
 
@@ -23,7 +22,7 @@ public class Notification {
         this.sendCommand = false;
         this.enabled = true;
         this.ticks = 20;
-        this.sound = new SoundData(SoundEvents.BLOCK_NOTE_BLOCK_PLING.value(), 1, 1);
+        this.sound = new SoundData(SoundEvents.NOTE_BLOCK_PLING.value(), 1, 1);
     }
 
     public Notification(String matchString, String notificationString, String command, boolean useRegex, boolean sendCommand, boolean enabled, int ticks, SoundData sound) {
@@ -107,7 +106,7 @@ public class Notification {
             }
         } else if (!message.equals(matchString)) return;
 
-        Debug.sendDebugMessage(Text.literal("Debug: " + notificationString));
+        Debug.sendDebugMessage(Component.literal("Debug: " + notificationString));
         Notifications.setNotification(this);
         Misc.sendSound(sound);
         if (sendCommand) {

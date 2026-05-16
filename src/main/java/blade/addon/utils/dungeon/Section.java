@@ -9,14 +9,13 @@ import blade.addon.utils.events.Events;
 import blade.addon.utils.events.interfaces.SectionEvent;
 import config.practical.hud.HUDComponent;
 import config.practical.manager.ConfigValue;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.text.Text;
-
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.network.chat.Component;
 
 public class Section {
     public enum DisplayTerminalSplitsWhen {
@@ -68,13 +67,13 @@ public class Section {
 
             if (Phase.inTerminals()) {
                 if (Debug.termInfo) {
-                    Misc.addChatMessage(Text.literal("Terminals started"));
+                    Misc.addChatMessage(Component.literal("Terminals started"));
                 }
                 currentSection = 1;
                 splits[0].start();
             } else if (Phase.inGoldorTunnel()) {
                 if (Debug.termInfo) {
-                    Misc.addChatMessage(Text.literal("Terminals ended"));
+                    Misc.addChatMessage(Component.literal("Terminals ended"));
                 }
                 currentSection = 5;
                 endAllSections();
@@ -109,7 +108,7 @@ public class Section {
         currentSection++;
 
         if (Debug.termInfo) {
-            Misc.addChatMessage(Text.literal("section: " + currentSection));
+            Misc.addChatMessage(Component.literal("section: " + currentSection));
         }
 
         Events.ON_SECTION_CHANGE.invoke(SectionEvent::onSection);
@@ -133,12 +132,12 @@ public class Section {
             split.end();
         }
         if (Debug.termInfo) {
-            Misc.addChatMessage(Text.literal("ending all sections"));
+            Misc.addChatMessage(Component.literal("ending all sections"));
         }
         Events.ON_SECTION_CHANGE.invoke(SectionEvent::onSection);
     }
 
-    private static boolean parseMessage(Text message) {
+    private static boolean parseMessage(Component message) {
         if (!Phase.inTerminals()) return false;
         boolean shouldCancelMessage = false;
 
@@ -160,7 +159,7 @@ public class Section {
             }
 
             if (Debug.termInfo) {
-                Misc.addChatMessage(Text.literal("name:" + name + ":objective>" + objective + ":(" + currentCompleted + "/" + totalNeeded + ")"));
+                Misc.addChatMessage(Component.literal("name:" + name + ":objective>" + objective + ":(" + currentCompleted + "/" + totalNeeded + ")"));
             }
 
             Events.ON_TERMINAL.invoke(terminalEvent -> terminalEvent.onComplete(name, action, objective, currentCompleted, totalNeeded));
@@ -168,16 +167,16 @@ public class Section {
             if (Floor7.terminalTimeStamps) {
                 //have to do it like this because for some reason they have the color in the
                 //Style object and not in the string literal
-                List<Text> texts = message.getSiblings();
+                List<Component> texts = message.getSiblings();
                 if (!texts.isEmpty()) {
-                    Misc.addChatMessage(Text.literal(name).setStyle(texts.getFirst().getStyle()).append(Text.literal(" §a" + action + " " + objective + "! (§c" + currentCompleted + "§a/" + totalNeeded + ") §8(§7" + getSectionTime() + "s §8| §7" + Phase.getPhaseTime(TERM_PHASE_INDEX) + "s§8)")));
+                    Misc.addChatMessage(Component.literal(name).setStyle(texts.getFirst().getStyle()).append(Component.literal(" §a" + action + " " + objective + "! (§c" + currentCompleted + "§a/" + totalNeeded + ") §8(§7" + getSectionTime() + "s §8| §7" + Phase.getPhaseTime(TERM_PHASE_INDEX) + "s§8)")));
                     shouldCancelMessage = true;
                 }
             }
 
             if (shouldIncrement(currentCompleted)) {
                 incrementSection();
-                Misc.forceTitle(Text.empty(), message);
+                Misc.forceTitle(Component.empty(), message);
             } else {
                 total = totalNeeded;
                 completed = currentCompleted;
@@ -193,7 +192,7 @@ public class Section {
                 }
 
                 if (Floor7.terminalTimeStamps) {
-                    Misc.addChatMessage(Text.literal("§aThe gate has been destroyed! §8(§7" + getSectionTime() + "s §8| §7" + Phase.getPhaseTime(TERM_PHASE_INDEX) + "s§8)"));
+                    Misc.addChatMessage(Component.literal("§aThe gate has been destroyed! §8(§7" + getSectionTime() + "s §8| §7" + Phase.getPhaseTime(TERM_PHASE_INDEX) + "s§8)"));
                     shouldCancelMessage = true;
                 }
             }
@@ -201,7 +200,7 @@ public class Section {
             //so in "goldor tunnel" can be shown after terms are done
             currentSection = 5;
             endAllSections();
-            Debug.sendDebugMessage(Text.literal("Core section"));
+            Debug.sendDebugMessage(Component.literal("Core section"));
         }
 
         return shouldCancelMessage;
@@ -244,11 +243,11 @@ public class Section {
         return (recentlyCompleted == total && gateBlownUp) || (recentlyCompleted < completed);
     }
 
-    public static void render(HUDComponent component, DrawContext context) {
+    public static void render(HUDComponent component, GuiGraphics context) {
         int x = component.getScaledX();
         int y = component.getScaledY();
 
-        TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
+        Font textRenderer = Minecraft.getInstance().font;
 
         for (int i = 0; i < splits.length; i++) {
             splits[i].drawSplit(context, textRenderer, x, y + Constants.TEXT_HEIGHT * i, SPLIT_LENGTH);

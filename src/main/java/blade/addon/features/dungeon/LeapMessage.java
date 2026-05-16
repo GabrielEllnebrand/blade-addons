@@ -2,8 +2,8 @@ package blade.addon.features.dungeon;
 
 import blade.addon.utils.config.values.Dungeons;
 import blade.addon.utils.events.Events;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayNetworkHandler;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientPacketListener;
 
 public class LeapMessage {
 
@@ -13,9 +13,9 @@ public class LeapMessage {
         Events.ON_LEAP.register(message -> {
             if (!Dungeons.enableLeapMessages) return false;
 
-            ClientPlayNetworkHandler networkHandler = MinecraftClient.getInstance().getNetworkHandler();
+            ClientPacketListener networkHandler = Minecraft.getInstance().getConnection();
             if (networkHandler == null) return false;
-            networkHandler.sendChatCommand("pc " + message.getString().substring(INDEX_REMOVAL));
+            networkHandler.sendCommand("pc " + message.getString().substring(INDEX_REMOVAL));
             return false;
         });
     }

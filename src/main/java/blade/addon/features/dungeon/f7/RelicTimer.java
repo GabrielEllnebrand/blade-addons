@@ -12,45 +12,43 @@ import blade.addon.utils.events.Events;
 import blade.addon.utils.rendering.RenderUtils;
 import blade.addon.utils.rendering.RenderingEvents;
 import blade.addon.utils.times.PersonalBests;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import config.practical.hud.HUDComponent;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderContext;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.render.DrawStyle;
-import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.render.VertexRendering;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.decoration.ArmorStandEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.ColorHelper;
-import net.minecraft.world.debug.gizmo.GizmoDrawing;
-
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.core.BlockPos;
+import net.minecraft.gizmos.GizmoStyle;
+import net.minecraft.gizmos.Gizmos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.util.ARGB;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.decoration.ArmorStand;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.BlockHitResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class RelicTimer {
 
     public enum Relic {
-        GREEN(new Box(49, 7, 44, 50, 8, 45), 0xff55ff55, "§cRed"),
-        RED(new Box(51, 7, 42, 52, 8, 43), 0xffff5555, "§aGreen"),
-        PURPLE(new Box(54, 7, 41, 55, 8, 42), 0xffff55ff, "§5Purple"),
-        ORANGE(new Box(57, 7, 42, 58, 8, 43), 0xffffaa00, "§6Orange"),
-        BLUE(new Box(59, 7, 44, 60, 8, 45), 0xff55ffff, "§bBlue");
+        GREEN(new AABB(49, 7, 44, 50, 8, 45), 0xff55ff55, "§cRed"),
+        RED(new AABB(51, 7, 42, 52, 8, 43), 0xffff5555, "§aGreen"),
+        PURPLE(new AABB(54, 7, 41, 55, 8, 42), 0xffff55ff, "§5Purple"),
+        ORANGE(new AABB(57, 7, 42, 58, 8, 43), 0xffffaa00, "§6Orange"),
+        BLUE(new AABB(59, 7, 44, 60, 8, 45), 0xff55ffff, "§bBlue");
 
-        final Box box;
+        final AABB box;
         final int color;
         final String name;
         int placedTick = 0;
 
-        Relic(Box box, int color, String name) {
+        Relic(AABB box, int color, String name) {
             this.box = box;
             this.color = color;
             this.name = name;
@@ -117,7 +115,7 @@ public class RelicTimer {
 
                 if (EntityUtil.isClientPlayer(name)) {
                     pickedupRelic = Relic.valueOf(relicString.toUpperCase());
-                    Debug.sendDebugMessage(Text.literal("Picked up relic " + relicString));
+                    Debug.sendDebugMessage(Component.literal("Picked up relic " + relicString));
                 }
             }
 
@@ -127,15 +125,15 @@ public class RelicTimer {
         ClientTickEvents.END_WORLD_TICK.register(world -> {
             if (!Location.inDungeon() || !Phase.inP5() || !Floor7.showAllRelicTimes || sentRelicTimes) return;
 
-            Iterable<Entity> entities = world.getEntities();
+            Iterable<Entity> entities = world.entitiesForRendering();
 
             for (Entity entity : entities) {
-                if (entity instanceof ArmorStandEntity armorStand) {
-                    ItemStack item = armorStand.getWeaponStack();
+                if (entity instanceof ArmorStand armorStand) {
+                    ItemStack item = armorStand.getWeaponItem();
                     String id = ItemUtil.getId(item);
 
                     if (id == null || !id.contains("RELIC")) continue;
-                    Debug.sendDebugMessage(Text.literal("item id is " + id));
+                    Debug.sendDebugMessage(Component.literal("item id is " + id));
 
                     double ax = armorStand.getX();
                     double az = armorStand.getZ();
@@ -143,7 +141,7 @@ public class RelicTimer {
                     for (Relic relic : Relic.values()) {
                         if (relic.placedTick != 0 && Misc.getDistance(relic.box.maxX, relic.box.maxZ, ax, az) < 1.5) {
                             relic.placedTick = placeTick;
-                            Debug.sendDebugMessage(Text.literal("Set" + relic.name + " time to " + relic.placedTick + ", item id is " + id));
+                            Debug.sendDebugMessage(Component.literal("Set" + relic.name + " time to " + relic.placedTick + ", item id is " + id));
                         }
                     }
                 }
@@ -151,7 +149,7 @@ public class RelicTimer {
 
             if (allRelicsPlaced()) {
                 for (Relic relic : Relic.values()) {
-                    Misc.addChatMessage(Text.literal(relic.name + " &aRelic placed in &e" + TextUtil.formatTicks(relic.placedTick) + "s&a."));
+                    Misc.addChatMessage(Component.literal(relic.name + " &aRelic placed in &e" + TextUtil.formatTicks(relic.placedTick) + "s&a."));
                     sentRelicTimes = true;
                 }
             }
@@ -175,8 +173,8 @@ public class RelicTimer {
         //skyblock menu check is there incase the item doesnt get updated
         if (!ItemUtil.itemHasName(itemStack, "Relic") && !ItemUtil.itemHasName(itemStack, "Skyblock Menu")) {
             if (Floor7.blockIncorrectRelicPlace) {
-                Debug.sendDebugMessage(Text.literal("Name: " + itemStack.getName() + " Item: " + itemStack));
-                Misc.addChatMessage(Text.literal("Blocked a weird click"));
+                Debug.sendDebugMessage(Component.literal("Name: " + itemStack.getHoverName() + " Item: " + itemStack));
+                Misc.addChatMessage(Component.literal("Blocked a weird click"));
                 return true;
             } else {
                 return false;
@@ -185,9 +183,9 @@ public class RelicTimer {
 
         if (clickedRelic(pickedupRelic, pos)) {
             if (Floor7.enableRelicPlaceTime) {
-                MutableText text = Text.literal("The ").formatted(Formatting.GREEN)
-                        .append(Text.literal(pickedupRelic.name().toLowerCase()).withColor(pickedupRelic.color))
-                        .append(" relic was placed in ").formatted(Formatting.GREEN);
+                MutableComponent text = Component.literal("The ").withStyle(ChatFormatting.GREEN)
+                        .append(Component.literal(pickedupRelic.name().toLowerCase()).withColor(pickedupRelic.color))
+                        .append(" relic was placed in ").withStyle(ChatFormatting.GREEN);
 
                 switch (pickedupRelic) {
                     case RED -> PersonalBests.redRelicTime.testNewTime(text, phaseStartTime);
@@ -201,8 +199,8 @@ public class RelicTimer {
             pickedupRelic = null;
         } else {
             if (Floor7.blockIncorrectRelicPlace) {
-                Debug.sendDebugMessage(Text.literal("Relic: " + pickedupRelic));
-                Misc.addChatMessage(Text.literal("incorrect click!"));
+                Debug.sendDebugMessage(Component.literal("Relic: " + pickedupRelic));
+                Misc.addChatMessage(Component.literal("incorrect click!"));
                 return true;
             }
         }
@@ -215,7 +213,7 @@ public class RelicTimer {
                 if (clickedRelic(relic, pos)) return true;
             }
         } catch (Exception e) {
-            Misc.addChatMessage(Text.literal("Relic not found!"));
+            Misc.addChatMessage(Component.literal("Relic not found!"));
         }
         return false;
     }
@@ -250,7 +248,7 @@ public class RelicTimer {
     public static boolean testSetRelic(String name) {
         try {
             pickedupRelic = RelicTimer.Relic.valueOf(name);
-            Misc.addChatMessage(Text.literal("Relic is now: " + name));
+            Misc.addChatMessage(Component.literal("Relic is now: " + name));
             return true;
         } catch (IllegalArgumentException e) {
             return false;
@@ -258,22 +256,22 @@ public class RelicTimer {
     }
 
     public static void printRelic() {
-        Misc.addChatMessage(Text.literal("Relic: " + pickedupRelic));
+        Misc.addChatMessage(Component.literal("Relic: " + pickedupRelic));
     }
 
-    private static void worldRender(WorldRenderContext context, MatrixStack matrixStack, VertexConsumer consumer) {
+    private static void worldRender(WorldRenderContext context, PoseStack matrixStack, VertexConsumer consumer) {
         if (pickedupRelic == null || !Floor7.renderRelicHighlight) return;
 
-        Box box = pickedupRelic.box;
+        AABB box = pickedupRelic.box;
         float[] color = RenderUtils.toFloats(pickedupRelic.color);
-        GizmoDrawing.box(box, DrawStyle.filled(ColorHelper.fromFloats(color[3], color[0], color[1], color[2])));
+        Gizmos.cuboid(box, GizmoStyle.fill(ARGB.colorFromFloat(color[3], color[0], color[1], color[2])));
     }
 
     public static boolean display() {
         return Floor7.enableRelicStartTimer && Location.inDungeon() && Phase.inP5() && tick > -1 && !Floor7.replaceWithProgressBar;
     }
 
-    public static void render(HUDComponent component, DrawContext context) {
+    public static void render(HUDComponent component, GuiGraphics context) {
         int color = tick > 7 ? GREEN_COLOR : RED_COLOR;
         RenderUtils.drawTimer(component, context, tick, color);
     }
@@ -283,7 +281,7 @@ public class RelicTimer {
         return Floor7.enableRelicStartTimer && Location.inDungeon() && Phase.inP5() && tick > -1 && Floor7.replaceWithProgressBar;
     }
 
-    public static void renderProgressBar(HUDComponent component, DrawContext context) {
+    public static void renderProgressBar(HUDComponent component, GuiGraphics context) {
         int x = component.getScaledX();
         int y = component.getScaledY();
 
@@ -309,7 +307,7 @@ public class RelicTimer {
             message.append("§8]");
         }
 
-        RenderUtils.drawCenteredText(context, MinecraftClient.getInstance().textRenderer, Text.literal(message.toString()), x, y, component.getWidth(), 0xffffffff);
+        RenderUtils.drawCenteredText(context, Minecraft.getInstance().font, Component.literal(message.toString()), x, y, component.getWidth(), 0xffffffff);
 
     }
 }

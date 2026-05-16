@@ -5,7 +5,7 @@ import blade.addon.utils.events.Events;
 import net.hypixel.data.type.ServerType;
 import net.hypixel.modapi.HypixelModAPI;
 import net.hypixel.modapi.packet.impl.clientbound.event.ClientboundLocationPacket;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
 
 public enum Location {
     UNKNOWN("Unknown"),
@@ -79,7 +79,7 @@ public enum Location {
         currentLocation = location;
         detectedNewLocation = true;
         lastChanged = System.currentTimeMillis();
-        Debug.sendDebugMessage(Text.literal("Location: " + currentLocation));
+        Debug.sendDebugMessage(Component.literal("Location: " + currentLocation));
 
         Events.ON_LOCATION_CHANGE.invoke(locationChangeEvent -> locationChangeEvent.onLocationChange(currentLocation));
 

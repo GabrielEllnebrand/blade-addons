@@ -3,13 +3,6 @@ package blade.addon.mixin;
 import blade.addon.utils.Misc;
 import blade.addon.utils.config.values.ExtraOptions;
 import blade.addon.utils.data.TextUtil;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.Click;
-import net.minecraft.client.gui.hud.ChatHud;
-import net.minecraft.client.gui.hud.ChatHudLine;
-import net.minecraft.client.gui.screen.ChatScreen;
-import net.minecraft.text.Text;
-import net.minecraft.util.math.MathHelper;
 import org.lwjgl.glfw.GLFW;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -18,31 +11,38 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
+import net.minecraft.client.GuiMessage;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.components.ChatComponent;
+import net.minecraft.client.gui.screens.ChatScreen;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.util.Mth;
 
 @Mixin(ChatScreen.class)
 public class ChatScreenMixin {
 
     @Inject(method = "mouseClicked", at = @At("HEAD"))
-    private void click(Click click, boolean doubled, CallbackInfoReturnable<Boolean> cir) {
+    private void click(MouseButtonEvent click, boolean doubled, CallbackInfoReturnable<Boolean> cir) {
 
         if (!ExtraOptions.copyChat || click.button() != GLFW.GLFW_MOUSE_BUTTON_RIGHT) return;
 
-        MinecraftClient mc = MinecraftClient.getInstance();
-        ChatHud chatHud = mc.inGameHud.getChatHud();
-        ChatHudAccessor hudAccessor = (ChatHudAccessor) chatHud;
+        Minecraft mc = Minecraft.getInstance();
+        ChatComponent chatHud = mc.gui.getChat();
+        ChatComponentMixin hudAccessor = (ChatComponentMixin) chatHud;
         if (chatHud == null) return;
 
         if (hudAccessor.width() + 4 < click.x()) return;
 
-        final int n = (int) (9 * (mc.options.getChatLineSpacing().getValue() + 1.0));
-        int index = (int) (MathHelper.floor((mc.getWindow().getScaledHeight() - 40) / hudAccessor.getScale()) - click.y()) / n + hudAccessor.getScrolledLines();
+        final int n = (int) (9 * (mc.options.chatLineSpacing().get() + 1.0));
+        int index = (int) (Mth.floor((mc.getWindow().getGuiScaledHeight() - 40) / hudAccessor.scale()) - click.y()) / n + hudAccessor.getScrolledLines();
 
-        List<ChatHudLine.Visible> messages = hudAccessor.getVisibleMessages();
+        List<GuiMessage.Line> messages = hudAccessor.getVisibleMessages();
         if (index < 0 || index >= messages.size()) return;
 
         String string;
         if (ExtraOptions.copyLineOnly) {
-            ChatHudLine.Visible msg = messages.get(index);
+            GuiMessage.Line msg = messages.get(index);
             string = TextUtil.orderedTextToString(msg.content());
         } else {
             string = copyChat(messages, index);
@@ -58,16 +58,16 @@ public class ChatScreenMixin {
             string = string.replace("§", "&");
         }
 
-        mc.keyboard.setClipboard(string);
+        mc.keyboardHandler.setClipboard(string);
 
         if (ExtraOptions.copyChatFeedback) {
-            Misc.addChatMessage(Text.literal("Copied chat message"));
+            Misc.addChatMessage(Component.literal("Copied chat message"));
         }
 
     }
 
     @Unique
-    private static String copyChat(List<ChatHudLine.Visible> messages, int index) {
+    private static String copyChat(List<GuiMessage.Line> messages, int index) {
         int endIndex = index;
 
         if (messages == null || endIndex < 0 || endIndex >= messages.size()) return null;
@@ -77,7 +77,7 @@ public class ChatScreenMixin {
 
         //edge case where the index is end of entry
         //but there are lines above that needs to be included
-        ChatHudLine.Visible currentLine = messages.get(endIndex);
+        GuiMessage.Line currentLine = messages.get(endIndex);
         if (endIndex + 1 < messages.size() && currentLine.endOfEntry() && !messages.get(startIndex + 1).endOfEntry()) {
             endIndex++;
         }
@@ -85,7 +85,7 @@ public class ChatScreenMixin {
 
         //find start of msg
         for (int i = endIndex; i >= 0; i--) {
-            ChatHudLine.Visible chatHudLine = messages.get(i);
+            GuiMessage.Line chatHudLine = messages.get(i);
             if (chatHudLine.endOfEntry()) {
                 startIndex = i;
                 break;
@@ -95,7 +95,7 @@ public class ChatScreenMixin {
         if (!messages.get(endIndex).endOfEntry()) {
             //find end of msg
             for (int i = endIndex + 1; i < messages.size(); i++) {
-                ChatHudLine.Visible chatHudLine = messages.get(i);
+                GuiMessage.Line chatHudLine = messages.get(i);
                 if (chatHudLine.endOfEntry()) {
                     endIndex = i - 1;
                     break;
@@ -104,7 +104,7 @@ public class ChatScreenMixin {
         }
         StringBuilder builder = new StringBuilder();
         for (int i = endIndex; i >= startIndex; i--) {
-            ChatHudLine.Visible chatHudLine = messages.get(i);
+            GuiMessage.Line chatHudLine = messages.get(i);
             TextUtil.acceptOrderedText(builder, chatHudLine.content());
         }
         return builder.toString();

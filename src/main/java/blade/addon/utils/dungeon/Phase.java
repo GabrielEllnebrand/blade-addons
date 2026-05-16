@@ -10,14 +10,13 @@ import blade.addon.utils.events.interfaces.PhaseEvent;
 import blade.addon.utils.events.interfaces.RunEndEvent;
 import config.practical.hud.HUDComponent;
 import config.practical.manager.ConfigValue;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.text.Text;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.network.chat.Component;
 
 public class Phase {
 
@@ -100,7 +99,7 @@ public class Phase {
         runOver = false;
     }
 
-    public static boolean parseGameMessage(Text message) {
+    public static boolean parseGameMessage(Component message) {
         if (!Location.inDungeon()) return false;
         String string = message.getString();
         if (currentSplits == null) return false;
@@ -153,14 +152,14 @@ public class Phase {
     }
 
     private static void printSplits() {
-        Misc.addChatMessage(Text.literal("§aSplits: "));
+        Misc.addChatMessage(Component.literal("§aSplits: "));
         for (Split split : currentSplits) {
             split.end();
             Misc.addChatMessage(split.createNameText().append(split.createTimeText()));
         }
         if (!currentSplits.isEmpty()) {
             double time = currentSplits.getLast().getTimeDiffrence();
-            Text timeLost = Text.literal("§aApproximately §e" + Constants.DECIMAL_FORMAT.format(time) + "s §alost to lag.");
+            Component timeLost = Component.literal("§aApproximately §e" + Constants.DECIMAL_FORMAT.format(time) + "s §alost to lag.");
             Misc.addChatMessage(timeLost);
         }
     }
@@ -230,7 +229,7 @@ public class Phase {
                 int x = hudComponent.getScaledX();
                 int y = hudComponent.getScaledY();
 
-                TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
+                Font textRenderer = Minecraft.getInstance().font;
 
                 if (currentSplits != null) {
                     int splitCount = currentSplits.size();

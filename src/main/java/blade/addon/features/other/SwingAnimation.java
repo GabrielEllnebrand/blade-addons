@@ -1,7 +1,7 @@
 package blade.addon.features.other;
 
 import blade.addon.features.item.DropAnimation;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 
 public class SwingAnimation {
 

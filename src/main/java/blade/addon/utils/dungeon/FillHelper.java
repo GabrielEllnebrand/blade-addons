@@ -1,10 +1,10 @@
 package blade.addon.utils.dungeon;
 
 import blade.addon.utils.Constants;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.item.ItemStack;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.world.Container;
+import net.minecraft.world.item.ItemStack;
 
 public class FillHelper {
 
@@ -20,19 +20,19 @@ public class FillHelper {
      * @return 1 if it succeeds else 0 for fail
      */
     public static int fillItem(String itemName, int minThreshold, int maxCount, boolean needAtleastOne) {
-        ClientPlayerEntity player = MinecraftClient.getInstance().player;
+        LocalPlayer player = Minecraft.getInstance().player;
 
         if (player == null) return Constants.FAIL;
 
-        Inventory inventory = player.getInventory();
+        Container inventory = player.getInventory();
 
         int currentCount = 0;
 
-        for (int i = 0; i < inventory.size(); i++) {
+        for (int i = 0; i < inventory.getContainerSize(); i++) {
 
-            ItemStack item = inventory.getStack(i);
+            ItemStack item = inventory.getItem(i);
 
-            if (item.getName().toString().contains(itemName)) {
+            if (item.getHoverName().toString().contains(itemName)) {
 
                 int highestCount = item.getCount();
 
@@ -48,24 +48,24 @@ public class FillHelper {
         if ((needAtleastOne && currentCount == 0) || minThreshold < currentCount) return Constants.FAIL;
 
         int itemsToGive = maxCount - currentCount;
-        player.networkHandler.sendChatCommand("gfs " + itemName + " " + itemsToGive);
+        player.connection.sendCommand("gfs " + itemName + " " + itemsToGive);
         return Constants.SUCCESS;
     }
 
-    public static int fillItem(MinecraftClient client, String itemName, int minThreshold, int maxCount) {
-        ClientPlayerEntity player = client.player;
+    public static int fillItem(Minecraft client, String itemName, int minThreshold, int maxCount) {
+        LocalPlayer player = client.player;
 
         if (player == null) return Constants.FAIL;
 
-        Inventory inventory = player.getInventory();
+        Container inventory = player.getInventory();
 
         int currentCount = 0;
 
-        for (int i = 0; i < inventory.size(); i++) {
+        for (int i = 0; i < inventory.getContainerSize(); i++) {
 
-            ItemStack item = inventory.getStack(i);
+            ItemStack item = inventory.getItem(i);
 
-            if (item.getName().toString().contains(itemName)) {
+            if (item.getHoverName().toString().contains(itemName)) {
 
                 int highestCount = item.getCount();
 
@@ -81,7 +81,7 @@ public class FillHelper {
         if ( minThreshold < currentCount) return Constants.FAIL;
 
         int itemsToGive = maxCount - currentCount;
-        player.networkHandler.sendChatCommand("gfs " + itemName + " " + itemsToGive);
+        player.connection.sendCommand("gfs " + itemName + " " + itemsToGive);
         return Constants.SUCCESS;
     }
 }

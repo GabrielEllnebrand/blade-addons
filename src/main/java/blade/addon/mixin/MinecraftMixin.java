@@ -4,11 +4,11 @@ import blade.addon.features.item.DropAnimation;
 import blade.addon.utils.events.Events;
 import blade.addon.utils.events.interfaces.WorldEvent;
 import com.llamalad7.mixinextras.sugar.Local;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.hit.HitResult;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -17,29 +17,29 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(MinecraftClient.class)
-public class MinecraftClientMixin {
+@Mixin(Minecraft.class)
+public class MinecraftMixin {
 
     @Shadow
     @Nullable
-    public HitResult crosshairTarget;
+    public HitResult hitResult;
 
-    @Inject(method = "doItemUse", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/item/ItemStack;getCount()I"), cancellable = true)
+    @Inject(method = "startUseItem", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/world/item/ItemStack;getCount()I"), cancellable = true)
     private void testInteractionBlock(CallbackInfo ci, @Local ItemStack itemStack) {
-        BlockHitResult blockHitResult = (BlockHitResult) this.crosshairTarget;
+        BlockHitResult blockHitResult = (BlockHitResult) this.hitResult;
         if (blockHitResult == null) return;
         if (Events.ON_BLOCK_INTERACTION.invoke(blockInteractionEvent -> blockInteractionEvent.interact(blockHitResult, itemStack))) {
             ci.cancel();
         }
     }
 
-    @Inject(method = "doAttack", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/hit/HitResult;getType()Lnet/minecraft/util/hit/HitResult$Type;"))
+    @Inject(method = "startAttack", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/phys/HitResult;getType()Lnet/minecraft/world/phys/HitResult$Type;"))
     private void onHit(CallbackInfoReturnable<Boolean> cir) {
         DropAnimation.clearData();
     }
 
-    @Inject(method = "setWorld", at = @At(value = "TAIL"))
-    private void onWorld(ClientWorld world, CallbackInfo ci) {
+    @Inject(method = "updateLevelInEngines", at = @At(value = "TAIL"))
+    private void onWorld(ClientLevel world, CallbackInfo ci) {
         Events.ON_WORLD_CHANGE.invoke(WorldEvent::onWorldSwap);
     }
 }

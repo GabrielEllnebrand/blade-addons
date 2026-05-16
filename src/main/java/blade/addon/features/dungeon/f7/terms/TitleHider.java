@@ -4,16 +4,15 @@ import blade.addon.utils.Location;
 import blade.addon.utils.config.values.Floor7;
 import blade.addon.utils.data.EntityUtil;
 import blade.addon.utils.dungeon.Phase;
-import net.minecraft.text.Text;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import net.minecraft.network.chat.Component;
 
 public class TitleHider {
 
     private static final Pattern TERMINALS_DONE_PATTERN = Pattern.compile("^(\\w+) (activated|completed) a (terminal|device|lever)! \\((\\d)/(\\d)\\)$");
 
-    public static boolean shouldHideTitle(Text title) {
+    public static boolean shouldHideTitle(Component title) {
         if (!(Floor7.hideTerminalTitles && Phase.inP3() && Location.inDungeon())) return false;
         String titleString = title.getString().replaceAll("§.", "");
 

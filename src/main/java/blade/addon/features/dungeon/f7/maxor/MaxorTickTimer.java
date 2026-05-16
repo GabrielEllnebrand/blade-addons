@@ -6,7 +6,7 @@ import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.events.Events;
 import blade.addon.utils.rendering.RenderUtils;
 import config.practical.hud.HUDComponent;
-import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.GuiGraphics;
 
 public class MaxorTickTimer {
 
@@ -28,7 +28,7 @@ public class MaxorTickTimer {
         return Floor7.enableMaxorTickTimer && Location.inDungeon() && Phase.inP1();
     }
 
-    public static void render(HUDComponent component, DrawContext context) {
+    public static void render(HUDComponent component, GuiGraphics context) {
         RenderUtils.drawTimer(component, context, tick, 0xffffffff);
     }
 

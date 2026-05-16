@@ -1,15 +1,15 @@
 package blade.addon.mixin;
 
 import blade.addon.utils.events.Events;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.world.chunk.WorldChunk;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.chunk.LevelChunk;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(WorldChunk.class)
-public abstract class ChunkMixin {
+@Mixin(LevelChunk.class)
+public abstract class LevelChunkMixin {
 
     @Inject(method = "setBlockEntity", at=@At("HEAD"))
     public void onBlockEntity(BlockEntity blockEntity, CallbackInfo ci) {

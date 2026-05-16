@@ -14,8 +14,8 @@ import blade.addon.features.other.SelectedPet;
 import blade.addon.utils.config.values.Dungeons;
 import blade.addon.utils.rendering.RenderUtils;
 import config.practical.hud.HUDComponent;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.network.chat.Component;
 
 public class CombinedScreenNotifications {
 
@@ -48,7 +48,7 @@ public class CombinedScreenNotifications {
         return false;
     }
 
-    public static void render(HUDComponent component, DrawContext context) {
+    public static void render(HUDComponent component, GuiGraphics context) {
         if (RunStartValidator.display()) {
             RunStartValidator.render(component, context);
         } else if (KeyNotifier.display()) {
@@ -72,7 +72,7 @@ public class CombinedScreenNotifications {
         }else if (BloodNotifier.display()) {
             BloodNotifier.render(component, context);
         }else {
-            RenderUtils.drawCenteredText(context, component, Text.literal("Some notification"));
+            RenderUtils.drawCenteredText(context, component, Component.literal("Some notification"));
         }
 
     }

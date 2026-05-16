@@ -6,9 +6,9 @@ import blade.addon.utils.config.values.Dungeons;
 import blade.addon.utils.data.EntityUtil;
 import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.events.Events;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.world.entity.player.Player;
 
 public class HidePlayers {
 
@@ -38,25 +38,25 @@ public class HidePlayers {
         return true;
     }
 
-    public static boolean testHideAtSS(PlayerEntity player) {
+    public static boolean testHideAtSS(Player player) {
         if (!Dungeons.hideAtSS || !Phase.inBoss()) return false;
         if (Dungeons.hideBeforeTermsOnly && Phase.inP3()) return false;
 
         return DeviceNotifier.atSS(player);
     }
 
-    public static boolean testHideInRange(PlayerEntity player) {
+    public static boolean testHideInRange(Player player) {
         if (!Dungeons.hidePlayersInRange) return false;
-        ClientPlayerEntity clientPlayer = MinecraftClient.getInstance().player;
+        LocalPlayer clientPlayer = Minecraft.getInstance().player;
         if (clientPlayer == null) return false;
 
-        double distance = player.getEntityPos().distanceTo(clientPlayer.getEntityPos());
+        double distance = player.position().distanceTo(clientPlayer.position());
         if (!Double.isFinite(distance) || !Double.isFinite(Dungeons.hidePlayerRange)) return false;
         return distance <= Dungeons.hidePlayerRange;
 
     }
 
-    public static boolean shouldHidePlayers(PlayerEntity player) {
+    public static boolean shouldHidePlayers(Player player) {
         if (!Location.inDungeon() || !EntityUtil.isARealPlayer(player) || EntityUtil.isClientPlayer(player)) return false;
 
         if (testHideAtLeap()) {

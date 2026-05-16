@@ -14,10 +14,9 @@ import config.practical.data.SoundData;
 import config.practical.hud.HUDComponent;
 import config.practical.manager.ConfigValue;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
-
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -47,7 +46,7 @@ public class Notifications {
             }
 
             if (Debug.sendNotiDebug) {
-                Misc.addChatMessage(Text.literal(message.replaceAll("§", "&")));
+                Misc.addChatMessage(Component.literal(message.replaceAll("§", "&")));
             }
 
             for (Notification notification : notifications) {
@@ -78,8 +77,8 @@ public class Notifications {
         return tick > 0;
     }
 
-    public static void render(HUDComponent component, DrawContext context) {
-        Text text = Text.literal(message != null ? message : "Some notification");
+    public static void render(HUDComponent component, GuiGraphics context) {
+        Component text = Component.literal(message != null ? message : "Some notification");
         RenderUtils.drawCenteredText(context, component, text);
     }
 
@@ -175,6 +174,6 @@ public class Notifications {
         if (!soundData.has("pitch")) return null;
         float pitch = soundData.get("pitch").getAsFloat();
 
-        return new SoundData(Identifier.of(sound), volume, pitch);
+        return new SoundData(Identifier.parse(sound), volume, pitch);
     }
 }

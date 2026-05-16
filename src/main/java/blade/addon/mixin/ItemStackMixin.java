@@ -7,7 +7,7 @@ import blade.addon.features.item.ItemRarityHolder;
 import blade.addon.features.item.PetHolder;
 import blade.addon.features.item.ProtectedItemHolder;
 import blade.addon.features.item.StarCountHolder;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 

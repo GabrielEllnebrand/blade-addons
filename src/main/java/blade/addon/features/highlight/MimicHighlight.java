@@ -4,19 +4,18 @@ import blade.addon.utils.Location;
 import blade.addon.utils.events.Events;
 import blade.addon.utils.rendering.RenderUtils;
 import blade.addon.utils.rendering.RenderingEvents;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderContext;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.TrappedChestBlockEntity;
-import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.math.Box;
-
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.TrappedChestBlockEntity;
+import net.minecraft.world.phys.AABB;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class MimicHighlight {
 
-    private static final Box box = new Box(0.0625, 0, 0.0625, 0.9375, 0.875, 0.9375);
+    private static final AABB box = new AABB(0.0625, 0, 0.0625, 0.9375, 0.875, 0.9375);
 
     private static final ConcurrentLinkedQueue<TrappedChestBlockEntity> mimics = new ConcurrentLinkedQueue<>();
 
@@ -42,17 +41,17 @@ public class MimicHighlight {
     }
 
 
-    private static void renderFilled(WorldRenderContext context, MatrixStack matrixStack, VertexConsumer consumer) {
+    private static void renderFilled(WorldRenderContext context, PoseStack matrixStack, VertexConsumer consumer) {
         if (!MobHighlight.highlightMimicChests || !MobHighlight.renderFilled()) return;
 
         float[] rgba = RenderUtils.toFloats(MobHighlight.mimicFilledColor);
-        mimics.forEach(mimic -> RenderUtils.renderFilled(box.offset(mimic.getPos()), rgba));
+        mimics.forEach(mimic -> RenderUtils.renderFilled(box.move(mimic.getBlockPos()), rgba));
     }
 
-    private static void renderOutline(WorldRenderContext context, MatrixStack matrixStack, VertexConsumer consumer) {
+    private static void renderOutline(WorldRenderContext context, PoseStack matrixStack, VertexConsumer consumer) {
         if (!MobHighlight.highlightMimicChests || !MobHighlight.renderOutline()) return;
 
         float[] rgba = RenderUtils.toFloats(MobHighlight.mimicOutlineColor);
-        mimics.forEach(mimic -> RenderUtils.renderOutline(box.offset(mimic.getPos()), rgba));
+        mimics.forEach(mimic -> RenderUtils.renderOutline(box.move(mimic.getBlockPos()), rgba));
     }
 }

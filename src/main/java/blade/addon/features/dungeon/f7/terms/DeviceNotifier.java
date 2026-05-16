@@ -7,19 +7,19 @@ import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.events.Events;
 import blade.addon.utils.rendering.RenderUtils;
 import config.practical.hud.HUDComponent;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.Text;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.Vec3;
 
 public class DeviceNotifier {
 
     private static final long TOTAL_DURATION = 1500;
 
-    private static final Vec3d SS_POSITION = new Vec3d(108, 119, 94);
+    private static final Vec3 SS_POSITION = new Vec3(108, 119, 94);
     private static final double DISTANCE = 3;
 
     private static long completedTime = 0;
@@ -33,7 +33,7 @@ public class DeviceNotifier {
             if ((Floor7.notifyPre4Completion && at4thDev()) || (Floor7.notifySSCompletion && atSS())) {
                 completedTime = System.currentTimeMillis();
                 showNotification = true;
-                Scheduler.scheduleSound(SoundEvents.BLOCK_NOTE_BLOCK_PLING.value(), 1, 1);
+                Scheduler.scheduleSound(SoundEvents.NOTE_BLOCK_PLING.value(), 1, 1);
             }
 
             return false;
@@ -41,22 +41,22 @@ public class DeviceNotifier {
     }
 
     public static boolean atSS() {
-        ClientPlayerEntity player = MinecraftClient.getInstance().player;
+        LocalPlayer player = Minecraft.getInstance().player;
         if (player == null) return false;
-        return SS_POSITION.distanceTo(player.getEntityPos()) <= DISTANCE;
+        return SS_POSITION.distanceTo(player.position()) <= DISTANCE;
     }
 
-    public static boolean atSS(PlayerEntity player) {
-        return SS_POSITION.distanceTo(player.getEntityPos()) <= DISTANCE;
+    public static boolean atSS(Player player) {
+        return SS_POSITION.distanceTo(player.position()) <= DISTANCE;
     }
 
     public static boolean at4thDev() {
-        ClientPlayerEntity player = MinecraftClient.getInstance().player;
+        LocalPlayer player = Minecraft.getInstance().player;
         if (player == null) return false;
         return (player.getX() >= 63 && player.getX() <= 64 && player.getY() == 127 && player.getZ() >= 35 && player.getZ() <= 36);
     }
 
-    public static boolean disableTitles(Text title) {
+    public static boolean disableTitles(Component title) {
         if (!(((Floor7.disableTitlesAtPre4 && at4thDev()) || (Floor7.disableTitlesAtSS && atSS())) && Phase.inTerminals()))
             return false;
 
@@ -74,8 +74,8 @@ public class DeviceNotifier {
         return showNotification;
     }
 
-    public static void render(HUDComponent component, DrawContext context) {
+    public static void render(HUDComponent component, GuiGraphics context) {
         if (System.currentTimeMillis() - completedTime >= TOTAL_DURATION) showNotification = false;
-        RenderUtils.drawCenteredText(context, component, Text.literal("§aDevice Completed!"));
+        RenderUtils.drawCenteredText(context, component, Component.literal("§aDevice Completed!"));
     }
 }

@@ -7,8 +7,8 @@ import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.events.Events;
 import blade.addon.utils.times.PersonalBests;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.text.Text;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.network.chat.Component;
 
 public class PredevTimer {
 
@@ -33,7 +33,7 @@ public class PredevTimer {
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             if (!shouldTrack || at3rdDev || (!Floor7.predevForAll && !DungeonClass.isClass(DungeonClass.HEALER))) return;
-            ClientPlayerEntity player = client.player;
+            LocalPlayer player = client.player;
             if (player == null) return;
             if (Misc.getDistance(player.getX(), player.getZ(), 1, 77) <= 3) {
                 at3rdDev = true;
@@ -42,7 +42,7 @@ public class PredevTimer {
 
         Events.ON_LEAP.register(message -> {
             if (at3rdDev && shouldTrack && (DungeonClass.isClass(DungeonClass.HEALER) || Floor7.predevForAll)) {
-                PersonalBests.predevTime.testNewTime(Text.literal("§aPredev completed in "), bossEnterTime);
+                PersonalBests.predevTime.testNewTime(Component.literal("§aPredev completed in "), bossEnterTime);
                 at3rdDev = false;
                 shouldTrack = false;
             }

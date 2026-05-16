@@ -4,10 +4,9 @@ import blade.addon.utils.config.values.Dungeons;
 import blade.addon.utils.events.Events;
 import blade.addon.utils.rendering.RenderUtils;
 import config.practical.hud.HUDComponent;
-import net.minecraft.client.gui.DrawContext;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import net.minecraft.client.gui.GuiGraphics;
 
 public class WarpCooldown {
 
@@ -43,7 +42,7 @@ public class WarpCooldown {
         }
     }
 
-    public static void render(HUDComponent component, DrawContext context) {
+    public static void render(HUDComponent component, GuiGraphics context) {
         double timeRemaining = Math.max((endTime - System.currentTimeMillis()) / 1000.0, 0);
         RenderUtils.drawPrefixedTimer(component, context, "Warp Cooldown", timeRemaining);
     }

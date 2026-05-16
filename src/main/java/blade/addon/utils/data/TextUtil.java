@@ -1,10 +1,10 @@
 package blade.addon.utils.data;
 
 import blade.addon.utils.Constants;
-import net.minecraft.text.OrderedText;
-import net.minecraft.text.Style;
-import net.minecraft.text.TextColor;
-import net.minecraft.util.Formatting;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TextColor;
+import net.minecraft.util.FormattedCharSequence;
 
 public class TextUtil {
 
@@ -31,18 +31,18 @@ public class TextUtil {
         }
     }
 
-    public static String orderedTextToString(OrderedText text) {
+    public static String orderedTextToString(FormattedCharSequence text) {
         StringBuilder builder = new StringBuilder();
         acceptOrderedText(builder, text);
         return builder.toString();
     }
 
-    public static void acceptOrderedText(StringBuilder builder, OrderedText orderedText) {
+    public static void acceptOrderedText(StringBuilder builder, FormattedCharSequence orderedText) {
         StyleTracker tracker = new StyleTracker();
         acceptOrderedText(builder, tracker, orderedText);
     }
 
-    private static void acceptOrderedText(StringBuilder builder, StyleTracker tracker, OrderedText orderedText) {
+    private static void acceptOrderedText(StringBuilder builder, StyleTracker tracker, FormattedCharSequence orderedText) {
         orderedText.accept((index, style, codePoint) -> {
             acceptStyle(builder, tracker, style);
             builder.appendCodePoint(codePoint);
@@ -62,10 +62,10 @@ public class TextUtil {
         if (style == null) return;
 
         TextColor color = style.getColor();
-        if (color != null && color.getRgb() != tracker.currentColor) {
+        if (color != null && color.getValue() != tracker.currentColor) {
             builder.append('§');
-            builder.append(getFormatChar(color.getRgb()));
-            tracker.currentColor = color.getRgb();
+            builder.append(getFormatChar(color.getValue()));
+            tracker.currentColor = color.getValue();
         }
 
         if (style.isObfuscated() &&  !tracker.isObfuscated) {
@@ -105,12 +105,12 @@ public class TextUtil {
     }
 
     private static char getFormatChar(int color) {
-        for (Formatting format: Formatting.values()) {
-            Integer colorValue = format.getColorValue();
+        for (ChatFormatting format: ChatFormatting.values()) {
+            Integer colorValue = format.getColor();
             if (colorValue == null) continue;
 
             if (colorValue == color) {
-                return format.getCode();
+                return format.getChar();
             }
         }
 

@@ -3,8 +3,8 @@ package blade.addon.features.item;
 import blade.addon.utils.Location;
 import blade.addon.utils.config.values.Dungeons;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 
 public class DropAnimation {
 

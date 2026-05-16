@@ -13,18 +13,17 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderContext;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
-import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.text.Text;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.BlockHitResult;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -66,12 +65,12 @@ public class BossWaypoints {
 
     public static void setPlace(boolean shouldPlace) {
         place = shouldPlace;
-        Misc.addChatMessage(Text.literal("Edit mode: ").append(Misc.getStatusText(place)));
+        Misc.addChatMessage(Component.literal("Edit mode: ").append(Misc.getStatusText(place)));
     }
 
     public static void setIgnoreBoss(boolean shouldIgnoreBoss) {
         ignoreBoss = shouldIgnoreBoss;
-        Misc.addChatMessage(Text.literal("Ignore boss: ").append(Misc.getStatusText(ignoreBoss)));
+        Misc.addChatMessage(Component.literal("Ignore boss: ").append(Misc.getStatusText(ignoreBoss)));
     }
 
     public static void togglePlace() {
@@ -116,9 +115,9 @@ public class BossWaypoints {
         save();
     }
 
-    private static ActionResult onBlock(PlayerEntity playerEntity, World world, Hand hand, BlockHitResult blockHitResult) {
-        if (!isInValidArea() || !EntityUtil.isClientPlayer(playerEntity)) return ActionResult.PASS;
-        if (hand == Hand.OFF_HAND) return ActionResult.PASS;
+    private static InteractionResult onBlock(Player playerEntity, Level world, InteractionHand hand, BlockHitResult blockHitResult) {
+        if (!isInValidArea() || !EntityUtil.isClientPlayer(playerEntity)) return InteractionResult.PASS;
+        if (hand == InteractionHand.OFF_HAND) return InteractionResult.PASS;
 
         BlockPos pos = blockHitResult.getBlockPos();
 
@@ -126,7 +125,7 @@ public class BossWaypoints {
         int y = pos.getY();
         int z = pos.getZ();
 
-        if (!place) return ActionResult.PASS;
+        if (!place) return InteractionResult.PASS;
 
         Waypoint waypoint = getWaypoint(x, y, z);
         if (waypoint == null) {
@@ -136,10 +135,10 @@ public class BossWaypoints {
         }
 
         save();
-        return ActionResult.PASS;
+        return InteractionResult.PASS;
     }
 
-    private static void render(WorldRenderContext context, MatrixStack matrixStack, VertexConsumer consumer) {
+    private static void render(WorldRenderContext context, PoseStack matrixStack, VertexConsumer consumer) {
         if (!isInValidArea()) return;
 
         waypoints.forEach(waypoint -> {
@@ -149,7 +148,7 @@ public class BossWaypoints {
         });
     }
 
-    private static void renderThroughWall(WorldRenderContext context, MatrixStack matrixStack, VertexConsumer consumer) {
+    private static void renderThroughWall(WorldRenderContext context, PoseStack matrixStack, VertexConsumer consumer) {
         if (!isInValidArea()) return;
 
         waypoints.forEach(waypoint -> {

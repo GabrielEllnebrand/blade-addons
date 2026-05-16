@@ -9,8 +9,8 @@ import blade.addon.utils.Constants;
 import blade.addon.utils.config.values.Floor7;
 import blade.addon.utils.rendering.RenderUtils;
 import config.practical.hud.HUDComponent;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.network.chat.Component;
 
 public class CombinedTickTimer {
 
@@ -31,7 +31,7 @@ public class CombinedTickTimer {
         return false;
     }
 
-    public static void render(HUDComponent component, DrawContext context) {
+    public static void render(HUDComponent component, GuiGraphics context) {
         if (CrystalSpawn.display()) {
             CrystalSpawn.render(component, context);
         } else if (StormTickTimer.display()) {
@@ -43,7 +43,7 @@ public class CombinedTickTimer {
         } else if (RelicTimer.display()) {
             RelicTimer.render(component, context);
         } else {
-            RenderUtils.drawCenteredText(context, component, Text.literal(Constants.DECIMAL_FORMAT.format(0.0)));
+            RenderUtils.drawCenteredText(context, component, Component.literal(Constants.DECIMAL_FORMAT.format(0.0)));
         }
 
     }

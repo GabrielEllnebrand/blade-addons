@@ -2,13 +2,12 @@ package blade.addon.features.item;
 
 import blade.addon.utils.config.values.ExtraOptions;
 import blade.addon.utils.rendering.DrawEvents;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.LoreComponent;
-import net.minecraft.item.ItemStack;
-import net.minecraft.text.Text;
-
 import java.util.List;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.ItemLore;
 
 public class SelectedPetHighlight {
 
@@ -16,7 +15,7 @@ public class SelectedPetHighlight {
         DrawEvents.INVENTORY_SLOT_BEFORE.register(SelectedPetHighlight::draw);
     }
 
-    private static void draw(DrawContext context, ItemStack stack, int x, int y) {
+    private static void draw(GuiGraphics context, ItemStack stack, int x, int y) {
         if (!ExtraOptions.highlightSelectedPet) return;
 
         PetHolder holder = (PetHolder) (Object) stack;
@@ -32,13 +31,13 @@ public class SelectedPetHighlight {
     }
 
     public static boolean isSelected(ItemStack item) {
-        LoreComponent lore = item.get(DataComponentTypes.LORE);
+        ItemLore lore = item.get(DataComponents.LORE);
         if (lore == null) return false;
 
-        List<Text> lines = lore.lines();
+        List<Component> lines = lore.lines();
         if (lines.isEmpty()) return false;
 
-        for (Text text : lines) {
+        for (Component text : lines) {
             if (text == null) continue;
             if (text.getString().equals("Click to despawn!")) return true;
         }

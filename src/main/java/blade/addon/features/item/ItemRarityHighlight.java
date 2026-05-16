@@ -3,27 +3,26 @@ package blade.addon.features.item;
 import blade.addon.utils.Constants;
 import blade.addon.utils.config.values.Visual;
 import blade.addon.utils.rendering.DrawEvents;
-import net.minecraft.client.gl.RenderPipelines;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.LoreComponent;
-import net.minecraft.item.ItemStack;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
-
 import java.util.List;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.ItemLore;
 
 public class ItemRarityHighlight {
 
-    private static final Identifier NORMAL_BACKGROUND = Identifier.of(Constants.NAMESPACE, "rarity-background");
-    private static final Identifier CIRCLE_BACKGROUND = Identifier.of(Constants.NAMESPACE, "rarity-background-circle");
+    private static final Identifier NORMAL_BACKGROUND = Identifier.fromNamespaceAndPath(Constants.NAMESPACE, "rarity-background");
+    private static final Identifier CIRCLE_BACKGROUND = Identifier.fromNamespaceAndPath(Constants.NAMESPACE, "rarity-background-circle");
 
     public static void init() {
         DrawEvents.INVENTORY_SLOT_BEFORE.register(ItemRarityHighlight::draw);
         DrawEvents.HUD_SLOT_BEFORE.register(ItemRarityHighlight::draw);
     }
 
-    private static void draw(DrawContext context, ItemStack stack, int x, int y) {
+    private static void draw(GuiGraphics context, ItemStack stack, int x, int y) {
         if (!Visual.itemRarityBackground) return;
         ItemRarityHolder holder = (ItemRarityHolder) (Object) stack;
         assert holder != null;
@@ -37,20 +36,20 @@ public class ItemRarityHighlight {
 
         ItemRarity rarity = holder.blade_addons$getItemRarity();
         if (Visual.circularRarityBackground) {
-            context.drawGuiTexture(RenderPipelines.GUI_TEXTURED, CIRCLE_BACKGROUND, x, y, 16, 16, rarity.getColor());
+            context.blitSprite(RenderPipelines.GUI_TEXTURED, CIRCLE_BACKGROUND, x, y, 16, 16, rarity.getColor());
         } else {
-            context.drawGuiTexture(RenderPipelines.GUI_TEXTURED, NORMAL_BACKGROUND, x, y, 16, 16, rarity.getColor());
+            context.blitSprite(RenderPipelines.GUI_TEXTURED, NORMAL_BACKGROUND, x, y, 16, 16, rarity.getColor());
         }
     }
 
     public static ItemRarity getRarity(ItemStack item) {
-        LoreComponent lore = item.get(DataComponentTypes.LORE);
+        ItemLore lore = item.get(DataComponents.LORE);
         if (lore == null)  return ItemRarity.NONE;
 
-        List<Text> lines = lore.lines();
+        List<Component> lines = lore.lines();
         if (lines.isEmpty()) return ItemRarity.NONE;
 
-        for (Text line: lines.reversed()) {
+        for (Component line: lines.reversed()) {
             String string = line.getString();
             String[] rarityStrings = string.split(" ");
 

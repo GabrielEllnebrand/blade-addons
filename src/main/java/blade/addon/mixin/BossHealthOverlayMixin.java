@@ -3,25 +3,25 @@ package blade.addon.mixin;
 import blade.addon.utils.config.values.Dungeons;
 import blade.addon.utils.debug.Debug;
 import blade.addon.utils.rendering.RenderUtils;
-import net.minecraft.client.gui.hud.BossBarHud;
-import net.minecraft.client.gui.hud.ClientBossBar;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.components.BossHealthOverlay;
+import net.minecraft.client.gui.components.LerpingBossEvent;
+import net.minecraft.network.chat.Component;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
-@Mixin(BossBarHud.class)
-public class BossBarHudMixin {
+@Mixin(BossHealthOverlay.class)
+public class BossHealthOverlayMixin {
 
     @Redirect(
             method = "render",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/ClientBossBar;getName()Lnet/minecraft/text/Text;")
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/components/LerpingBossEvent;getName()Lnet/minecraft/network/chat/Component;")
     )
-    private Text modifyBossBarText(ClientBossBar bossBar) {
+    private Component modifyBossBarText(LerpingBossEvent bossBar) {
         if (!Dungeons.bossHealthNumbers) return bossBar.getName();
 
         try {
-            Text text = bossBar.getName();
+            Component text = bossBar.getName();
             String string = text.getString();
 
             String name = string.replaceAll("§.", "");
@@ -44,8 +44,8 @@ public class BossBarHudMixin {
                     return text;
             }
 
-            float currHealth = health * bossBar.getPercent();
-            return Text.literal("§c" + name + " §a" + RenderUtils.formatNumber(currHealth) + "§7/§a" + RenderUtils.formatNumber(health));
+            float currHealth = health * bossBar.getProgress();
+            return Component.literal("§c" + name + " §a" + RenderUtils.formatNumber(currHealth) + "§7/§a" + RenderUtils.formatNumber(health));
         } catch (Exception e) {
             Debug.LOGGER.error("Failed to modify bossbar name!", e);
             return bossBar.getName();

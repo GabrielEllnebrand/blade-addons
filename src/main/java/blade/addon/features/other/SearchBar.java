@@ -5,16 +5,16 @@ import blade.addon.utils.config.values.ExtraOptions;
 import blade.addon.utils.data.ItemUtil;
 import blade.addon.utils.rendering.DrawEvents;
 import blade.addon.utils.rendering.RenderUtils;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.Click;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.client.input.CharInput;
-import net.minecraft.client.input.KeyInput;
-import net.minecraft.client.util.Window;
-import net.minecraft.item.ItemStack;
-import net.minecraft.text.Text;
+import com.mojang.blaze3d.platform.Window;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.input.CharacterEvent;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.ItemStack;
 import org.lwjgl.glfw.GLFW;
 
 public class SearchBar {
@@ -22,7 +22,7 @@ public class SearchBar {
     private static final int SEARCH_Y = 20;
     private static final int SEARCH_WIDTH = 150;
     private static final int SEARCH_HEIGHT = 20;
-    private static TextFieldWidget searchBar;
+    private static EditBox searchBar;
     private static boolean shouldDisplay = false;
     private static String searchTerm = "";
     private static double parsedValue = Double.NaN;
@@ -39,28 +39,28 @@ public class SearchBar {
     }
 
     private static boolean matches(ItemStack item) {
-        String name = item.getName().getString().toLowerCase();
+        String name = item.getHoverName().getString().toLowerCase();
         if (name.equals("air")) return false;
 
         return (name.contains(searchTerm) || ItemUtil.containsIgnoreCaseLore(item, searchTerm));
     }
 
-    public static void render(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
+    public static void render(GuiGraphics context, int mouseX, int mouseY, float deltaTicks) {
         if (!exists() || !shouldDisplay() || !ExtraOptions.toggleableSearchBar) return;
         searchBar.render(context, mouseX, mouseY, deltaTicks);
 
         if (!Double.isNaN(parsedValue)) {
             String expression = "  §e= §2" + RenderUtils.formatNumber((float) parsedValue);
-            TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
+            Font textRenderer = Minecraft.getInstance().font;
             if (textRenderer == null) return;
 
-            int textX = searchBar.getX() + textRenderer.getWidth(searchTerm) + 4;
+            int textX = searchBar.getX() + textRenderer.width(searchTerm) + 4;
             int textY = searchBar.getY() + (searchBar.getHeight() - 8) / 2;
-            context.drawText(textRenderer, expression, textX, textY, 0xffffffff, true);
+            context.drawString(textRenderer, expression, textX, textY, 0xffffffff, true);
         }
     }
 
-    public static boolean keyPressed(KeyInput input) {
+    public static boolean keyPressed(KeyEvent input) {
         if (!exists() || !ExtraOptions.toggleableSearchBar) return false;
 
         boolean ctrlIsPressed = (input.modifiers() & GLFW.GLFW_MOD_CONTROL) != 0;
@@ -71,7 +71,7 @@ public class SearchBar {
         } else if (shouldDisplay() && searchBar.isFocused()) {
             if (input.key() == GLFW.GLFW_KEY_ENTER) {
                 if (!Double.isNaN(parsedValue)) {
-                    searchBar.setText(RenderUtils.formatNumber((float) parsedValue));
+                    searchBar.setValue(RenderUtils.formatNumber((float) parsedValue));
                 }
             } else if (input.key() != GLFW.GLFW_KEY_ESCAPE) {
                 searchBar.keyPressed(input);
@@ -81,12 +81,12 @@ public class SearchBar {
         return false;
     }
 
-    public static void CharTyped(CharInput input) {
+    public static void CharTyped(CharacterEvent input) {
         if (!exists() || !searchBar.isFocused() || !shouldDisplay() || !ExtraOptions.toggleableSearchBar) return;
         searchBar.charTyped(input);
     }
 
-    public static void onMouseClick(Click click) {
+    public static void onMouseClick(MouseButtonEvent click) {
         if (!exists() || !shouldDisplay() || !ExtraOptions.toggleableSearchBar) return;
         searchBar.setFocused(inBounds(click.x(), click.y()));
     }
@@ -99,14 +99,14 @@ public class SearchBar {
     private static boolean exists() {
         if (searchBar != null) return true;
 
-        MinecraftClient mc = MinecraftClient.getInstance();
-        TextRenderer textRenderer = mc.textRenderer;
+        Minecraft mc = Minecraft.getInstance();
+        Font textRenderer = mc.font;
         Window window = mc.getWindow();
 
         if (window == null || textRenderer == null) return false;
 
-        searchBar = new TextFieldWidget(textRenderer, (window.getScaledWidth() - SEARCH_WIDTH) / 2, SEARCH_Y, SEARCH_WIDTH, SEARCH_HEIGHT, Text.literal(""));
-        searchBar.setChangedListener(string -> {
+        searchBar = new EditBox(textRenderer, (window.getGuiScaledWidth() - SEARCH_WIDTH) / 2, SEARCH_Y, SEARCH_WIDTH, SEARCH_HEIGHT, Component.literal(""));
+        searchBar.setResponder(string -> {
             searchTerm = string.toLowerCase();
             parsedValue = MathParser.parseExpression(searchTerm);
         });

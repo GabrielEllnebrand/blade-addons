@@ -3,7 +3,7 @@ package blade.addon.utils.config.values;
 import blade.addon.features.dungeon.f7.dragons.DragSpawnTimer;
 import config.practical.data.SoundData;
 import config.practical.manager.ConfigValue;
-import net.minecraft.sound.SoundEvents;
+import net.minecraft.sounds.SoundEvents;
 
 public class Floor7 {
 
@@ -89,7 +89,7 @@ public class Floor7 {
     public static int notificationDuration = 15;
 
     @ConfigValue
-    public static SoundData atLocationSound = new SoundData(SoundEvents.BLOCK_NOTE_BLOCK_PLING.value(), 1, 1);
+    public static SoundData atLocationSound = new SoundData(SoundEvents.NOTE_BLOCK_PLING.value(), 1, 1);
 
     @ConfigValue
     public static int notificationRepetitions = 3;
@@ -161,7 +161,7 @@ public class Floor7 {
     public static boolean sectionCompletionNotification = false;
 
     @ConfigValue
-    public static SoundData sectionChangeSound = new SoundData(SoundEvents.BLOCK_NOTE_BLOCK_PLING.value(), 0, 1);
+    public static SoundData sectionChangeSound = new SoundData(SoundEvents.NOTE_BLOCK_PLING.value(), 0, 1);
 
     @ConfigValue
     public static boolean enableMaxorTickTimer = false;

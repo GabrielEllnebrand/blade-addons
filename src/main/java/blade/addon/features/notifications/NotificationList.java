@@ -1,16 +1,16 @@
 package blade.addon.features.notifications;
 
+import com.mojang.blaze3d.platform.Window;
 import config.practical.ConfigScroll;
 import config.practical.utilities.Constants;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.util.Window;
-import net.minecraft.text.Text;
 import org.joml.Matrix3x2fStack;
 
 import java.util.List;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
 
 public class NotificationList extends Screen {
 
@@ -22,45 +22,45 @@ public class NotificationList extends Screen {
 
     private final Screen parent;
     private final ConfigScroll scroll;
-    private final ButtonWidget addNotification;
+    private final Button addNotification;
 
     public NotificationList() {
-        super(Text.literal("Notifications"));
+        super(Component.literal("Notifications"));
 
-        MinecraftClient client = MinecraftClient.getInstance();
-        parent = client.currentScreen;
+        Minecraft client = Minecraft.getInstance();
+        parent = client.screen;
         Window window = client.getWindow();
 
-        scroll = new ConfigScroll(0,  BUTTON_HEIGHT + TITLE_Y_OFFSET + 16, window.getScaledWidth(), window.getScaledHeight() - BUTTON_HEIGHT, Constants.WIDGET_WIDTH);
-        addNotification = ButtonWidget.builder(Text.literal("Add notification"), this::addNotification).position((window.getScaledWidth() - Constants.WIDGET_WIDTH) / 2,  TITLE_Y_OFFSET + 16).width(100).build();
+        scroll = new ConfigScroll(0,  BUTTON_HEIGHT + TITLE_Y_OFFSET + 16, window.getGuiScaledWidth(), window.getGuiScaledHeight() - BUTTON_HEIGHT, Constants.WIDGET_WIDTH);
+        addNotification = Button.builder(Component.literal("Add notification"), this::addNotification).pos((window.getGuiScaledWidth() - Constants.WIDGET_WIDTH) / 2,  TITLE_Y_OFFSET + 16).width(100).build();
     }
 
     @Override
     protected void init() {
         super.init();
-        this.addDrawableChild(scroll);
-        this.addDrawableChild(addNotification);
+        this.addRenderableWidget(scroll);
+        this.addRenderableWidget(addNotification);
         updateList();
     }
 
     @Override
-    public void render(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
+    public void render(GuiGraphics context, int mouseX, int mouseY, float deltaTicks) {
         super.render(context, mouseX, mouseY, deltaTicks);
 
-        float centerX = (MinecraftClient.getInstance().getWindow().getScaledWidth() - (this.textRenderer.getWidth(this.title) * TITLE_SCALAR)) / 2;
-        Matrix3x2fStack stack = context.getMatrices();
+        float centerX = (Minecraft.getInstance().getWindow().getGuiScaledWidth() - (this.font.width(this.title) * TITLE_SCALAR)) / 2;
+        Matrix3x2fStack stack = context.pose();
         stack.pushMatrix();
         stack.translate(centerX, TITLE_Y_OFFSET);
         stack.scale(TITLE_SCALAR, TITLE_SCALAR);
-        context.drawText(this.textRenderer, this.title, 0, 0, TITLE_COLOR, true);
+        context.drawString(this.font, this.title, 0, 0, TITLE_COLOR, true);
         stack.popMatrix();
     }
 
     @Override
-    public void close() {
-        assert this.client != null;
+    public void onClose() {
+        assert this.minecraft != null;
         Notifications.save();
-        this.client.setScreen(this.parent);
+        this.minecraft.setScreen(this.parent);
     }
 
     private void updateList() {
@@ -73,10 +73,10 @@ public class NotificationList extends Screen {
         }
 
         scroll.update();
-        scroll.setScrollY(0);
+        scroll.setScrollAmount(0);
     }
 
-    private void addNotification(ButtonWidget buttonWidget) {
+    private void addNotification(Button buttonWidget) {
         Notification notification = new Notification();
         Notifications.addNotification(notification);
         updateList();

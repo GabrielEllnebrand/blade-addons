@@ -5,25 +5,24 @@ import blade.addon.utils.data.EntityUtil;
 import blade.addon.utils.events.Events;
 import blade.addon.utils.rendering.RenderUtils;
 import blade.addon.utils.rendering.RenderingEvents;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderContext;
-import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.passive.BatEntity;
-
+import net.minecraft.world.entity.ambient.Bat;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class BatHighlight {
 
     private static final float[] BAT_HEALTHS = {100.0f, 200.0f, 400.0f, 800.0f};
 
-    private static final ConcurrentLinkedQueue<BatEntity> bats = new ConcurrentLinkedQueue<>();
+    private static final ConcurrentLinkedQueue<Bat> bats = new ConcurrentLinkedQueue<>();
 
     public static void init() {
 
         Events.ON_ENTITY_TRACKED.register((entity, world) -> {
             if (!Location.inDungeon() || !MobHighlight.mobHighlight) return false;
-            if (entity instanceof BatEntity bat && !bats.contains(bat)) {
+            if (entity instanceof Bat bat && !bats.contains(bat)) {
                 for (float health : BAT_HEALTHS) {
                     if (health == bat.getHealth()) {
                         bats.add(bat);
@@ -38,20 +37,20 @@ public class BatHighlight {
             return false;
         });
 
-        ClientTickEvents.END_CLIENT_TICK.register(client -> bats.removeIf(bat -> bat.isRemoved() ||bat.isDead()));
+        ClientTickEvents.END_CLIENT_TICK.register(client -> bats.removeIf(bat -> bat.isRemoved() ||bat.isDeadOrDying()));
 
         RenderingEvents.FILLED_ENTITY.register(BatHighlight::renderFilled);
         RenderingEvents.OUTLINE_ENTITY.register(BatHighlight::renderOutline);
     }
 
-    private static void renderFilled(WorldRenderContext context, MatrixStack matrixStack, VertexConsumer consumer) {
+    private static void renderFilled(WorldRenderContext context, PoseStack matrixStack, VertexConsumer consumer) {
         if (!MobHighlight.mobHighlight || !MobHighlight.renderFilled()) return;
 
         float[] rgba = RenderUtils.toFloats(MobHighlight.batFilledColor);
         bats.forEach(entity -> RenderUtils.renderFilled(EntityUtil.getBox(entity), rgba));
     }
 
-    private static void renderOutline(WorldRenderContext context, MatrixStack matrixStack, VertexConsumer consumer) {
+    private static void renderOutline(WorldRenderContext context, PoseStack matrixStack, VertexConsumer consumer) {
         if (!MobHighlight.mobHighlight || !MobHighlight.renderOutline()) return;
 
         float[] rgba = RenderUtils.toFloats(MobHighlight.batOutlineColor);

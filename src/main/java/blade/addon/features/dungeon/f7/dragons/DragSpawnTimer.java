@@ -6,11 +6,11 @@ import blade.addon.utils.debug.Debug;
 import blade.addon.utils.events.Events;
 import blade.addon.utils.rendering.RenderUtils;
 import config.practical.hud.HUDComponent;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.network.packet.s2c.play.ParticleS2CPacket;
-import net.minecraft.particle.ParticleTypes;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.game.ClientboundLevelParticlesPacket;
+import net.minecraft.sounds.SoundEvents;
 
 public class DragSpawnTimer {
 
@@ -62,28 +62,28 @@ public class DragSpawnTimer {
         if (dragon == Dragon.NONE) return;
 
         if (currentDragon == Dragon.NONE) {
-            Debug.sendDebugMessage(Text.literal("Drag: " + currentDragon.name()));
+            Debug.sendDebugMessage(Component.literal("Drag: " + currentDragon.name()));
             currentDragon = dragon;
             tick = SPAWN_DURATION;
 
             if (Floor7.sendSoundOnDragSpawn) {
-                Misc.sendSound(SoundEvents.BLOCK_NOTE_BLOCK_PLING.value(), 0.75f, 1);
+                Misc.sendSound(SoundEvents.NOTE_BLOCK_PLING.value(), 0.75f, 1);
             }
 
         } else if (currentDragon != dragon && !hasDoneSplit) {
-            Debug.sendDebugMessage(Text.literal("comparing: " + currentDragon.name() + " and " +  dragon.name()));
+            Debug.sendDebugMessage(Component.literal("comparing: " + currentDragon.name() + " and " +  dragon.name()));
             currentDragon = Dragon.getPrio(dragon, currentDragon);
             hasDoneSplit = true;
         }
     }
 
-    private static boolean validParticle(ParticleS2CPacket packet) {
+    private static boolean validParticle(ClientboundLevelParticlesPacket packet) {
         if (packet.getCount() != 20) return false;
         if (packet.getY() != 19) return false;
-        if (packet.getParameters().getType() != ParticleTypes.FLAME) return false;
-        if (packet.getOffsetX() != 2) return false;
-        if (packet.getOffsetY() != 3) return false;
-        if (packet.getOffsetZ() != 2) return false;
+        if (packet.getParticle().getType() != ParticleTypes.FLAME) return false;
+        if (packet.getXDist() != 2) return false;
+        if (packet.getYDist() != 3) return false;
+        if (packet.getZDist() != 2) return false;
         if (packet.getX() % 1 != 0) return false;
         if (packet.getZ() % 1 != 0) return false;
         return true;
@@ -99,7 +99,7 @@ public class DragSpawnTimer {
         return Floor7.dragSpawnTimers && currentDragon != Dragon.NONE;
     }
 
-    public static void render(HUDComponent component, DrawContext context) {
+    public static void render(HUDComponent component, GuiGraphics context) {
         RenderUtils.drawTimer(component, context, tick, currentDragon.color);
     }
 }

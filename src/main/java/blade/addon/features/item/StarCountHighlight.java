@@ -2,13 +2,13 @@ package blade.addon.features.item;
 
 import blade.addon.utils.config.values.Visual;
 import blade.addon.utils.rendering.DrawEvents;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.NbtComponent;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomData;
 
 public class StarCountHighlight {
 
@@ -17,7 +17,7 @@ public class StarCountHighlight {
         DrawEvents.HUD_SLOT_AFTER.register(StarCountHighlight::draw);
     }
 
-    private static void draw(DrawContext context, ItemStack stack, int x, int y) {
+    private static void draw(GuiGraphics context, ItemStack stack, int x, int y) {
 
         if (!Visual.drawStarCount) return;
 
@@ -32,22 +32,22 @@ public class StarCountHighlight {
         if (starCount == 0) return;
 
 
-        TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
+        Font textRenderer = Minecraft.getInstance().font;
         String starText = "" + starCount;
-        context.drawText(MinecraftClient.getInstance().textRenderer, starText, x + 17 - textRenderer.getWidth(starText), y + 18 - textRenderer.fontHeight, 0xffffffff, true);
+        context.drawString(Minecraft.getInstance().font, starText, x + 17 - textRenderer.width(starText), y + 18 - textRenderer.lineHeight, 0xffffffff, true);
     }
 
     public static int getStarCount(ItemStack item) {
-        NbtComponent nbt = item.get(DataComponentTypes.CUSTOM_DATA);
+        CustomData nbt = item.get(DataComponents.CUSTOM_DATA);
         if (nbt == null)  return 0;
 
-        NbtCompound compound = nbt.copyNbt();
+        CompoundTag compound = nbt.copyTag();
 
-        int starCount = compound.getInt("upgrade_level", 0);
+        int starCount = compound.getIntOr("upgrade_level", 0);
         if (starCount == 0) {
             //the old star system they used to use.
             // Some items don't have the new data so this is a fallback
-            starCount = compound.getInt("dungeon_item_level", 0);
+            starCount = compound.getIntOr("dungeon_item_level", 0);
         }
 
         return starCount;

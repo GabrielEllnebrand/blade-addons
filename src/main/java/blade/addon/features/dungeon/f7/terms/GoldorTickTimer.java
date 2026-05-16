@@ -7,7 +7,7 @@ import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.events.Events;
 import blade.addon.utils.rendering.RenderUtils;
 import config.practical.hud.HUDComponent;
-import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.GuiGraphics;
 
 public class GoldorTickTimer {
 
@@ -31,7 +31,7 @@ public class GoldorTickTimer {
         return Floor7.enableGoldorTickTimer && Location.inDungeon() && Phase.inTerminals();
     }
 
-    public static void render(HUDComponent component, DrawContext context) {
+    public static void render(HUDComponent component, GuiGraphics context) {
         double num = tick * Constants.TICK_DURATION;
         double mod = num % 3;
         if (Floor7.inDeathTicks && !Floor7.makeGoldorTickUp) mod = 3.0 - mod;

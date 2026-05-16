@@ -6,34 +6,32 @@ import blade.addon.utils.debug.Debug;
 import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.events.Events;
 import blade.addon.utils.rendering.RenderingEvents;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderContext;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.client.render.DrawStyle;
-import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.render.VertexRendering;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.ColorHelper;
-import net.minecraft.world.debug.gizmo.GizmoDrawing;
-
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.gizmos.GizmoStyle;
+import net.minecraft.gizmos.Gizmos;
+import net.minecraft.util.ARGB;
+import net.minecraft.world.phys.AABB;
 import java.util.ArrayList;
 
 public class PositionMessages {
 
     static final ArrayList<PositionMessage> positionMessages = new ArrayList<>();
 
-    static PositionMessage SS = new PositionMessage("At SS!", new String[]{"ss"}, new Box(107, 120, 93, 110, 121, 95), new int[]{0, 1});
-    static PositionMessage EE2 = new PositionMessage("At EE2!", new String[]{"ee2", "early enter 2"}, new Box(57, 109, 130, 59, 110, 132), new int[]{1, 2});
-    static PositionMessage HEE2 = new PositionMessage("At High EE2!", new String[]{"high ee2", "highee2", "hee2"}, new Box(59, 132, 138, 62, 133, 140), new int[]{1, 2});
-    static PositionMessage EE3 = new PositionMessage("At EE3!", new String[]{"ee3", "early enter 3", "early entry 3"}, new Box(1, 109, 103, 3, 110, 106), new int[]{2, 3});
-    static PositionMessage CORE = new PositionMessage("At Core!", new String[]{"core"}, new Box(53, 115, 51, 56, 116, 54), new int[]{2, 3, 4});
-    static PositionMessage TUNNEL = new PositionMessage("Inside Goldor Tunnel!", new String[]{"tunnel"}, new Box(52, 114, 55, 57, 116, 58), new int[]{4, 5});
-    static PositionMessage SAFE_2 = new PositionMessage("At 2 Safespot!", new String[]{"2 safespot", "ee2 safespot", "safespot ee2", "s2 safespot", "safespot s2"}, new Box(46, 109, 121.987, 49, 110, 121.988), new int[]{1, 2});
-    static PositionMessage SAFE_3 = new PositionMessage("At 3 Safespot!", new String[]{"3 safespot", "ee3 safespot", "freaky ee3", "freak ee", "safespot s3", "safespot 3"}, new Box(18, 121, 91, 19, 126, 99), new int[]{2, 3});
-    static PositionMessage SPLIT_2 = new PositionMessage("At Split ee2!", new String[]{"split ee2", "splitee2", "mage term"}, new Box(58, 119, 124, 60, 123, 126), new int[]{1, 2});
-    static PositionMessage SAFE_2_HIGH = new PositionMessage("At High 2 Safespot!", new String[]{"2 safespot"}, new Box(70, 127, 143.7, 57, 133, 146.7), new int[]{1, 2});
+    static PositionMessage SS = new PositionMessage("At SS!", new String[]{"ss"}, new AABB(107, 120, 93, 110, 121, 95), new int[]{0, 1});
+    static PositionMessage EE2 = new PositionMessage("At EE2!", new String[]{"ee2", "early enter 2"}, new AABB(57, 109, 130, 59, 110, 132), new int[]{1, 2});
+    static PositionMessage HEE2 = new PositionMessage("At High EE2!", new String[]{"high ee2", "highee2", "hee2"}, new AABB(59, 132, 138, 62, 133, 140), new int[]{1, 2});
+    static PositionMessage EE3 = new PositionMessage("At EE3!", new String[]{"ee3", "early enter 3", "early entry 3"}, new AABB(1, 109, 103, 3, 110, 106), new int[]{2, 3});
+    static PositionMessage CORE = new PositionMessage("At Core!", new String[]{"core"}, new AABB(53, 115, 51, 56, 116, 54), new int[]{2, 3, 4});
+    static PositionMessage TUNNEL = new PositionMessage("Inside Goldor Tunnel!", new String[]{"tunnel"}, new AABB(52, 114, 55, 57, 116, 58), new int[]{4, 5});
+    static PositionMessage SAFE_2 = new PositionMessage("At 2 Safespot!", new String[]{"2 safespot", "ee2 safespot", "safespot ee2", "s2 safespot", "safespot s2"}, new AABB(46, 109, 121.987, 49, 110, 121.988), new int[]{1, 2});
+    static PositionMessage SAFE_3 = new PositionMessage("At 3 Safespot!", new String[]{"3 safespot", "ee3 safespot", "freaky ee3", "freak ee", "safespot s3", "safespot 3"}, new AABB(18, 121, 91, 19, 126, 99), new int[]{2, 3});
+    static PositionMessage SPLIT_2 = new PositionMessage("At Split ee2!", new String[]{"split ee2", "splitee2", "mage term"}, new AABB(58, 119, 124, 60, 123, 126), new int[]{1, 2});
+    static PositionMessage SAFE_2_HIGH = new PositionMessage("At High 2 Safespot!", new String[]{"2 safespot"}, new AABB(70, 127, 143.7, 57, 133, 146.7), new int[]{1, 2});
 
     public static void init() {
         ClientTickEvents.END_CLIENT_TICK.register(PositionMessages::tick);
@@ -73,9 +71,9 @@ public class PositionMessages {
 
     }
 
-    public static void tick(MinecraftClient client) {
+    public static void tick(Minecraft client) {
         if (!Location.inDungeon() || !Floor7.enablePositionalMessages) return;
-        ClientPlayerEntity player = client.player;
+        LocalPlayer player = client.player;
         if (player == null) return;
 
         for (PositionMessage message : positionMessages) {
@@ -99,16 +97,16 @@ public class PositionMessages {
         }
     }
 
-    private static void render(WorldRenderContext context, MatrixStack matrixStack, VertexConsumer consumer) {
+    private static void render(WorldRenderContext context, PoseStack matrixStack, VertexConsumer consumer) {
         if (!Location.inDungeon() || !Debug.renderPositions) return;
 
-        MatrixStack.Entry entry = matrixStack.peek();
+        PoseStack.Pose entry = matrixStack.last();
         for (PositionMessage positionMessage : positionMessages) {
-            Box box = positionMessage.getBox();
+            AABB box = positionMessage.getBox();
             if (positionMessage.sent()) {
-                GizmoDrawing.box(box, DrawStyle.stroked(ColorHelper.fromFloats(1.0f, 0, 1, 0)));
+                Gizmos.cuboid(box, GizmoStyle.stroke(ARGB.colorFromFloat(1.0f, 0, 1, 0)));
             } else {
-                GizmoDrawing.box(box, DrawStyle.stroked(ColorHelper.fromFloats(1.0f, 1, 0, 0)));
+                Gizmos.cuboid(box, GizmoStyle.stroke(ARGB.colorFromFloat(1.0f, 1, 0, 0)));
             }
         }
     }

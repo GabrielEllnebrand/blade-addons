@@ -1,7 +1,7 @@
 package blade.addon.utils.interfaces;
 
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
 
 public interface GameHud {
-    void blade_addons$forceTitle(Text title, Text subtitle);
+    void blade_addons$forceTitle(Component title, Component subtitle);
 }

@@ -3,20 +3,20 @@ package blade.addon.features.dungeon.f7.location;
 import blade.addon.utils.Misc;
 import blade.addon.utils.config.values.Floor7;
 import blade.addon.utils.dungeon.Section;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 
 public class PositionMessage {
 
     private final String message;
     private final String[] checks;
-    private final Box box;
+    private final AABB box;
     private boolean sent;
     private boolean personallySent;
     private final int[] sections;
 
-    public PositionMessage(String message, String[] checks, Box box, int[] sections) {
+    public PositionMessage(String message, String[] checks, AABB box, int[] sections) {
         this.message = message;
         this.checks = checks;
         this.box = box;
@@ -26,7 +26,7 @@ public class PositionMessage {
         PositionMessages.positionMessages.add(this);
     }
 
-    private boolean inRange(Vec3d pos) {
+    private boolean inRange(Vec3 pos) {
         return box.contains(pos);
     }
 
@@ -37,8 +37,8 @@ public class PositionMessage {
         return false;
     }
 
-    public void tick(ClientPlayerEntity player) {
-        if (sent || personallySent || !inAValidSection() || !inRange(player.getEntityPos())) return;
+    public void tick(LocalPlayer player) {
+        if (sent || personallySent || !inAValidSection() || !inRange(player.position())) return;
         if (Floor7.enablePositionalMessages) {
             Misc.executeCommand("pc " + message);
             personallySent = true;
@@ -72,7 +72,7 @@ public class PositionMessage {
         return sent;
     }
 
-    public Box getBox() {
+    public AABB getBox() {
         return box;
     }
 }

@@ -7,16 +7,16 @@ import blade.addon.utils.data.ItemUtil;
 import blade.addon.utils.events.Events;
 import blade.addon.utils.rendering.RenderUtils;
 import config.practical.hud.HUDComponent;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.entity.passive.WolfSoundVariants;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.resources.Identifier;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.entity.animal.wolf.WolfSoundVariants;
 
 public class RagDisplay {
 
-    private static final SoundEvent SOUND = SoundEvents.WOLF_SOUNDS.get(WolfSoundVariants.Type.CLASSIC).deathSound().value();
-    private static final SoundEvent OLD_RAG_SOUND = SoundEvent.of(Identifier.of(Constants.NAMESPACE, "wolf-howl"));
+    private static final SoundEvent SOUND = SoundEvents.WOLF_SOUNDS.get(WolfSoundVariants.SoundSet.CLASSIC).deathSound().value();
+    private static final SoundEvent OLD_RAG_SOUND = SoundEvent.createVariableRangeEvent(Identifier.fromNamespaceAndPath(Constants.NAMESPACE, "wolf-howl"));
     private static final int TOTAL_TICKS = 200;
 
     private static int tick = 0;
@@ -53,7 +53,7 @@ public class RagDisplay {
         return tick > 0;
     }
 
-    public static void render(HUDComponent component, DrawContext context) {
+    public static void render(HUDComponent component, GuiGraphics context) {
         RenderUtils.drawTimer(component, context, tick, Constants.YELLOW);
     }
 

@@ -9,13 +9,12 @@ import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.events.Events;
 import blade.addon.utils.rendering.RenderUtils;
 import config.practical.hud.HUDComponent;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.Text;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvents;
 
 public class ChestCounter {
 
@@ -35,7 +34,7 @@ public class ChestCounter {
 
         Events.ON_PLAYER_ENTRY.register(receivedEntry -> {
             if (receivedEntry == null || !Location.in(Location.DUNGEON_HUB)) return false;
-            Text text = receivedEntry.displayName();
+            Component text = receivedEntry.displayName();
             if (text == null) return false;
 
             String string = text.getString();
@@ -54,8 +53,8 @@ public class ChestCounter {
         Events.ON_RUN_END.register(() -> {
             countedChests++;
             if (Dungeons.sendChestWarning && chestDisplayCount + countedChests >= Dungeons.chestWarningCount) {
-                Scheduler.scheduleSound(SoundEvents.BLOCK_NOTE_BLOCK_PLING.value(), 2, 1);
-                Misc.setTitle(Text.literal("§cChest count reached"));
+                Scheduler.scheduleSound(SoundEvents.NOTE_BLOCK_PLING.value(), 2, 1);
+                Misc.setTitle(Component.literal("§cChest count reached"));
             }
 
             return false;
@@ -67,14 +66,14 @@ public class ChestCounter {
         return Dungeons.displayChestCount && Location.inDungeon();
     }
 
-    public static void render(HUDComponent component, DrawContext context) {
+    public static void render(HUDComponent component, GuiGraphics context) {
         int x = component.getScaledX();
         int y = component.getScaledY();
 
         if (hasUpdatedData) {
             RenderUtils.drawPrefixedText(component, context, "Chests", Math.min(chestDisplayCount + countedChests, 60) + "");
         } else {
-            context.drawText(MinecraftClient.getInstance().textRenderer, Text.literal("go to the dungeon hub"), x, y, Constants.RED, true);
+            context.drawString(Minecraft.getInstance().font, Component.literal("go to the dungeon hub"), x, y, Constants.RED, true);
 
         }
     }

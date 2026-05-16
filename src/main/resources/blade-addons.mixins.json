@@ -3,16 +3,16 @@
   "package": "blade.addon.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "ChunkMixin",
-    "ClientConnectionMixin",
-    "ClientPlayNetworkHandlerMixin",
+    "LevelChunkMixin",
+    "ConnectionMixin",
+    "ClientPacketListenerMixin",
     "EnderPearlItemMixin",
     "EntityMixin",
     "ItemStackMixin",
     "LivingEntityMixin",
-    "PlayerInventoryMixin",
+    "InventoryMixin",
     "ShovelItemMixin",
-    "StuckArrowsFeatureRendererMixin"
+    "ArrowLayerMixin"
   ],
   "injectors": {
     "defaultRequire": 1
@@ -21,24 +21,24 @@
     "requireAnnotations": true
   },
   "client": [
-    "BossBarHudMixin",
-    "ChatHudAccessor",
+    "BossHealthOverlayMixin",
+    "ChatComponentMixin",
     "ChatScreenMixin",
-    "ClientPlayerEntityMixin",
-    "ClientPlayNetworkHandlerMixin",
-    "DrawContextMixin",
+    "LocalPlayerMixin",
+    "ClientPacketListenerMixin",
+    "GuiGraphicsMixin",
     "EntityRendererMixin",
-    "EntityRenderManagerMixin",
+    "EntityRenderDispatcherMixin",
     "HandledScreenMixin",
     "HeldItemRendererMixin",
-    "InGameHudMixin",
+    "GuiMixin",
     "InventoryScreenMixin",
-    "KeyboardMixin",
-    "MinecraftClientMixin",
-    "MouseMixin",
+    "KeyboardHandlerMixin",
+    "MinecraftMixin",
+    "MouseHandlerMixin",
     "RecipeBookScreenMixin",
-    "RecipeBookWidgetMixin",
-    "SkullBlockEntityRendererMixin",
-    "StatusEffectsDisplayMixin"
+    "RecipeBookComponentMixin",
+    "SkullBlockRendererMixin",
+    "EffectsInInventoryMixin"
   ]
 }

@@ -11,24 +11,23 @@ import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.rendering.DrawEvents;
 import config.practical.manager.ConfigManager;
 import config.practical.manager.ConfigValue;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gl.RenderPipelines;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.ingame.HandledScreen;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.screen.ScreenHandler;
-import net.minecraft.screen.slot.Slot;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.collection.DefaultedList;
-
 import java.util.HashSet;
 import java.util.List;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.core.NonNullList;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
 
 public class ProtectItem {
 
-    private static final Identifier SPRITE = Identifier.of(Constants.NAMESPACE, "lock");
+    private static final Identifier SPRITE = Identifier.fromNamespaceAndPath(Constants.NAMESPACE, "lock");
 
     public static final ConfigManager itemManager = new ConfigManager(FolderUtility.OLD_PATH + FolderUtility.PROTECT_ITEMS_NAME,
             List.of(ProtectItem.class));
@@ -44,27 +43,27 @@ public class ProtectItem {
     }
 
     public static void protectSelected() {
-        ClientPlayerEntity player = MinecraftClient.getInstance().player;
+        LocalPlayer player = Minecraft.getInstance().player;
         if (player == null) {
             Debug.LOGGER.warn("Cant find client player to protect item");
             return;
         }
 
-        ItemStack item = player.getInventory().getSelectedStack();
+        ItemStack item = player.getInventory().getSelectedItem();
         String uuid = ItemUtil.getUuid(item);
         if (uuid == null) {
-            Misc.addChatMessage(Text.literal("Cant protect this item, it does not have a uuid"));
+            Misc.addChatMessage(Component.literal("Cant protect this item, it does not have a uuid"));
             return;
         }
         ProtectedItemHolder holder = (ProtectedItemHolder) (Object) item;
         if (protectedItems.contains(uuid)) {
             protectedItems.remove(uuid);
             holder.blade_addons$setProtected(false);
-            Misc.addChatMessage(Text.literal("Item ").append(item.getName()).append(" is NOT protected anymore"));
+            Misc.addChatMessage(Component.literal("Item ").append(item.getHoverName()).append(" is NOT protected anymore"));
         } else {
             protectedItems.add(uuid);
             holder.blade_addons$setProtected(true);
-            Misc.addChatMessage(Text.literal("Item ").append(item.getName()).append(" is protected"));
+            Misc.addChatMessage(Component.literal("Item ").append(item.getHoverName()).append(" is protected"));
         }
 
         itemManager.save();
@@ -82,7 +81,7 @@ public class ProtectItem {
         return protectedItems.contains(uuid);
     }
 
-    private static void draw(DrawContext context, ItemStack stack, int x, int y) {
+    private static void draw(GuiGraphics context, ItemStack stack, int x, int y) {
         if (!Visual.highlightProtectedItem) return;
         ProtectedItemHolder holder = (ProtectedItemHolder) (Object) stack;
         assert holder != null;
@@ -95,44 +94,44 @@ public class ProtectItem {
 
         if (!holder.blade_addons$isProtected()) return;
 
-        context.drawGuiTexture(RenderPipelines.GUI_TEXTURED, SPRITE, x, y, 16, 16, 0x99ffffff);
+        context.blitSprite(RenderPipelines.GUI_TEXTURED, SPRITE, x, y, 16, 16, 0x99ffffff);
     }
 
-    public static boolean blockGUI(HandledScreen screen, ItemStack item) {
+    public static boolean blockGUI(AbstractContainerScreen screen, ItemStack item) {
         if (!protect(item)) return false;
 
 
-        Text title = screen.getTitle();
+        Component title = screen.getTitle();
         if (title == null) return false;
         String name = title.getString();
 
         if (name.contains("Auction")) {
-            Misc.addChatMessage(Text.literal("Protected ").append(item.getName()).append(" From being auctioned"));
+            Misc.addChatMessage(Component.literal("Protected ").append(item.getHoverName()).append(" From being auctioned"));
             return true;
         }
 
         if (name.contains("Salvage")) {
-            Misc.addChatMessage(Text.literal("Protected ").append(item.getName()).append(" From being salvaged"));
+            Misc.addChatMessage(Component.literal("Protected ").append(item.getHoverName()).append(" From being salvaged"));
             return true;
         }
 
-        ScreenHandler handler = screen.getScreenHandler();
-        DefaultedList<Slot> slots = handler.slots;
+        AbstractContainerMenu handler = screen.getMenu();
+        NonNullList<Slot> slots = handler.slots;
 
         if (slots.size() > 49) {
             Slot slot = slots.get(49);
-            ItemStack stack = slot.getStack();
-            Text itemName = stack.getName();
+            ItemStack stack = slot.getItem();
+            Component itemName = stack.getHoverName();
             if (itemName != null && itemName.getString().contains("Sell Item") || ItemUtil.containsLore(stack, "Click to buyback!")) {
-                Misc.addChatMessage(Text.literal("Protected ").append(item.getName()).append(" From being sold"));
+                Misc.addChatMessage(Component.literal("Protected ").append(item.getHoverName()).append(" From being sold"));
                 return true;
             }
 
             slot = slots.get(4);
-            stack = slot.getStack();
-            itemName = stack.getName();
+            stack = slot.getItem();
+            itemName = stack.getHoverName();
             if (itemName != null && itemName.getString().contains("⇦ Your stuff")) {
-                Misc.addChatMessage(Text.literal("Protected ").append(item.getName()).append(" From being traded"));
+                Misc.addChatMessage(Component.literal("Protected ").append(item.getHoverName()).append(" From being traded"));
                 return true;
             }
 

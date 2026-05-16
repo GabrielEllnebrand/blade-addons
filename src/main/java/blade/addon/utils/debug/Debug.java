@@ -14,8 +14,8 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
-import net.minecraft.command.CommandRegistryAccess;
-import net.minecraft.text.Text;
+import net.minecraft.commands.CommandBuildContext;
+import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +34,7 @@ public class Debug {
     }
 
     private static void registerCommands(@NotNull CommandDispatcher<FabricClientCommandSource> dispatcher,
-                                         CommandRegistryAccess registryAccess) {
+                                         CommandBuildContext registryAccess) {
 
         dispatcher.register(ClientCommandManager.literal("badev")
                 .then(ClientCommandManager.literal("runInfo").executes(context -> {
@@ -44,19 +44,19 @@ public class Debug {
 
                 .then(ClientCommandManager.literal("debug").executes(context -> {
                     sendDebug = !sendDebug;
-                    Misc.addChatMessage(Text.literal("Send debug: ").append(Misc.getStatusText(sendDebug)));
+                    Misc.addChatMessage(Component.literal("Send debug: ").append(Misc.getStatusText(sendDebug)));
                     return Constants.SUCCESS;
                 }))
 
                 .then(ClientCommandManager.literal("sound").executes(context -> {
                     sendSound = !sendSound;
-                    Misc.addChatMessage(Text.literal("Send Sound: ").append(Misc.getStatusText(sendSound)));
+                    Misc.addChatMessage(Component.literal("Send Sound: ").append(Misc.getStatusText(sendSound)));
                     return Constants.SUCCESS;
                 }))
 
                 .then(ClientCommandManager.literal("termInfo").executes(context -> {
                     termInfo = !termInfo;
-                    Misc.addChatMessage(Text.literal("Terminal info: ").append(Misc.getStatusText(termInfo)));
+                    Misc.addChatMessage(Component.literal("Terminal info: ").append(Misc.getStatusText(termInfo)));
                     return Constants.SUCCESS;
                 }))
 
@@ -68,13 +68,13 @@ public class Debug {
 
                 .then(ClientCommandManager.literal("drawPositionBoxes").executes(context -> {
                     renderPositions = !renderPositions;
-                    Misc.addChatMessage(Text.literal("Render positons: ").append(Misc.getStatusText(renderPositions)));
+                    Misc.addChatMessage(Component.literal("Render positons: ").append(Misc.getStatusText(renderPositions)));
                     return Constants.SUCCESS;
                 }))
 
                 .then(ClientCommandManager.literal("testString").then(ClientCommandManager.argument("message", StringArgumentType.string()).executes(context -> {
                     String message = StringArgumentType.getString(context, "message");
-                    Events.ON_GAME_MESSAGE.invoke(gameMessageEvent -> gameMessageEvent.onGameMessage(Text.literal(message)));
+                    Events.ON_GAME_MESSAGE.invoke(gameMessageEvent -> gameMessageEvent.onGameMessage(Component.literal(message)));
                     return Constants.SUCCESS;
                 })))
 
@@ -106,7 +106,7 @@ public class Debug {
                 .then(ClientCommandManager.literal("location")
                         .then(ClientCommandManager.literal("current")
                                 .executes(context -> {
-                                    Misc.addChatMessage(Text.literal(Location.getCurrentLocation().toString()));
+                                    Misc.addChatMessage(Component.literal(Location.getCurrentLocation().toString()));
                                     return Constants.SUCCESS;
                                         }))
 
@@ -116,7 +116,7 @@ public class Debug {
                                             String name = StringArgumentType.getString(context, "name").toUpperCase();
                                             Location location =  Location.getLocation(name);
                                             Location.changeLocation(location);
-                                            Misc.addChatMessage(Text.literal("Swapped to location: " + location.name()));
+                                            Misc.addChatMessage(Component.literal("Swapped to location: " + location.name()));
                                             return Constants.SUCCESS;
                                         })
                                 )
@@ -127,7 +127,7 @@ public class Debug {
                         .then(ClientCommandManager.literal("sendDebug")
                                 .executes(context -> {
                                     sendNotiDebug = !sendNotiDebug;
-                                    Misc.addChatMessage(Text.literal("Send notification debug: ").append(Misc.getStatusText(sendNotiDebug)));
+                                    Misc.addChatMessage(Component.literal("Send notification debug: ").append(Misc.getStatusText(sendNotiDebug)));
                                     return Constants.SUCCESS;
                                 })
 
@@ -142,7 +142,7 @@ public class Debug {
                 )
                 .then(ClientCommandManager.literal("currentClass")
                         .executes(context -> {
-                            Misc.addChatMessage(Text.literal("Current class: " + DungeonClass.currentClass));
+                            Misc.addChatMessage(Component.literal("Current class: " + DungeonClass.currentClass));
                             return Constants.SUCCESS;
                         })
                 )
@@ -150,17 +150,17 @@ public class Debug {
     }
 
 
-    public static void sendDebugMessage(Text text) {
+    public static void sendDebugMessage(Component text) {
         if (sendDebug) {
             Misc.addChatMessage(text);
         }
     }
 
     public static void sendRunInfo() {
-        Misc.addChatMessage(Text.literal("Phase: " + Phase.getPhase()));
-        Misc.addChatMessage(Text.literal("Section: " + Section.getSection()));
-        Misc.addChatMessage(Text.literal("Gateblown: " + Section.isGateBlownUp()));
-        Misc.addChatMessage(Text.literal("In floor 7: " + Phase.isInFloor7()));
+        Misc.addChatMessage(Component.literal("Phase: " + Phase.getPhase()));
+        Misc.addChatMessage(Component.literal("Section: " + Section.getSection()));
+        Misc.addChatMessage(Component.literal("Gateblown: " + Section.isGateBlownUp()));
+        Misc.addChatMessage(Component.literal("In floor 7: " + Phase.isInFloor7()));
     }
 
 }

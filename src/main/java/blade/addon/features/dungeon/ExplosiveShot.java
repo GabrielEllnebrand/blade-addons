@@ -5,11 +5,10 @@ import blade.addon.utils.Misc;
 import blade.addon.utils.config.values.Dungeons;
 import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.events.Events;
-import net.minecraft.text.Text;
-
 import java.text.DecimalFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import net.minecraft.network.chat.Component;
 
 public class ExplosiveShot {
 
@@ -37,7 +36,7 @@ public class ExplosiveShot {
 
                     double damagePerEntity = amountNum / countNum;
 
-                    Misc.addChatMessage(Text.literal("§aExplosive shot did §e" + FORMAT.format(damagePerEntity) +"§a damage per enemy."));
+                    Misc.addChatMessage(Component.literal("§aExplosive shot did §e" + FORMAT.format(damagePerEntity) +"§a damage per enemy."));
 
                 } catch (NumberFormatException ignored) {
                 }

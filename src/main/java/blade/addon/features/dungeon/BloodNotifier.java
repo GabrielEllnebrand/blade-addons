@@ -8,9 +8,9 @@ import blade.addon.utils.dungeon.DungeonClass;
 import blade.addon.utils.events.Events;
 import blade.addon.utils.rendering.RenderUtils;
 import config.practical.hud.HUDComponent;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvents;
 
 public class BloodNotifier {
 
@@ -28,7 +28,7 @@ public class BloodNotifier {
                 prevTime = System.currentTimeMillis();
 
                 if (correctClass()) {
-                    Misc.sendSound(SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP, 2, 0);
+                    Misc.sendSound(SoundEvents.EXPERIENCE_ORB_PICKUP, 2, 0);
                 }
             }
 
@@ -53,8 +53,8 @@ public class BloodNotifier {
         return Dungeons.alertBloodSpawns && System.currentTimeMillis() - prevTime < 2000 && correctClass();
     }
 
-    public static void render(HUDComponent component, DrawContext context) {
-        RenderUtils.drawCenteredText(context, component, Text.literal("First four mobs spawned!"), Constants.RED);
+    public static void render(HUDComponent component, GuiGraphics context) {
+        RenderUtils.drawCenteredText(context, component, Component.literal("First four mobs spawned!"), Constants.RED);
     }
 
 }

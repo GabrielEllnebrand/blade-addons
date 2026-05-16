@@ -8,27 +8,26 @@ import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.events.Events;
 import blade.addon.utils.rendering.RenderUtils;
 import config.practical.hud.HUDComponent;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.scoreboard.Scoreboard;
-import net.minecraft.scoreboard.Team;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.Text;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.scores.PlayerTeam;
+import net.minecraft.world.scores.Scoreboard;
 
 public class RunStartValidator {
 
     private static final Pattern STARTING_PATTERN = Pattern.compile("^Starting in \\d second(s)?");
     private static final Pattern CLASS_PATTERN = Pattern.compile("\\[([ABHMT])]");
 
-    private static final Text DUPE_CLASS_TEXT = Text.literal("§cDuplicate Class Detected");
-    private static final Text PLAYER_COUNT_TEXT = Text.literal("§cNot enough players");
+    private static final Component DUPE_CLASS_TEXT = Component.literal("§cDuplicate Class Detected");
+    private static final Component PLAYER_COUNT_TEXT = Component.literal("§cNot enough players");
 
     private static boolean hasDupeClasses = false;
     private static boolean notEnoughPlayers = false;
@@ -44,7 +43,7 @@ public class RunStartValidator {
             hasTicked = true;
 
             if (validate()) {
-                Scheduler.scheduleSound(SoundEvents.BLOCK_NOTE_BLOCK_PLING.value(), 2, 1);
+                Scheduler.scheduleSound(SoundEvents.NOTE_BLOCK_PLING.value(), 2, 1);
             }
             return false;
         });
@@ -69,8 +68,8 @@ public class RunStartValidator {
     }
 
     private static boolean validate() {
-        ClientWorld world = MinecraftClient.getInstance().world;
-        ClientPlayerEntity player = MinecraftClient.getInstance().player;
+        ClientLevel world = Minecraft.getInstance().level;
+        LocalPlayer player = Minecraft.getInstance().player;
         if (world == null || player == null) return false;
 
         Scoreboard scoreboard = world.getScoreboard();
@@ -118,8 +117,8 @@ public class RunStartValidator {
     private static HashMap<String, Integer> readScoreBoard(Scoreboard scoreboard) {
         HashMap<String, Integer> map = new HashMap<>();
 
-        for (Team team : scoreboard.getTeams()) {
-            String teamStr = team.getPrefix().getString() + team.getSuffix().getString();
+        for (PlayerTeam team : scoreboard.getPlayerTeams()) {
+            String teamStr = team.getPlayerPrefix().getString() + team.getPlayerSuffix().getString();
             Matcher matcher = CLASS_PATTERN.matcher(teamStr);
             if (!matcher.find()) continue;
 
@@ -135,13 +134,13 @@ public class RunStartValidator {
         return Location.inDungeon() && !Phase.runStarted() && (hasDupeClasses || notEnoughPlayers);
     }
 
-    public static void render(HUDComponent component, DrawContext context) {
+    public static void render(HUDComponent component, GuiGraphics context) {
         if (hasDupeClasses) {
             RenderUtils.drawCenteredText(context, component, DUPE_CLASS_TEXT);
         } else if (notEnoughPlayers) {
             RenderUtils.drawCenteredText(context, component, PLAYER_COUNT_TEXT);
         } else {
-            RenderUtils.drawCenteredText(context, component, Text.literal("§cSome warning text"));
+            RenderUtils.drawCenteredText(context, component, Component.literal("§cSome warning text"));
         }
     }
 }

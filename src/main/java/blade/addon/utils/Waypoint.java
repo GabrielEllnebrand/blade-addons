@@ -1,12 +1,11 @@
 package blade.addon.utils;
 
-import net.minecraft.client.render.DrawStyle;
-import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.render.VertexRendering;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.ColorHelper;
-import net.minecraft.world.debug.gizmo.GizmoDrawing;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.gizmos.GizmoStyle;
+import net.minecraft.gizmos.Gizmos;
+import net.minecraft.util.ARGB;
+import net.minecraft.world.phys.AABB;
 
 public class Waypoint {
     private final double x, y, z, dx, dy, dz;
@@ -41,8 +40,8 @@ public class Waypoint {
         return throughWall;
     }
 
-    public void Render(VertexConsumer consumer, MatrixStack matrixStack) {
-        GizmoDrawing.box(new Box(x, y, z, x + dx, y + dy, z + dz), DrawStyle.filled(ColorHelper.fromFloats(a, r, g, b)));
+    public void Render(VertexConsumer consumer, PoseStack matrixStack) {
+        Gizmos.cuboid(new AABB(x, y, z, x + dx, y + dy, z + dz), GizmoStyle.fill(ARGB.colorFromFloat(a, r, g, b)));
     }
 
     @Override

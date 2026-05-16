@@ -3,16 +3,15 @@ package blade.addon.features.dungeon;
 import blade.addon.utils.debug.Debug;
 import blade.addon.utils.Misc;
 import blade.addon.utils.dungeon.DungeonClass;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.scoreboard.Scoreboard;
-import net.minecraft.scoreboard.Team;
-import net.minecraft.text.Text;
-
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.scores.PlayerTeam;
+import net.minecraft.world.scores.Scoreboard;
 
 public class LeapOrder {
 
@@ -31,16 +30,16 @@ public class LeapOrder {
         HashMap<DungeonClass, String> classNameMap = new HashMap<>();
         DungeonClass playersClass = null;
 
-        ClientPlayerEntity player = MinecraftClient.getInstance().player;
-        ClientWorld world = MinecraftClient.getInstance().world;
+        LocalPlayer player = Minecraft.getInstance().player;
+        ClientLevel world = Minecraft.getInstance().level;
         if (player == null || world == null) {
             Debug.LOGGER.warn("Player or World is null");
             return;
         }
 
         Scoreboard scoreboard = world.getScoreboard();
-        for (Team team : scoreboard.getTeams()) {
-            String teamStr = (team.getPrefix().getString() + team.getSuffix().getString()).replaceAll("§.", "");
+        for (PlayerTeam team : scoreboard.getPlayerTeams()) {
+            String teamStr = (team.getPlayerPrefix().getString() + team.getPlayerSuffix().getString()).replaceAll("§.", "");
             Matcher matcher = PATTERN.matcher(teamStr);
             if (matcher.find()) {
                 DungeonClass dungeonClass = getClass(matcher.group(1));
@@ -61,7 +60,7 @@ public class LeapOrder {
         }
 
         if (classNameMap.size() != 4 || playersClass == null) {
-            Misc.addChatMessage(Text.literal("Cant find all players or the players class"));
+            Misc.addChatMessage(Component.literal("Cant find all players or the players class"));
             return;
         }
         DungeonClass[] order;
@@ -78,7 +77,7 @@ public class LeapOrder {
         }
 
         String leapOrder = "odin leaporder " + classNameMap.get(order[0]) + " " + classNameMap.get(order[1]) + " " + classNameMap.get(order[2]) + " " + classNameMap.get(order[3]);
-        Misc.addChatMessage(Text.literal("Executing command: " + leapOrder));
+        Misc.addChatMessage(Component.literal("Executing command: " + leapOrder));
         Misc.executeCommand(leapOrder);
     }
 

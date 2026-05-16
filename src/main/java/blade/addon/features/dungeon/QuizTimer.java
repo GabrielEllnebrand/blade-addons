@@ -7,10 +7,10 @@ import blade.addon.utils.config.values.ExtraOptions;
 import blade.addon.utils.events.Events;
 import blade.addon.utils.rendering.RenderUtils;
 import config.practical.hud.HUDComponent;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.text.Text;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.network.chat.Component;
 
 public class QuizTimer {
 
@@ -56,16 +56,16 @@ public class QuizTimer {
         return Dungeons.quizTimer && tick > 0;
     }
 
-    public static void render(HUDComponent component, DrawContext context) {
-        TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
+    public static void render(HUDComponent component, GuiGraphics context) {
+        Font textRenderer = Minecraft.getInstance().font;
         if (textRenderer == null) return;
 
         if (Dungeons.quizProgress) {
-            Text drawnText = Text.literal("Quiz " + "(").withColor(ExtraOptions.timerPrefixColor)
-                    .append(Text.literal(stage + "/3").withColor(0xffffffff)
-                            .append(Text.literal("): ").withColor(ExtraOptions.timerPrefixColor))
-                            .append(Text.literal(Constants.DECIMAL_FORMAT.format(tick * Constants.TICK_DURATION) + "s").withColor(0xffffffff)));
-            context.drawText(textRenderer, drawnText, component.getScaledX(), component.getScaledY(), 0xffffffff, true);
+            Component drawnText = Component.literal("Quiz " + "(").withColor(ExtraOptions.timerPrefixColor)
+                    .append(Component.literal(stage + "/3").withColor(0xffffffff)
+                            .append(Component.literal("): ").withColor(ExtraOptions.timerPrefixColor))
+                            .append(Component.literal(Constants.DECIMAL_FORMAT.format(tick * Constants.TICK_DURATION) + "s").withColor(0xffffffff)));
+            context.drawString(textRenderer, drawnText, component.getScaledX(), component.getScaledY(), 0xffffffff, true);
         } else {
             RenderUtils.drawPrefixedTimer(component, context, "Quiz", tick);
         }

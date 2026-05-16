@@ -7,8 +7,8 @@ import blade.addon.utils.dungeon.Section;
 import blade.addon.utils.events.Events;
 import blade.addon.utils.rendering.RenderUtils;
 import config.practical.hud.HUDComponent;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.network.chat.Component;
 
 public class SectionProgress {
 
@@ -88,11 +88,11 @@ public class SectionProgress {
         return Section.getSection() != 2 ? 7 : 8;
     }
 
-    private static Text getProgressText() {
+    private static Component getProgressText() {
         if (Floor7.sectionColorProgress) {
-            return Text.literal("§f(" + completedFormat + completed + "§f/§a" + sectionTotal + "§f)");
+            return Component.literal("§f(" + completedFormat + completed + "§f/§a" + sectionTotal + "§f)");
         } else {
-            return Text.literal("§a(§c" + completed + "§a/" + sectionTotal + ")");
+            return Component.literal("§a(§c" + completed + "§a/" + sectionTotal + ")");
         }
     }
 
@@ -100,9 +100,9 @@ public class SectionProgress {
         return Floor7.showSectionProgress && Phase.inTerminals();
     }
 
-    public static void render(HUDComponent component, DrawContext context) {
+    public static void render(HUDComponent component, GuiGraphics context) {
         if (Floor7.sectionPrevObjective) {
-            RenderUtils.drawCenteredText(context, component, Text.literal(objectiveFormat + prevObjective + " ").append(getProgressText()));
+            RenderUtils.drawCenteredText(context, component, Component.literal(objectiveFormat + prevObjective + " ").append(getProgressText()));
         } else {
             RenderUtils.drawCenteredText(context, component, getProgressText());
         }

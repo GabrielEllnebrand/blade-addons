@@ -5,26 +5,25 @@ import blade.addon.utils.data.EntityUtil;
 import blade.addon.utils.events.Events;
 import blade.addon.utils.rendering.RenderUtils;
 import blade.addon.utils.rendering.RenderingEvents;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import config.practical.manager.ConfigValue;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientEntityEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderContext;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.decoration.ArmorStandEntity;
-import net.minecraft.entity.effect.StatusEffects;
-import net.minecraft.entity.mob.EndermanEntity;
-import net.minecraft.entity.mob.ZombieEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.text.Text;
-import net.minecraft.text.TextColor;
-import net.minecraft.util.math.Box;
-
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextColor;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.decoration.ArmorStand;
+import net.minecraft.world.entity.monster.EnderMan;
+import net.minecraft.world.entity.monster.zombie.Zombie;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.phys.AABB;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -52,10 +51,10 @@ public class MobHighlight {
         }
     }
 
-    private static final int LEATHER_BOOTS_ID = Item.getRawId(Items.LEATHER_BOOTS);
+    private static final int LEATHER_BOOTS_ID = Item.getId(Items.LEATHER_BOOTS);
 
     private static final ConcurrentHashMap<Integer, Entity> foundEntities = new ConcurrentHashMap<>();
-    public static final ConcurrentLinkedQueue<ArmorStandEntity> nonStaredTags = new ConcurrentLinkedQueue<>();
+    public static final ConcurrentLinkedQueue<ArmorStand> nonStaredTags = new ConcurrentLinkedQueue<>();
     public static final ConcurrentLinkedQueue<DataHolder> savedEntities = new ConcurrentLinkedQueue<>();
 
     public static boolean dontRenderHighlight = false;
@@ -122,7 +121,7 @@ public class MobHighlight {
     public static void init() {
 
         Events.ON_ENTITY_SPAWNED.register((entity, world) -> {
-            if (entity instanceof ArmorStandEntity) return false;
+            if (entity instanceof ArmorStand) return false;
             foundEntities.put(entity.getId(), entity);
             return false;
         });
@@ -130,13 +129,13 @@ public class MobHighlight {
         Events.ON_ENTITY_TRACKED.register((entity, world) -> {
             if (!Location.inDungeon()) return false;
 
-            if (entity instanceof PlayerEntity player) {
+            if (entity instanceof Player player) {
                 if (MobHighlight.isShadowAssassin(player)) {
                     savedEntities.add(new DataHolder(player, MobType.ASSASSIN));
                 }
             }
 
-            if (entity instanceof ArmorStandEntity armorStand) {
+            if (entity instanceof ArmorStand armorStand) {
                 testArmorStand(armorStand);
             }
 
@@ -151,9 +150,9 @@ public class MobHighlight {
         });
 
         ClientTickEvents.END_CLIENT_TICK.register(minecraftClient -> {
-            ClientPlayerEntity player = minecraftClient.player;
+            LocalPlayer player = minecraftClient.player;
             if (player == null) return;
-            dontRenderHighlight = player.hasStatusEffect(StatusEffects.BLINDNESS);
+            dontRenderHighlight = player.hasEffect(MobEffects.BLINDNESS);
         });
 
         ClientEntityEvents.ENTITY_UNLOAD.register((entity, world) -> {
@@ -161,7 +160,7 @@ public class MobHighlight {
             int id = entity.getId();
             savedEntities.removeIf(dataHolder -> dataHolder.entity == entity);
             foundEntities.remove(id);
-            if (entity instanceof ArmorStandEntity) {
+            if (entity instanceof ArmorStand) {
                 nonStaredTags.remove(entity);
             }
         });
@@ -170,7 +169,7 @@ public class MobHighlight {
         RenderingEvents.OUTLINE_ENTITY.register(MobHighlight::renderOutline);
     }
 
-    private static void testArmorStand(ArmorStandEntity armorStand) {
+    private static void testArmorStand(ArmorStand armorStand) {
         MobType type = getType(armorStand);
         if (type == null) {
             if (isGeneralStaredMob(armorStand)) {
@@ -189,8 +188,8 @@ public class MobHighlight {
         savedEntities.add(new DataHolder(entity, type));
     }
 
-    public static MobType getType(ArmorStandEntity armorStand) {
-        Text text = armorStand.getCustomName();
+    public static MobType getType(ArmorStand armorStand) {
+        Component text = armorStand.getCustomName();
         if (text == null) return null;
         String name = text.getString();
         if (name.contains("King Midas")) return MobType.MINI;
@@ -202,8 +201,8 @@ public class MobHighlight {
         return MobType.STAR;
     }
 
-    public static int getIdOffset(ArmorStandEntity armorStand) {
-        Text text = armorStand.getCustomName();
+    public static int getIdOffset(ArmorStand armorStand) {
+        Component text = armorStand.getCustomName();
         if (text == null) return -1;
         String name = text.getString();
 
@@ -211,12 +210,12 @@ public class MobHighlight {
         return 1;
     }
 
-    public static boolean containsStarText(Text text) {
-        for (Text sib : text.getSiblings()) {
+    public static boolean containsStarText(Component text) {
+        for (Component sib : text.getSiblings()) {
             TextColor color = sib.getStyle().getColor();
             if (color == null) continue;
 
-            if (color.getRgb() == 0xFFAA00 && sib.getString().equals("✯ ")) {
+            if (color.getValue() == 0xFFAA00 && sib.getString().equals("✯ ")) {
                 return true;
             }
         }
@@ -224,8 +223,8 @@ public class MobHighlight {
         return false;
     }
 
-    public static boolean isGeneralStaredMob(ArmorStandEntity armorStand) {
-        Text text = armorStand.getCustomName();
+    public static boolean isGeneralStaredMob(ArmorStand armorStand) {
+        Component text = armorStand.getCustomName();
         if (text == null) return false;
         String name = text.getString();
         return name.contains("Lurker") || name.contains("Dreadlord") || name.contains("Souleater") || name.contains("Zombie") || name.contains("Skeleton") || name.contains("Skeletor")
@@ -240,16 +239,16 @@ public class MobHighlight {
         return name.contains("Lost Adventurer") || name.contains("Angry Archaeologist") || name.contains("Frozen Adventurer");
     }
 
-    public static boolean isShadowAssassin(PlayerEntity player) {
+    public static boolean isShadowAssassin(Player player) {
         if (EntityUtil.isARealPlayer(player)) return false;
-        ItemStack heldItem = player.getMainHandStack();
-        ItemStack boots = player.getInventory().getStack(36);
-        Text text = heldItem.getCustomName();
+        ItemStack heldItem = player.getMainHandItem();
+        ItemStack boots = player.getInventory().getItem(36);
+        Component text = heldItem.getCustomName();
 
         if (text == null) return false;
         if (!text.getString().equals("Silent Death")) return false;
 
-        return Item.getRawId(boots.getItem()) == LEATHER_BOOTS_ID;
+        return Item.getId(boots.getItem()) == LEATHER_BOOTS_ID;
     }
 
     public static int getFilledColor(MobType mob) {
@@ -283,18 +282,18 @@ public class MobHighlight {
         return currentHighlight == HighlightType.BOTH || currentHighlight == HighlightType.OUTLINE;
     }
 
-    public static Box getBox(Entity entity) {
-        Box box = EntityUtil.getBox(entity);
+    public static AABB getBox(Entity entity) {
+        AABB box = EntityUtil.getBox(entity);
 
         //only shows the head
-        if (entity instanceof EndermanEntity && entity.isInvisible() && MobHighlight.dontShowInvisibleMobs) {
-            box = box.expand(0, -1.8, 0).offset(0, -1.2, 0);
+        if (entity instanceof EnderMan && entity.isInvisible() && MobHighlight.dontShowInvisibleMobs) {
+            box = box.inflate(0, -1.8, 0).move(0, -1.2, 0);
         }
 
         //bigger mimic highlight
-        if (entity instanceof ZombieEntity zombie) {
+        if (entity instanceof Zombie zombie) {
             if (zombie.isBaby()) {
-                box = box.expand(0.15, 0.2, 0.15);
+                box = box.inflate(0.15, 0.2, 0.15);
             }
         }
 
@@ -302,16 +301,16 @@ public class MobHighlight {
     }
 
 
-    private static void renderFilled(WorldRenderContext context, MatrixStack matrixStack, VertexConsumer consumer) {
+    private static void renderFilled(WorldRenderContext context, PoseStack matrixStack, VertexConsumer consumer) {
         if (!MobHighlight.mobHighlight || dontRenderHighlight || !MobHighlight.renderFilled()) return;
 
         for (DataHolder savedEntity : savedEntities) {
             Entity entity = savedEntity.entity;
             MobType type = savedEntity.type;
 
-            if (entity.isInvisible() && MobHighlight.dontShowInvisibleMobs && entity instanceof PlayerEntity) return;
+            if (entity.isInvisible() && MobHighlight.dontShowInvisibleMobs && entity instanceof Player) return;
 
-            Box box = getBox(entity);
+            AABB box = getBox(entity);
             int filledColor = getFilledColor(type);
             float[] rgba = RenderUtils.toFloats(filledColor);
 
@@ -320,16 +319,16 @@ public class MobHighlight {
         }
     }
 
-    private static void renderOutline(WorldRenderContext context, MatrixStack matrixStack, VertexConsumer consumer) {
+    private static void renderOutline(WorldRenderContext context, PoseStack matrixStack, VertexConsumer consumer) {
         if (!MobHighlight.mobHighlight || dontRenderHighlight || !MobHighlight.renderOutline()) return;
 
         for (DataHolder savedEntity : savedEntities) {
             Entity entity = savedEntity.entity;
             MobType type = savedEntity.type;
 
-            if (entity.isInvisible() && MobHighlight.dontShowInvisibleMobs && entity instanceof PlayerEntity) return;
+            if (entity.isInvisible() && MobHighlight.dontShowInvisibleMobs && entity instanceof Player) return;
 
-            Box box = getBox(entity);
+            AABB box = getBox(entity);
             int outlineColor = getOutlineColor(type);
             float[] rgba = RenderUtils.toFloats(outlineColor);
 

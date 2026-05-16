@@ -8,9 +8,9 @@ import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.events.Events;
 import blade.addon.utils.rendering.RenderUtils;
 import config.practical.hud.HUDComponent;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvents;
 
 public class PillarExplode {
 
@@ -27,7 +27,7 @@ public class PillarExplode {
 
             if (string.equals("[BOSS] Storm: Oof") || string.equals("[BOSS] Storm: Ouch, that hurt!")) {
                 tick = TOTAL_TICKS;
-                Scheduler.scheduleSound(SoundEvents.BLOCK_NOTE_BLOCK_PLING.value(), 1, 1);
+                Scheduler.scheduleSound(SoundEvents.NOTE_BLOCK_PLING.value(), 1, 1);
             }
 
             return false;
@@ -43,7 +43,7 @@ public class PillarExplode {
         return Floor7.timePillarExplosion && tick > 0;
     }
 
-    public static void renderTimer(HUDComponent component, DrawContext context) {
+    public static void renderTimer(HUDComponent component, GuiGraphics context) {
         int color = tick < 6 ? Constants.GREEN : Constants.RED;
         RenderUtils.drawTimer(component, context, tick, color);
     }
@@ -52,7 +52,7 @@ public class PillarExplode {
         return Floor7.notifyStormCrush && tick > 0;
     }
 
-    public static void render(HUDComponent component, DrawContext context) {
-        RenderUtils.drawCenteredText(context, component, Text.literal("§6||| §bStorm crushed! §6|||"));
+    public static void render(HUDComponent component, GuiGraphics context) {
+        RenderUtils.drawCenteredText(context, component, Component.literal("§6||| §bStorm crushed! §6|||"));
     }
 }

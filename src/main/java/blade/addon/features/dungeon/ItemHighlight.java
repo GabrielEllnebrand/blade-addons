@@ -6,24 +6,22 @@ import blade.addon.utils.config.values.Dungeons;
 import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.rendering.RenderUtils;
 import blade.addon.utils.rendering.RenderingEvents;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientEntityEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderContext;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.client.render.DrawStyle;
-import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.render.VertexRendering;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.entity.EntityDimensions;
-import net.minecraft.entity.ItemEntity;
-import net.minecraft.text.Text;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.ColorHelper;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.debug.gizmo.GizmoDrawing;
-
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.gizmos.GizmoStyle;
+import net.minecraft.gizmos.Gizmos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.util.ARGB;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.EntityDimensions;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.phys.AABB;
 import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -37,10 +35,10 @@ public class ItemHighlight {
 
     public static void init() {
         ClientTickEvents.END_CLIENT_TICK.register(minecraftClient -> {
-            ClientWorld world = minecraftClient.world;
+            ClientLevel world = minecraftClient.level;
             if (world == null) return;
 
-            world.getEntities().forEach(entity -> {
+            world.entitiesForRendering().forEach(entity -> {
                 if (entity instanceof ItemEntity item) {
                     if (trackedItems.containsKey(item)) return;
 
@@ -61,27 +59,27 @@ public class ItemHighlight {
         RenderingEvents.NO_DEPTH_FILLED.register(ItemHighlight::render);
     }
 
-    private static void render(WorldRenderContext context, MatrixStack matrixStack, VertexConsumer consumer) {
+    private static void render(WorldRenderContext context, PoseStack matrixStack, VertexConsumer consumer) {
         if (!Dungeons.highlightItems) return;
-        double tickProgress = MinecraftClient.getInstance().getRenderTickCounter().getTickProgress(false);
+        double tickProgress = Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(false);
 
 
         trackedItems.forEach((itemEntity, integer) -> {
-            double x =  MathHelper.lerp(tickProgress, itemEntity.lastRenderX, itemEntity.getX());
-            double y =  MathHelper.lerp(tickProgress, itemEntity.lastRenderY, itemEntity.getY());
-            double z =  MathHelper.lerp(tickProgress, itemEntity.lastRenderZ, itemEntity.getZ());
+            double x =  Mth.lerp(tickProgress, itemEntity.xOld, itemEntity.getX());
+            double y =  Mth.lerp(tickProgress, itemEntity.yOld, itemEntity.getY());
+            double z =  Mth.lerp(tickProgress, itemEntity.zOld, itemEntity.getZ());
 
             EntityDimensions dimension = itemEntity.getDimensions(itemEntity.getPose());
-            Box box = dimension.getBoxAt(x, y, z).expand(0.1).offset(0, 0.05, 0);
+            AABB box = dimension.makeBoundingBox(x, y, z).inflate(0.1).move(0, 0.05, 0);
             float[] color = RenderUtils.toFloats(getColor(itemEntity));
-            GizmoDrawing.box(box, DrawStyle.filled(ColorHelper.fromFloats(color[3], color[0], color[1], color[2])));
+            Gizmos.cuboid(box, GizmoStyle.fill(ARGB.colorFromFloat(color[3], color[0], color[1], color[2])));
         });
     }
 
     public static boolean highlightItem(ItemEntity item) {
         if (!Dungeons.highlightItems || !Location.inDungeon() || Phase.inBoss()) return false;
 
-        Text itemText = item.getStack().getName();
+        Component itemText = item.getItem().getHoverName();
         if (itemText == null) return false;
         String itemName = itemText.getString();
 
@@ -89,14 +87,14 @@ public class ItemHighlight {
     }
 
     public static int getColor(ItemEntity item) {
-        ClientPlayerEntity player = MinecraftClient.getInstance().player;
+        LocalPlayer player = Minecraft.getInstance().player;
         if (player == null) return 0;
-        double distance = item.getEntityPos().distanceTo(player.getEntityPos());
+        double distance = item.position().distanceTo(player.position());
         if (distance > 20) {
             return 0;
         } else if (distance > 3.5) {
             return Constants.RED;
-        } else if (item.age > 11){
+        } else if (item.tickCount > 11){
             return Constants.GREEN;
         } else {
             return Constants.GOLD;

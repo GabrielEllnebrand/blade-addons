@@ -10,14 +10,13 @@ import blade.addon.utils.events.Events;
 import blade.addon.utils.rendering.RenderUtils;
 import blade.addon.utils.times.PersonalBests;
 import config.practical.hud.HUDComponent;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.entity.decoration.EndCrystalEntity;
-import net.minecraft.text.Text;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.boss.enderdragon.EndCrystal;
 
 public class CrystalSpawn {
 
@@ -78,14 +77,14 @@ public class CrystalSpawn {
         Events.ON_ENTITY_SPAWNED.register((entity, world) -> {
             if (!pickedUp || !Location.inDungeon() || !Floor7.enableCrystalSpawnTime || !Phase.inP1()) return false;
 
-            if (entity instanceof EndCrystalEntity crystal) {
-                ClientPlayerEntity player = MinecraftClient.getInstance().player;
+            if (entity instanceof EndCrystal crystal) {
+                LocalPlayer player = Minecraft.getInstance().player;
                 if (player == null) return false;
 
                 double distance = Misc.getDistance(player, crystal);
 
                 if (distance < 6 && crystal.getY() == 224.375) {
-                    PersonalBests.crystalTime.testNewTime(Text.literal("§aCrystal placed in "), pickupTime);
+                    PersonalBests.crystalTime.testNewTime(Component.literal("§aCrystal placed in "), pickupTime);
                     pickedUp = false;
                     tickSincePicked = 0;
                 }
@@ -99,7 +98,7 @@ public class CrystalSpawn {
         return tick > 0 && Location.inDungeon() && Phase.inP1() && Floor7.enableCrystalSpawnTime;
     }
 
-    public static void render(HUDComponent component, DrawContext context) {
+    public static void render(HUDComponent component, GuiGraphics context) {
         RenderUtils.drawTimer(component, context, tick, Constants.LIGHT_PURPLE);
     }
 
@@ -107,8 +106,8 @@ public class CrystalSpawn {
         return (Floor7.instantlyDisplayCrystalReminder || tickSincePicked > REMINDER_TICK) && Location.inDungeon() && Phase.inP1() && Floor7.crystalPlaceReminder && pickedUp;
     }
 
-    public static void renderNotification(HUDComponent component, DrawContext context) {
-        RenderUtils.drawCenteredText(context, component, Text.literal("§bPlace Crystal!"));
+    public static void renderNotification(HUDComponent component, GuiGraphics context) {
+        RenderUtils.drawCenteredText(context, component, Component.literal("§bPlace Crystal!"));
     }
 
 

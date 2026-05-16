@@ -7,23 +7,22 @@ import blade.addon.utils.data.EntityUtil;
 import blade.addon.utils.events.Events;
 import blade.addon.utils.rendering.RenderUtils;
 import blade.addon.utils.rendering.RenderingEvents;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderContext;
-import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.boss.dragon.EnderDragonEntity;
-import net.minecraft.text.Text;
-import net.minecraft.util.math.Vec3d;
-
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
+import net.minecraft.world.phys.Vec3;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class DragonHealth {
 
     static class DataHolder {
-        EnderDragonEntity dragon;
+        EnderDragon dragon;
         float health;
 
-        public DataHolder(EnderDragonEntity dragon, float health) {
+        public DataHolder(EnderDragon dragon, float health) {
             this.dragon = dragon;
             this.health = health;
         }
@@ -36,7 +35,7 @@ public class DragonHealth {
         Events.ON_ENTITY_SPAWNED.register((entity, world) -> {
             if (!Location.inDungeon()) return false;
 
-            if (entity instanceof EnderDragonEntity dragon) {
+            if (entity instanceof EnderDragon dragon) {
                 dragons.add(new DataHolder(dragon, dragon.getHealth()));
             }
 
@@ -62,12 +61,12 @@ public class DragonHealth {
         return Constants.RED;
     }
 
-    private static void render(WorldRenderContext context, MatrixStack matrixStack, VertexConsumer consumer) {
+    private static void render(WorldRenderContext context, PoseStack matrixStack, VertexConsumer consumer) {
         if (!Floor7.dragonHealth) return;
 
         dragons.forEach(dataHolder -> {
 
-            EnderDragonEntity dragon = dataHolder.dragon;
+            EnderDragon dragon = dataHolder.dragon;
             float currHealth =  dragon.getHealth();
 
             if (currHealth != 1024.0f) {
@@ -77,8 +76,8 @@ public class DragonHealth {
             float health = dataHolder.health;
 
             if (health == 0) return;
-            Vec3d pos = EntityUtil.getLerpedPos(dragon);
-            RenderUtils.renderText(context, matrixStack, Text.literal(RenderUtils.formatNumber(health)).withColor(getColor(health)), pos, 5);
+            Vec3 pos = EntityUtil.getLerpedPos(dragon);
+            RenderUtils.renderText(context, matrixStack, Component.literal(RenderUtils.formatNumber(health)).withColor(getColor(health)), pos, 5);
 
         });
 

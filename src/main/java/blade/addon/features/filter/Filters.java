@@ -6,8 +6,7 @@ import blade.addon.utils.debug.Debug;
 import config.practical.manager.ConfigManager;
 import config.practical.manager.ConfigValue;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
-import net.minecraft.text.Text;
-
+import net.minecraft.network.chat.Component;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.PatternSyntaxException;
@@ -34,7 +33,7 @@ public class Filters {
                 try {
                     if (string.matches(filter)) return false;
                 } catch (PatternSyntaxException e) {
-                    Debug.sendDebugMessage(Text.literal("Invalid regex: " + filter));
+                    Debug.sendDebugMessage(Component.literal("Invalid regex: " + filter));
                 }
             }
             return true;

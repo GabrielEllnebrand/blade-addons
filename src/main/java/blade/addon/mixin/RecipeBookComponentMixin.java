@@ -1,25 +1,25 @@
 package blade.addon.mixin;
 
 import blade.addon.utils.config.values.ExtraOptions;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.recipebook.RecipeBookWidget;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.recipebook.RecipeBookComponent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(RecipeBookWidget.class)
-public class RecipeBookWidgetMixin {
+@Mixin(RecipeBookComponent.class)
+public class RecipeBookComponentMixin {
 
     @Inject(method = "render", at = @At("HEAD"), cancellable = true)
-    public void render(DrawContext context, int mouseX, int mouseY, float deltaTicks, CallbackInfo ci) {
+    public void render(GuiGraphics context, int mouseX, int mouseY, float deltaTicks, CallbackInfo ci) {
         if (ExtraOptions.disableRecipeBook) {
             ci.cancel();
         }
     }
 
-    @Inject(method = "isOpen", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "isVisible", at = @At("HEAD"), cancellable = true)
     public void render(CallbackInfoReturnable<Boolean> cir) {
         if (ExtraOptions.disableRecipeBook) {
             cir.setReturnValue(false);
@@ -27,7 +27,7 @@ public class RecipeBookWidgetMixin {
 
     }
 
-    @Inject(method = "setOpen", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "setVisible", at = @At("HEAD"), cancellable = true)
     public void render(boolean opened, CallbackInfo ci) {
         if (ExtraOptions.disableRecipeBook) {
             ci.cancel();

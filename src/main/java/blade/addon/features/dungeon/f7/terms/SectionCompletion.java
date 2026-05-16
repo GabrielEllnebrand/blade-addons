@@ -5,9 +5,9 @@ import blade.addon.utils.config.values.Floor7;
 import blade.addon.utils.events.Events;
 import blade.addon.utils.rendering.RenderUtils;
 import config.practical.hud.HUDComponent;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.network.chat.Component;
 
 public class SectionCompletion {
 
@@ -25,8 +25,8 @@ public class SectionCompletion {
         return System.currentTimeMillis() - prevTime < 1000 && Floor7.sectionCompletionNotification;
     }
 
-    public static void render(HUDComponent component, DrawContext context) {
-        RenderUtils.drawCenteredText(context, component, Text.literal("Section completed!").formatted(Formatting.GREEN));
+    public static void render(HUDComponent component, GuiGraphics context) {
+        RenderUtils.drawCenteredText(context, component, Component.literal("Section completed!").withStyle(ChatFormatting.GREEN));
     }
 
 }

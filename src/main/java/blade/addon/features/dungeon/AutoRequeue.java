@@ -5,8 +5,7 @@ import blade.addon.utils.Misc;
 import blade.addon.utils.config.values.Dungeons;
 import blade.addon.utils.events.Events;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
-import net.minecraft.text.Text;
-
+import net.minecraft.network.chat.Component;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -25,12 +24,12 @@ public class AutoRequeue {
             if (playerHashMap.containsKey(username)) {
                 if (message.contains("!undt")) {
                     playerHashMap.remove(username);
-                    Misc.addChatMessage(Text.literal("§aDowntime removed"));
+                    Misc.addChatMessage(Component.literal("§aDowntime removed"));
                 }
             } else {
                 if (message.contains("!dt")) {
                     playerHashMap.put(username, message);
-                    Misc.addChatMessage(Text.literal("§aDowntime added"));
+                    Misc.addChatMessage(Component.literal("§aDowntime added"));
                 }
             }
             return false;
@@ -51,8 +50,8 @@ public class AutoRequeue {
             if (playerHashMap.isEmpty()) {
                 Misc.executeCommand("instancerequeue");
             } else {
-                Misc.addChatMessage(Text.literal("Downtime reasons:"));
-                playerHashMap.forEach((name, string) -> Misc.addChatMessage((Text.literal(name + "> " + string))));
+                Misc.addChatMessage(Component.literal("Downtime reasons:"));
+                playerHashMap.forEach((name, string) -> Misc.addChatMessage((Component.literal(name + "> " + string))));
 
 
             }

@@ -4,19 +4,19 @@ import blade.addon.utils.Constants;
 import blade.addon.utils.config.values.ExtraOptions;
 import blade.addon.utils.config.values.Floor7;
 import blade.addon.utils.data.EntityUtil;
+import com.mojang.blaze3d.vertex.PoseStack;
 import config.practical.hud.HUDComponent;
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderContext;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.client.render.DrawStyle;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.Text;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.ColorHelper;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.debug.gizmo.GizmoDrawing;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.gizmos.GizmoStyle;
+import net.minecraft.gizmos.Gizmos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.util.ARGB;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
 
 public class RenderUtils {
@@ -35,105 +35,105 @@ public class RenderUtils {
         return value >= minGreen ? Constants.GREEN : value >= minOrange ? Constants.GOLD : Constants.RED;
     }
 
-    public static void drawText(DrawContext context, HUDComponent component, Text text, int color) {
-        TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
+    public static void drawText(GuiGraphics context, HUDComponent component, Component text, int color) {
+        Font textRenderer = Minecraft.getInstance().font;
         if (textRenderer == null) return;
-        context.drawText(textRenderer, text, component.getScaledX(), component.getScaledY(), color, true);
+        context.drawString(textRenderer, text, component.getScaledX(), component.getScaledY(), color, true);
     }
 
-    public static void drawCenteredText(DrawContext context, TextRenderer textRenderer, Text text, int x, int y, int maxWidth, int color) {
+    public static void drawCenteredText(GuiGraphics context, Font textRenderer, Component text, int x, int y, int maxWidth, int color) {
         if (textRenderer == null) return;
-        int centered = (maxWidth - textRenderer.getWidth(text)) / 2;
-        context.drawText(textRenderer, text, x + centered, y, color, true);
+        int centered = (maxWidth - textRenderer.width(text)) / 2;
+        context.drawString(textRenderer, text, x + centered, y, color, true);
 
     }
 
-    public static void drawCenteredText(DrawContext context, HUDComponent component, Text text) {
-        TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
+    public static void drawCenteredText(GuiGraphics context, HUDComponent component, Component text) {
+        Font textRenderer = Minecraft.getInstance().font;
         if (textRenderer == null) return;
         drawCenteredText(context, textRenderer, text, component.getScaledX(), component.getScaledY(), component.getWidth(), 0xffffffff);
     }
 
-    public static void drawCenteredText(DrawContext context, HUDComponent component, Text text, int color) {
-        TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
+    public static void drawCenteredText(GuiGraphics context, HUDComponent component, Component text, int color) {
+        Font textRenderer = Minecraft.getInstance().font;
         if (textRenderer == null) return;
         drawCenteredText(context, textRenderer, text, component.getScaledX(), component.getScaledY(), component.getWidth(), color);
     }
 
-    public static void drawTimer(HUDComponent component, DrawContext context, int tick, int color) {
+    public static void drawTimer(HUDComponent component, GuiGraphics context, int tick, int color) {
         double num = tick * Constants.TICK_DURATION;
         drawTimer(component, context, num, color);
     }
 
-    public static void drawTimer(HUDComponent component, DrawContext context, double num, int color) {
+    public static void drawTimer(HUDComponent component, GuiGraphics context, double num, int color) {
         int x = component.getScaledX();
         int y = component.getScaledY();
 
-        RenderUtils.drawCenteredText(context, MinecraftClient.getInstance().textRenderer, Text.literal(Constants.DECIMAL_FORMAT.format(num)), x, y, component.getWidth(), color);
+        RenderUtils.drawCenteredText(context, Minecraft.getInstance().font, Component.literal(Constants.DECIMAL_FORMAT.format(num)), x, y, component.getWidth(), color);
     }
 
-    public static void drawPrefixedTimer(HUDComponent component, DrawContext context, String prefix, int num) {
+    public static void drawPrefixedTimer(HUDComponent component, GuiGraphics context, String prefix, int num) {
         drawPrefixedText(component, context, prefix, Constants.DECIMAL_FORMAT.format(num * Constants.TICK_DURATION) + "s");
     }
 
-    public static void drawPrefixedTimer(HUDComponent component, DrawContext context, String prefix, double num) {
+    public static void drawPrefixedTimer(HUDComponent component, GuiGraphics context, String prefix, double num) {
         drawPrefixedText(component, context, prefix, Constants.DECIMAL_FORMAT.format(num) + "s");
     }
 
-    public static void drawPrefixedText(HUDComponent component, DrawContext context, String prefix, String text) {
-        TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
+    public static void drawPrefixedText(HUDComponent component, GuiGraphics context, String prefix, String text) {
+        Font textRenderer = Minecraft.getInstance().font;
         if (textRenderer == null) return;
 
-        Text drawnText = Text.literal(prefix + ": ").withColor(ExtraOptions.timerPrefixColor).append(Text.literal(text).withColor(0xffffffff));
-        context.drawText(textRenderer, drawnText, component.getScaledX(), component.getScaledY(), 0xffffffff, true);
+        Component drawnText = Component.literal(prefix + ": ").withColor(ExtraOptions.timerPrefixColor).append(Component.literal(text).withColor(0xffffffff));
+        context.drawString(textRenderer, drawnText, component.getScaledX(), component.getScaledY(), 0xffffffff, true);
     }
 
-    public static void renderFilled(Box box, float[] rgba) {
+    public static void renderFilled(AABB box, float[] rgba) {
         if (rgba[3] == 0) return;
-        GizmoDrawing.box(box, DrawStyle.filled(ColorHelper.fromFloats(rgba[3], rgba[0], rgba[1], rgba[2]))); // Could be filledAndStroked
+        Gizmos.cuboid(box, GizmoStyle.fill(ARGB.colorFromFloat(rgba[3], rgba[0], rgba[1], rgba[2]))); // Could be filledAndStroked
         //VertexRendering.drawFilledBox(matrixStack, consumer, box.minX, box.minY, box.minZ, box.maxX, box.maxY, box.maxZ, rgba[0], rgba[1], rgba[2], rgba[3]);
     }
 
-    public static void renderOutline(Box box, float[] rgba) {
+    public static void renderOutline(AABB box, float[] rgba) {
         if (rgba[3] == 0) return;
-        GizmoDrawing.box(box, DrawStyle.stroked(ColorHelper.fromFloats(rgba[3], rgba[0], rgba[1], rgba[2]))); // Could be filledAndStroked
+        Gizmos.cuboid(box, GizmoStyle.stroke(ARGB.colorFromFloat(rgba[3], rgba[0], rgba[1], rgba[2]))); // Could be filledAndStroked
         //VertexRendering.drawBox(matrixStack.peek(), consumer, box, rgba[0], rgba[1], rgba[2], rgba[3]);
     }
 
 
-    public static void renderText(WorldRenderContext context, MatrixStack matrices, Text text, double x, double y, double z, float scale) {
-        MinecraftClient client = MinecraftClient.getInstance();
-        TextRenderer textRenderer = client.textRenderer;
-        ClientPlayerEntity player = client.player;
+    public static void renderText(WorldRenderContext context, PoseStack matrices, Component text, double x, double y, double z, float scale) {
+        Minecraft client = Minecraft.getInstance();
+        Font textRenderer = client.font;
+        LocalPlayer player = client.player;
         if (player == null) return;
 
-        matrices.push();
+        matrices.pushPose();
         matrices.translate(x, y, z);
-        matrices.multiply(context.worldState().cameraRenderState.orientation);
+        matrices.mulPose(context.worldState().cameraRenderState.orientation);
         matrices.scale(TEXT_SCALE * scale, -TEXT_SCALE * scale, TEXT_SCALE * scale);
 
-        float halfWidth = textRenderer.getWidth(text.getString()) / 2f;
+        float halfWidth = textRenderer.width(text.getString()) / 2f;
 
-        context.commandQueue().submitText(matrices, -halfWidth, 0, text.asOrderedText(), true, TextRenderer.TextLayerType.SEE_THROUGH, 15728880, 0xffffffff, 0, 0);
-        matrices.pop();
+        context.commandQueue().submitText(matrices, -halfWidth, 0, text.getVisualOrderText(), true, Font.DisplayMode.SEE_THROUGH, 15728880, 0xffffffff, 0, 0);
+        matrices.popPose();
     }
 
-    public static void renderText(WorldRenderContext context, MatrixStack matrices, Text text, Vec3d pos, float scale) {
+    public static void renderText(WorldRenderContext context, PoseStack matrices, Component text, Vec3 pos, float scale) {
         renderText(context, matrices, text, pos.x, pos.y, pos.z, scale);
     }
 
     public static void renderLineTo(WorldRenderContext context, double x, double y, double z, int color) {
-        ClientPlayerEntity player = MinecraftClient.getInstance().player;
+        LocalPlayer player = Minecraft.getInstance().player;
         if (player == null) return;
 
-        Vec3d playerPos = EntityUtil.getLerpedPos(player);
-        double eyeHeight = player.getStandingEyeHeight();
+        Vec3 playerPos = EntityUtil.getLerpedPos(player);
+        double eyeHeight = player.getEyeHeight();
         Vector3f lookAt = new Vector3f(0, 0, -1f).rotate(context.worldState().cameraRenderState.orientation);
-        Vec3d startPos = playerPos.add(0, eyeHeight, 0).add(lookAt.x, lookAt.y, lookAt.z);
-        GizmoDrawing.line(startPos, new Vec3d(x, y, z), color);
+        Vec3 startPos = playerPos.add(0, eyeHeight, 0).add(lookAt.x, lookAt.y, lookAt.z);
+        Gizmos.line(startPos, new Vec3(x, y, z), color);
     }
 
-    public static void renderLineTo(WorldRenderContext context, Vec3d pos, int color) {
+    public static void renderLineTo(WorldRenderContext context, Vec3 pos, int color) {
         renderLineTo(context, pos.x, pos.y, pos.z, color);
     }
 

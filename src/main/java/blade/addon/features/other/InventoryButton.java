@@ -1,18 +1,17 @@
 package blade.addon.features.other;
 
 import blade.addon.utils.Misc;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gl.RenderPipelines;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.util.Identifier;
-
 import java.util.ArrayList;
 import java.util.function.Supplier;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.resources.Identifier;
 
 public class InventoryButton {
 
-    private static final Identifier BUTTON_TEXTURE = Identifier.ofVanilla("widget/button");
+    private static final Identifier BUTTON_TEXTURE = Identifier.withDefaultNamespace("widget/button");
     private static final int SIZE = 18;
     private static final ArrayList<InventoryButton> inventoryButtons = new ArrayList<>();
 
@@ -29,13 +28,13 @@ public class InventoryButton {
         this.index = inventoryButtons.size();
     }
 
-    public void render(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
+    public void render(GuiGraphics context, int mouseX, int mouseY, float deltaTicks) {
         String str = command.get();
         if (str == null ||str.isEmpty()) return;
-        context.drawGuiTexture(RenderPipelines.GUI_TEXTURED, BUTTON_TEXTURE, x, y, SIZE, SIZE);
-        TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
-        int center = textRenderer.getWidth("" + index);
-        context.drawText(textRenderer, "" + index, x + (SIZE - center) / 2 + 1, y + (SIZE - textRenderer.fontHeight) / 2 + 1, 0xffffffff, true);
+        context.blitSprite(RenderPipelines.GUI_TEXTURED, BUTTON_TEXTURE, x, y, SIZE, SIZE);
+        Font textRenderer = Minecraft.getInstance().font;
+        int center = textRenderer.width("" + index);
+        context.drawString(textRenderer, "" + index, x + (SIZE - center) / 2 + 1, y + (SIZE - textRenderer.lineHeight) / 2 + 1, 0xffffffff, true);
     }
 
     public void onClick(double mouseX, double mouseY) {
@@ -56,7 +55,7 @@ public class InventoryButton {
         }
     }
 
-    public static void renderAll(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
+    public static void renderAll(GuiGraphics context, int mouseX, int mouseY, float deltaTicks) {
         for (InventoryButton button : inventoryButtons) {
             button.render(context, mouseX, mouseY, deltaTicks);
         }

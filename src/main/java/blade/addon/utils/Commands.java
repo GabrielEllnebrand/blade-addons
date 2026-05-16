@@ -15,11 +15,11 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.command.CommandRegistryAccess;
-import net.minecraft.text.Text;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.commands.CommandBuildContext;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 
 public class Commands {
@@ -31,7 +31,7 @@ public class Commands {
     }
 
     public static void registerCommands(@NotNull CommandDispatcher<FabricClientCommandSource> dispatcher,
-                                        CommandRegistryAccess registryAccess) {
+                                        CommandBuildContext registryAccess) {
 
 
         //prob not a good solution but I don't use that many commands currently
@@ -105,7 +105,7 @@ public class Commands {
                                                     )
                                             )
                                             .executes(context -> {
-                                                ClientPlayerEntity player = MinecraftClient.getInstance().player;
+                                                LocalPlayer player = Minecraft.getInstance().player;
                                                 if (player == null) return 0;
 
                                                 BossWaypoints.attemptAddWaypoint(player.getBlockX(), player.getBlockY(), player.getBlockZ(), 1, 1, 1);
@@ -118,7 +118,7 @@ public class Commands {
                                             .then(ClientCommandManager.argument("radius", DoubleArgumentType.doubleArg())
                                                     .executes(context -> {
                                                         double r = DoubleArgumentType.getDouble(context, "radius");
-                                                        ClientPlayerEntity player = MinecraftClient.getInstance().player;
+                                                        LocalPlayer player = Minecraft.getInstance().player;
                                                         if (player == null) return Constants.FAIL;
                                                         BossWaypoints.removeWaypoints(player.getX(), player.getY(), player.getZ(), r);
                                                         return Constants.SUCCESS;
@@ -184,7 +184,7 @@ public class Commands {
                                                                 int y = IntegerArgumentType.getInteger(context, "y");
                                                                 int z = IntegerArgumentType.getInteger(context, "z");
                                                                 ExtraOptions.startButton = new BlockPos(x, y, z);
-                                                                Misc.addChatMessage(Text.literal("Set the start position to " + x + " " + y + " " + z));
+                                                                Misc.addChatMessage(Component.literal("Set the start position to " + x + " " + y + " " + z));
                                                                 Config.manager.save();
                                                                 return Constants.SUCCESS;
                                                             }))

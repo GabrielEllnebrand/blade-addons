@@ -6,10 +6,10 @@ import blade.addon.utils.Misc;
 import blade.addon.utils.Scheduler;
 import blade.addon.utils.events.Events;
 import config.practical.manager.ConfigValue;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.Text;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvents;
 
 public class DianaNotifier {
 
@@ -49,16 +49,16 @@ public class DianaNotifier {
 
     private static void check(String string, String name) {
         if (string.contains(name)) {
-            MinecraftClient client = MinecraftClient.getInstance();
-            Misc.setTitle(Text.literal(name));
-            ClientPlayerEntity player = client.player;
+            Minecraft client = Minecraft.getInstance();
+            Misc.setTitle(Component.literal(name));
+            LocalPlayer player = client.player;
             if (player == null) {
-                Debug.sendDebugMessage(Text.literal("Player is null when checking diana message"));
+                Debug.sendDebugMessage(Component.literal("Player is null when checking diana message"));
                 return;
             }
 
             if (sendSound) {
-                Scheduler.scheduleSound(SoundEvents.BLOCK_NOTE_BLOCK_PLING.value(), 2, 1);
+                Scheduler.scheduleSound(SoundEvents.NOTE_BLOCK_PLING.value(), 2, 1);
 
             }
 

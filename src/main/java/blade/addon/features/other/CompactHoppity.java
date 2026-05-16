@@ -3,10 +3,9 @@ package blade.addon.features.other;
 import blade.addon.utils.Misc;
 import blade.addon.utils.config.values.Visual;
 import blade.addon.utils.events.Events;
-import net.minecraft.text.Text;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import net.minecraft.network.chat.Component;
 
 public class CompactHoppity {
 
@@ -35,7 +34,7 @@ public class CompactHoppity {
                 String styleInfo = matcher.group(1);
                 String statusInfo = matcher.group(2);
                 String chocolateAmount = matcher.group(3);
-                Misc.addChatMessage(Text.literal(styleInfo + statusInfo + " " + formattedName + " " + chocolateAmount));
+                Misc.addChatMessage(Component.literal(styleInfo + statusInfo + " " + formattedName + " " + chocolateAmount));
                 formattedName = "";
                 return true;
             }

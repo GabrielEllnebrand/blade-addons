@@ -7,9 +7,8 @@ import blade.addon.utils.config.values.Floor7;
 import blade.addon.utils.data.EntityUtil;
 import blade.addon.utils.events.Events;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.text.Text;
-
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.Player;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -49,7 +48,7 @@ public enum DungeonClass {
 
         Events.ON_PLAYER_ENTRY.register(receivedEntry -> {
             if (receivedEntry == null) return false;
-            Text text = receivedEntry.displayName();
+            Component text = receivedEntry.displayName();
             if (text == null) return false;
             String string = text.getString();
             Matcher matcher = NAME_CLASS_PATTERN.matcher(string);
@@ -88,12 +87,12 @@ public enum DungeonClass {
         return null;
     }
 
-    public static DungeonClass getClass(PlayerEntity player) {
+    public static DungeonClass getClass(Player player) {
         if (player == null) return null;
         return getClass(player.getName().getString());
     }
 
-    public static boolean isTeammate(PlayerEntity player) {
+    public static boolean isTeammate(Player player) {
         if (player == null || EntityUtil.isClientPlayer(player)) return false;
         String name = player.getName().getString();
         return nameClassMap.containsKey(name);
@@ -145,9 +144,9 @@ public enum DungeonClass {
     }
 
     public static void printClasses() {
-        Misc.addChatMessage(Text.literal("Classes"));
+        Misc.addChatMessage(Component.literal("Classes"));
         nameClassMap.forEach((name, clazz) -> {
-            Misc.addChatMessage(Text.literal("Name: " + name + "Class: " + (clazz != null? clazz.name(): null)));
+            Misc.addChatMessage(Component.literal("Name: " + name + "Class: " + (clazz != null? clazz.name(): null)));
         });
     }
 }

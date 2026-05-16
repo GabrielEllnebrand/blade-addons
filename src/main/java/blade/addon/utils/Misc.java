@@ -4,28 +4,28 @@ import blade.addon.utils.config.values.ExtraOptions;
 import blade.addon.utils.debug.Debug;
 import blade.addon.utils.interfaces.GameHud;
 import config.practical.data.SoundData;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.hud.ChatHud;
-import net.minecraft.client.gui.hud.InGameHud;
-import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.entity.Entity;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.components.ChatComponent;
+import net.minecraft.client.multiplayer.ClientPacketListener;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.phys.Vec3;
 
 public class Misc {
-    public static final MinecraftClient INSTANCE = MinecraftClient.getInstance();
-    private static final Text ON = Text.literal("ON").formatted(Formatting.GREEN);
-    private static final Text OFF = Text.literal("OFF").formatted(Formatting.RED);
+    public static final Minecraft INSTANCE = Minecraft.getInstance();
+    private static final Component ON = Component.literal("ON").withStyle(ChatFormatting.GREEN);
+    private static final Component OFF = Component.literal("OFF").withStyle(ChatFormatting.RED);
 
-    public static Vec3d getPos(Entity entity, double tickProgress) {
-        double x = MathHelper.lerp(tickProgress, entity.lastRenderX, entity.getX());
-        double y = MathHelper.lerp(tickProgress, entity.lastRenderY, entity.getY());
-        double z = MathHelper.lerp(tickProgress, entity.lastRenderZ, entity.getZ());
-        return new Vec3d(x, y, z);
+    public static Vec3 getPos(Entity entity, double tickProgress) {
+        double x = Mth.lerp(tickProgress, entity.xOld, entity.getX());
+        double y = Mth.lerp(tickProgress, entity.yOld, entity.getY());
+        double z = Mth.lerp(tickProgress, entity.zOld, entity.getZ());
+        return new Vec3(x, y, z);
     }
 
     public static double getDistance(Entity e1, Entity e2) {
@@ -36,51 +36,51 @@ public class Misc {
         return ((x1 - x2) * (x1 - x2)) + ((z1 - z2) * (z1 - z2));
     }
 
-    public static void addChatMessage(Text text) {
+    public static void addChatMessage(Component text) {
         try {
             if (INSTANCE == null) return;
-            InGameHud gameHud = INSTANCE.inGameHud;
-            ChatHud hud = gameHud.getChatHud();
-            forceMainThread(() -> hud.addMessage(Text.literal(ExtraOptions.textPrefix).append(text)));
+            Gui gameHud = INSTANCE.gui;
+            ChatComponent hud = gameHud.getChat();
+            forceMainThread(() -> hud.addMessage(Component.literal(ExtraOptions.textPrefix).append(text)));
         } catch (IndexOutOfBoundsException ignored) {
             Debug.LOGGER.error("Chat message failed to get added");
         }
     }
 
-    public static Text getStatusText(boolean status) {
+    public static Component getStatusText(boolean status) {
         return status ? ON : OFF;
     }
 
-    public static void setTitle(Text text) {
-        forceMainThread(() -> INSTANCE.inGameHud.setTitle(text));
+    public static void setTitle(Component text) {
+        forceMainThread(() -> INSTANCE.gui.setTitle(text));
     }
 
-    public static void forceTitle(Text title, Text subtitle) {
-        GameHud gameHud = (GameHud) INSTANCE.inGameHud;
+    public static void forceTitle(Component title, Component subtitle) {
+        GameHud gameHud = (GameHud) INSTANCE.gui;
         forceMainThread(() -> gameHud.blade_addons$forceTitle(title, subtitle));
     }
 
     public static void executeCommand(String string) {
-        ClientPlayNetworkHandler networkHandler = INSTANCE.getNetworkHandler();
+        ClientPacketListener networkHandler = INSTANCE.getConnection();
         if (networkHandler == null) return;
-        forceMainThread(() -> networkHandler.sendChatCommand(string));
+        forceMainThread(() -> networkHandler.sendCommand(string));
     }
 
     public static void sendSound(SoundEvent soundEvent, float volume, float pitch) {
-        ClientPlayerEntity player = INSTANCE.player;
+        LocalPlayer player = INSTANCE.player;
         if (player == null) return;
         forceMainThread(() -> player.playSound(soundEvent, volume, pitch));
     }
 
     public static void sendSound(SoundData soundData) {
-        sendSound(SoundEvent.of(soundData.getSound()), soundData.getVolume(), soundData.getPitch());
+        sendSound(SoundEvent.createVariableRangeEvent(soundData.getSound()), soundData.getVolume(), soundData.getPitch());
     }
 
     public static void forceMainThread(Runnable runnable) {
-        if (INSTANCE.isOnThread()) {
+        if (INSTANCE.isSameThread()) {
             runnable.run();
         } else {
-            INSTANCE.executeSync(runnable);
+            INSTANCE.executeIfPossible(runnable);
         }
     }
 }

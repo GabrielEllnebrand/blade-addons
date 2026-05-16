@@ -1,6 +1,6 @@
 package blade.addon.utils.events.interfaces;
 
-import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
 
 public interface BlockEntityEvent {
 

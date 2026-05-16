@@ -6,14 +6,14 @@ import blade.addon.utils.dungeon.DungeonClass;
 import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.rendering.RenderUtils;
 import config.practical.hud.HUDComponent;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.util.math.Box;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.world.phys.AABB;
 
 public class DistanceToLedge {
 
-    private static final Box YELLOW_PAD = new Box(20, 163, 0, 58, 213, 107);
+    private static final AABB YELLOW_PAD = new AABB(20, 163, 0, 58, 213, 107);
     private static final double MIN_X = 33.704;
 
     public static void init() {
@@ -21,16 +21,16 @@ public class DistanceToLedge {
     }
 
     public static double getDistance() {
-        ClientPlayerEntity player = MinecraftClient.getInstance().player;
+        LocalPlayer player = Minecraft.getInstance().player;
         if (player == null) return 0;
 
         return player.getX() - MIN_X;
     }
 
     private static boolean isAtYellow() {
-        ClientPlayerEntity player = MinecraftClient.getInstance().player;
+        LocalPlayer player = Minecraft.getInstance().player;
         if (player == null) return false;
-        return YELLOW_PAD.contains(player.getEntityPos());
+        return YELLOW_PAD.contains(player.position());
     }
 
     public static boolean display() {
@@ -39,7 +39,7 @@ public class DistanceToLedge {
         return Phase.inP2() && !Phase.stormDead() && (DungeonClass.isClass(DungeonClass.MAGE) || DungeonClass.isClass(DungeonClass.ARCHER));
     }
 
-    public static void render(HUDComponent component, DrawContext context) {
+    public static void render(HUDComponent component, GuiGraphics context) {
         RenderUtils.drawTimer(component, context, getDistance(), 0xffffffff);
     }
 }

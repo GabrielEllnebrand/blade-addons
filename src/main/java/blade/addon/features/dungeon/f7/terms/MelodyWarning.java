@@ -10,14 +10,13 @@ import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.events.Events;
 import blade.addon.utils.rendering.RenderUtils;
 import config.practical.hud.HUDComponent;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
-
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
 
 public class MelodyWarning {
 
@@ -81,7 +80,7 @@ public class MelodyWarning {
         return melodyStarted && Floor7.notifiyMelody && !ownUsername;
     }
 
-    public static void render(HUDComponent component, DrawContext context) {
+    public static void render(HUDComponent component, GuiGraphics context) {
         DungeonClass dungeonClass = DungeonClass.getClass(name);
         int num = Math.min(furthestProgress / 25, 3);
 
@@ -90,10 +89,10 @@ public class MelodyWarning {
             color = DungeonClass.getColor(name);
         }
 
-        MutableText nameText = Text.literal(dungeonClass != null ? dungeonClass.name() : name != null? name: "Someone").setStyle(Style.EMPTY.withColor(color).withBold(true));
-        MutableText infoText = Text.literal(" §r§dhas melody! " + num + "/4").setStyle(Style.EMPTY);
+        MutableComponent nameText = Component.literal(dungeonClass != null ? dungeonClass.name() : name != null? name: "Someone").setStyle(Style.EMPTY.withColor(color).withBold(true));
+        MutableComponent infoText = Component.literal(" §r§dhas melody! " + num + "/4").setStyle(Style.EMPTY);
 
-        Text text = nameText.append(infoText);
+        Component text = nameText.append(infoText);
 
         RenderUtils.drawCenteredText(context, component, text);
     }

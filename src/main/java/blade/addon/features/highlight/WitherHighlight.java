@@ -6,20 +6,19 @@ import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.events.Events;
 import blade.addon.utils.rendering.RenderUtils;
 import blade.addon.utils.rendering.RenderingEvents;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderContext;
-import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.boss.WitherEntity;
-import net.minecraft.util.math.Box;
-
+import net.minecraft.world.entity.boss.wither.WitherBoss;
+import net.minecraft.world.phys.AABB;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class WitherHighlight {
 
     private static final float WITHER_BORN_HEALTH = 300f;
 
-    private static final ConcurrentLinkedQueue<WitherEntity> withers = new ConcurrentLinkedQueue<>();
+    private static final ConcurrentLinkedQueue<WitherBoss> withers = new ConcurrentLinkedQueue<>();
 
 
     public static void init() {
@@ -27,7 +26,7 @@ public class WitherHighlight {
             if (!Location.inDungeon() || !MobHighlight.mobHighlight) return false;
 
             if (Phase.inBoss()) {
-                if (entity instanceof WitherEntity wither) {
+                if (entity instanceof WitherBoss wither) {
                     if (wither.getHealth() != WITHER_BORN_HEALTH && !withers.contains(wither)) {
                         withers.add(wither);
                     }
@@ -42,24 +41,24 @@ public class WitherHighlight {
             return false;
         });
 
-        ClientTickEvents.END_CLIENT_TICK.register(client -> {withers.removeIf(wither -> wither.isRemoved() || wither.isDead());});
+        ClientTickEvents.END_CLIENT_TICK.register(client -> {withers.removeIf(wither -> wither.isRemoved() || wither.isDeadOrDying());});
 
         RenderingEvents.FILLED_ENTITY.register(WitherHighlight::renderFilled);
         RenderingEvents.OUTLINE_ENTITY.register(WitherHighlight::renderOutline);
     }
 
-    private static Box getBox(WitherEntity wither) {
-        return EntityUtil.getBox(wither).expand(MobHighlight.witherExtraWidth, 0, MobHighlight.witherExtraWidth);
+    private static AABB getBox(WitherBoss wither) {
+        return EntityUtil.getBox(wither).inflate(MobHighlight.witherExtraWidth, 0, MobHighlight.witherExtraWidth);
     }
 
-    private static void renderFilled(WorldRenderContext context, MatrixStack matrixStack, VertexConsumer consumer) {
+    private static void renderFilled(WorldRenderContext context, PoseStack matrixStack, VertexConsumer consumer) {
         if (!MobHighlight.mobHighlight || !MobHighlight.renderFilled() || MobHighlight.dontRenderHighlight) return;
 
         float[] rgba = RenderUtils.toFloats(MobHighlight.witherFilledColor);
         withers.forEach(entity -> RenderUtils.renderFilled(getBox(entity), rgba));
     }
 
-    private static void renderOutline(WorldRenderContext context, MatrixStack matrixStack, VertexConsumer consumer) {
+    private static void renderOutline(WorldRenderContext context, PoseStack matrixStack, VertexConsumer consumer) {
         if (!MobHighlight.mobHighlight || !MobHighlight.renderOutline() || MobHighlight.dontRenderHighlight) return;
 
         float[] rgba = RenderUtils.toFloats(MobHighlight.witherOutlineColor);

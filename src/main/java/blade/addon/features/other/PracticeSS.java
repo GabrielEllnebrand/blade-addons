@@ -8,33 +8,32 @@ import blade.addon.utils.events.Events;
 import blade.addon.utils.rendering.RenderUtils;
 import blade.addon.utils.rendering.RenderingEvents;
 import blade.addon.utils.times.PersonalBests;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderContext;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.item.ItemStack;
-import net.minecraft.state.property.Properties;
-import net.minecraft.text.Text;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Direction;
-
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.BlockHitResult;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class PracticeSS {
 
-    private static final Box NORTH_BOX = new Box(5 / 16.0, 6 / 16.0, 14 / 16.0, 11 / 16.0, 10 / 16.0, 1);
-    private static final Box SOUTH_BOX = new Box(5 / 16.0, 6 / 16.0, 0, 11 / 16.0, 10 / 16.0, 2 / 16.0);
-    private static final Box EAST_BOX = new Box(0, 6 / 16.0, 5 / 16.0, 2 / 16.0, 10 / 16.0, 11 / 16.0);
-    private static final Box WEST_BOX = new Box(14 / 16.0, 6 / 16.0, 5 / 16.0, 1, 10 / 16.0, 11 / 16.0);
+    private static final AABB NORTH_BOX = new AABB(5 / 16.0, 6 / 16.0, 14 / 16.0, 11 / 16.0, 10 / 16.0, 1);
+    private static final AABB SOUTH_BOX = new AABB(5 / 16.0, 6 / 16.0, 0, 11 / 16.0, 10 / 16.0, 2 / 16.0);
+    private static final AABB EAST_BOX = new AABB(0, 6 / 16.0, 5 / 16.0, 2 / 16.0, 10 / 16.0, 11 / 16.0);
+    private static final AABB WEST_BOX = new AABB(14 / 16.0, 6 / 16.0, 5 / 16.0, 1, 10 / 16.0, 11 / 16.0);
 
     private static final List<BlockPos> START_POSES = List.of(new BlockPos(-17, 5, -26), new BlockPos(-37, 5, -26), new BlockPos(-51, 5, -26), new BlockPos(-74, 5, -26), new BlockPos(7, 5, -26), new BlockPos(-60, 5, -26), new BlockPos(-6, 5, -26), new BlockPos(-28, 5, -26));
     private static final CopyOnWriteArrayList<BlockPos> buttons = new CopyOnWriteArrayList<>();
@@ -70,7 +69,7 @@ public class PracticeSS {
 
         Events.ON_BLOCK_INTERACTION.register((BlockHitResult result, ItemStack item) -> {
             if (!ExtraOptions.practiceSSAnywhere && !Location.in(Location.PRIVATE_ISLAND)) return false;
-            ClientWorld world = MinecraftClient.getInstance().world;
+            ClientLevel world = Minecraft.getInstance().level;
             if (world == null) return false;
             BlockPos pos = result.getBlockPos();
             BlockState state = world.getBlockState(pos);
@@ -102,11 +101,11 @@ public class PracticeSS {
                 inSkipPhase = false;
 
                 if (skipped) {
-                    Misc.addChatMessage(Text.literal("Skip successful!"));
-                    genBoard(client.world, startPos);
+                    Misc.addChatMessage(Component.literal("Skip successful!"));
+                    genBoard(client.level, startPos);
                     setStage(2);
                 } else {
-                    Misc.addChatMessage(Text.literal("Failed to skip"));
+                    Misc.addChatMessage(Component.literal("Failed to skip"));
                     skipped = false;
                 }
             }
@@ -120,7 +119,7 @@ public class PracticeSS {
 
     }
 
-    private static void parseStartButton(ClientWorld world, BlockState state, BlockPos pos) {
+    private static void parseStartButton(ClientLevel world, BlockState state, BlockPos pos) {
         if (started && ExtraOptions.autoSkip) {
             start(world, state, pos);
             startPos = pos;
@@ -164,9 +163,9 @@ public class PracticeSS {
         return false;
     }
 
-    private static void start(ClientWorld world, BlockState state, BlockPos pos) {
+    private static void start(ClientLevel world, BlockState state, BlockPos pos) {
         reset();
-        direction = state.get(Properties.HORIZONTAL_FACING);
+        direction = state.getValue(BlockStateProperties.HORIZONTAL_FACING);
         genBoard(world, pos);
         startTime = System.currentTimeMillis();
 
@@ -180,9 +179,9 @@ public class PracticeSS {
         started = true;
     }
 
-    private static void genBoard(ClientWorld world, BlockPos pos) {
+    private static void genBoard(ClientLevel world, BlockPos pos) {
         if (world == null || pos == null) {
-            Misc.addChatMessage(Text.literal("World or start position cant be found"));
+            Misc.addChatMessage(Component.literal("World or start position cant be found"));
             return;
         }
 
@@ -215,7 +214,7 @@ public class PracticeSS {
                 ez = 5;
             }
             default -> {
-                Misc.addChatMessage(Text.literal("Failed to generate board"));
+                Misc.addChatMessage(Component.literal("Failed to generate board"));
                 return;
             }
         }
@@ -233,7 +232,7 @@ public class PracticeSS {
 
                     } else {
                         started = false;
-                        Misc.addChatMessage(Text.literal("Block at: " + x + ", " + y + ", " + z + " is not a stone button"));
+                        Misc.addChatMessage(Component.literal("Block at: " + x + ", " + y + ", " + z + " is not a stone button"));
                         return;
                     }
                 }
@@ -265,23 +264,23 @@ public class PracticeSS {
         if (ExtraOptions.realisticDelay) {
             if (ExtraOptions.includeLuckyButton) {
                 if (wasLuckyButton) {
-                    PersonalBests.practiseSSRealisticTime.testNewTime(Text.literal("SS with Realistic Time (Lucky Button) Took: "), startTime);
+                    PersonalBests.practiseSSRealisticTime.testNewTime(Component.literal("SS with Realistic Time (Lucky Button) Took: "), startTime);
                 } else {
-                    PersonalBests.practiseSSRealisticUnluckyTime.testNewTime(Text.literal("SS with Realistic Time Took: "), startTime);
+                    PersonalBests.practiseSSRealisticUnluckyTime.testNewTime(Component.literal("SS with Realistic Time Took: "), startTime);
                 }
             } else {
-                PersonalBests.practiseSSRealisticTime.testNewTime(Text.literal("SS with Realistic Time Took: "), startTime);
+                PersonalBests.practiseSSRealisticTime.testNewTime(Component.literal("SS with Realistic Time Took: "), startTime);
             }
 
         } else {
             if (ExtraOptions.includeLuckyButton) {
                 if (wasLuckyButton) {
-                    PersonalBests.practiseSSTime.testNewTime(Text.literal("SS (Lucky Button) Took: "), startTime);
+                    PersonalBests.practiseSSTime.testNewTime(Component.literal("SS (Lucky Button) Took: "), startTime);
                 } else {
-                    PersonalBests.practiseSSUnluckyTime.testNewTime(Text.literal("SS Time Took: "), startTime);
+                    PersonalBests.practiseSSUnluckyTime.testNewTime(Component.literal("SS Time Took: "), startTime);
                 }
             } else {
-                PersonalBests.practiseSSTime.testNewTime(Text.literal("SS Took: "), startTime);
+                PersonalBests.practiseSSTime.testNewTime(Component.literal("SS Took: "), startTime);
             }
 
         }
@@ -347,7 +346,7 @@ public class PracticeSS {
         return endIndex - ticksLeft / getDelay();
     }
 
-    private static void render(WorldRenderContext context, MatrixStack matrixStack, VertexConsumer consumer) {
+    private static void render(WorldRenderContext context, PoseStack matrixStack, VertexConsumer consumer) {
         if (!started) return;
 
         if (showingPattern) {
@@ -362,19 +361,19 @@ public class PracticeSS {
     }
 
     private static void renderButtons(int start, int end) {
-        Box directionBox = getBox(direction);
+        AABB directionBox = getBox(direction);
         if (directionBox == null) return;
 
         for (int i = start; i < end; i++) {
             if (buttons.size() <= i) break;
             BlockPos pos = buttons.get(i);
-            Box box = directionBox.offset(pos.getX(), pos.getY(), pos.getZ());
+            AABB box = directionBox.move(pos.getX(), pos.getY(), pos.getZ());
             float[] color = RenderUtils.toFloats(getColor(i));
             RenderUtils.renderFilled(box, color);
         }
     }
 
-    private static Box getBox(Direction direction) {
+    private static AABB getBox(Direction direction) {
         return switch (direction) {
             case NORTH -> NORTH_BOX;
             case SOUTH -> SOUTH_BOX;
@@ -386,7 +385,7 @@ public class PracticeSS {
 
     private static void renderBackground(int backgroundIndex) {
         if (buttons.size() > backgroundIndex && backgroundIndex >= 0) {
-            Box box = Box.of(buttons.get(backgroundIndex).toCenterPos(), 1, 1, 1);
+            AABB box = AABB.ofSize(buttons.get(backgroundIndex).getCenter(), 1, 1, 1);
             int dx, dz;
             switch (direction) {
                 case SOUTH -> {
@@ -409,7 +408,7 @@ public class PracticeSS {
                     return;
                 }
             }
-            RenderUtils.renderFilled(box.offset(dx, 0, dz), new float[]{0, 0.5f, 1, 1});
+            RenderUtils.renderFilled(box.move(dx, 0, dz), new float[]{0, 0.5f, 1, 1});
         }
     }
 }

@@ -1,7 +1,7 @@
 package blade.addon.utils.events.interfaces;
 
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
 
 public interface LeapEvent {
-    boolean onLeap(Text message);
+    boolean onLeap(Component message);
 }

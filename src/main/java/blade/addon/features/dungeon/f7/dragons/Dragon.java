@@ -1,22 +1,22 @@
 package blade.addon.features.dungeon.f7.dragons;
 
 import blade.addon.utils.dungeon.DungeonClass;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.phys.Vec3;
 
 public enum Dragon {
-    PURPLE(0xffff55ff, 0, 4, new Vec3d(56.5, 14, 125.5)),
-    BLUE(0xff55ffff, 1, 3, new Vec3d(84.5, 14, 94.5)),
-    RED(0xffff5555, 2, 2, new Vec3d (27.5, 14, 59.5)),
-    GREEN(0xff55ff55, 3, 1, new Vec3d(27.5, 14, 94.5)),
-    ORANGE(0xffffaa00, 4, 0, new Vec3d(84.5, 14, 56.5)),
-    NONE(0xffffffff, 99, 99, new Vec3d(0, 0, 0));
+    PURPLE(0xffff55ff, 0, 4, new Vec3(56.5, 14, 125.5)),
+    BLUE(0xff55ffff, 1, 3, new Vec3(84.5, 14, 94.5)),
+    RED(0xffff5555, 2, 2, new Vec3 (27.5, 14, 59.5)),
+    GREEN(0xff55ff55, 3, 1, new Vec3(27.5, 14, 94.5)),
+    ORANGE(0xffffaa00, 4, 0, new Vec3(84.5, 14, 56.5)),
+    NONE(0xffffffff, 99, 99, new Vec3(0, 0, 0));
 
     final int color;
     final int archPrio;
     final int bersPrio;
-    final Vec3d spawnPos;
+    final Vec3 spawnPos;
 
-    Dragon(int color, int archPrio, int bersPrio, Vec3d spawnPos) {
+    Dragon(int color, int archPrio, int bersPrio, Vec3 spawnPos) {
         this.color = color;
         this.archPrio = archPrio;
         this.bersPrio = bersPrio;

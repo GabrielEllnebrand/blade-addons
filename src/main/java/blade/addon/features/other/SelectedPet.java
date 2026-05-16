@@ -8,15 +8,14 @@ import blade.addon.utils.events.Events;
 import blade.addon.utils.rendering.RenderUtils;
 import config.practical.hud.HUDComponent;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gl.RenderPipelines;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
-
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
+import net.minecraft.resources.Identifier;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -32,10 +31,10 @@ public class SelectedPet {
 
     private static final int TOTAL_TICKS = 20;
 
-    private static final MutableText NO_PET = Text.literal("§cNo pet");
+    private static final MutableComponent NO_PET = Component.literal("§cNo pet");
     private static final String identifierPrefix = "pets/";
 
-    private static MutableText currentPetText = NO_PET;
+    private static MutableComponent currentPetText = NO_PET;
     private static int currentPetLevel = -1;
     private static String currentPetString = "";
     private static Identifier spriteId = null;
@@ -54,7 +53,7 @@ public class SelectedPet {
 
                 String name = matcher.group(2).replace(" ✦", "");
                 Style style = getStyle(message, name);
-                summonPet(name, Text.literal(name).setStyle(style), getLevel(string), false);
+                summonPet(name, Component.literal(name).setStyle(style), getLevel(string), false);
                 return false;
             }
 
@@ -69,14 +68,14 @@ public class SelectedPet {
                     textName = string.substring(index - COLOR_OFFSET, index) + textName;
                 }
 
-                summonPet(name, Text.literal(textName), getLevel(unformattedLine), true);
+                summonPet(name, Component.literal(textName), getLevel(unformattedLine), true);
             }
             return false;
         });
 
         Events.ON_PLAYER_ENTRY.register(receivedEntry -> {
             if (receivedEntry == null) return false;
-            Text text = receivedEntry.displayName();
+            Component text = receivedEntry.displayName();
             if (text == null) return false;
 
             String string = text.getString();
@@ -89,7 +88,7 @@ public class SelectedPet {
             if (matcher.find()) {
                 String petName = matcher.group(1).replace(" ✦", "");
                 Style style = getStyle(text, petName);
-                summonPet(petName, Text.literal(petName).setStyle(style), getLevel(string), false);
+                summonPet(petName, Component.literal(petName).setStyle(style), getLevel(string), false);
             }
 
             return false;
@@ -110,7 +109,7 @@ public class SelectedPet {
 
     }
 
-    private static void summonPet(String stringName, MutableText textName, int level, boolean sendSound) {
+    private static void summonPet(String stringName, MutableComponent textName, int level, boolean sendSound) {
         currentPetLevel = level;
         if (stringName.equals(currentPetString)) {
             return;
@@ -128,11 +127,11 @@ public class SelectedPet {
         }
     }
 
-    private static Style getStyle(Text text, String name) {
+    private static Style getStyle(Component text, String name) {
         Style style = Style.EMPTY;
-        List<Text> lines = text.getSiblings();
+        List<Component> lines = text.getSiblings();
 
-        for (Text line : lines) {
+        for (Component line : lines) {
             if (line.getString().equals(name)) {
                 style = line.getStyle();
             }
@@ -156,8 +155,8 @@ public class SelectedPet {
             return;
         }
         String formattedName = petName.toLowerCase().replace(" ", "-");
-        if (Identifier.isNamespaceValid(formattedName)) {
-            spriteId = Identifier.of(Constants.NAMESPACE, identifierPrefix + formattedName);
+        if (Identifier.isValidNamespace(formattedName)) {
+            spriteId = Identifier.fromNamespaceAndPath(Constants.NAMESPACE, identifierPrefix + formattedName);
         } else {
             Debug.LOGGER.warn("{} includes invalid chars", formattedName);
         }
@@ -167,32 +166,32 @@ public class SelectedPet {
         return ExtraOptions.drawPetHUD;
     }
 
-    public static void render(HUDComponent component, DrawContext context) {
+    public static void render(HUDComponent component, GuiGraphics context) {
         int x = component.getScaledX();
         int y = component.getScaledY();
 
         if (spriteId != null && ExtraOptions.includePetSprite) {
-            context.drawGuiTexture(RenderPipelines.GUI_TEXTURED, spriteId, x, y, 16, 16, 0xffffffff);
+            context.blitSprite(RenderPipelines.GUI_TEXTURED, spriteId, x, y, 16, 16, 0xffffffff);
         }
 
-        TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
+        Font textRenderer = Minecraft.getInstance().font;
 
         int textX = x + (ExtraOptions.includePetSprite ? 18 : 0);
-        int textY = y + component.getHeight() - textRenderer.fontHeight;
+        int textY = y + component.getHeight() - textRenderer.lineHeight;
 
         if (ExtraOptions.displayPetLevel && currentPetText != NO_PET) {
-            context.drawText(textRenderer, Text.literal("§7[Lvl " + (currentPetLevel != -1 ? currentPetLevel : "???") + "]"), textX, textY, 0xffffffff, true);
-            textY -= textRenderer.fontHeight;
+            context.drawString(textRenderer, Component.literal("§7[Lvl " + (currentPetLevel != -1 ? currentPetLevel : "???") + "]"), textX, textY, 0xffffffff, true);
+            textY -= textRenderer.lineHeight;
         }
 
-        context.drawText(textRenderer, currentPetText, textX, textY, 0xffffffff, true);
+        context.drawString(textRenderer, currentPetText, textX, textY, 0xffffffff, true);
     }
 
     public static boolean displayNotification() {
         return ExtraOptions.sendPetSwapNotification && tick > 0;
     }
 
-    public static void renderNotification(HUDComponent component, DrawContext context) {
+    public static void renderNotification(HUDComponent component, GuiGraphics context) {
         RenderUtils.drawCenteredText(context, component, currentPetText);
     }
 
