@@ -36,8 +36,8 @@ public class MimicHighlight {
 
        ClientTickEvents.END_CLIENT_TICK.register(client -> mimics.removeIf(BlockEntity::isRemoved));
 
-        RenderingEvents.FILLED_ENTITY.register(MimicHighlight::renderFilled);
-        RenderingEvents.OUTLINE_ENTITY.register(MimicHighlight::renderOutline);
+        RenderingEvents.FILLED.register(MimicHighlight::renderFilled);
+        RenderingEvents.LINE.register(MimicHighlight::renderOutline);
     }
 
 
@@ -45,13 +45,13 @@ public class MimicHighlight {
         if (!MobHighlight.highlightMimicChests || !MobHighlight.renderFilled()) return;
 
         float[] rgba = RenderUtils.toFloats(MobHighlight.mimicFilledColor);
-        mimics.forEach(mimic -> RenderUtils.renderFilled(box.move(mimic.getBlockPos()), rgba));
+        mimics.forEach(mimic -> RenderUtils.renderFilledBox(matrixStack, consumer, box.move(mimic.getBlockPos()), rgba));
     }
 
     private static void renderOutline(WorldRenderContext context, PoseStack matrixStack, VertexConsumer consumer) {
         if (!MobHighlight.highlightMimicChests || !MobHighlight.renderOutline()) return;
 
         float[] rgba = RenderUtils.toFloats(MobHighlight.mimicOutlineColor);
-        mimics.forEach(mimic -> RenderUtils.renderOutline(box.move(mimic.getBlockPos()), rgba));
+        mimics.forEach(mimic -> RenderUtils.renderOutlinedBox(matrixStack, consumer,box.move(mimic.getBlockPos()), rgba));
     }
 }

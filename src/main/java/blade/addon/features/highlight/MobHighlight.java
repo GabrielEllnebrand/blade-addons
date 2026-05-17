@@ -165,8 +165,8 @@ public class MobHighlight {
             }
         });
 
-        RenderingEvents.FILLED_ENTITY.register(MobHighlight::renderFilled);
-        RenderingEvents.OUTLINE_ENTITY.register(MobHighlight::renderOutline);
+        RenderingEvents.FILLED.register(MobHighlight::renderFilled);
+        RenderingEvents.LINE.register(MobHighlight::renderOutline);
     }
 
     private static void testArmorStand(ArmorStand armorStand) {
@@ -314,7 +314,7 @@ public class MobHighlight {
             int filledColor = getFilledColor(type);
             float[] rgba = RenderUtils.toFloats(filledColor);
 
-            RenderUtils.renderFilled(box, rgba);
+            RenderUtils.renderFilledBox(matrixStack, consumer,box, rgba);
 
         }
     }
@@ -332,7 +332,7 @@ public class MobHighlight {
             int outlineColor = getOutlineColor(type);
             float[] rgba = RenderUtils.toFloats(outlineColor);
 
-            RenderUtils.renderOutline(box, rgba);
+            RenderUtils.renderOutlinedBox(matrixStack, consumer,box, rgba);
         }
     }
 }

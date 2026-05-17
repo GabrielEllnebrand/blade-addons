@@ -10,6 +10,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderContext;
 import net.minecraft.world.entity.ambient.Bat;
+
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class BatHighlight {
@@ -37,24 +38,24 @@ public class BatHighlight {
             return false;
         });
 
-        ClientTickEvents.END_CLIENT_TICK.register(client -> bats.removeIf(bat -> bat.isRemoved() ||bat.isDeadOrDying()));
+        ClientTickEvents.END_CLIENT_TICK.register(client -> bats.removeIf(bat -> bat.isRemoved() || bat.isDeadOrDying()));
 
-        RenderingEvents.FILLED_ENTITY.register(BatHighlight::renderFilled);
-        RenderingEvents.OUTLINE_ENTITY.register(BatHighlight::renderOutline);
+        RenderingEvents.FILLED.register(BatHighlight::renderFilled);
+        RenderingEvents.LINE.register(BatHighlight::renderOutline);
     }
 
     private static void renderFilled(WorldRenderContext context, PoseStack matrixStack, VertexConsumer consumer) {
         if (!MobHighlight.mobHighlight || !MobHighlight.renderFilled()) return;
 
         float[] rgba = RenderUtils.toFloats(MobHighlight.batFilledColor);
-        bats.forEach(entity -> RenderUtils.renderFilled(EntityUtil.getBox(entity), rgba));
+        bats.forEach(entity -> RenderUtils.renderFilledBox(matrixStack, consumer, EntityUtil.getBox(entity), rgba));
     }
 
     private static void renderOutline(WorldRenderContext context, PoseStack matrixStack, VertexConsumer consumer) {
         if (!MobHighlight.mobHighlight || !MobHighlight.renderOutline()) return;
 
         float[] rgba = RenderUtils.toFloats(MobHighlight.batOutlineColor);
-        bats.forEach(entity -> RenderUtils.renderOutline(EntityUtil.getBox(entity), rgba));
+        bats.forEach(entity -> RenderUtils.renderOutlinedBox(matrixStack, consumer, EntityUtil.getBox(entity), rgba));
     }
 
 }

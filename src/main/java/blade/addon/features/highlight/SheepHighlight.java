@@ -33,22 +33,22 @@ public class SheepHighlight {
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> sheeps.removeIf(sheep -> sheep.isRemoved() || sheep.isDeadOrDying()));
 
-        RenderingEvents.FILLED_ENTITY.register(SheepHighlight::renderFilled);
-        RenderingEvents.OUTLINE_ENTITY.register(SheepHighlight::renderOutline);
+        RenderingEvents.FILLED.register(SheepHighlight::renderFilled);
+        RenderingEvents.LINE.register(SheepHighlight::renderOutline);
     }
 
     private static void renderFilled(WorldRenderContext context, PoseStack matrixStack, VertexConsumer consumer) {
         if (!MobHighlight.highlightSheep || !MobHighlight.renderFilled()) return;
 
         float[] rgba = RenderUtils.toFloats(MobHighlight.sheepFilledColor);
-        sheeps.forEach(entity -> RenderUtils.renderFilled(EntityUtil.getBox(entity), rgba));
+        sheeps.forEach(entity -> RenderUtils.renderFilledBox(matrixStack, consumer, EntityUtil.getBox(entity), rgba));
     }
 
     private static void renderOutline(WorldRenderContext context, PoseStack matrixStack, VertexConsumer consumer) {
         if (!MobHighlight.highlightSheep || !MobHighlight.renderOutline()) return;
 
         float[] rgba = RenderUtils.toFloats(MobHighlight.sheepFilledColor);
-        sheeps.forEach(entity -> RenderUtils.renderOutline(EntityUtil.getBox(entity), rgba));
+        sheeps.forEach(entity -> RenderUtils.renderOutlinedBox(matrixStack, consumer,EntityUtil.getBox(entity), rgba));
     }
 
 }

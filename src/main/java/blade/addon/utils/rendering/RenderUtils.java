@@ -1,22 +1,23 @@
 package blade.addon.utils.rendering;
 
+import blade.addon.features.highlight.MobHighlight;
 import blade.addon.utils.Constants;
 import blade.addon.utils.config.values.ExtraOptions;
 import blade.addon.utils.config.values.Floor7;
 import blade.addon.utils.data.EntityUtil;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import config.practical.hud.HUDComponent;
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderContext;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.gizmos.GizmoStyle;
 import net.minecraft.gizmos.Gizmos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.util.ARGB;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 public class RenderUtils {
@@ -88,19 +89,6 @@ public class RenderUtils {
         context.drawString(textRenderer, drawnText, component.getScaledX(), component.getScaledY(), 0xffffffff, true);
     }
 
-    public static void renderFilled(AABB box, float[] rgba) {
-        if (rgba[3] == 0) return;
-        Gizmos.cuboid(box, GizmoStyle.fill(ARGB.colorFromFloat(rgba[3], rgba[0], rgba[1], rgba[2]))); // Could be filledAndStroked
-        //VertexRendering.drawFilledBox(matrixStack, consumer, box.minX, box.minY, box.minZ, box.maxX, box.maxY, box.maxZ, rgba[0], rgba[1], rgba[2], rgba[3]);
-    }
-
-    public static void renderOutline(AABB box, float[] rgba) {
-        if (rgba[3] == 0) return;
-        Gizmos.cuboid(box, GizmoStyle.stroke(ARGB.colorFromFloat(rgba[3], rgba[0], rgba[1], rgba[2]))); // Could be filledAndStroked
-        //VertexRendering.drawBox(matrixStack.peek(), consumer, box, rgba[0], rgba[1], rgba[2], rgba[3]);
-    }
-
-
     public static void renderText(WorldRenderContext context, PoseStack matrices, Component text, double x, double y, double z, float scale) {
         Minecraft client = Minecraft.getInstance();
         Font textRenderer = client.font;
@@ -137,7 +125,7 @@ public class RenderUtils {
         renderLineTo(context, pos.x, pos.y, pos.z, color);
     }
 
-        public static String formatNumber(float num) {
+    public static String formatNumber(float num) {
         if (Floor7.capitalizeHealthNumbers) {
             if (num >= 1e9) return String.format("%.1fB", num / 1e9);
             if (num >= 1e6) return String.format("%.1fM", num / 1e6);
@@ -147,6 +135,142 @@ public class RenderUtils {
             if (num >= 1e6) return String.format("%.1fm", num / 1e6);
             if (num >= 1e3) return String.format("%.1fk", num / 1e3);
         }
-            return num + "";
-        }
+        return num + "";
+    }
+
+    private static void quad(Matrix4f matrix,
+                             VertexConsumer consumer,
+                             double x1, double y1, double z1,
+                             double x2, double y2, double z2,
+                             double x3, double y3, double z3,
+                             double x4, double y4, double z4,
+
+                             float r, float g, float b, float a) {
+
+        consumer.addVertex(matrix, (float) x1, (float) y1, (float) z1)
+                .setColor(r, g, b, a)
+                .setNormal(0, 1, 0);
+
+        consumer.addVertex(matrix, (float) x2, (float) y2, (float) z2)
+                .setColor(r, g, b, a)
+                .setNormal(0, 1, 0);
+
+        consumer.addVertex(matrix, (float) x3, (float) y3, (float) z3)
+                .setColor(r, g, b, a)
+                .setNormal(0, 1, 0);
+
+        consumer.addVertex(matrix, (float) x4, (float) y4, (float) z4)
+                .setColor(r, g, b, a)
+                .setNormal(0, 1, 0);
+
+    }
+
+    private static void verticalLine(Matrix4f matrix,
+                                     VertexConsumer consumer,
+                                     double x1, double y1, double z1,
+                                     double x2, double y2, double z2,
+                                     float r, float g, float b, float a, float width) {
+
+        consumer.addVertex(matrix, (float) x1, (float) y1, (float) z1)
+                .setColor(r, g, b, a)
+                .setNormal(1, 0, 0).setLineWidth(width);
+
+        consumer.addVertex(matrix, (float) x2, (float) y2, (float) z2)
+                .setColor(r, g, b, a)
+                .setNormal(1, 0, 0).setLineWidth(width);
+
+        consumer.addVertex(matrix, (float) x1, (float) y1, (float) z1)
+                .setColor(r, g, b, a)
+                .setNormal(0, 0, 1).setLineWidth(width);
+
+        consumer.addVertex(matrix, (float) x2, (float) y2, (float) z2)
+                .setColor(r, g, b, a)
+                .setNormal(0, 0, 1).setLineWidth(width);
+    }
+
+    private static void horizontalLine(Matrix4f matrix,
+                                       VertexConsumer consumer,
+                                       double x1, double y1, double z1,
+                                       double x2, double y2, double z2,
+                                       float r, float g, float b, float a, float width) {
+
+        consumer.addVertex(matrix, (float) x1, (float) y1, (float) z1)
+                .setColor(r, g, b, a)
+                .setNormal(0, 1, 0).setLineWidth(width);
+
+        consumer.addVertex(matrix, (float) x2, (float) y2, (float) z2)
+                .setColor(r, g, b, a)
+                .setNormal(0, 1, 0).setLineWidth(width);
+    }
+
+    public static void renderOutlinedBox(PoseStack matrices,
+                                       VertexConsumer consumer,
+                                       AABB box,
+                                       float[] rgba) {
+
+
+        if (rgba[3] == 0) return;
+        float r = rgba[0];
+        float g = rgba[1];
+        float b = rgba[2];
+        float a = rgba[3];
+
+        Matrix4f matrix = matrices.last().pose();
+
+        double minX = box.minX;
+        double minY = box.minY;
+        double minZ = box.minZ;
+        double maxX = box.maxX;
+        double maxY = box.maxY;
+        double maxZ = box.maxZ;
+
+        horizontalLine(matrix, consumer, minX, minY, minZ, minX, maxY, minZ, r, g, b, a, MobHighlight.outlineWidth);
+        horizontalLine(matrix, consumer, maxX, minY, minZ, maxX, maxY, minZ, r, g, b, a, MobHighlight.outlineWidth);
+        horizontalLine(matrix, consumer, minX, minY, maxZ, minX, maxY, maxZ, r, g, b, a, MobHighlight.outlineWidth);
+        horizontalLine(matrix, consumer, maxX, minY, maxZ, maxX, maxY, maxZ, r, g, b, a, MobHighlight.outlineWidth);
+
+        verticalLine(matrix, consumer, minX, maxY, minZ, maxX, maxY, minZ, r, g, b, a, MobHighlight.outlineWidth);
+        verticalLine(matrix, consumer, maxX, maxY, minZ, maxX, maxY, maxZ, r, g, b, a, MobHighlight.outlineWidth);
+        verticalLine(matrix, consumer, maxX, maxY, maxZ, minX, maxY, maxZ, r, g, b, a, MobHighlight.outlineWidth);
+        verticalLine(matrix, consumer, minX, maxY, maxZ, minX, maxY, minZ, r, g, b, a, MobHighlight.outlineWidth);
+
+        verticalLine(matrix, consumer, minX, minY, minZ, maxX, minY, minZ, r, g, b, a, MobHighlight.outlineWidth);
+        verticalLine(matrix, consumer, maxX, minY, minZ, maxX, minY, maxZ, r, g, b, a, MobHighlight.outlineWidth);
+        verticalLine(matrix, consumer, maxX, minY, maxZ, minX, minY, maxZ, r, g, b, a, MobHighlight.outlineWidth);
+        verticalLine(matrix, consumer, minX, minY, maxZ, minX, minY, minZ, r, g, b, a, MobHighlight.outlineWidth);
+
+
+    }
+
+    public static void renderFilledBox(PoseStack matrices,
+                                     VertexConsumer consumer,
+                                     AABB box,
+                                     float[] rgba) {
+
+        if (rgba[3] == 0) return;
+        float r = rgba[0];
+        float g = rgba[1];
+        float b = rgba[2];
+        float a = rgba[3];
+
+        Matrix4f matrix = matrices.last().pose();
+
+        double minX = box.minX;
+        double minY = box.minY;
+        double minZ = box.minZ;
+        double maxX = box.maxX;
+        double maxY = box.maxY;
+        double maxZ = box.maxZ;
+
+        quad(matrix, consumer, minX, minY, minZ, minX, maxY, minZ, maxX, maxY, minZ, maxX, minY, minZ, r, g, b, a);
+        quad(matrix, consumer, maxX, minY, minZ, maxX, maxY, minZ, maxX, maxY, maxZ, maxX, minY, maxZ, r, g, b, a);
+
+        quad(matrix, consumer, maxX, minY, maxZ, maxX, maxY, maxZ, minX, maxY, maxZ, minX, minY, maxZ, r, g, b, a);
+        quad(matrix, consumer, minX, minY, maxZ, minX, maxY, maxZ, minX, maxY, minZ, minX, minY, minZ, r, g, b, a);
+
+        quad(matrix, consumer, minX, maxY, minZ, minX, maxY, maxZ, maxX, maxY, maxZ, maxX, maxY, minZ, r, g, b, a);
+        quad(matrix, consumer, maxX, minY, minZ, maxX, minY, maxZ, minX, minY, maxZ, minX, minY, minZ, r, g, b, a);
+
+    }
+
 }

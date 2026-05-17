@@ -56,7 +56,7 @@ public class ItemHighlight {
             }
         });
 
-        RenderingEvents.NO_DEPTH_FILLED.register(ItemHighlight::render);
+        RenderingEvents.FILLED_NO_DEPTH.register(ItemHighlight::render);
     }
 
     private static void render(WorldRenderContext context, PoseStack matrixStack, VertexConsumer consumer) {

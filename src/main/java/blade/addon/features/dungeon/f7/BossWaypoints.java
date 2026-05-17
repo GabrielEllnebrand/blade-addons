@@ -42,9 +42,8 @@ public class BossWaypoints {
 
     public static void init() {
         load();
-        //needs separate consumers because of depth checking or smth
-        RenderingEvents.FILLED_BLOCK.register(BossWaypoints::render);
-        RenderingEvents.NO_DEPTH_FILLED.register(BossWaypoints::renderThroughWall);
+        RenderingEvents.FILLED.register(BossWaypoints::render);
+        RenderingEvents.FILLED_NO_DEPTH.register(BossWaypoints::renderThroughWall);
         UseBlockCallback.EVENT.register(BossWaypoints::onBlock);
     }
 

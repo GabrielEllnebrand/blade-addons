@@ -42,7 +42,7 @@ public class TeammateHighlight {
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> teammates.removeIf(Entity::isRemoved));
 
-        RenderingEvents.NO_DEPTH_OUTLINE_ENTITY.register(TeammateHighlight::renderOutline);
+        RenderingEvents.LINE_NO_DEPTH.register(TeammateHighlight::renderOutline);
     }
 
     private static void renderOutline(WorldRenderContext context, PoseStack matrixStack, VertexConsumer consumer) {
@@ -57,7 +57,7 @@ public class TeammateHighlight {
 
             if (Dungeons.highlightTeammates) {
                 float[] rgba = RenderUtils.toFloats(color);
-                RenderUtils.renderOutline(EntityUtil.getBox(player), rgba);
+                RenderUtils.renderOutlinedBox(matrixStack, consumer,EntityUtil.getBox(player), rgba);
             }
 
             if (Dungeons.renderClassName) {

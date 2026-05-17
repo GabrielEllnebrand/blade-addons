@@ -157,7 +157,7 @@ public class RelicTimer {
 
 
         Events.ON_BLOCK_INTERACTION.register(RelicTimer::blockInteraction);
-        RenderingEvents.FILLED_BLOCK.register(RelicTimer::worldRender);
+        RenderingEvents.FILLED.register(RelicTimer::worldRender);
 
     }
 

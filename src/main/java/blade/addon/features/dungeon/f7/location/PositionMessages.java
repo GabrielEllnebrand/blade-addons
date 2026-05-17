@@ -35,7 +35,7 @@ public class PositionMessages {
 
     public static void init() {
         ClientTickEvents.END_CLIENT_TICK.register(PositionMessages::tick);
-        RenderingEvents.OUTLINE_ENTITY.register(PositionMessages::render);
+        RenderingEvents.LINE.register(PositionMessages::render);
         Events.ON_LOCATION_CHANGE.register(newLocation -> {
             disableAll();
             return false;
@@ -100,7 +100,6 @@ public class PositionMessages {
     private static void render(WorldRenderContext context, PoseStack matrixStack, VertexConsumer consumer) {
         if (!Location.inDungeon() || !Debug.renderPositions) return;
 
-        PoseStack.Pose entry = matrixStack.last();
         for (PositionMessage positionMessage : positionMessages) {
             AABB box = positionMessage.getBox();
             if (positionMessage.sent()) {

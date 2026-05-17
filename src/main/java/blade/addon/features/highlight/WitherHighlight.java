@@ -43,8 +43,8 @@ public class WitherHighlight {
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {withers.removeIf(wither -> wither.isRemoved() || wither.isDeadOrDying());});
 
-        RenderingEvents.FILLED_ENTITY.register(WitherHighlight::renderFilled);
-        RenderingEvents.OUTLINE_ENTITY.register(WitherHighlight::renderOutline);
+        RenderingEvents.FILLED.register(WitherHighlight::renderFilled);
+        RenderingEvents.LINE.register(WitherHighlight::renderOutline);
     }
 
     private static AABB getBox(WitherBoss wither) {
@@ -55,14 +55,14 @@ public class WitherHighlight {
         if (!MobHighlight.mobHighlight || !MobHighlight.renderFilled() || MobHighlight.dontRenderHighlight) return;
 
         float[] rgba = RenderUtils.toFloats(MobHighlight.witherFilledColor);
-        withers.forEach(entity -> RenderUtils.renderFilled(getBox(entity), rgba));
+        withers.forEach(entity -> RenderUtils.renderFilledBox(matrixStack, consumer, getBox(entity), rgba));
     }
 
     private static void renderOutline(WorldRenderContext context, PoseStack matrixStack, VertexConsumer consumer) {
         if (!MobHighlight.mobHighlight || !MobHighlight.renderOutline() || MobHighlight.dontRenderHighlight) return;
 
         float[] rgba = RenderUtils.toFloats(MobHighlight.witherOutlineColor);
-        withers.forEach(entity -> RenderUtils.renderOutline(getBox(entity), rgba));
+        withers.forEach(entity -> RenderUtils.renderOutlinedBox(matrixStack, consumer,getBox(entity), rgba));
     }
 
 }

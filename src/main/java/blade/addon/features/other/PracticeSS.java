@@ -111,7 +111,7 @@ public class PracticeSS {
             }
         });
 
-        RenderingEvents.FILLED_BLOCK.register(PracticeSS::render);
+        RenderingEvents.FILLED.register(PracticeSS::render);
         Events.ON_LOCATION_CHANGE.register(location -> {
             reset();
             return false;
@@ -352,15 +352,15 @@ public class PracticeSS {
         if (showingPattern) {
             if (!ExtraOptions.realisticDelay || totalTicks - ticksLeft > START_WAIT_DURATION || endIndex != 2) {
                 int lastIndex = getLastDisplayIndex();
-                renderButtons(0, lastIndex);
-                renderBackground(lastIndex - 1);
+                renderButtons(matrixStack, consumer, 0, lastIndex);
+                renderBackground(matrixStack, consumer, lastIndex - 1);
             }
         } else {
-            renderButtons(currentIndex, endIndex);
+            renderButtons(matrixStack, consumer, currentIndex, endIndex);
         }
     }
 
-    private static void renderButtons(int start, int end) {
+    private static void renderButtons(PoseStack matrixStack, VertexConsumer consumer, int start, int end) {
         AABB directionBox = getBox(direction);
         if (directionBox == null) return;
 
@@ -369,7 +369,7 @@ public class PracticeSS {
             BlockPos pos = buttons.get(i);
             AABB box = directionBox.move(pos.getX(), pos.getY(), pos.getZ());
             float[] color = RenderUtils.toFloats(getColor(i));
-            RenderUtils.renderFilled(box, color);
+            RenderUtils.renderFilledBox(matrixStack, consumer, box, color);
         }
     }
 
@@ -383,7 +383,7 @@ public class PracticeSS {
         };
     }
 
-    private static void renderBackground(int backgroundIndex) {
+    private static void renderBackground(PoseStack matrixStack, VertexConsumer consumer, int backgroundIndex) {
         if (buttons.size() > backgroundIndex && backgroundIndex >= 0) {
             AABB box = AABB.ofSize(buttons.get(backgroundIndex).getCenter(), 1, 1, 1);
             int dx, dz;
@@ -408,7 +408,7 @@ public class PracticeSS {
                     return;
                 }
             }
-            RenderUtils.renderFilled(box.move(dx, 0, dz), new float[]{0, 0.5f, 1, 1});
+            RenderUtils.renderFilledBox(matrixStack, consumer, box.move(dx, 0, dz), new float[]{0, 0.5f, 1, 1});
         }
     }
 }

@@ -43,7 +43,7 @@ public class DragonHealth {
         });
 
         ClientTickEvents.END_WORLD_TICK.register(world -> dragons.removeIf(dataHolder -> dataHolder.dragon.isRemoved()));
-        RenderingEvents.FILLED_ENTITY.register(DragonHealth::render);
+        RenderingEvents.FILLED.register(DragonHealth::render);
         Events.ON_LOCATION_CHANGE.register(newLocation -> {
             reset();
             return false;
