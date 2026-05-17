@@ -100,11 +100,11 @@ public class SectionProgress {
         return Floor7.showSectionProgress && Phase.inTerminals();
     }
 
-    public static void render(HUDComponent component, GuiGraphics context) {
+    public static void render(HUDComponent component, GuiGraphics graphics) {
         if (Floor7.sectionPrevObjective) {
-            RenderUtils.drawCenteredText(context, component, Component.literal(objectiveFormat + prevObjective + " ").append(getProgressText()));
+            RenderUtils.drawCenteredText(graphics, component, Component.literal(objectiveFormat + prevObjective + " ").append(getProgressText()));
         } else {
-            RenderUtils.drawCenteredText(context, component, getProgressText());
+            RenderUtils.drawCenteredText(graphics, component, getProgressText());
         }
 
     }

@@ -34,7 +34,7 @@ public class ReaperDisplay {
         return tick > 0;
     }
 
-    public static void render(HUDComponent component, GuiGraphics context) {
-        RenderUtils.drawTimer(component, context, tick, Constants.RED);
+    public static void render(HUDComponent component, GuiGraphics graphics) {
+        RenderUtils.drawTimer(component, graphics, tick, Constants.RED);
     }
 }

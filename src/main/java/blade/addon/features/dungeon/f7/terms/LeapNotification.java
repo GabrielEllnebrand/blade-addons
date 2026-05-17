@@ -100,12 +100,12 @@ public class LeapNotification {
         return Floor7.leapNotifications && inBounds && Phase.inBoss() && Location.inDungeon();
     }
 
-    public static void render(HUDComponent component, GuiGraphics context) {
+    public static void render(HUDComponent component, GuiGraphics graphics) {
         int maxCount = getMaxCount();
 
         String startFormat;
         startFormat = (maxCount - count <= 1? "§9" : "§4");
 
-        RenderUtils.drawCenteredText(context, component, Component.literal(startFormat + count + "§9/" + maxCount + " Players Leaped"));
+        RenderUtils.drawCenteredText(graphics, component, Component.literal(startFormat + count + "§9/" + maxCount + " Players Leaped"));
     }
 }

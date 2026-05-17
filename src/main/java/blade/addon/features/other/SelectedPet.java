@@ -191,8 +191,8 @@ public class SelectedPet {
         return ExtraOptions.sendPetSwapNotification && tick > 0;
     }
 
-    public static void renderNotification(HUDComponent component, GuiGraphics context) {
-        RenderUtils.drawCenteredText(context, component, currentPetText);
+    public static void renderNotification(HUDComponent component, GuiGraphics graphics) {
+        RenderUtils.drawCenteredText(graphics, component, currentPetText);
     }
 
 }

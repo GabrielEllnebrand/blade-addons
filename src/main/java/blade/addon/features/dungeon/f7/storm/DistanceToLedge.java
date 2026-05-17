@@ -39,7 +39,7 @@ public class DistanceToLedge {
         return Phase.inP2() && !Phase.stormDead() && (DungeonClass.isClass(DungeonClass.MAGE) || DungeonClass.isClass(DungeonClass.ARCHER));
     }
 
-    public static void render(HUDComponent component, GuiGraphics context) {
-        RenderUtils.drawTimer(component, context, getDistance(), 0xffffffff);
+    public static void render(HUDComponent component, GuiGraphics graphics) {
+        RenderUtils.drawTimer(component, graphics, getDistance(), 0xffffffff);
     }
 }

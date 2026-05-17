@@ -51,8 +51,8 @@ public class MaxorStun {
         return tick > 0 && Location.inDungeon() && Phase.inP1() && Floor7.maxorStunDuration && stunned;
     }
 
-    public static void render(HUDComponent component, GuiGraphics context) {
-        RenderUtils.drawPrefixedText(component, context, "Stunned", TextUtil.formatTicks(tick));
+    public static void render(HUDComponent component, GuiGraphics graphics) {
+        RenderUtils.drawPrefixedText(component, graphics, "Stunned", TextUtil.formatTicks(tick));
     }
 
 

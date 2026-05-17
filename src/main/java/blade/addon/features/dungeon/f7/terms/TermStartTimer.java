@@ -32,8 +32,8 @@ public class TermStartTimer {
         return Floor7.enableTermStartTimer && Location.inDungeon() && Phase.inP2() && Phase.stormDead();
     }
 
-    public static void render(HUDComponent component, GuiGraphics context) {
+    public static void render(HUDComponent component, GuiGraphics graphics) {
         double num = tick * Constants.TICK_DURATION;
-        RenderUtils.drawCenteredText(context, component, Component.literal(Constants.DECIMAL_FORMAT.format(num)), Constants.YELLOW);
+        RenderUtils.drawCenteredText(graphics, component, Component.literal(Constants.DECIMAL_FORMAT.format(num)), Constants.YELLOW);
     }
 }

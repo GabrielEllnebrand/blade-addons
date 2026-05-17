@@ -26,11 +26,11 @@ public class InvincibilityDuration {
         return  ticks > 0 && Dungeons.InvincibilityDuration;
     }
 
-    public static void render(HUDComponent component, GuiGraphics context) {
+    public static void render(HUDComponent component, GuiGraphics graphics) {
         int color = 0xffffffff;
         if (Dungeons.useStatusColorForInvincibility) {
             color = RenderUtils.getStatusColor(40, 20, ticks);
         }
-        RenderUtils.drawTimer(component, context, ticks, color);
+        RenderUtils.drawTimer(component, graphics, ticks, color);
     }
 }

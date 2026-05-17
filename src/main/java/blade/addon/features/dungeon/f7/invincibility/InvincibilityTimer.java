@@ -190,23 +190,23 @@ public class InvincibilityTimer {
         }
     }
 
-    public static void render(HUDComponent component, GuiGraphics context) {
+    public static void render(HUDComponent component, GuiGraphics graphics) {
         int x = component.getScaledX();
         int y = component.getScaledY();
 
         if (Dungeons.useSprites) {
-            drawSprite(context, BONZO_SPRITE, x, y, bonzoMaskOn, bonzoMaskTicks, formatTimer(bonzoMaskTicks));
-            drawSprite(context, SPIRIT_SPRITE, x, y + SPRITE_SIZE + 1, spiritMaskOn, spiritMaskTicks, formatTimer(spiritMaskTicks));
-            drawSprite(context, PHOENIX_SPRITE, x, y + (SPRITE_SIZE + 1) * 2, phoenixOn, phoenixTicks, formatTimer(phoenixTicks));
+            drawSprite(graphics, BONZO_SPRITE, x, y, bonzoMaskOn, bonzoMaskTicks, formatTimer(bonzoMaskTicks));
+            drawSprite(graphics, SPIRIT_SPRITE, x, y + SPRITE_SIZE + 1, spiritMaskOn, spiritMaskTicks, formatTimer(spiritMaskTicks));
+            drawSprite(graphics, PHOENIX_SPRITE, x, y + (SPRITE_SIZE + 1) * 2, phoenixOn, phoenixTicks, formatTimer(phoenixTicks));
         } else {
             if (Dungeons.removeMaskPart) {
-                context.drawString(Minecraft.getInstance().font, getText(bonzoMaskTicks, bonzoMaskOn, "Bonzo "), x, y, 0xffffffff, true);
-                context.drawString(Minecraft.getInstance().font, getText(spiritMaskTicks, spiritMaskOn, "Spirit "), x, y + TEXT_HEIGHT, 0xffffffff, true);
+                graphics.drawString(Minecraft.getInstance().font, getText(bonzoMaskTicks, bonzoMaskOn, "Bonzo "), x, y, 0xffffffff, true);
+                graphics.drawString(Minecraft.getInstance().font, getText(spiritMaskTicks, spiritMaskOn, "Spirit "), x, y + TEXT_HEIGHT, 0xffffffff, true);
             } else {
-                context.drawString(Minecraft.getInstance().font, getText(bonzoMaskTicks, bonzoMaskOn, "Bonzo's Mask "), x, y, 0xffffffff, true);
-                context.drawString(Minecraft.getInstance().font, getText(spiritMaskTicks, spiritMaskOn, "Spirit Mask "), x, y + TEXT_HEIGHT, 0xffffffff, true);
+                graphics.drawString(Minecraft.getInstance().font, getText(bonzoMaskTicks, bonzoMaskOn, "Bonzo's Mask "), x, y, 0xffffffff, true);
+                graphics.drawString(Minecraft.getInstance().font, getText(spiritMaskTicks, spiritMaskOn, "Spirit Mask "), x, y + TEXT_HEIGHT, 0xffffffff, true);
             }
-            context.drawString(Minecraft.getInstance().font, getText(phoenixTicks, phoenixOn, "Phoenix "), x, y + TEXT_HEIGHT * 2, 0xffffffff, true);
+            graphics.drawString(Minecraft.getInstance().font, getText(phoenixTicks, phoenixOn, "Phoenix "), x, y + TEXT_HEIGHT * 2, 0xffffffff, true);
         }
     }
 }

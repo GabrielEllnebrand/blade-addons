@@ -98,16 +98,16 @@ public class CrystalSpawn {
         return tick > 0 && Location.inDungeon() && Phase.inP1() && Floor7.enableCrystalSpawnTime;
     }
 
-    public static void render(HUDComponent component, GuiGraphics context) {
-        RenderUtils.drawTimer(component, context, tick, Constants.LIGHT_PURPLE);
+    public static void render(HUDComponent component, GuiGraphics graphics) {
+        RenderUtils.drawTimer(component, graphics, tick, Constants.LIGHT_PURPLE);
     }
 
     public static boolean displayNotification() {
         return (Floor7.instantlyDisplayCrystalReminder || tickSincePicked > REMINDER_TICK) && Location.inDungeon() && Phase.inP1() && Floor7.crystalPlaceReminder && pickedUp;
     }
 
-    public static void renderNotification(HUDComponent component, GuiGraphics context) {
-        RenderUtils.drawCenteredText(context, component, Component.literal("§bPlace Crystal!"));
+    public static void renderNotification(HUDComponent component, GuiGraphics graphics) {
+        RenderUtils.drawCenteredText(graphics, component, Component.literal("§bPlace Crystal!"));
     }
 
 

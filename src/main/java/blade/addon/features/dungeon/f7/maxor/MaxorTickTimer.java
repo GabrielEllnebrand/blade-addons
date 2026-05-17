@@ -28,8 +28,8 @@ public class MaxorTickTimer {
         return Floor7.enableMaxorTickTimer && Location.inDungeon() && Phase.inP1();
     }
 
-    public static void render(HUDComponent component, GuiGraphics context) {
-        RenderUtils.drawTimer(component, context, tick, 0xffffffff);
+    public static void render(HUDComponent component, GuiGraphics graphics) {
+        RenderUtils.drawTimer(component, graphics, tick, 0xffffffff);
     }
 
 }

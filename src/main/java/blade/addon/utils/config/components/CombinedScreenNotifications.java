@@ -48,31 +48,31 @@ public class CombinedScreenNotifications {
         return false;
     }
 
-    public static void render(HUDComponent component, GuiGraphics context) {
+    public static void render(HUDComponent component, GuiGraphics graphics) {
         if (RunStartValidator.display()) {
-            RunStartValidator.render(component, context);
+            RunStartValidator.render(component, graphics);
         } else if (KeyNotifier.display()) {
-            KeyNotifier.render(component, context);
+            KeyNotifier.render(component, graphics);
         } else if (DeviceNotifier.display()) {
-            DeviceNotifier.render(component, context);
+            DeviceNotifier.render(component, graphics);
         } else if (MelodyWarning.display()) {
-            MelodyWarning.render(component, context);
+            MelodyWarning.render(component, graphics);
         } else if (PillarExplode.display()) {
-            PillarExplode.render(component, context);
+            PillarExplode.render(component, graphics);
         } else if (CrystalSpawn.displayNotification()) {
-            CrystalSpawn.renderNotification(component, context);
+            CrystalSpawn.renderNotification(component, graphics);
         }else if (Notifications.display()) {
-            Notifications.render(component, context);
+            Notifications.render(component, graphics);
         } else if (SelectedPet.displayNotification()) {
-            SelectedPet.renderNotification(component, context);
+            SelectedPet.renderNotification(component, graphics);
         }   else if (ArrowSwapper.displayNotification()) {
-            ArrowSwapper.renderNotification(component, context);
+            ArrowSwapper.renderNotification(component, graphics);
         }   else if (SectionCompletion.display()) {
-            SectionCompletion.render(component, context);
+            SectionCompletion.render(component, graphics);
         }else if (BloodNotifier.display()) {
-            BloodNotifier.render(component, context);
+            BloodNotifier.render(component, graphics);
         }else {
-            RenderUtils.drawCenteredText(context, component, Component.literal("Some notification"));
+            RenderUtils.drawCenteredText(graphics, component, Component.literal("Some notification"));
         }
 
     }

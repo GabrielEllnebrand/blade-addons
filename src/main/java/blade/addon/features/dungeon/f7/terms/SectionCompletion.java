@@ -25,8 +25,8 @@ public class SectionCompletion {
         return System.currentTimeMillis() - prevTime < 1000 && Floor7.sectionCompletionNotification;
     }
 
-    public static void render(HUDComponent component, GuiGraphics context) {
-        RenderUtils.drawCenteredText(context, component, Component.literal("Section completed!").withStyle(ChatFormatting.GREEN));
+    public static void render(HUDComponent component, GuiGraphics graphics) {
+        RenderUtils.drawCenteredText(graphics, component, Component.literal("Section completed!").withStyle(ChatFormatting.GREEN));
     }
 
 }

@@ -271,9 +271,9 @@ public class RelicTimer {
         return Floor7.enableRelicStartTimer && Location.inDungeon() && Phase.inP5() && tick > -1 && !Floor7.replaceWithProgressBar;
     }
 
-    public static void render(HUDComponent component, GuiGraphics context) {
+    public static void render(HUDComponent component, GuiGraphics graphics) {
         int color = tick > 7 ? GREEN_COLOR : RED_COLOR;
-        RenderUtils.drawTimer(component, context, tick, color);
+        RenderUtils.drawTimer(component, graphics, tick, color);
     }
 
     public static boolean displayProgressBar() {
@@ -281,7 +281,7 @@ public class RelicTimer {
         return Floor7.enableRelicStartTimer && Location.inDungeon() && Phase.inP5() && tick > -1 && Floor7.replaceWithProgressBar;
     }
 
-    public static void renderProgressBar(HUDComponent component, GuiGraphics context) {
+    public static void renderProgressBar(HUDComponent component, GuiGraphics graphics) {
         int x = component.getScaledX();
         int y = component.getScaledY();
 
@@ -307,7 +307,7 @@ public class RelicTimer {
             message.append("§8]");
         }
 
-        RenderUtils.drawCenteredText(context, Minecraft.getInstance().font, Component.literal(message.toString()), x, y, component.getWidth(), 0xffffffff);
+        RenderUtils.drawCenteredText(graphics, Minecraft.getInstance().font, Component.literal(message.toString()), x, y, component.getWidth(), 0xffffffff);
 
     }
 }

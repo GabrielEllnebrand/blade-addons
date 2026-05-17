@@ -31,7 +31,7 @@ public class GoldorTickTimer {
         return Floor7.enableGoldorTickTimer && Location.inDungeon() && Phase.inTerminals();
     }
 
-    public static void render(HUDComponent component, GuiGraphics context) {
+    public static void render(HUDComponent component, GuiGraphics graphics) {
         double num = tick * Constants.TICK_DURATION;
         double mod = num % 3;
         if (Floor7.inDeathTicks && !Floor7.makeGoldorTickUp) mod = 3.0 - mod;
@@ -39,6 +39,6 @@ public class GoldorTickTimer {
 
         int color = (mod < 1 ? Constants.GREEN : mod < 2 ? Constants.GOLD : Constants.RED);
 
-        RenderUtils.drawTimer(component, context, num, color);
+        RenderUtils.drawTimer(component, graphics, num, color);
     }
 }

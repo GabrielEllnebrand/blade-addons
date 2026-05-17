@@ -53,8 +53,8 @@ public class BloodNotifier {
         return Dungeons.alertBloodSpawns && System.currentTimeMillis() - prevTime < 2000 && correctClass();
     }
 
-    public static void render(HUDComponent component, GuiGraphics context) {
-        RenderUtils.drawCenteredText(context, component, Component.literal("First four mobs spawned!"), Constants.RED);
+    public static void render(HUDComponent component, GuiGraphics graphics) {
+        RenderUtils.drawCenteredText(graphics, component, Component.literal("First four mobs spawned!"), Constants.RED);
     }
 
 }

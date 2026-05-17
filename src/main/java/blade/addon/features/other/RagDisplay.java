@@ -53,8 +53,8 @@ public class RagDisplay {
         return tick > 0;
     }
 
-    public static void render(HUDComponent component, GuiGraphics context) {
-        RenderUtils.drawTimer(component, context, tick, Constants.YELLOW);
+    public static void render(HUDComponent component, GuiGraphics graphics) {
+        RenderUtils.drawTimer(component, graphics, tick, Constants.YELLOW);
     }
 
 }

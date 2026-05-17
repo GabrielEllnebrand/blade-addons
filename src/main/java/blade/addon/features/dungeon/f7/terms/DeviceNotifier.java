@@ -74,8 +74,8 @@ public class DeviceNotifier {
         return showNotification;
     }
 
-    public static void render(HUDComponent component, GuiGraphics context) {
+    public static void render(HUDComponent component, GuiGraphics graphics) {
         if (System.currentTimeMillis() - completedTime >= TOTAL_DURATION) showNotification = false;
-        RenderUtils.drawCenteredText(context, component, Component.literal("§aDevice Completed!"));
+        RenderUtils.drawCenteredText(graphics, component, Component.literal("§aDevice Completed!"));
     }
 }

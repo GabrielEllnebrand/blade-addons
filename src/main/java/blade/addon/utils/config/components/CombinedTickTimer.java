@@ -31,19 +31,19 @@ public class CombinedTickTimer {
         return false;
     }
 
-    public static void render(HUDComponent component, GuiGraphics context) {
+    public static void render(HUDComponent component, GuiGraphics graphics) {
         if (CrystalSpawn.display()) {
-            CrystalSpawn.render(component, context);
+            CrystalSpawn.render(component, graphics);
         } else if (StormTickTimer.display()) {
-            StormTickTimer.render(component, context);
+            StormTickTimer.render(component, graphics);
         } else if (TermStartTimer.display()) {
-          TermStartTimer.render(component, context);
+          TermStartTimer.render(component, graphics);
         } else if (GoldorTickTimer.display()) {
-            GoldorTickTimer.render(component, context);
+            GoldorTickTimer.render(component, graphics);
         } else if (RelicTimer.display()) {
-            RelicTimer.render(component, context);
+            RelicTimer.render(component, graphics);
         } else {
-            RenderUtils.drawCenteredText(context, component, Component.literal(Constants.DECIMAL_FORMAT.format(0.0)));
+            RenderUtils.drawCenteredText(graphics, component, Component.literal(Constants.DECIMAL_FORMAT.format(0.0)));
         }
 
     }

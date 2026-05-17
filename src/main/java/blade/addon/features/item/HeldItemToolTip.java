@@ -29,9 +29,9 @@ public class HeldItemToolTip {
         return ExtraOptions.moveToolTip && heldItemFade > 0;
     }
 
-    public static void render(HUDComponent component, GuiGraphics context) {
+    public static void render(HUDComponent component, GuiGraphics graphics) {
         int currentColor = heldItemFade > 0? color: 0xffffffff;
-        RenderUtils.drawCenteredText(context, component, tooltip, currentColor);
+        RenderUtils.drawCenteredText(graphics, component, tooltip, currentColor);
     }
 
 }

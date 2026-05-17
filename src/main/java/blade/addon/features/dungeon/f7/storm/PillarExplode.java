@@ -43,16 +43,16 @@ public class PillarExplode {
         return Floor7.timePillarExplosion && tick > 0;
     }
 
-    public static void renderTimer(HUDComponent component, GuiGraphics context) {
+    public static void renderTimer(HUDComponent component, GuiGraphics graphics) {
         int color = tick < 6 ? Constants.GREEN : Constants.RED;
-        RenderUtils.drawTimer(component, context, tick, color);
+        RenderUtils.drawTimer(component, graphics, tick, color);
     }
 
     public static boolean display() {
         return Floor7.notifyStormCrush && tick > 0;
     }
 
-    public static void render(HUDComponent component, GuiGraphics context) {
-        RenderUtils.drawCenteredText(context, component, Component.literal("§6||| §bStorm crushed! §6|||"));
+    public static void render(HUDComponent component, GuiGraphics graphics) {
+        RenderUtils.drawCenteredText(graphics, component, Component.literal("§6||| §bStorm crushed! §6|||"));
     }
 }

@@ -66,14 +66,14 @@ public class ChestCounter {
         return Dungeons.displayChestCount && Location.inDungeon();
     }
 
-    public static void render(HUDComponent component, GuiGraphics context) {
+    public static void render(HUDComponent component, GuiGraphics graphics) {
         int x = component.getScaledX();
         int y = component.getScaledY();
 
         if (hasUpdatedData) {
-            RenderUtils.drawPrefixedText(component, context, "Chests", Math.min(chestDisplayCount + countedChests, 60) + "");
+            RenderUtils.drawPrefixedText(component, graphics, "Chests", Math.min(chestDisplayCount + countedChests, 60) + "");
         } else {
-            context.drawString(Minecraft.getInstance().font, Component.literal("go to the dungeon hub"), x, y, Constants.RED, true);
+            graphics.drawString(Minecraft.getInstance().font, Component.literal("go to the dungeon hub"), x, y, Constants.RED, true);
 
         }
     }

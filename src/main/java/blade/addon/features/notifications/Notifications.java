@@ -77,9 +77,9 @@ public class Notifications {
         return tick > 0;
     }
 
-    public static void render(HUDComponent component, GuiGraphics context) {
+    public static void render(HUDComponent component, GuiGraphics graphics) {
         Component text = Component.literal(message != null ? message : "Some notification");
-        RenderUtils.drawCenteredText(context, component, text);
+        RenderUtils.drawCenteredText(graphics, component, text);
     }
 
     public static void setNotification(Notification notification) {

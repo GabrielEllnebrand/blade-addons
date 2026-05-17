@@ -65,7 +65,7 @@ public class LocationNotifier {
         return ticks > 0 && Floor7.displayLocationNotification;
     }
 
-    public static void render(HUDComponent component, GuiGraphics context) {
-        RenderUtils.drawCenteredText(context, component, notification);
+    public static void render(HUDComponent component, GuiGraphics graphics) {
+        RenderUtils.drawCenteredText(graphics, component, notification);
     }
 }

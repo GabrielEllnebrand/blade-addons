@@ -26,8 +26,8 @@ public class CurrentSection {
         return Floor7.showCurrentSection && Phase.inTerminals();
     }
 
-    public static void render(HUDComponent component, GuiGraphics context) {
-        RenderUtils.drawPrefixedText(component, context, "Section", " " + section);
+    public static void render(HUDComponent component, GuiGraphics graphics) {
+        RenderUtils.drawPrefixedText(component, graphics, "Section", " " + section);
     }
 
 }

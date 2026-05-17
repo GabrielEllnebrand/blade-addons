@@ -80,7 +80,7 @@ public class MelodyWarning {
         return melodyStarted && Floor7.notifiyMelody && !ownUsername;
     }
 
-    public static void render(HUDComponent component, GuiGraphics context) {
+    public static void render(HUDComponent component, GuiGraphics graphics) {
         DungeonClass dungeonClass = DungeonClass.getClass(name);
         int num = Math.min(furthestProgress / 25, 3);
 
@@ -94,7 +94,7 @@ public class MelodyWarning {
 
         Component text = nameText.append(infoText);
 
-        RenderUtils.drawCenteredText(context, component, text);
+        RenderUtils.drawCenteredText(graphics, component, text);
     }
 
 }

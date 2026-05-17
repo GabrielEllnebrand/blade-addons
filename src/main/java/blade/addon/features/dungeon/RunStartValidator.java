@@ -134,13 +134,13 @@ public class RunStartValidator {
         return Location.inDungeon() && !Phase.runStarted() && (hasDupeClasses || notEnoughPlayers);
     }
 
-    public static void render(HUDComponent component, GuiGraphics context) {
+    public static void render(HUDComponent component, GuiGraphics graphics) {
         if (hasDupeClasses) {
-            RenderUtils.drawCenteredText(context, component, DUPE_CLASS_TEXT);
+            RenderUtils.drawCenteredText(graphics, component, DUPE_CLASS_TEXT);
         } else if (notEnoughPlayers) {
-            RenderUtils.drawCenteredText(context, component, PLAYER_COUNT_TEXT);
+            RenderUtils.drawCenteredText(graphics, component, PLAYER_COUNT_TEXT);
         } else {
-            RenderUtils.drawCenteredText(context, component, Component.literal("§cSome warning text"));
+            RenderUtils.drawCenteredText(graphics, component, Component.literal("§cSome warning text"));
         }
     }
 }

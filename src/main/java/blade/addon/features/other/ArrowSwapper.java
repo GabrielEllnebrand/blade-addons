@@ -80,15 +80,15 @@ public class ArrowSwapper {
         return ExtraOptions.displayCurrentArrow;
     }
 
-    public static void render(HUDComponent component, GuiGraphics context) {
-        RenderUtils.drawText(context, component, displayedText, 0xffffffff);
+    public static void render(HUDComponent component, GuiGraphics graphics) {
+        RenderUtils.drawText(graphics, component, displayedText, 0xffffffff);
     }
 
     public static boolean displayNotification() {
         return ExtraOptions.arrowSwapNotification && tick > 0;
     }
 
-    public static void renderNotification(HUDComponent component, GuiGraphics context) {
-        RenderUtils.drawCenteredText(context, component, displayedText, 0xffffffff);
+    public static void renderNotification(HUDComponent component, GuiGraphics graphics) {
+        RenderUtils.drawCenteredText(graphics, component, displayedText, 0xffffffff);
     }
 }

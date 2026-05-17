@@ -30,11 +30,11 @@ public class KickedTimer {
         return isKicked;
     }
 
-    public static void render(HUDComponent component, GuiGraphics context) {
+    public static void render(HUDComponent component, GuiGraphics graphics) {
         long diff = System.currentTimeMillis() - kickedTime;
         if (diff > 60 * 1000) isKicked = false;
         double drawnTime = Math.min(diff / 1000.0, 60.0);
-        RenderUtils.drawPrefixedTimer(component, context, "Time kicked", drawnTime);
+        RenderUtils.drawPrefixedTimer(component, graphics, "Time kicked", drawnTime);
     }
 
 }
