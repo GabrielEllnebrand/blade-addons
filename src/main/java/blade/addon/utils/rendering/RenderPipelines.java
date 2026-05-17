@@ -9,34 +9,34 @@ import net.minecraft.resources.Identifier;
 
 public class RenderPipelines {
     public static final RenderPipeline FILLED_DEBUG = net.minecraft.client.renderer.RenderPipelines.register(RenderPipeline.builder(net.minecraft.client.renderer.RenderPipelines.DEBUG_FILLED_SNIPPET)
-            .withLocation(Identifier.fromNamespaceAndPath(Constants.NAMESPACE, "filled-debug"))
+            .withLocation(Identifier.fromNamespaceAndPath(Constants.NAMESPACE, "filled-debug-pipe"))
             .withVertexFormat(DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.QUADS)
             .build());
 
 
 
     public static final RenderPipeline FILLED = net.minecraft.client.renderer.RenderPipelines.register(RenderPipeline.builder(net.minecraft.client.renderer.RenderPipelines.DEBUG_FILLED_SNIPPET)
-            .withLocation(Identifier.fromNamespaceAndPath(Constants.NAMESPACE, "filled"))
+            .withLocation(Identifier.fromNamespaceAndPath(Constants.NAMESPACE, "filled-pipe"))
             .withVertexFormat(DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.QUADS)
             .withDepthWrite(true)
             .build());
 
     public static final RenderPipeline LINE = net.minecraft.client.renderer.RenderPipelines.register(RenderPipeline.builder(net.minecraft.client.renderer.RenderPipelines.LINES_SNIPPET)
-            .withLocation(Identifier.fromNamespaceAndPath(Constants.NAMESPACE, "line"))
+            .withLocation(Identifier.fromNamespaceAndPath(Constants.NAMESPACE, "line-pipe"))
             .withVertexFormat(DefaultVertexFormat.POSITION_COLOR_NORMAL_LINE_WIDTH, VertexFormat.Mode.LINES)
             .withDepthWrite(true)
             .build());
 
 
     public static final RenderPipeline FILLED_NO_DEPTH = net.minecraft.client.renderer.RenderPipelines.register(RenderPipeline.builder(net.minecraft.client.renderer.RenderPipelines.DEBUG_FILLED_SNIPPET)
-            .withLocation(Identifier.fromNamespaceAndPath(Constants.NAMESPACE, "filled-no-depth"))
+            .withLocation(Identifier.fromNamespaceAndPath(Constants.NAMESPACE, "filled-no-depth-pipe"))
             .withVertexFormat(DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.QUADS)
             .withDepthTestFunction(DepthTestFunction.NO_DEPTH_TEST)
             .build());
 
 
     public static final RenderPipeline LINE_NO_DEPTH = net.minecraft.client.renderer.RenderPipelines.register(RenderPipeline.builder(net.minecraft.client.renderer.RenderPipelines.LINES_SNIPPET)
-            .withLocation(Identifier.fromNamespaceAndPath(blade.addon.utils.Constants.NAMESPACE, "line-no-depth"))
+            .withLocation(Identifier.fromNamespaceAndPath(blade.addon.utils.Constants.NAMESPACE, "line-no-depth-pipe"))
             .withVertexFormat(DefaultVertexFormat.POSITION_COLOR_NORMAL_LINE_WIDTH, VertexFormat.Mode.LINES)
             .withDepthTestFunction(DepthTestFunction.NO_DEPTH_TEST)
             .build());
