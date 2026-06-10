@@ -13,6 +13,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.gizmos.GizmoStyle;
 import net.minecraft.gizmos.Gizmos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.phys.AABB;
@@ -273,4 +274,7 @@ public class RenderUtils {
 
     }
 
+    public static void renderFilledBlock(AABB box, int argb) {
+        Gizmos.cuboid(box, GizmoStyle.fill(argb));
+    }
 }

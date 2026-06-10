@@ -14,14 +14,12 @@ import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderContext;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.gizmos.GizmoStyle;
-import net.minecraft.gizmos.Gizmos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.phys.AABB;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -72,7 +70,7 @@ public class ItemHighlight {
             EntityDimensions dimension = itemEntity.getDimensions(itemEntity.getPose());
             AABB box = dimension.makeBoundingBox(x, y, z).inflate(0.1).move(0, 0.05, 0);
             float[] color = RenderUtils.toFloats(getColor(itemEntity));
-            Gizmos.cuboid(box, GizmoStyle.fill(ARGB.colorFromFloat(color[3], color[0], color[1], color[2])));
+            RenderUtils.renderFilledBox(matrixStack, consumer, box, color);
         });
     }
 
