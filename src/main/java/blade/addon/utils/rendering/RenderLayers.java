@@ -9,6 +9,9 @@ public class RenderLayers {
     public static final RenderType FILLED_DEBUG =
             RenderType.create("filled-debug-layer", RenderSetup.builder(RenderPipelines.FILLED_DEBUG).createRenderSetup());
 
+    public static final RenderType FILLED_DEBUG_NO_DEPTH =
+            RenderType.create("filled-debug-no-depth-layer", RenderSetup.builder(RenderPipelines.FILLED_DEBUG).createRenderSetup());
+
     public static final RenderType FILLED =
             RenderType.create("filled-layer", RenderSetup.builder(RenderPipelines.FILLED).createRenderSetup());
 

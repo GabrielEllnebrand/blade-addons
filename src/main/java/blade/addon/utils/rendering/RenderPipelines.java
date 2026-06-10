@@ -11,6 +11,12 @@ public class RenderPipelines {
     public static final RenderPipeline FILLED_DEBUG = net.minecraft.client.renderer.RenderPipelines.register(RenderPipeline.builder(net.minecraft.client.renderer.RenderPipelines.DEBUG_FILLED_SNIPPET)
             .withLocation(Identifier.fromNamespaceAndPath(Constants.NAMESPACE, "filled-debug-pipe"))
             .withVertexFormat(DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.QUADS)
+            .withDepthWrite(true)
+            .build());
+
+    public static final RenderPipeline FILLED_DEBUG_NO_DEPTH = net.minecraft.client.renderer.RenderPipelines.register(RenderPipeline.builder(net.minecraft.client.renderer.RenderPipelines.DEBUG_FILLED_SNIPPET)
+            .withLocation(Identifier.fromNamespaceAndPath(Constants.NAMESPACE, "filled-debug-no-depth-pipe"))
+            .withVertexFormat(DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.QUADS)
             .build());
 
 

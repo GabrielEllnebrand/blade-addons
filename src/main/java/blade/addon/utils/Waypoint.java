@@ -1,10 +1,8 @@
 package blade.addon.utils;
 
+import blade.addon.utils.rendering.RenderUtils;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.gizmos.GizmoStyle;
-import net.minecraft.gizmos.Gizmos;
-import net.minecraft.util.ARGB;
 import net.minecraft.world.phys.AABB;
 
 public class Waypoint {
@@ -41,7 +39,7 @@ public class Waypoint {
     }
 
     public void Render(VertexConsumer consumer, PoseStack matrixStack) {
-        Gizmos.cuboid(new AABB(x, y, z, x + dx, y + dy, z + dz), GizmoStyle.fill(ARGB.colorFromFloat(a, r, g, b)));
+        RenderUtils.renderFilledBox(matrixStack, consumer, new AABB(x, y, z, x + dx, y + dy, z + dz), new float[]{r, g, b,a});
     }
 
     @Override

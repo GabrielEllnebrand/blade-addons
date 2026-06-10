@@ -31,7 +31,7 @@ public class SearchBar {
         DrawEvents.INVENTORY_SLOT_AFTER.register((context, item, x, y) -> {
             if (shouldDisplay() && !searchTerm.isEmpty() && ExtraOptions.toggleableSearchBar && Double.isNaN(parsedValue)) {
                 if (!matches(item)) {
-                    context.fill(x, y, x + 16, y + 16, 0xaa111111);
+                    context.fill(x, y, x + 16, y + 16, ExtraOptions.searchbarMissColor);
                 }
 
             }

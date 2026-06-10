@@ -7,34 +7,27 @@ import blade.addon.features.dungeon.f7.location.LocationNotifier;
 import blade.addon.features.filter.FilterList;
 import blade.addon.features.highlight.MobHighlight;
 import blade.addon.features.item.ProtectItem;
-import blade.addon.features.other.DianaNotifier;
 import blade.addon.features.notifications.NotificationList;
+import blade.addon.features.other.DianaNotifier;
 import blade.addon.utils.config.components.Components;
-import blade.addon.utils.config.values.Buttons;
-import blade.addon.utils.config.values.Dungeons;
-import blade.addon.utils.config.values.ExtraOptions;
-import blade.addon.utils.config.values.Floor7;
-import blade.addon.utils.config.values.Visual;
+import blade.addon.utils.config.values.*;
 import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.dungeon.Section;
 import blade.addon.utils.dungeon.Split;
 import config.practical.ConfigurableScreen;
 import config.practical.category.ConfigCategory;
 import config.practical.manager.ConfigManager;
-import config.practical.widgets.ConfigBool;
-import config.practical.widgets.ConfigButton;
-import config.practical.widgets.ConfigSection;
-import config.practical.widgets.ConfigString;
-import config.practical.widgets.ConfigTextArea;
+import config.practical.widgets.*;
 import config.practical.widgets.color.ConfigColor;
 import config.practical.widgets.options.ConfigOptions;
 import config.practical.widgets.sliders.ConfigDouble;
 import config.practical.widgets.sliders.ConfigInt;
 import config.practical.widgets.sound.ConfigSound;
-import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+
+import java.util.List;
 
 public class Config {
 
@@ -323,9 +316,9 @@ public class Config {
         extra.add(new ConfigBool(Component.literal("Display selected arrow"), () -> ExtraOptions.displayCurrentArrow, bool -> ExtraOptions.displayCurrentArrow = bool));
         extra.add(new ConfigBool(Component.literal("Title on arrow swap"), () -> ExtraOptions.arrowSwapNotification, bool -> ExtraOptions.arrowSwapNotification = bool));
         extra.add(new ConfigBool(Component.literal("Toggleable searchbar (ctrl + f)"), () -> ExtraOptions.toggleableSearchBar, bool -> ExtraOptions.toggleableSearchBar = bool));
+        extra.add(new ConfigColor(Component.literal("Searchbar miss color"), () -> ExtraOptions.searchbarMissColor, color -> ExtraOptions.searchbarMissColor = color, "search-bar-miss-color", true));
         extra.add(new ConfigBool(Component.literal("Disable protect item (resets on launch)"), () -> ProtectItem.stopProtectItem, bool -> ProtectItem.stopProtectItem = bool));
         extra.add(new ConfigBool(Component.literal("Display reaper duration"), () -> ExtraOptions.enableReaperDisplay, bool -> ExtraOptions.enableReaperDisplay = bool));
-        //extra.add(new ConfigBool(Text.literal("Kuudra stun waypoint"), () -> ExtraOptions.stunWaypoint, bool -> ExtraOptions.stunWaypoint = bool));
 
 
         ConfigSection sound = new ConfigSection(Component.literal("Sound options"));
