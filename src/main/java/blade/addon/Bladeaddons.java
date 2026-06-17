@@ -127,5 +127,6 @@ public class Bladeaddons implements ModInitializer {
         CurrentSection.init();
         DragonTracer.init();
         ReaperDisplay.init();
+        //DeathMessage.init(); TODO finish this
     }
 }

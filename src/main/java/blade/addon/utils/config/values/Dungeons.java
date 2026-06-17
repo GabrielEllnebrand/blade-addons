@@ -148,4 +148,10 @@ public class Dungeons {
 
     @ConfigValue
     public static boolean quizProgress = false;
+
+    @ConfigValue
+    public static boolean sendDeathMessage = false;
+
+    @ConfigValue
+    public static String deathMessage = "";
 }

@@ -18,12 +18,16 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderContext;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.minecraft.core.BlockPos;
+import net.minecraft.gizmos.GizmoStyle;
+import net.minecraft.gizmos.Gizmos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.ARGB;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
+
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -137,7 +141,7 @@ public class BossWaypoints {
         return InteractionResult.PASS;
     }
 
-    private static void render(WorldRenderContext context, PoseStack matrixStack, VertexConsumer consumer) {
+    private static void renderThroughWall(WorldRenderContext context, PoseStack matrixStack, VertexConsumer consumer) {
         if (!isInValidArea()) return;
 
         waypoints.forEach(waypoint -> {
@@ -147,12 +151,13 @@ public class BossWaypoints {
         });
     }
 
-    private static void renderThroughWall(WorldRenderContext context, PoseStack matrixStack, VertexConsumer consumer) {
+    private static void render(WorldRenderContext context, PoseStack matrixStack, VertexConsumer consumer) {
         if (!isInValidArea()) return;
 
         waypoints.forEach(waypoint -> {
             if (!waypoint.isThroughWall()) {
-                waypoint.Render(consumer, matrixStack);
+                float[] color = waypoint.getColor();
+                Gizmos.cuboid(waypoint.getBox(), GizmoStyle.fill(ARGB.colorFromFloat(color[3], color[0],  color[1],  color[2])));
             }
         });
     }

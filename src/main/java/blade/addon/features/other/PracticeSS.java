@@ -24,6 +24,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -352,15 +353,15 @@ public class PracticeSS {
         if (showingPattern) {
             if (!ExtraOptions.realisticDelay || totalTicks - ticksLeft > START_WAIT_DURATION || endIndex != 2) {
                 int lastIndex = getLastDisplayIndex();
-                renderButtons(matrixStack, consumer, 0, lastIndex);
-                renderBackground(matrixStack, consumer, lastIndex - 1);
+                renderButtons(0, lastIndex);
+                renderBackground(lastIndex - 1);
             }
         } else {
-            renderButtons(matrixStack, consumer, currentIndex, endIndex);
+            renderButtons(currentIndex, endIndex);
         }
     }
 
-    private static void renderButtons(PoseStack matrixStack, VertexConsumer consumer, int start, int end) {
+    private static void renderButtons(int start, int end) {
         AABB directionBox = getBox(direction);
         if (directionBox == null) return;
 
@@ -368,8 +369,7 @@ public class PracticeSS {
             if (buttons.size() <= i) break;
             BlockPos pos = buttons.get(i);
             AABB box = directionBox.move(pos.getX(), pos.getY(), pos.getZ());
-            float[] color = RenderUtils.toFloats(getColor(i));
-            RenderUtils.renderFilledBox(matrixStack, consumer, box, color);
+            RenderUtils.renderFilledBlock(box, getColor(i));
         }
     }
 
@@ -383,7 +383,7 @@ public class PracticeSS {
         };
     }
 
-    private static void renderBackground(PoseStack matrixStack, VertexConsumer consumer, int backgroundIndex) {
+    private static void renderBackground(int backgroundIndex) {
         if (buttons.size() > backgroundIndex && backgroundIndex >= 0) {
             AABB box = AABB.ofSize(buttons.get(backgroundIndex).getCenter(), 1, 1, 1);
             int dx, dz;
@@ -408,7 +408,7 @@ public class PracticeSS {
                     return;
                 }
             }
-            RenderUtils.renderFilledBox(matrixStack, consumer, box.move(dx, 0, dz), new float[]{0, 0.5f, 1, 1});
+            RenderUtils.renderFilledBlock(box.move(dx, 0, dz), 0xff0080ff);
         }
     }
 }

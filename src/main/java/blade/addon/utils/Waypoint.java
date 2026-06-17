@@ -42,6 +42,14 @@ public class Waypoint {
         RenderUtils.renderFilledBox(matrixStack, consumer, new AABB(x, y, z, x + dx, y + dy, z + dz), new float[]{r, g, b,a});
     }
 
+    public AABB getBox() {
+        return new AABB(x, y, z, x + dx, y + dy, z + dz);
+    }
+
+    public float[] getColor() {
+        return new float[]{r, g, b,a};
+    }
+
     @Override
     public String toString() {
         return "Waypoint{" +
