@@ -11,9 +11,10 @@ import blade.addon.utils.events.Events;
 import blade.addon.utils.rendering.RenderUtils;
 import config.practical.hud.HUDComponent;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -65,7 +66,7 @@ public class LocationNotifier {
         return ticks > 0 && Floor7.displayLocationNotification;
     }
 
-    public static void render(HUDComponent component, GuiGraphics graphics) {
+    public static void render(HUDComponent component, GuiGraphicsExtractor graphics) {
         RenderUtils.drawCenteredText(graphics, component, notification);
     }
 }

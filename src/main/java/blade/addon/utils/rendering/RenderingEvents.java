@@ -1,6 +1,6 @@
 package blade.addon.utils.rendering;
 
-import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderEvents;
+import net.fabricmc.fabric.api.client.rendering.v1.level.LevelRenderEvents;
 
 public class RenderingEvents {
 
@@ -13,11 +13,11 @@ public class RenderingEvents {
 
 
     public static void init() {
-        WorldRenderEvents.BEFORE_DEBUG_RENDER.register(FILLED_DEBUG::init);
-        WorldRenderEvents.BEFORE_DEBUG_RENDER.register(FILLED_DEBUG_NO_DEPTH::init);
-        WorldRenderEvents.AFTER_ENTITIES.register(FILLED::init);
-        WorldRenderEvents.AFTER_ENTITIES.register(LINE::init);
-        WorldRenderEvents.AFTER_ENTITIES.register(FILLED_NO_DEPTH::init);
-        WorldRenderEvents.AFTER_ENTITIES.register(LINE_NO_DEPTH::init);
+        LevelRenderEvents.COLLECT_SUBMITS.register(FILLED_DEBUG::init);
+        LevelRenderEvents.COLLECT_SUBMITS.register(FILLED_DEBUG_NO_DEPTH::init);
+        LevelRenderEvents.AFTER_TRANSLUCENT_FEATURES.register(FILLED::init);
+        LevelRenderEvents.AFTER_TRANSLUCENT_FEATURES.register(LINE::init);
+        LevelRenderEvents.AFTER_TRANSLUCENT_FEATURES.register(FILLED_NO_DEPTH::init);
+        LevelRenderEvents.AFTER_TRANSLUCENT_FEATURES.register(LINE_NO_DEPTH::init);
     }
 }

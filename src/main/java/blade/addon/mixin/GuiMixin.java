@@ -10,7 +10,7 @@ import blade.addon.utils.rendering.DrawEvents;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.profiling.Profiler;
@@ -42,18 +42,18 @@ public class GuiMixin implements GameHud {
     @Shadow
     private int toolHighlightTimer;
 
-    @Inject(method = "renderSlot", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;renderItem(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/item/ItemStack;III)V"), order = 2000)
-    public void drawBackground(GuiGraphics context, int x, int y, DeltaTracker tickCounter, Player player, ItemStack stack, int seed, CallbackInfo ci) {
+    @Inject(method = "extractSlot", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphicsExtractor;item(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/item/ItemStack;III)V"), order = 2000)
+    public void drawBackground(GuiGraphicsExtractor context, int x, int y, DeltaTracker tickCounter, Player player, ItemStack stack, int seed, CallbackInfo ci) {
         DrawEvents.HUD_SLOT_BEFORE.invoke(slotEvent -> slotEvent.draw(context, stack, x, y));
     }
 
-    @Inject(method = "renderSlot", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;renderItem(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/item/ItemStack;III)V", shift = At.Shift.AFTER), order = 2000)
-    public void drawStar(GuiGraphics context, int x, int y, DeltaTracker tickCounter, Player player, ItemStack stack, int seed, CallbackInfo ci) {
+    @Inject(method = "extractSlot", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphicsExtractor;item(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/item/ItemStack;III)V", shift = At.Shift.AFTER), order = 2000)
+    public void drawStar(GuiGraphicsExtractor context, int x, int y, DeltaTracker tickCounter, Player player, ItemStack stack, int seed, CallbackInfo ci) {
         DrawEvents.HUD_SLOT_AFTER.invoke(slotEvent -> slotEvent.draw(context, stack, x, y));
     }
 
-    @Inject(method = "renderEffects", at = @At("HEAD"), cancellable = true, order = 2000)
-    public void renderStatusEffectsOverLay(GuiGraphics context, DeltaTracker tickCounter, CallbackInfo ci) {
+    @Inject(method = "extractEffects", at = @At("HEAD"), cancellable = true, order = 2000)
+    public void renderStatusEffectsOverLay(GuiGraphicsExtractor context, DeltaTracker tickCounter, CallbackInfo ci) {
         if (Visual.hideStatusOverLay) {
             ci.cancel();
         }
@@ -71,14 +71,14 @@ public class GuiMixin implements GameHud {
         else if (DeviceNotifier.disableTitles(subtitle)) ci.cancel();
     }
 
-    @Inject(method = "renderSelectedItemName", at=@At("HEAD"))
-    private void getFadeDuration(GuiGraphics context, CallbackInfo ci) {
+    @Inject(method = "extractSelectedItemName", at=@At("HEAD"))
+    private void getFadeDuration(GuiGraphicsExtractor graphics, CallbackInfo ci) {
         if (!ExtraOptions.moveToolTip) return;
         HeldItemToolTip.setFade(toolHighlightTimer);
     }
 
-    @Inject(method = "renderSelectedItemName", at= @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;drawStringWithBackdrop(Lnet/minecraft/client/gui/Font;Lnet/minecraft/network/chat/Component;IIII)V"), cancellable = true)
-    private void renderHeldItemTooltip(GuiGraphics context, CallbackInfo ci, @Local MutableComponent mutableText, @Local(ordinal = 3) int color) {
+    @Inject(method = "extractSelectedItemName", at= @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphicsExtractor;textWithBackdrop(Lnet/minecraft/client/gui/Font;Lnet/minecraft/network/chat/Component;IIII)V"), cancellable = true)
+    private void renderHeldItemTooltip(GuiGraphicsExtractor graphics, CallbackInfo ci, @Local(name = "str") MutableComponent mutableText, @Local(name = "alpha") int color) {
         if (!ExtraOptions.moveToolTip) return;
         ci.cancel();
         HeldItemToolTip.setText(mutableText);

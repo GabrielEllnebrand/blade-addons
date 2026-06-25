@@ -10,7 +10,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import config.practical.manager.ConfigValue;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientEntityEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderContext;
+import net.fabricmc.fabric.api.client.rendering.v1.level.LevelRenderContext;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextColor;
@@ -24,6 +24,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.phys.AABB;
+
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -301,7 +302,7 @@ public class MobHighlight {
     }
 
 
-    private static void renderFilled(WorldRenderContext context, PoseStack matrixStack, VertexConsumer consumer) {
+    private static void renderFilled(LevelRenderContext context, PoseStack matrixStack, VertexConsumer consumer) {
         if (!MobHighlight.mobHighlight || dontRenderHighlight || !MobHighlight.renderFilled()) return;
 
         for (DataHolder savedEntity : savedEntities) {
@@ -319,7 +320,7 @@ public class MobHighlight {
         }
     }
 
-    private static void renderOutline(WorldRenderContext context, PoseStack matrixStack, VertexConsumer consumer) {
+    private static void renderOutline(LevelRenderContext context, PoseStack matrixStack, VertexConsumer consumer) {
         if (!MobHighlight.mobHighlight || dontRenderHighlight || !MobHighlight.renderOutline()) return;
 
         for (DataHolder savedEntity : savedEntities) {

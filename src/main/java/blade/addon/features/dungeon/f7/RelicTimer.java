@@ -16,10 +16,10 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import config.practical.hud.HUDComponent;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderContext;
+import net.fabricmc.fabric.api.client.rendering.v1.level.LevelRenderContext;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gizmos.GizmoStyle;
 import net.minecraft.gizmos.Gizmos;
@@ -31,6 +31,7 @@ import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -122,7 +123,7 @@ public class RelicTimer {
             return false;
         });
 
-        ClientTickEvents.END_WORLD_TICK.register(world -> {
+        ClientTickEvents.END_LEVEL_TICK.register(world -> {
             if (!Location.inDungeon() || !Phase.inP5() || !Floor7.showAllRelicTimes || sentRelicTimes) return;
 
             Iterable<Entity> entities = world.entitiesForRendering();
@@ -259,7 +260,7 @@ public class RelicTimer {
         Misc.addChatMessage(Component.literal("Relic: " + pickedupRelic));
     }
 
-    private static void worldRender(WorldRenderContext context, PoseStack matrixStack, VertexConsumer consumer) {
+    private static void worldRender(LevelRenderContext context, PoseStack matrixStack, VertexConsumer consumer) {
         if (pickedupRelic == null || !Floor7.renderRelicHighlight) return;
 
         AABB box = pickedupRelic.box;
@@ -271,7 +272,7 @@ public class RelicTimer {
         return Floor7.enableRelicStartTimer && Location.inDungeon() && Phase.inP5() && tick > -1 && !Floor7.replaceWithProgressBar;
     }
 
-    public static void render(HUDComponent component, GuiGraphics graphics) {
+    public static void render(HUDComponent component, GuiGraphicsExtractor graphics) {
         int color = tick > 7 ? GREEN_COLOR : RED_COLOR;
         RenderUtils.drawTimer(component, graphics, tick, color);
     }
@@ -281,7 +282,7 @@ public class RelicTimer {
         return Floor7.enableRelicStartTimer && Location.inDungeon() && Phase.inP5() && tick > -1 && Floor7.replaceWithProgressBar;
     }
 
-    public static void renderProgressBar(HUDComponent component, GuiGraphics graphics) {
+    public static void renderProgressBar(HUDComponent component, GuiGraphicsExtractor graphics) {
         int x = component.getScaledX();
         int y = component.getScaledY();
 

@@ -14,9 +14,10 @@ import config.practical.data.SoundData;
 import config.practical.hud.HUDComponent;
 import config.practical.manager.ConfigValue;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
+
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -77,7 +78,7 @@ public class Notifications {
         return tick > 0;
     }
 
-    public static void render(HUDComponent component, GuiGraphics graphics) {
+    public static void render(HUDComponent component, GuiGraphicsExtractor graphics) {
         Component text = Component.literal(message != null ? message : "Some notification");
         RenderUtils.drawCenteredText(graphics, component, text);
     }

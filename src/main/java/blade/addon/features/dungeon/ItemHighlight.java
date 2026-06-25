@@ -10,7 +10,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientEntityEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderContext;
+import net.fabricmc.fabric.api.client.rendering.v1.level.LevelRenderContext;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
@@ -57,7 +57,7 @@ public class ItemHighlight {
         RenderingEvents.FILLED_NO_DEPTH.register(ItemHighlight::render);
     }
 
-    private static void render(WorldRenderContext context, PoseStack matrixStack, VertexConsumer consumer) {
+    private static void render(LevelRenderContext context, PoseStack matrixStack, VertexConsumer consumer) {
         if (!Dungeons.highlightItems) return;
         double tickProgress = Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(false);
 

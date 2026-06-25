@@ -9,13 +9,14 @@ import blade.addon.utils.events.Events;
 import blade.addon.utils.events.interfaces.SectionEvent;
 import config.practical.hud.HUDComponent;
 import config.practical.manager.ConfigValue;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.network.chat.Component;
+
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.network.chat.Component;
 
 public class Section {
     public enum DisplayTerminalSplitsWhen {
@@ -243,14 +244,14 @@ public class Section {
         return (recentlyCompleted == total && gateBlownUp) || (recentlyCompleted < completed);
     }
 
-    public static void render(HUDComponent component, GuiGraphics context) {
+    public static void render(HUDComponent component, GuiGraphicsExtractor graphics) {
         int x = component.getScaledX();
         int y = component.getScaledY();
 
         Font textRenderer = Minecraft.getInstance().font;
 
         for (int i = 0; i < splits.length; i++) {
-            splits[i].drawSplit(context, textRenderer, x, y + Constants.TEXT_HEIGHT * i, SPLIT_LENGTH);
+            splits[i].drawSplit(graphics, textRenderer, x, y + Constants.TEXT_HEIGHT * i, SPLIT_LENGTH);
         }
     }
 

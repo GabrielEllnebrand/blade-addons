@@ -5,12 +5,13 @@ import com.mojang.blaze3d.platform.Window;
 import config.practical.ConfigScroll;
 import config.practical.utilities.Constants;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Tuple;
 import org.joml.Matrix3x2fStack;
+import org.jspecify.annotations.NonNull;
 
 public class FilterList extends Screen {
 
@@ -41,19 +42,19 @@ public class FilterList extends Screen {
     }
 
     @Override
-    public void render(GuiGraphics context, int mouseX, int mouseY, float deltaTicks) {
-        super.render(context, mouseX, mouseY, deltaTicks);
+    public void extractRenderState(@NonNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float deltaTicks) {
+        super.extractRenderState(graphics, mouseX, mouseY, deltaTicks);
 
         float centerX = (Minecraft.getInstance().getWindow().getGuiScaledWidth() - (this.font.width(this.title) * TITLE_SCALAR)) / 2;
-        Matrix3x2fStack stack = context.pose();
+        Matrix3x2fStack stack = graphics.pose();
         stack.pushMatrix();
         stack.translate(centerX, TITLE_Y_OFFSET);
         stack.scale(TITLE_SCALAR, TITLE_SCALAR);
-        context.drawString(this.font, this.title, 0, 0, TITLE_COLOR, true);
+        graphics.text(this.font, this.title, 0, 0, TITLE_COLOR, true);
         stack.popMatrix();
 
         Tuple<Integer, Integer> pos = getButtonPos();
-        context.drawWordWrap(this.font, INFO_TEXT, pos.getA() + BUTTON_WIDTH + 5, pos.getB(), 245, 0xffffffff, true);
+        graphics.textWithWordWrap(  this.font, INFO_TEXT, pos.getA() + BUTTON_WIDTH + 5, pos.getB(), 245, 0xffffffff, true);
     }
 
     @Override

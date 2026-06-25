@@ -7,11 +7,12 @@ import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.events.Events;
 import blade.addon.utils.rendering.RenderUtils;
 import config.practical.hud.HUDComponent;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.network.chat.Component;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.network.chat.Component;
 
 public class SecretSpawnTimer {
 
@@ -41,7 +42,7 @@ public class SecretSpawnTimer {
         return Location.inDungeon() && Dungeons.enableSecretSpawnTimer && !Phase.inBoss() && Phase.runStarted();
     }
 
-    public static void render(HUDComponent component, GuiGraphics context) {
+    public static void render(HUDComponent component, GuiGraphicsExtractor context) {
         int x = component.getScaledX();
         int y = component.getScaledY();
 

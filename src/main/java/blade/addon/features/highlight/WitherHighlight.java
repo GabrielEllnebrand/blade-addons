@@ -9,9 +9,10 @@ import blade.addon.utils.rendering.RenderingEvents;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderContext;
+import net.fabricmc.fabric.api.client.rendering.v1.level.LevelRenderContext;
 import net.minecraft.world.entity.boss.wither.WitherBoss;
 import net.minecraft.world.phys.AABB;
+
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class WitherHighlight {
@@ -51,14 +52,14 @@ public class WitherHighlight {
         return EntityUtil.getBox(wither).inflate(MobHighlight.witherExtraWidth, 0, MobHighlight.witherExtraWidth);
     }
 
-    private static void renderFilled(WorldRenderContext context, PoseStack matrixStack, VertexConsumer consumer) {
+    private static void renderFilled(LevelRenderContext context, PoseStack matrixStack, VertexConsumer consumer) {
         if (!MobHighlight.mobHighlight || !MobHighlight.renderFilled() || MobHighlight.dontRenderHighlight) return;
 
         float[] rgba = RenderUtils.toFloats(MobHighlight.witherFilledColor);
         withers.forEach(entity -> RenderUtils.renderFilledBox(matrixStack, consumer, getBox(entity), rgba));
     }
 
-    private static void renderOutline(WorldRenderContext context, PoseStack matrixStack, VertexConsumer consumer) {
+    private static void renderOutline(LevelRenderContext context, PoseStack matrixStack, VertexConsumer consumer) {
         if (!MobHighlight.mobHighlight || !MobHighlight.renderOutline() || MobHighlight.dontRenderHighlight) return;
 
         float[] rgba = RenderUtils.toFloats(MobHighlight.witherOutlineColor);

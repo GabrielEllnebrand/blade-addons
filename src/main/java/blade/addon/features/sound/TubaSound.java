@@ -12,7 +12,7 @@ import net.minecraft.world.entity.animal.wolf.WolfSoundVariants;
 
 public class TubaSound {
 
-    private static final SoundEvent SOUND = SoundEvents.WOLF_SOUNDS.get(WolfSoundVariants.SoundSet.CLASSIC).deathSound().value();
+    private static final SoundEvent SOUND = SoundEvents.WOLF_SOUNDS.get(WolfSoundVariants.SoundSet.CLASSIC).adultSounds().deathSound().value();
     private static final SoundEvent TUBA_SOUND = SoundEvent.createVariableRangeEvent(Identifier.fromNamespaceAndPath(Constants.NAMESPACE, "wolf-howl"));
 
 

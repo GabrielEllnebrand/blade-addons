@@ -7,10 +7,11 @@ import blade.addon.utils.rendering.RenderingEvents;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderContext;
+import net.fabricmc.fabric.api.client.rendering.v1.level.LevelRenderContext;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.TrappedChestBlockEntity;
 import net.minecraft.world.phys.AABB;
+
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class MimicHighlight {
@@ -41,14 +42,14 @@ public class MimicHighlight {
     }
 
 
-    private static void renderFilled(WorldRenderContext context, PoseStack matrixStack, VertexConsumer consumer) {
+    private static void renderFilled(LevelRenderContext context, PoseStack matrixStack, VertexConsumer consumer) {
         if (!MobHighlight.highlightMimicChests || !MobHighlight.renderFilled()) return;
 
         float[] rgba = RenderUtils.toFloats(MobHighlight.mimicFilledColor);
         mimics.forEach(mimic -> RenderUtils.renderFilledBox(matrixStack, consumer, box.move(mimic.getBlockPos()), rgba));
     }
 
-    private static void renderOutline(WorldRenderContext context, PoseStack matrixStack, VertexConsumer consumer) {
+    private static void renderOutline(LevelRenderContext context, PoseStack matrixStack, VertexConsumer consumer) {
         if (!MobHighlight.highlightMimicChests || !MobHighlight.renderOutline()) return;
 
         float[] rgba = RenderUtils.toFloats(MobHighlight.mimicOutlineColor);

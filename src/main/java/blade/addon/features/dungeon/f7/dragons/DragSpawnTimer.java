@@ -6,7 +6,7 @@ import blade.addon.utils.debug.Debug;
 import blade.addon.utils.events.Events;
 import blade.addon.utils.rendering.RenderUtils;
 import config.practical.hud.HUDComponent;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundLevelParticlesPacket;
@@ -99,7 +99,7 @@ public class DragSpawnTimer {
         return Floor7.dragSpawnTimers && currentDragon != Dragon.NONE;
     }
 
-    public static void render(HUDComponent component, GuiGraphics graphics) {
+    public static void render(HUDComponent component, GuiGraphicsExtractor graphics) {
         RenderUtils.drawTimer(component, graphics, tick, currentDragon.color);
     }
 }

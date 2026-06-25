@@ -1,20 +1,18 @@
 package blade.addon.features.item;
 
 import blade.addon.utils.Constants;
-import blade.addon.utils.config.values.Visual;
-import blade.addon.utils.debug.Debug;
 import blade.addon.utils.Location;
 import blade.addon.utils.Misc;
 import blade.addon.utils.config.FolderUtility;
+import blade.addon.utils.config.values.Visual;
 import blade.addon.utils.data.ItemUtil;
+import blade.addon.utils.debug.Debug;
 import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.rendering.DrawEvents;
 import config.practical.manager.ConfigManager;
 import config.practical.manager.ConfigValue;
-import java.util.HashSet;
-import java.util.List;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.RenderPipelines;
@@ -24,6 +22,9 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+
+import java.util.HashSet;
+import java.util.List;
 
 public class ProtectItem {
 
@@ -81,7 +82,7 @@ public class ProtectItem {
         return protectedItems.contains(uuid);
     }
 
-    private static void draw(GuiGraphics context, ItemStack stack, int x, int y) {
+    private static void draw(GuiGraphicsExtractor context, ItemStack stack, int x, int y) {
         if (!Visual.highlightProtectedItem) return;
         ProtectedItemHolder holder = (ProtectedItemHolder) (Object) stack;
         assert holder != null;

@@ -8,14 +8,15 @@ import blade.addon.utils.config.values.Dungeons;
 import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.events.Events;
 import config.practical.hud.HUDComponent;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class InvincibilityTimer {
 
@@ -152,12 +153,12 @@ public class InvincibilityTimer {
         return (double) spiritMaskTicks / SPIRIT_MASK_COOLDOWN;
     }
 
-    private static void drawSprite(GuiGraphics context, Identifier identifier, int x, int y, boolean isOn, int ticks, Component timerText) {
+    private static void drawSprite(GuiGraphicsExtractor context, Identifier identifier, int x, int y, boolean isOn, int ticks, Component timerText) {
         int color = (ticks > 0 ? Constants.RED : isOn ? Constants.YELLOW : Constants.GREEN);
         context.fill(x, y, x + SPRITE_SIZE, y + SPRITE_SIZE, color);
         context.blitSprite(RenderPipelines.GUI_TEXTURED, identifier, x, y, SPRITE_SIZE, SPRITE_SIZE, 0xffffffff);
         if (ticks > 0) {
-            context.drawString(Minecraft.getInstance().font, timerText, x + TEXT_HEIGHT * 2, y, 0xffffffff, true);
+            context.text(Minecraft.getInstance().font, timerText, x + TEXT_HEIGHT * 2, y, 0xffffffff, true);
         }
 
     }
@@ -190,7 +191,7 @@ public class InvincibilityTimer {
         }
     }
 
-    public static void render(HUDComponent component, GuiGraphics graphics) {
+    public static void render(HUDComponent component, GuiGraphicsExtractor graphics) {
         int x = component.getScaledX();
         int y = component.getScaledY();
 
@@ -200,13 +201,13 @@ public class InvincibilityTimer {
             drawSprite(graphics, PHOENIX_SPRITE, x, y + (SPRITE_SIZE + 1) * 2, phoenixOn, phoenixTicks, formatTimer(phoenixTicks));
         } else {
             if (Dungeons.removeMaskPart) {
-                graphics.drawString(Minecraft.getInstance().font, getText(bonzoMaskTicks, bonzoMaskOn, "Bonzo "), x, y, 0xffffffff, true);
-                graphics.drawString(Minecraft.getInstance().font, getText(spiritMaskTicks, spiritMaskOn, "Spirit "), x, y + TEXT_HEIGHT, 0xffffffff, true);
+                graphics.text(Minecraft.getInstance().font, getText(bonzoMaskTicks, bonzoMaskOn, "Bonzo "), x, y, 0xffffffff, true);
+                graphics.text(Minecraft.getInstance().font, getText(spiritMaskTicks, spiritMaskOn, "Spirit "), x, y + TEXT_HEIGHT, 0xffffffff, true);
             } else {
-                graphics.drawString(Minecraft.getInstance().font, getText(bonzoMaskTicks, bonzoMaskOn, "Bonzo's Mask "), x, y, 0xffffffff, true);
-                graphics.drawString(Minecraft.getInstance().font, getText(spiritMaskTicks, spiritMaskOn, "Spirit Mask "), x, y + TEXT_HEIGHT, 0xffffffff, true);
+                graphics.text(Minecraft.getInstance().font, getText(bonzoMaskTicks, bonzoMaskOn, "Bonzo's Mask "), x, y, 0xffffffff, true);
+                graphics.text(Minecraft.getInstance().font, getText(spiritMaskTicks, spiritMaskOn, "Spirit Mask "), x, y + TEXT_HEIGHT, 0xffffffff, true);
             }
-            graphics.drawString(Minecraft.getInstance().font, getText(phoenixTicks, phoenixOn, "Phoenix "), x, y + TEXT_HEIGHT * 2, 0xffffffff, true);
+            graphics.text(Minecraft.getInstance().font, getText(phoenixTicks, phoenixOn, "Phoenix "), x, y + TEXT_HEIGHT * 2, 0xffffffff, true);
         }
     }
 }

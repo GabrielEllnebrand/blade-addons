@@ -7,7 +7,7 @@ import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.events.Events;
 import blade.addon.utils.rendering.RenderUtils;
 import config.practical.hud.HUDComponent;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 
 public class TermStartTimer {
@@ -32,7 +32,7 @@ public class TermStartTimer {
         return Floor7.enableTermStartTimer && Location.inDungeon() && Phase.inP2() && Phase.stormDead();
     }
 
-    public static void render(HUDComponent component, GuiGraphics graphics) {
+    public static void render(HUDComponent component, GuiGraphicsExtractor graphics) {
         double num = tick * Constants.TICK_DURATION;
         RenderUtils.drawCenteredText(graphics, component, Component.literal(Constants.DECIMAL_FORMAT.format(num)), Constants.YELLOW);
     }

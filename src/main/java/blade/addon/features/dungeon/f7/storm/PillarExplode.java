@@ -8,7 +8,7 @@ import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.events.Events;
 import blade.addon.utils.rendering.RenderUtils;
 import config.practical.hud.HUDComponent;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 
@@ -43,7 +43,7 @@ public class PillarExplode {
         return Floor7.timePillarExplosion && tick > 0;
     }
 
-    public static void renderTimer(HUDComponent component, GuiGraphics graphics) {
+    public static void renderTimer(HUDComponent component, GuiGraphicsExtractor graphics) {
         int color = tick < 6 ? Constants.GREEN : Constants.RED;
         RenderUtils.drawTimer(component, graphics, tick, color);
     }
@@ -52,7 +52,7 @@ public class PillarExplode {
         return Floor7.notifyStormCrush && tick > 0;
     }
 
-    public static void render(HUDComponent component, GuiGraphics graphics) {
+    public static void render(HUDComponent component, GuiGraphicsExtractor graphics) {
         RenderUtils.drawCenteredText(graphics, component, Component.literal("§6||| §bStorm crushed! §6|||"));
     }
 }

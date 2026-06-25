@@ -8,7 +8,7 @@ import blade.addon.utils.dungeon.DungeonClass;
 import blade.addon.utils.events.Events;
 import blade.addon.utils.rendering.RenderUtils;
 import config.practical.hud.HUDComponent;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 
@@ -53,7 +53,7 @@ public class BloodNotifier {
         return Dungeons.alertBloodSpawns && System.currentTimeMillis() - prevTime < 2000 && correctClass();
     }
 
-    public static void render(HUDComponent component, GuiGraphics graphics) {
+    public static void render(HUDComponent component, GuiGraphicsExtractor graphics) {
         RenderUtils.drawCenteredText(graphics, component, Component.literal("First four mobs spawned!"), Constants.RED);
     }
 

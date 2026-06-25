@@ -26,7 +26,7 @@
     "ChatScreenMixin",
     "LocalPlayerMixin",
     "ClientPacketListenerMixin",
-    "GuiGraphicsMixin",
+    "GuiGraphicsExtractorMixin",
     "EntityRendererMixin",
     "EntityRenderDispatcherMixin",
     "HandledScreenMixin",

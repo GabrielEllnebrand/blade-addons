@@ -3,14 +3,15 @@ package blade.addon.features.item;
 import blade.addon.utils.Constants;
 import blade.addon.utils.config.values.Visual;
 import blade.addon.utils.rendering.DrawEvents;
-import java.util.List;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemLore;
+
+import java.util.List;
 
 public class ItemRarityHighlight {
 
@@ -22,7 +23,7 @@ public class ItemRarityHighlight {
         DrawEvents.HUD_SLOT_BEFORE.register(ItemRarityHighlight::draw);
     }
 
-    private static void draw(GuiGraphics context, ItemStack stack, int x, int y) {
+    private static void draw(GuiGraphicsExtractor context, ItemStack stack, int x, int y) {
         if (!Visual.itemRarityBackground) return;
         ItemRarityHolder holder = (ItemRarityHolder) (Object) stack;
         assert holder != null;

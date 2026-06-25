@@ -4,7 +4,7 @@ import config.practical.utilities.Constants;
 import config.practical.utilities.DrawHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.input.MouseButtonEvent;
@@ -34,24 +34,24 @@ class NotificationEntry extends AbstractWidget {
     }
 
     @Override
-    protected void renderWidget(GuiGraphics context, int mouseX, int mouseY, float deltaTicks) {
+    protected void extractWidgetRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float deltaTicks) {
         int x = getX();
         int y = getY();
         int width = getWidth();
         int height = getHeight();
-        DrawHelper.drawBackground(context, x, y, width - SPRITE_WIDTH_AREA, height);
+        DrawHelper.drawBackground(graphics, x, y, width - SPRITE_WIDTH_AREA, height);
 
         Minecraft mc = Minecraft.getInstance();
         Font textRenderer = mc.font;
 
-        drawText(context, textRenderer, notification.getMatchString(), x + PADDING, y);
-        drawText(context, textRenderer, notification.getNotificationString(), x + PADDING * 2 + TEXT_SPACE, y);
+        drawText(graphics, textRenderer, notification.getMatchString(), x + PADDING, y);
+        drawText(graphics, textRenderer, notification.getNotificationString(), x + PADDING * 2 + TEXT_SPACE, y);
 
         Tuple<Integer, Integer> pos = getRemovePos();
-        context.blitSprite(RenderPipelines.GUI_TEXTURED, CROSS, pos.getA(), pos.getB(), SPRITE_SIZE, SPRITE_SIZE, 0xffffffff);
+        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, CROSS, pos.getA(), pos.getB(), SPRITE_SIZE, SPRITE_SIZE, 0xffffffff);
     }
 
-    private void drawText(GuiGraphics context, Font textRenderer, String string, int x, int y) {
+    private void drawText(GuiGraphicsExtractor context, Font textRenderer, String string, int x, int y) {
 
         Component text;
         if (string.isEmpty()) {
@@ -63,7 +63,7 @@ class NotificationEntry extends AbstractWidget {
         int textY = (30 - Constants.TEXT_HEIGHT) / 2 + y;
 
         context.enableScissor(x, y, x + MAX_TEXT_WIDTH - 1, y + height);
-        context.drawString(textRenderer, text, x + 1, textY, 0xffffffff, true);
+        context.text(textRenderer, text, x + 1, textY, 0xffffffff, true);
         context.disableScissor();
     }
 

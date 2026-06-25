@@ -9,12 +9,13 @@ import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.events.Events;
 import blade.addon.utils.rendering.RenderUtils;
 import config.practical.hud.HUDComponent;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ChestCounter {
 
@@ -66,14 +67,14 @@ public class ChestCounter {
         return Dungeons.displayChestCount && Location.inDungeon();
     }
 
-    public static void render(HUDComponent component, GuiGraphics graphics) {
+    public static void render(HUDComponent component, GuiGraphicsExtractor graphics) {
         int x = component.getScaledX();
         int y = component.getScaledY();
 
         if (hasUpdatedData) {
             RenderUtils.drawPrefixedText(component, graphics, "Chests", Math.min(chestDisplayCount + countedChests, 60) + "");
         } else {
-            graphics.drawString(Minecraft.getInstance().font, Component.literal("go to the dungeon hub"), x, y, Constants.RED, true);
+            graphics.text(Minecraft.getInstance().font, Component.literal("go to the dungeon hub"), x, y, Constants.RED, true);
 
         }
     }

@@ -2,12 +2,13 @@ package blade.addon.features.item;
 
 import blade.addon.utils.config.values.ExtraOptions;
 import blade.addon.utils.rendering.DrawEvents;
-import java.util.List;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemLore;
+
+import java.util.List;
 
 public class SelectedPetHighlight {
 
@@ -15,7 +16,7 @@ public class SelectedPetHighlight {
         DrawEvents.INVENTORY_SLOT_BEFORE.register(SelectedPetHighlight::draw);
     }
 
-    private static void draw(GuiGraphics context, ItemStack stack, int x, int y) {
+    private static void draw(GuiGraphicsExtractor context, ItemStack stack, int x, int y) {
         if (!ExtraOptions.highlightSelectedPet) return;
 
         PetHolder holder = (PetHolder) (Object) stack;

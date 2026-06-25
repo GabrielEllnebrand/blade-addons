@@ -4,7 +4,7 @@ import blade.addon.utils.config.values.Dungeons;
 import blade.addon.utils.events.Events;
 import blade.addon.utils.rendering.RenderUtils;
 import config.practical.hud.HUDComponent;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 
 public class InvincibilityDuration {
 
@@ -26,7 +26,7 @@ public class InvincibilityDuration {
         return  ticks > 0 && Dungeons.InvincibilityDuration;
     }
 
-    public static void render(HUDComponent component, GuiGraphics graphics) {
+    public static void render(HUDComponent component, GuiGraphicsExtractor graphics) {
         int color = 0xffffffff;
         if (Dungeons.useStatusColorForInvincibility) {
             color = RenderUtils.getStatusColor(40, 20, ticks);

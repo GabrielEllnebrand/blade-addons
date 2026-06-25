@@ -5,7 +5,7 @@ import blade.addon.utils.rendering.RenderUtils;
 import blade.addon.utils.rendering.RenderingEvents;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderContext;
+import net.fabricmc.fabric.api.client.rendering.v1.level.LevelRenderContext;
 
 public class DragonTracer {
 
@@ -13,7 +13,7 @@ public class DragonTracer {
         RenderingEvents.LINE.register(DragonTracer::render);
     }
 
-    private static void render(WorldRenderContext context, PoseStack matrixStack, VertexConsumer consumer) {
+    private static void render(LevelRenderContext context, PoseStack matrixStack, VertexConsumer consumer) {
         if (!Floor7.dragonTracer) return;
 
         Dragon dragon = DragSpawnTimer.currentDragon;

@@ -11,8 +11,8 @@ import blade.addon.utils.dungeon.Section;
 import blade.addon.utils.events.Events;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommands;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.network.chat.Component;
@@ -36,51 +36,51 @@ public class Debug {
     private static void registerCommands(@NotNull CommandDispatcher<FabricClientCommandSource> dispatcher,
                                          CommandBuildContext registryAccess) {
 
-        dispatcher.register(ClientCommandManager.literal("badev")
-                .then(ClientCommandManager.literal("runInfo").executes(context -> {
+        dispatcher.register(ClientCommands.literal("badev")
+                .then(ClientCommands.literal("runInfo").executes(context -> {
                     sendRunInfo();
                     return Constants.SUCCESS;
                 }))
 
-                .then(ClientCommandManager.literal("debug").executes(context -> {
+                .then(ClientCommands.literal("debug").executes(context -> {
                     sendDebug = !sendDebug;
                     Misc.addChatMessage(Component.literal("Send debug: ").append(Misc.getStatusText(sendDebug)));
                     return Constants.SUCCESS;
                 }))
 
-                .then(ClientCommandManager.literal("sound").executes(context -> {
+                .then(ClientCommands.literal("sound").executes(context -> {
                     sendSound = !sendSound;
                     Misc.addChatMessage(Component.literal("Send Sound: ").append(Misc.getStatusText(sendSound)));
                     return Constants.SUCCESS;
                 }))
 
-                .then(ClientCommandManager.literal("termInfo").executes(context -> {
+                .then(ClientCommands.literal("termInfo").executes(context -> {
                     termInfo = !termInfo;
                     Misc.addChatMessage(Component.literal("Terminal info: ").append(Misc.getStatusText(termInfo)));
                     return Constants.SUCCESS;
                 }))
 
-                .then(ClientCommandManager.literal("sendNotification").then(ClientCommandManager.argument("message", StringArgumentType.string()).executes(context -> {
+                .then(ClientCommands.literal("sendNotification").then(ClientCommands.argument("message", StringArgumentType.string()).executes(context -> {
                     String message = StringArgumentType.getString(context, "message");
                     LocationNotifier.startNotification("Someone", message);
                     return Constants.SUCCESS;
                 })))
 
-                .then(ClientCommandManager.literal("drawPositionBoxes").executes(context -> {
+                .then(ClientCommands.literal("drawPositionBoxes").executes(context -> {
                     renderPositions = !renderPositions;
                     Misc.addChatMessage(Component.literal("Render positons: ").append(Misc.getStatusText(renderPositions)));
                     return Constants.SUCCESS;
                 }))
 
-                .then(ClientCommandManager.literal("testString").then(ClientCommandManager.argument("message", StringArgumentType.string()).executes(context -> {
+                .then(ClientCommands.literal("testString").then(ClientCommands.argument("message", StringArgumentType.string()).executes(context -> {
                     String message = StringArgumentType.getString(context, "message");
                     Events.ON_GAME_MESSAGE.invoke(gameMessageEvent -> gameMessageEvent.onGameMessage(Component.literal(message)));
                     return Constants.SUCCESS;
                 })))
 
-                .then(ClientCommandManager.literal("relic")
-                        .then(ClientCommandManager.literal("set")
-                                .then(ClientCommandManager.argument("name", StringArgumentType.string())
+                .then(ClientCommands.literal("relic")
+                        .then(ClientCommands.literal("set")
+                                .then(ClientCommands.argument("name", StringArgumentType.string())
                                         .executes(context -> {
                                             String name = StringArgumentType.getString(context, "name").toUpperCase();
                                             if (RelicTimer.testSetRelic(name)) {
@@ -91,27 +91,27 @@ public class Debug {
                                 )
                         )
 
-                        .then(ClientCommandManager.literal("testRelicGUI").executes(context -> {
+                        .then(ClientCommands.literal("testRelicGUI").executes(context -> {
                             RelicTimer.testRelicGUI();
                             return Constants.SUCCESS;
                         }))
 
-                        .then(ClientCommandManager.literal("getRelic").executes(context -> {
+                        .then(ClientCommands.literal("getRelic").executes(context -> {
                             RelicTimer.printRelic();
                             return Constants.SUCCESS;
                         }))
 
                 )
 
-                .then(ClientCommandManager.literal("location")
-                        .then(ClientCommandManager.literal("current")
+                .then(ClientCommands.literal("location")
+                        .then(ClientCommands.literal("current")
                                 .executes(context -> {
                                     Misc.addChatMessage(Component.literal(Location.getCurrentLocation().toString()));
                                     return Constants.SUCCESS;
                                         }))
 
-                        .then(ClientCommandManager.literal("set")
-                                .then(ClientCommandManager.argument("name", StringArgumentType.string())
+                        .then(ClientCommands.literal("set")
+                                .then(ClientCommands.argument("name", StringArgumentType.string())
                                         .executes(context -> {
                                             String name = StringArgumentType.getString(context, "name").toUpperCase();
                                             Location location =  Location.getLocation(name);
@@ -123,8 +123,8 @@ public class Debug {
                         )
                 )
 
-                .then(ClientCommandManager.literal("chatNoti")
-                        .then(ClientCommandManager.literal("sendDebug")
+                .then(ClientCommands.literal("chatNoti")
+                        .then(ClientCommands.literal("sendDebug")
                                 .executes(context -> {
                                     sendNotiDebug = !sendNotiDebug;
                                     Misc.addChatMessage(Component.literal("Send notification debug: ").append(Misc.getStatusText(sendNotiDebug)));
@@ -134,13 +134,13 @@ public class Debug {
                         )
                 )
 
-                .then(ClientCommandManager.literal("classes")
+                .then(ClientCommands.literal("classes")
                         .executes(context -> {
                             DungeonClass.printClasses();
                             return Constants.SUCCESS;
                         })
                 )
-                .then(ClientCommandManager.literal("currentClass")
+                .then(ClientCommands.literal("currentClass")
                         .executes(context -> {
                             Misc.addChatMessage(Component.literal("Current class: " + DungeonClass.currentClass));
                             return Constants.SUCCESS;

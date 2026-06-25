@@ -4,7 +4,7 @@ import blade.addon.utils.config.values.Visual;
 import blade.addon.utils.rendering.DrawEvents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
@@ -17,7 +17,7 @@ public class StarCountHighlight {
         DrawEvents.HUD_SLOT_AFTER.register(StarCountHighlight::draw);
     }
 
-    private static void draw(GuiGraphics context, ItemStack stack, int x, int y) {
+    private static void draw(GuiGraphicsExtractor context, ItemStack stack, int x, int y) {
 
         if (!Visual.drawStarCount) return;
 
@@ -34,7 +34,7 @@ public class StarCountHighlight {
 
         Font textRenderer = Minecraft.getInstance().font;
         String starText = "" + starCount;
-        context.drawString(Minecraft.getInstance().font, starText, x + 17 - textRenderer.width(starText), y + 18 - textRenderer.lineHeight, 0xffffffff, true);
+        context.text(Minecraft.getInstance().font, starText, x + 17 - textRenderer.width(starText), y + 18 - textRenderer.lineHeight, 0xffffffff, true);
     }
 
     public static int getStarCount(ItemStack item) {

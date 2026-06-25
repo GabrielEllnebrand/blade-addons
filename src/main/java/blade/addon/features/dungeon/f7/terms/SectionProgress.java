@@ -7,7 +7,7 @@ import blade.addon.utils.dungeon.Section;
 import blade.addon.utils.events.Events;
 import blade.addon.utils.rendering.RenderUtils;
 import config.practical.hud.HUDComponent;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 
 public class SectionProgress {
@@ -100,7 +100,7 @@ public class SectionProgress {
         return Floor7.showSectionProgress && Phase.inTerminals();
     }
 
-    public static void render(HUDComponent component, GuiGraphics graphics) {
+    public static void render(HUDComponent component, GuiGraphicsExtractor graphics) {
         if (Floor7.sectionPrevObjective) {
             RenderUtils.drawCenteredText(graphics, component, Component.literal(objectiveFormat + prevObjective + " ").append(getProgressText()));
         } else {

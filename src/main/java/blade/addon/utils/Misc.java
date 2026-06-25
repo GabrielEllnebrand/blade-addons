@@ -41,7 +41,7 @@ public class Misc {
             if (INSTANCE == null) return;
             Gui gameHud = INSTANCE.gui;
             ChatComponent hud = gameHud.getChat();
-            forceMainThread(() -> hud.addMessage(Component.literal(ExtraOptions.textPrefix).append(text)));
+            forceMainThread(() -> hud.addClientSystemMessage(Component.literal(ExtraOptions.textPrefix).append(text)));
         } catch (IndexOutOfBoundsException ignored) {
             Debug.LOGGER.error("Chat message failed to get added");
         }

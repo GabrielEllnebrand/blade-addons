@@ -1,7 +1,7 @@
 package blade.addon.utils.config.components;
 
-import blade.addon.features.dungeon.f7.maxor.CrystalSpawn;
 import blade.addon.features.dungeon.f7.RelicTimer;
+import blade.addon.features.dungeon.f7.maxor.CrystalSpawn;
 import blade.addon.features.dungeon.f7.storm.StormTickTimer;
 import blade.addon.features.dungeon.f7.terms.GoldorTickTimer;
 import blade.addon.features.dungeon.f7.terms.TermStartTimer;
@@ -9,7 +9,7 @@ import blade.addon.utils.Constants;
 import blade.addon.utils.config.values.Floor7;
 import blade.addon.utils.rendering.RenderUtils;
 import config.practical.hud.HUDComponent;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 
 public class CombinedTickTimer {
@@ -31,7 +31,7 @@ public class CombinedTickTimer {
         return false;
     }
 
-    public static void render(HUDComponent component, GuiGraphics graphics) {
+    public static void render(HUDComponent component, GuiGraphicsExtractor graphics) {
         if (CrystalSpawn.display()) {
             CrystalSpawn.render(component, graphics);
         } else if (StormTickTimer.display()) {

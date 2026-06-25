@@ -9,7 +9,7 @@ import blade.addon.utils.rendering.RenderUtils;
 import config.practical.hud.HUDComponent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 
 public class QuizTimer {
@@ -56,7 +56,7 @@ public class QuizTimer {
         return Dungeons.quizTimer && tick > 0;
     }
 
-    public static void render(HUDComponent component, GuiGraphics graphics) {
+    public static void render(HUDComponent component, GuiGraphicsExtractor graphics) {
         Font textRenderer = Minecraft.getInstance().font;
         if (textRenderer == null) return;
 
@@ -65,7 +65,7 @@ public class QuizTimer {
                     .append(Component.literal(stage + "/3").withColor(0xffffffff)
                             .append(Component.literal("): ").withColor(ExtraOptions.timerPrefixColor))
                             .append(Component.literal(Constants.DECIMAL_FORMAT.format(tick * Constants.TICK_DURATION) + "s").withColor(0xffffffff)));
-            graphics.drawString(textRenderer, drawnText, component.getScaledX(), component.getScaledY(), 0xffffffff, true);
+            graphics.text(textRenderer, drawnText, component.getScaledX(), component.getScaledY(), 0xffffffff, true);
         } else {
             RenderUtils.drawPrefixedTimer(component, graphics, "Quiz", tick);
         }

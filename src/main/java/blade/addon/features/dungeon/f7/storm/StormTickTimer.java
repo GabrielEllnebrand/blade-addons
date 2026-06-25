@@ -10,10 +10,11 @@ import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.events.Events;
 import blade.addon.utils.rendering.RenderUtils;
 import config.practical.hud.HUDComponent;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.network.chat.Component;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.network.chat.Component;
 
 public class StormTickTimer {
 
@@ -72,7 +73,7 @@ public class StormTickTimer {
         return Floor7.enableStormTickTimer && Location.inDungeon() && Phase.inP2() && !Phase.stormDead();
     }
 
-    public static void render(HUDComponent component, GuiGraphics graphics) {
+    public static void render(HUDComponent component, GuiGraphicsExtractor graphics) {
         double num = tick * Constants.TICK_DURATION;
         if (Floor7.tickDownStormTickTimer) {
             num = CRUSH_TICK * Constants.TICK_DURATION - num;
@@ -84,7 +85,7 @@ public class StormTickTimer {
         return Floor7.enableStormDeathTime && Location.inDungeon() && Phase.inP2() && !Phase.stormDead() && deathTime > 0 && deathStartDisplayTime > System.currentTimeMillis() - DEATH_DISPLAY_DURATION;
     }
 
-    public static void renderDeathTime(HUDComponent component, GuiGraphics graphics) {
+    public static void renderDeathTime(HUDComponent component, GuiGraphicsExtractor graphics) {
         RenderUtils.drawTimer(component, graphics, deathTime, Constants.DARK_PURPLE);
     }
 }

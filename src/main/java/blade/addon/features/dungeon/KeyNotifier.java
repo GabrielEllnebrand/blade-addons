@@ -10,7 +10,7 @@ import blade.addon.utils.rendering.RenderUtils;
 import config.practical.hud.HUDComponent;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
@@ -19,6 +19,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ResolvableProfile;
+
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -41,7 +42,7 @@ public class KeyNotifier {
     private static boolean isBloodKey = false;
 
     public static void init() {
-        ClientTickEvents.END_WORLD_TICK.register((world) -> {
+        ClientTickEvents.END_LEVEL_TICK.register((world) -> {
             if (!Location.inDungeon() || hasKey || !Dungeons.enableKeyNotifier || Phase.inBoss()) return;
 
             for (Entity entity : world.entitiesForRendering()) {
@@ -113,11 +114,11 @@ public class KeyNotifier {
         return Location.inDungeon() && hasKey && isValidClass() && !Phase.inBoss();
     }
 
-    public static void render(HUDComponent component, GuiGraphics context) {
+    public static void render(HUDComponent component, GuiGraphicsExtractor graphics) {
         int x = component.getScaledX();
         int y = component.getScaledY();
 
         Component text = isBloodKey ? BLOOD_KEY : WITHER_KEY;
-        RenderUtils.drawCenteredText(context, Minecraft.getInstance().font, text, x, y, component.getWidth(), 0xffffffff);
+        RenderUtils.drawCenteredText(graphics, Minecraft.getInstance().font, text, x, y, component.getWidth(), 0xffffffff);
     }
 }

@@ -7,7 +7,7 @@ import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.events.Events;
 import blade.addon.utils.rendering.RenderUtils;
 import config.practical.hud.HUDComponent;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 
 public class MaxorStun {
 
@@ -51,7 +51,7 @@ public class MaxorStun {
         return tick > 0 && Location.inDungeon() && Phase.inP1() && Floor7.maxorStunDuration && stunned;
     }
 
-    public static void render(HUDComponent component, GuiGraphics graphics) {
+    public static void render(HUDComponent component, GuiGraphicsExtractor graphics) {
         RenderUtils.drawPrefixedText(component, graphics, "Stunned", TextUtil.formatTicks(tick));
     }
 

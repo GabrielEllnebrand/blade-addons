@@ -10,10 +10,11 @@ import blade.addon.utils.rendering.RenderingEvents;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderContext;
+import net.fabricmc.fabric.api.client.rendering.v1.level.LevelRenderContext;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.phys.Vec3;
+
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class DragonHealth {
@@ -42,7 +43,7 @@ public class DragonHealth {
             return false;
         });
 
-        ClientTickEvents.END_WORLD_TICK.register(world -> dragons.removeIf(dataHolder -> dataHolder.dragon.isRemoved()));
+        ClientTickEvents.END_LEVEL_TICK.register(world -> dragons.removeIf(dataHolder -> dataHolder.dragon.isRemoved()));
         RenderingEvents.FILLED.register(DragonHealth::render);
         Events.ON_LOCATION_CHANGE.register(newLocation -> {
             reset();
@@ -61,7 +62,7 @@ public class DragonHealth {
         return Constants.RED;
     }
 
-    private static void render(WorldRenderContext context, PoseStack matrixStack, VertexConsumer consumer) {
+    private static void render(LevelRenderContext context, PoseStack matrixStack, VertexConsumer consumer) {
         if (!Floor7.dragonHealth) return;
 
         dragons.forEach(dataHolder -> {

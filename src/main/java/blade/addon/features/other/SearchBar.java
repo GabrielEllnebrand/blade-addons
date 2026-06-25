@@ -8,7 +8,7 @@ import blade.addon.utils.rendering.RenderUtils;
 import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.client.input.KeyEvent;
@@ -45,9 +45,9 @@ public class SearchBar {
         return (name.contains(searchTerm) || ItemUtil.containsIgnoreCaseLore(item, searchTerm));
     }
 
-    public static void render(GuiGraphics context, int mouseX, int mouseY, float deltaTicks) {
+    public static void render(GuiGraphicsExtractor context, int mouseX, int mouseY, float deltaTicks) {
         if (!exists() || !shouldDisplay() || !ExtraOptions.toggleableSearchBar) return;
-        searchBar.render(context, mouseX, mouseY, deltaTicks);
+        searchBar.extractRenderState(context, mouseX, mouseY, deltaTicks);
 
         if (!Double.isNaN(parsedValue)) {
             String expression = "  §e= §2" + RenderUtils.formatNumber((float) parsedValue);
@@ -56,7 +56,7 @@ public class SearchBar {
 
             int textX = searchBar.getX() + textRenderer.width(searchTerm) + 4;
             int textY = searchBar.getY() + (searchBar.getHeight() - 8) / 2;
-            context.drawString(textRenderer, expression, textX, textY, 0xffffffff, true);
+            context.text(textRenderer, expression, textX, textY, 0xffffffff, true);
         }
     }
 

@@ -10,12 +10,13 @@ import config.practical.hud.HUDComponent;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.Identifier;
+
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -94,7 +95,7 @@ public class SelectedPet {
             return false;
         });
 
-        ClientTickEvents.END_WORLD_TICK.register((world -> {
+        ClientTickEvents.END_LEVEL_TICK.register((world -> {
             tick = Math.max(tick - 1, 0);
         }));
 
@@ -166,7 +167,7 @@ public class SelectedPet {
         return ExtraOptions.drawPetHUD;
     }
 
-    public static void render(HUDComponent component, GuiGraphics context) {
+    public static void render(HUDComponent component, GuiGraphicsExtractor context) {
         int x = component.getScaledX();
         int y = component.getScaledY();
 
@@ -180,18 +181,18 @@ public class SelectedPet {
         int textY = y + component.getHeight() - textRenderer.lineHeight;
 
         if (ExtraOptions.displayPetLevel && currentPetText != NO_PET) {
-            context.drawString(textRenderer, Component.literal("§7[Lvl " + (currentPetLevel != -1 ? currentPetLevel : "???") + "]"), textX, textY, 0xffffffff, true);
+            context.text(textRenderer, Component.literal("§7[Lvl " + (currentPetLevel != -1 ? currentPetLevel : "???") + "]"), textX, textY, 0xffffffff, true);
             textY -= textRenderer.lineHeight;
         }
 
-        context.drawString(textRenderer, currentPetText, textX, textY, 0xffffffff, true);
+        context.text(textRenderer, currentPetText, textX, textY, 0xffffffff, true);
     }
 
     public static boolean displayNotification() {
         return ExtraOptions.sendPetSwapNotification && tick > 0;
     }
 
-    public static void renderNotification(HUDComponent component, GuiGraphics graphics) {
+    public static void renderNotification(HUDComponent component, GuiGraphicsExtractor graphics) {
         RenderUtils.drawCenteredText(graphics, component, currentPetText);
     }
 

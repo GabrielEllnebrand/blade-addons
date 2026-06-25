@@ -8,8 +8,9 @@ import blade.addon.utils.rendering.RenderingEvents;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderContext;
+import net.fabricmc.fabric.api.client.rendering.v1.level.LevelRenderContext;
 import net.minecraft.world.entity.animal.sheep.Sheep;
+
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class SheepHighlight {
@@ -37,14 +38,14 @@ public class SheepHighlight {
         RenderingEvents.LINE.register(SheepHighlight::renderOutline);
     }
 
-    private static void renderFilled(WorldRenderContext context, PoseStack matrixStack, VertexConsumer consumer) {
+    private static void renderFilled(LevelRenderContext context, PoseStack matrixStack, VertexConsumer consumer) {
         if (!MobHighlight.highlightSheep || !MobHighlight.renderFilled()) return;
 
         float[] rgba = RenderUtils.toFloats(MobHighlight.sheepFilledColor);
         sheeps.forEach(entity -> RenderUtils.renderFilledBox(matrixStack, consumer, EntityUtil.getBox(entity), rgba));
     }
 
-    private static void renderOutline(WorldRenderContext context, PoseStack matrixStack, VertexConsumer consumer) {
+    private static void renderOutline(LevelRenderContext context, PoseStack matrixStack, VertexConsumer consumer) {
         if (!MobHighlight.highlightSheep || !MobHighlight.renderOutline()) return;
 
         float[] rgba = RenderUtils.toFloats(MobHighlight.sheepFilledColor);

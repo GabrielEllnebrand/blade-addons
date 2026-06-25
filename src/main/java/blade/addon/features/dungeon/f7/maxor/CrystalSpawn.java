@@ -10,13 +10,14 @@ import blade.addon.utils.events.Events;
 import blade.addon.utils.rendering.RenderUtils;
 import blade.addon.utils.times.PersonalBests;
 import config.practical.hud.HUDComponent;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.boss.enderdragon.EndCrystal;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class CrystalSpawn {
 
@@ -98,7 +99,7 @@ public class CrystalSpawn {
         return tick > 0 && Location.inDungeon() && Phase.inP1() && Floor7.enableCrystalSpawnTime;
     }
 
-    public static void render(HUDComponent component, GuiGraphics graphics) {
+    public static void render(HUDComponent component, GuiGraphicsExtractor graphics) {
         RenderUtils.drawTimer(component, graphics, tick, Constants.LIGHT_PURPLE);
     }
 
@@ -106,7 +107,7 @@ public class CrystalSpawn {
         return (Floor7.instantlyDisplayCrystalReminder || tickSincePicked > REMINDER_TICK) && Location.inDungeon() && Phase.inP1() && Floor7.crystalPlaceReminder && pickedUp;
     }
 
-    public static void renderNotification(HUDComponent component, GuiGraphics graphics) {
+    public static void renderNotification(HUDComponent component, GuiGraphicsExtractor graphics) {
         RenderUtils.drawCenteredText(graphics, component, Component.literal("§bPlace Crystal!"));
     }
 

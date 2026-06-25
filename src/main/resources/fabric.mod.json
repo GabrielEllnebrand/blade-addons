@@ -26,9 +26,9 @@
 		"blade-addons.mixins.json"
 	],
 	"depends": {
-		"fabricloader": ">=0.17.3",
-		"minecraft": "~1.21.8",
-		"java": ">=21",
+		"fabricloader": ">=0.19.3",
+		"minecraft": "~26.1.2",
+		"java": ">=25",
 		"fabric-api": "*",
       "hypixel-mod-api": "*"
 	},

@@ -12,8 +12,8 @@ import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.DoubleArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommands;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -37,14 +37,14 @@ public class Commands {
         //prob not a good solution but I don't use that many commands currently
         for (String alias : COMMAND_ALIASES) {
             dispatcher.register(
-                    ClientCommandManager.literal(alias)
-                            .then(ClientCommandManager.literal("ep").executes(context -> FillHelper.fillItem(FillHelper.ENDER_PEARL, 16, 16, false)))
+                    ClientCommands.literal(alias)
+                            .then(ClientCommands.literal("ep").executes(context -> FillHelper.fillItem(FillHelper.ENDER_PEARL, 16, 16, false)))
 
-                            .then(ClientCommandManager.literal("sb").executes(context -> FillHelper.fillItem(FillHelper.SUPERBOOM_TNT, 64, 64, false)))
+                            .then(ClientCommands.literal("sb").executes(context -> FillHelper.fillItem(FillHelper.SUPERBOOM_TNT, 64, 64, false)))
 
-                            .then(ClientCommandManager.literal("ij").executes(context -> FillHelper.fillItem(FillHelper.INFLATABLE_JERRY, 64, 64, false)))
+                            .then(ClientCommands.literal("ij").executes(context -> FillHelper.fillItem(FillHelper.INFLATABLE_JERRY, 64, 64, false)))
 
-                            .then(ClientCommandManager.literal("refill")
+                            .then(ClientCommands.literal("refill")
                                     .executes(
                                             context -> {
                                                 FillHelper.fillItem(FillHelper.ENDER_PEARL, 16, 16, true);
@@ -55,9 +55,9 @@ public class Commands {
 
                                     ))
 
-                            .then(ClientCommandManager.literal("leaporder")
-                                    .then(ClientCommandManager.argument("backupMage", StringArgumentType.string())
-                                            .then(ClientCommandManager.argument("odinOrder", BoolArgumentType.bool())
+                            .then(ClientCommands.literal("leaporder")
+                                    .then(ClientCommands.argument("backupMage", StringArgumentType.string())
+                                            .then(ClientCommands.argument("odinOrder", BoolArgumentType.bool())
                                                     .executes(context -> {
                                                         String backupMage = StringArgumentType.getString(context, "backupMage");
                                                         boolean odinOrder = BoolArgumentType.getBool(context, "odinOrder");
@@ -67,12 +67,12 @@ public class Commands {
                                             )
                                     ))
 
-                            .then(ClientCommandManager.literal("waypoint")
+                            .then(ClientCommands.literal("waypoint")
 
-                                    .then(ClientCommandManager.literal("add")
-                                            .then(ClientCommandManager.argument("x", DoubleArgumentType.doubleArg())
-                                                    .then(ClientCommandManager.argument("y", DoubleArgumentType.doubleArg())
-                                                            .then(ClientCommandManager.argument("z", DoubleArgumentType.doubleArg())
+                                    .then(ClientCommands.literal("add")
+                                            .then(ClientCommands.argument("x", DoubleArgumentType.doubleArg())
+                                                    .then(ClientCommands.argument("y", DoubleArgumentType.doubleArg())
+                                                            .then(ClientCommands.argument("z", DoubleArgumentType.doubleArg())
                                                                     .executes(context -> {
                                                                         double x = DoubleArgumentType.getDouble(context, "x");
                                                                         double y = DoubleArgumentType.getDouble(context, "y");
@@ -82,9 +82,9 @@ public class Commands {
                                                                         return Constants.SUCCESS;
                                                                     })
 
-                                                                    .then(ClientCommandManager.argument("dx", DoubleArgumentType.doubleArg())
-                                                                            .then(ClientCommandManager.argument("dy", DoubleArgumentType.doubleArg())
-                                                                                    .then(ClientCommandManager.argument("dz", DoubleArgumentType.doubleArg())
+                                                                    .then(ClientCommands.argument("dx", DoubleArgumentType.doubleArg())
+                                                                            .then(ClientCommands.argument("dy", DoubleArgumentType.doubleArg())
+                                                                                    .then(ClientCommands.argument("dz", DoubleArgumentType.doubleArg())
                                                                                             .executes(context -> {
                                                                                                 double x = DoubleArgumentType.getDouble(context, "x");
                                                                                                 double y = DoubleArgumentType.getDouble(context, "y");
@@ -113,9 +113,9 @@ public class Commands {
                                             })
 
                                     )
-                                    .then(ClientCommandManager.literal("remove")
+                                    .then(ClientCommands.literal("remove")
 
-                                            .then(ClientCommandManager.argument("radius", DoubleArgumentType.doubleArg())
+                                            .then(ClientCommands.argument("radius", DoubleArgumentType.doubleArg())
                                                     .executes(context -> {
                                                         double r = DoubleArgumentType.getDouble(context, "radius");
                                                         LocalPlayer player = Minecraft.getInstance().player;
@@ -124,10 +124,10 @@ public class Commands {
                                                         return Constants.SUCCESS;
                                                     }))
 
-                                            .then(ClientCommandManager.argument("x", DoubleArgumentType.doubleArg())
-                                                    .then(ClientCommandManager.argument("y", DoubleArgumentType.doubleArg())
-                                                            .then(ClientCommandManager.argument("z", DoubleArgumentType.doubleArg())
-                                                                    .then(ClientCommandManager.argument("radius", DoubleArgumentType.doubleArg())
+                                            .then(ClientCommands.argument("x", DoubleArgumentType.doubleArg())
+                                                    .then(ClientCommands.argument("y", DoubleArgumentType.doubleArg())
+                                                            .then(ClientCommands.argument("z", DoubleArgumentType.doubleArg())
+                                                                    .then(ClientCommands.argument("radius", DoubleArgumentType.doubleArg())
                                                                             .executes(context -> {
                                                                                 double x = DoubleArgumentType.getDouble(context, "x");
                                                                                 double y = DoubleArgumentType.getDouble(context, "y");
@@ -153,32 +153,32 @@ public class Commands {
 
                                     )
 
-                                    .then(ClientCommandManager.literal("editMode").executes(context -> {
+                                    .then(ClientCommands.literal("editMode").executes(context -> {
                                         BossWaypoints.togglePlace();
                                         return Constants.SUCCESS;
                                     }))
 
-                                    .then(ClientCommandManager.literal("ignoreBoss").executes(context -> {
+                                    .then(ClientCommands.literal("ignoreBoss").executes(context -> {
                                         BossWaypoints.toggleIgnoreBoss();
                                         return Constants.SUCCESS;
                                     }))
 
                             )
 
-                            .then(ClientCommandManager.literal("protectItem").executes(context -> {
+                            .then(ClientCommands.literal("protectItem").executes(context -> {
                                 ProtectItem.protectSelected();
                                 return Constants.SUCCESS;
                             }))
 
-                            .then(ClientCommandManager.literal("resetPbs").executes(context -> {
+                            .then(ClientCommands.literal("resetPbs").executes(context -> {
                                 PersonalBests.reset();
                                 return Constants.SUCCESS;
                             }))
 
-                            .then(ClientCommandManager.literal("ss")
-                                    .then(ClientCommandManager.argument("x", IntegerArgumentType.integer())
-                                            .then(ClientCommandManager.argument("y", IntegerArgumentType.integer())
-                                                    .then(ClientCommandManager.argument("z", IntegerArgumentType.integer())
+                            .then(ClientCommands.literal("ss")
+                                    .then(ClientCommands.argument("x", IntegerArgumentType.integer())
+                                            .then(ClientCommands.argument("y", IntegerArgumentType.integer())
+                                                    .then(ClientCommands.argument("z", IntegerArgumentType.integer())
                                                             .executes(context -> {
                                                                 int x = IntegerArgumentType.getInteger(context, "x");
                                                                 int y = IntegerArgumentType.getInteger(context, "y");
@@ -195,18 +195,18 @@ public class Commands {
                             .executes(commandContext -> Scheduler.scheduleScreen(Config.createScreen(null)))
             );
 
-            dispatcher.register(ClientCommandManager.literal("dh").executes(context -> {
+            dispatcher.register(ClientCommands.literal("dh").executes(context -> {
                 Misc.executeCommand("warp dungeon_hub");
                 return Constants.SUCCESS;
             }));
 
             for (int i = 1; i <= 7; i++) {
                 int finalI = i;
-                dispatcher.register(ClientCommandManager.literal("f" + i).executes(context -> {
+                dispatcher.register(ClientCommands.literal("f" + i).executes(context -> {
                     Misc.executeCommand("joindungeon catacombs " + finalI);
                     return Constants.SUCCESS;
                 }));
-                dispatcher.register(ClientCommandManager.literal("m" + i).executes(context -> {
+                dispatcher.register(ClientCommands.literal("m" + i).executes(context -> {
                     Misc.executeCommand("joindungeon master_catacombs " + finalI);
                     return Constants.SUCCESS;
                 }));

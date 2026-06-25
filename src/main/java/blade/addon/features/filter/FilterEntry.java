@@ -2,10 +2,8 @@ package blade.addon.features.filter;
 
 import config.practical.utilities.Constants;
 import config.practical.utilities.DrawHelper;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.client.input.MouseButtonEvent;
@@ -14,6 +12,9 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import net.minecraft.util.Tuple;
+
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public class FilterEntry extends EditBox {
 
@@ -41,11 +42,11 @@ public class FilterEntry extends EditBox {
     }
 
     @Override
-    public void renderWidget(GuiGraphics context, int mouseX, int mouseY, float deltaTicks) {
-        DrawHelper.drawBackground(context, getX(), super.getY(), width - SPRITE_WIDTH_AREA, height, INPUT_COLOR);
+    public void extractWidgetRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float deltaTicks) {
+        DrawHelper.drawBackground(graphics, getX(), super.getY(), width - SPRITE_WIDTH_AREA, height, INPUT_COLOR);
         Tuple<Integer, Integer> pos = getRemovePos();
-        context.blitSprite(RenderPipelines.GUI_TEXTURED, CROSS, pos.getA(), pos.getB(), SPRITE_SIZE, SPRITE_SIZE, 0xffffffff);
-        super.renderWidget(context, mouseX, mouseY, deltaTicks);
+        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, CROSS, pos.getA(), pos.getB(), SPRITE_SIZE, SPRITE_SIZE, 0xffffffff);
+        super.extractWidgetRenderState(graphics, mouseX, mouseY, deltaTicks);
     }
 
     @Override

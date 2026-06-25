@@ -7,10 +7,11 @@ import blade.addon.utils.rendering.RenderUtils;
 import config.practical.hud.HUDComponent;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.component.ItemLore;
+
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -26,7 +27,7 @@ public class ArrowSwapper {
     private static int tick = 0;
 
     public static void init() {
-        ClientTickEvents.END_WORLD_TICK.register(world -> {
+        ClientTickEvents.END_LEVEL_TICK.register(world -> {
             tick = Math.max(0, tick - 1);
         });
 
@@ -80,7 +81,7 @@ public class ArrowSwapper {
         return ExtraOptions.displayCurrentArrow;
     }
 
-    public static void render(HUDComponent component, GuiGraphics graphics) {
+    public static void render(HUDComponent component, GuiGraphicsExtractor graphics) {
         RenderUtils.drawText(graphics, component, displayedText, 0xffffffff);
     }
 
@@ -88,7 +89,7 @@ public class ArrowSwapper {
         return ExtraOptions.arrowSwapNotification && tick > 0;
     }
 
-    public static void renderNotification(HUDComponent component, GuiGraphics graphics) {
+    public static void renderNotification(HUDComponent component, GuiGraphicsExtractor graphics) {
         RenderUtils.drawCenteredText(graphics, component, displayedText, 0xffffffff);
     }
 }

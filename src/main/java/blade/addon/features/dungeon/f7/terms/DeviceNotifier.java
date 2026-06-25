@@ -8,7 +8,7 @@ import blade.addon.utils.events.Events;
 import blade.addon.utils.rendering.RenderUtils;
 import config.practical.hud.HUDComponent;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
@@ -74,7 +74,7 @@ public class DeviceNotifier {
         return showNotification;
     }
 
-    public static void render(HUDComponent component, GuiGraphics graphics) {
+    public static void render(HUDComponent component, GuiGraphicsExtractor graphics) {
         if (System.currentTimeMillis() - completedTime >= TOTAL_DURATION) showNotification = false;
         RenderUtils.drawCenteredText(graphics, component, Component.literal("§aDevice Completed!"));
     }

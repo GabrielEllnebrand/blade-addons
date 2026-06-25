@@ -4,7 +4,7 @@ import blade.addon.utils.config.values.ExtraOptions;
 import blade.addon.utils.events.Events;
 import blade.addon.utils.rendering.RenderUtils;
 import config.practical.hud.HUDComponent;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 
 public class KickedTimer {
 
@@ -30,7 +30,7 @@ public class KickedTimer {
         return isKicked;
     }
 
-    public static void render(HUDComponent component, GuiGraphics graphics) {
+    public static void render(HUDComponent component, GuiGraphicsExtractor graphics) {
         long diff = System.currentTimeMillis() - kickedTime;
         if (diff > 60 * 1000) isKicked = false;
         double drawnTime = Math.min(diff / 1000.0, 60.0);

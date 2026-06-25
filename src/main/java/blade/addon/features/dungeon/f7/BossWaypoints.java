@@ -15,7 +15,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderContext;
+import net.fabricmc.fabric.api.client.rendering.v1.level.LevelRenderContext;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gizmos.GizmoStyle;
@@ -141,7 +141,7 @@ public class BossWaypoints {
         return InteractionResult.PASS;
     }
 
-    private static void renderThroughWall(WorldRenderContext context, PoseStack matrixStack, VertexConsumer consumer) {
+    private static void renderThroughWall(LevelRenderContext context, PoseStack matrixStack, VertexConsumer consumer) {
         if (!isInValidArea()) return;
 
         waypoints.forEach(waypoint -> {
@@ -151,7 +151,7 @@ public class BossWaypoints {
         });
     }
 
-    private static void render(WorldRenderContext context, PoseStack matrixStack, VertexConsumer consumer) {
+    private static void render(LevelRenderContext context, PoseStack matrixStack, VertexConsumer consumer) {
         if (!isInValidArea()) return;
 
         waypoints.forEach(waypoint -> {
