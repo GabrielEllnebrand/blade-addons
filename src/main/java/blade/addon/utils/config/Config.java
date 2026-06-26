@@ -78,7 +78,7 @@ public class Config {
         ConfigSection deathMessage = new ConfigSection(Component.literal("Death message"));
         deathMessage.add(new ConfigBool(Component.literal("Send death message"), () -> Dungeons.sendDeathMessage, bool -> Dungeons.sendDeathMessage = bool));
         deathMessage.add(new ConfigString(Component.literal("Message sent (<player> replaces with the players name) "), () -> Dungeons.deathMessage, str -> Dungeons.deathMessage = str));
-        dungeons.add(deathMessage);
+        //dungeons.add(deathMessage);
 
         ConfigSection invincibility = new ConfigSection(Component.literal("Invincibility Timer"));
         invincibility.add(new ConfigBool(Component.literal("Enable invincibility display"), () -> Dungeons.displayInvincibilityTimer, bool -> Dungeons.displayInvincibilityTimer = bool));

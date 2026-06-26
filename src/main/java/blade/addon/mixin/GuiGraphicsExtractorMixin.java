@@ -5,7 +5,6 @@ import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.Level;
 import org.joml.Matrix3x2fStack;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -40,8 +39,8 @@ public class GuiGraphicsExtractorMixin {
         }
     }
 
-    @Inject(method = "item(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/level/Level;Lnet/minecraft/world/item/ItemStack;III)V", at=@At("TAIL"))
-    private void scaleDown(LivingEntity entity, Level world, ItemStack stack, int x, int y, int seed, CallbackInfo ci) {
+    @Inject(method = "item(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/item/ItemStack;III)V", at=@At("TAIL"))
+    private void scaleDown(LivingEntity owner, ItemStack stack, int x, int y, int seed, CallbackInfo ci) {
         if (Visual.oldPlayerHead && stack.getItem() == Items.PLAYER_HEAD) {
             pose.popMatrix();
         }
