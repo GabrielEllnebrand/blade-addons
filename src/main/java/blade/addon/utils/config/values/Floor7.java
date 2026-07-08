@@ -183,4 +183,10 @@ public class Floor7 {
 
     @ConfigValue
     public static boolean assumeSplitEE2 = false;
+
+    @ConfigValue
+    public static boolean showLBTimer = false;
+
+    @ConfigValue
+    public static int lbTickOffset = 10;
 }

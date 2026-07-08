@@ -4,6 +4,7 @@ import blade.addon.features.dungeon.*;
 import blade.addon.features.dungeon.f7.BossWaypoints;
 import blade.addon.features.dungeon.f7.PredevTimer;
 import blade.addon.features.dungeon.f7.RelicTimer;
+import blade.addon.features.dungeon.f7.StormLBTimer;
 import blade.addon.features.dungeon.f7.dragons.DragSpawnTimer;
 import blade.addon.features.dungeon.f7.dragons.DragonHealth;
 import blade.addon.features.dungeon.f7.dragons.DragonTracer;
@@ -127,6 +128,7 @@ public class Bladeaddons implements ModInitializer {
         CurrentSection.init();
         DragonTracer.init();
         ReaperDisplay.init();
+        StormLBTimer.init();
         //DeathMessage.init(); TODO finish this
     }
 }

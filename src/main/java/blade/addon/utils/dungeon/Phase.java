@@ -21,7 +21,7 @@ import net.minecraft.network.chat.Component;
 public class Phase {
 
     private static final Pattern END_PATTERN = Pattern.compile("^\\s*☠ Defeated (.+) in 0?([\\dhms ]+)\\s*(\\(NEW RECORD!\\))?$");
-    private static final Pattern SEARCH_PATTERN = Pattern.compile("^ ⏣ The Catacombs .*$");
+    private static final Pattern SEARCH_PATTERN = Pattern.compile("The Catacombs .*$");
 
     private static final Split DUMMY_SPLIT = new Split("test split", "if this is called idk", "if this is called idk", 43690);
 
