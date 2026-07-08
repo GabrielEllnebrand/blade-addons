@@ -103,9 +103,7 @@ public class RenderUtils {
 
         float halfWidth = textRenderer.width(text.getString()) / 2f;
 
-
-        //context.commandQueue().submitText(matrices, -halfWidth, 0, text.getVisualOrderText(), true, Font.DisplayMode.SEE_THROUGH, 15728880, 0xffffffff, 0, 0);
-        textRenderer.drawInBatch(text, -halfWidth, 0, 15728880, true, matrices.last().pose(), context.bufferSource(), Font.DisplayMode.SEE_THROUGH, 0, 0xffffffff);
+        textRenderer.drawInBatch(text, -halfWidth, 0, 0xffffffff, true, matrices.last().pose(), context.bufferSource(), Font.DisplayMode.SEE_THROUGH, 0, 15728880);
         matrices.popPose();
     }
 
