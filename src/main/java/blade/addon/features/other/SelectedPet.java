@@ -22,6 +22,9 @@ import java.util.regex.Pattern;
 
 public class SelectedPet {
 
+    //https://hypixelskyblock.minecraft.wiki/w/Pets
+    //https://cloudconvert.com/to-png
+
     private static final int COLOR_OFFSET = 2;
 
     private static final Pattern TAB_PET_PATTERN = Pattern.compile(" \\[Lvl \\d+] (?:\\[[^\\]]+\\] )?(.+)");
