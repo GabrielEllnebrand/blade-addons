@@ -5,6 +5,7 @@ import blade.addon.utils.events.Events;
 import blade.addon.utils.events.interfaces.WorldEvent;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.BlockHitResult;
@@ -41,5 +42,10 @@ public class MinecraftMixin {
     @Inject(method = "updateLevelInEngines", at = @At(value = "TAIL"))
     private void onWorld(ClientLevel world, CallbackInfo ci) {
         Events.ON_WORLD_CHANGE.invoke(WorldEvent::onWorldSwap);
+    }
+
+    @Inject(method = "setScreen", at=@At("HEAD"))
+    public void onClose(Screen screen, CallbackInfo ci) {
+        if (screen == null) Events.ON_SCREEN.invoke(screenEvent -> screenEvent.onScreen(null));
     }
 }

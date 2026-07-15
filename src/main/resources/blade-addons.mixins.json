@@ -29,7 +29,7 @@
     "GuiGraphicsExtractorMixin",
     "EntityRendererMixin",
     "EntityRenderDispatcherMixin",
-    "HandledScreenMixin",
+    "AbstractContainerScreenMixin",
     "HeldItemRendererMixin",
     "GuiMixin",
     "InventoryScreenMixin",
