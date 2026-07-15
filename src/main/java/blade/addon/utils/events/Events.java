@@ -1,25 +1,6 @@
 package blade.addon.utils.events;
 
-import blade.addon.utils.events.interfaces.BlockEntityEvent;
-import blade.addon.utils.events.interfaces.BlockInteractionEvent;
-import blade.addon.utils.events.interfaces.EntityEvent;
-import blade.addon.utils.events.interfaces.GameMessageEvent;
-import blade.addon.utils.events.interfaces.LeapEvent;
-import blade.addon.utils.events.interfaces.LocationChangeEvent;
-import blade.addon.utils.events.interfaces.PacketEvent;
-import blade.addon.utils.events.interfaces.ParticleEvent;
-import blade.addon.utils.events.interfaces.PartyMessageEvent;
-import blade.addon.utils.events.interfaces.PetEvent;
-import blade.addon.utils.events.interfaces.PhaseEvent;
-import blade.addon.utils.events.interfaces.PlaySoundEvent;
-import blade.addon.utils.events.interfaces.PlayerListEvent;
-import blade.addon.utils.events.interfaces.RunEndEvent;
-import blade.addon.utils.events.interfaces.ScoreBoardEvent;
-import blade.addon.utils.events.interfaces.SectionEvent;
-import blade.addon.utils.events.interfaces.ServerTickEvent;
-import blade.addon.utils.events.interfaces.SlotChangeEvent;
-import blade.addon.utils.events.interfaces.TerminalEvent;
-import blade.addon.utils.events.interfaces.WorldEvent;
+import blade.addon.utils.events.interfaces.*;
 
 public class Events {
     public static final EventHandler<ServerTickEvent> ON_SERVER_TICK = new EventHandler<>();
@@ -49,8 +30,12 @@ public class Events {
 
     public static final EventHandler<BlockEntityEvent> ON_BLOCK_ENTITY = new EventHandler<>();
 
-
     public static final EventHandler<ParticleEvent> ON_PARTICLE = new EventHandler<>();
     public static final EventHandler<PacketEvent> ON_PACKET = new EventHandler<>();
+
+    //screen
+    public static final EventHandler<ScreenEvent> ON_SCREEN = new EventHandler<>();
+    public static final EventHandler<SlotClickEvent> ON_SLOT_CLICKED = new EventHandler<>();
+
 
 }

@@ -3,6 +3,7 @@ package blade.addon.features.other;
 import blade.addon.utils.Constants;
 import blade.addon.utils.Misc;
 import blade.addon.utils.config.values.ExtraOptions;
+import blade.addon.utils.data.ItemUtil;
 import blade.addon.utils.debug.Debug;
 import blade.addon.utils.events.Events;
 import blade.addon.utils.rendering.RenderUtils;
@@ -16,6 +17,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.Identifier;
+
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -42,6 +44,8 @@ public class SelectedPet {
     private static String currentPetString = "";
     private static Identifier spriteId = null;
     private static int tick = 0;
+
+    private static boolean inLoadout = false;
 
     public static void init() {
         Events.ON_GAME_MESSAGE.register(message -> {
@@ -93,6 +97,36 @@ public class SelectedPet {
                 Style style = getStyle(text, petName);
                 summonPet(petName, Component.literal(petName).setStyle(style), getLevel(string), false);
             }
+
+            return false;
+        });
+
+        Events.ON_SCREEN.register(screen -> {
+            if (screen == null) {
+                inLoadout = false;
+                return false;
+            }
+
+            Component title = screen.getTitle();
+            inLoadout = title.getString().contains(") Loadouts");
+
+            return false;
+        });
+
+        Events.ON_SLOT_CLICKED.register((slot, button,clickType) -> {
+            if (!inLoadout || button != 0) return false;
+
+            Component component = ItemUtil.findLore(slot.getItem(), "Pet: ");
+            if (component == null) return false;
+
+            String string = component.getString();
+            Matcher matcher = TAB_PET_PATTERN.matcher(string);
+            if (matcher.find()) {
+                String petName = matcher.group(1).replace(" ✦", "");
+                Style style = getStyle(component, petName);
+                summonPet(petName, Component.literal(petName).setStyle(style), getLevel(string), false);
+            }
+
 
             return false;
         });

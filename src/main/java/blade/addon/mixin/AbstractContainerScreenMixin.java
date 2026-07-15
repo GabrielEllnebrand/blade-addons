@@ -2,6 +2,7 @@ package blade.addon.mixin;
 
 import blade.addon.features.item.ProtectItem;
 import blade.addon.features.other.SearchBar;
+import blade.addon.utils.events.Events;
 import blade.addon.utils.rendering.DrawEvents;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
@@ -23,7 +24,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(AbstractContainerScreen.class)
-public abstract class HandledScreenMixin<T extends AbstractContainerMenu> extends Screen {
+public abstract class AbstractContainerScreenMixin<T extends AbstractContainerMenu> extends Screen {
 
     @Shadow
     @Final
@@ -31,7 +32,7 @@ public abstract class HandledScreenMixin<T extends AbstractContainerMenu> extend
     @Unique
     private static final int INVALID_SLOT_ID = -999;
 
-    protected HandledScreenMixin(Component title) {
+    protected AbstractContainerScreenMixin(Component title) {
         super(title);
     }
 
@@ -89,5 +90,15 @@ public abstract class HandledScreenMixin<T extends AbstractContainerMenu> extend
                 ci.cancel();
             }
         }
+    }
+
+    @Inject(method = "slotClicked", at=@At("HEAD"))
+    public void slotClicked(Slot slot, int i, int button, ClickType clickType, CallbackInfo ci) {
+        Events.ON_SLOT_CLICKED.invoke(slotEvent -> slotEvent.onSlot(slot, button, clickType));
+    }
+
+    @Inject(method = "init", at=@At("HEAD"))
+    public void init(CallbackInfo ci) {
+        Events.ON_SCREEN.invoke(screenEvent -> screenEvent.onScreen(this));
     }
 }

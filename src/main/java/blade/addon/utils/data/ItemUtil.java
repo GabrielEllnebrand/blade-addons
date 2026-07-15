@@ -43,12 +43,8 @@ public class ItemUtil {
     }
 
     public static boolean containsLore(ItemStack item, String contain) {
-        if (item ==null) return false;
-        ItemLore lore = item.get(DataComponents.LORE);
-        if (lore == null) return false;
-
-        List<Component> lines = lore.lines();
-        if (lines.isEmpty()) return false;
+        List<Component> lines = getLore(item);
+        if (lines == null) return false;
 
         for (Component line : lines.reversed()) {
             String string = line.getString();
@@ -58,6 +54,29 @@ public class ItemUtil {
         }
         return false;
     }
+
+    public static List<Component> getLore(ItemStack item) {
+        if (item ==null) return null;
+        ItemLore lore = item.get(DataComponents.LORE);
+        if (lore == null) return null;
+
+        List<Component> lines = lore.lines();
+        return lines;
+    }
+
+    public static Component findLore(ItemStack item, String contain) {
+        List<Component> lines = getLore(item);
+        if (lines == null) return null;
+
+        for (Component line : lines.reversed()) {
+            String string = line.getString();
+            if (string.contains(contain)) {
+                return line;
+            }
+        }
+        return null;
+    }
+
 
     public static boolean containsIgnoreCaseLore(ItemStack item, String contain) {
         if (item ==null) return false;
