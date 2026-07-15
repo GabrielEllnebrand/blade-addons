@@ -51,18 +51,24 @@ public class ProtectItem {
         }
 
         ItemStack item = player.getInventory().getSelectedItem();
-        String uuid = ItemUtil.getUuid(item);
-        if (uuid == null) {
-            Misc.addChatMessage(Component.literal("Cant protect this item, it does not have a uuid"));
+        String saveString = ItemUtil.getUuid(item);
+
+        if (saveString == null) {
+            saveString = ItemUtil.getId(item);
+        }
+
+        if (saveString == null) {
+            Misc.addChatMessage(Component.literal("Cant protect this item, the item does not have a uuid or id"));
             return;
         }
+
         ProtectedItemHolder holder = (ProtectedItemHolder) (Object) item;
-        if (protectedItems.contains(uuid)) {
-            protectedItems.remove(uuid);
+        if (protectedItems.contains(saveString)) {
+            protectedItems.remove(saveString);
             holder.blade_addons$setProtected(false);
             Misc.addChatMessage(Component.literal("Item ").append(item.getHoverName()).append(" is NOT protected anymore"));
         } else {
-            protectedItems.add(uuid);
+            protectedItems.add(saveString);
             holder.blade_addons$setProtected(true);
             Misc.addChatMessage(Component.literal("Item ").append(item.getHoverName()).append(" is protected"));
         }
@@ -72,14 +78,17 @@ public class ProtectItem {
 
     public static boolean protect(ItemStack stack) {
         if (stopProtectItem) return false;
-        String uuid = ItemUtil.getUuid(stack);
+        String saveString = ItemUtil.getUuid(stack);
 
-        //TODO: add smth for non uuid items
-        if (uuid == null) {
+        if (saveString == null) {
+            saveString = ItemUtil.getId(stack);
+        }
+
+        if (saveString == null) {
             return false;
         }
 
-        return protectedItems.contains(uuid);
+        return protectedItems.contains(saveString);
     }
 
     private static void draw(GuiGraphicsExtractor context, ItemStack stack, int x, int y) {

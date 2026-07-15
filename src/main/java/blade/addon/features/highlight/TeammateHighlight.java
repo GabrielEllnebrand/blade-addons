@@ -51,6 +51,7 @@ public class TeammateHighlight {
 
         teammates.forEach(player -> {
             if (Dungeons.dontHighlightHiddenTeammates && HidePlayers.shouldHidePlayers(player)) return;
+            if (Dungeons.dontHighlightVisibleTeammates && !HidePlayers.shouldHidePlayers(player)) return;
             DungeonClass clazz = DungeonClass.getClass(player);
             if (clazz == null) return;
 

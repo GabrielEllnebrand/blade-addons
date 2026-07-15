@@ -9,6 +9,8 @@ import blade.addon.utils.events.Events;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
+
+import java.util.Iterator;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -96,6 +98,15 @@ public enum DungeonClass {
         if (player == null || EntityUtil.isClientPlayer(player)) return false;
         String name = player.getName().getString();
         return nameClassMap.containsKey(name);
+    }
+
+    public static String getNameFromMessage(String message) {
+        for (Iterator<String> it = nameClassMap.keys().asIterator(); it.hasNext(); ) {
+            String name = it.next();
+            if (message.contains(name)) return name;
+        }
+
+        return null;
     }
 
     public static int getColor(DungeonClass dungeonClass) {
