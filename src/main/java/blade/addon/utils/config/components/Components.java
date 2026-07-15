@@ -1,38 +1,22 @@
 package blade.addon.utils.config.components;
 
-import blade.addon.features.dungeon.BloodNotifier;
-import blade.addon.features.dungeon.ChestCounter;
-import blade.addon.features.dungeon.QuizTimer;
-import blade.addon.features.dungeon.RunStartValidator;
-import blade.addon.features.dungeon.KeyNotifier;
-import blade.addon.features.dungeon.SecretSpawnTimer;
-import blade.addon.features.dungeon.WarpCooldown;
-import blade.addon.features.dungeon.f7.maxor.CrystalSpawn;
-import blade.addon.features.dungeon.f7.maxor.MaxorTickTimer;
-import blade.addon.features.dungeon.f7.storm.DistanceToLedge;
-import blade.addon.features.dungeon.f7.dragons.DragSpawnTimer;
-import blade.addon.features.dungeon.f7.storm.PillarExplode;
+import blade.addon.features.dungeon.*;
 import blade.addon.features.dungeon.f7.RelicTimer;
-import blade.addon.features.dungeon.f7.storm.StormTickTimer;
+import blade.addon.features.dungeon.f7.StormLBTimer;
+import blade.addon.features.dungeon.f7.dragons.DragSpawnTimer;
 import blade.addon.features.dungeon.f7.invincibility.InvincibilityDuration;
 import blade.addon.features.dungeon.f7.invincibility.InvincibilityTimer;
 import blade.addon.features.dungeon.f7.location.LocationNotifier;
+import blade.addon.features.dungeon.f7.maxor.CrystalSpawn;
 import blade.addon.features.dungeon.f7.maxor.MaxorStun;
-import blade.addon.features.dungeon.f7.terms.CurrentSection;
-import blade.addon.features.dungeon.f7.terms.GoldorTickTimer;
-import blade.addon.features.dungeon.f7.terms.LeapNotification;
-import blade.addon.features.dungeon.f7.terms.MelodyWarning;
-import blade.addon.features.dungeon.f7.terms.DeviceNotifier;
-import blade.addon.features.dungeon.f7.terms.SectionCompletion;
-import blade.addon.features.dungeon.f7.terms.SectionProgress;
-import blade.addon.features.dungeon.f7.terms.TermStartTimer;
+import blade.addon.features.dungeon.f7.maxor.MaxorTickTimer;
+import blade.addon.features.dungeon.f7.storm.DistanceToLedge;
+import blade.addon.features.dungeon.f7.storm.PillarExplode;
+import blade.addon.features.dungeon.f7.storm.StormTickTimer;
+import blade.addon.features.dungeon.f7.terms.*;
 import blade.addon.features.item.HeldItemToolTip;
-import blade.addon.features.other.ArrowSwapper;
-import blade.addon.features.other.KickedTimer;
-import blade.addon.features.other.RagDisplay;
-import blade.addon.features.other.ReaperDisplay;
-import blade.addon.features.other.SelectedPet;
 import blade.addon.features.notifications.Notifications;
+import blade.addon.features.other.*;
 import blade.addon.utils.config.values.Dungeons;
 import blade.addon.utils.config.values.ExtraOptions;
 import blade.addon.utils.config.values.Floor7;
@@ -169,4 +153,7 @@ public class Components {
 
     @ConfigValue
     public static HUDComponent reaperDisplay = new HUDComponent(0, 0, TICK_TIMER_WIDTH, 10, 1, "reaper display", ReaperDisplay::display, ReaperDisplay::render, () -> ExtraOptions.enableReaperDisplay);
+
+    @ConfigValue
+    public static HUDComponent stormLbTimer = new HUDComponent(0, 0, TICK_TIMER_WIDTH, 10, 1, "Storm lb timer", StormLBTimer::display, StormLBTimer::render, () -> Floor7.showLBTimer);
 }

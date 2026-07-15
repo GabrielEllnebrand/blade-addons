@@ -245,6 +245,11 @@ public class Config {
         dragon.add(new ConfigBool(Component.literal("Render dragon spawn tracer"), () -> Floor7.dragonTracer, bool -> Floor7.dragonTracer = bool));
         floor7.add(dragon);
 
+        ConfigSection stormlb = new ConfigSection(Component.literal("Storm lb"));
+        stormlb.add(new ConfigBool(Component.literal("Enable"), () -> Floor7.showLBTimer, bool ->  Floor7.showLBTimer = bool));
+        stormlb.add(new ConfigInt(Component.literal("Tick offset (34:00 is at 0)"), () -> Floor7.lbTickOffset, num -> Floor7.lbTickOffset = num, 1, 0, 20));
+        floor7.add(stormlb);
+
         return floor7;
     }
 
