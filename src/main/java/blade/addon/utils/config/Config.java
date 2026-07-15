@@ -143,6 +143,7 @@ public class Config {
         dungeons.add(new ConfigBool(Component.literal("Draw boss health numbers"), () -> Dungeons.bossHealthNumbers, bool -> Dungeons.bossHealthNumbers = bool));
         dungeons.add(new ConfigBool(Component.literal("Blood notifier on first 4 spawned"), () -> Dungeons.alertBloodSpawns, bool -> Dungeons.alertBloodSpawns = bool));
         dungeons.add(new ConfigBool(Component.literal("Blood notifier on all classes"), () -> Dungeons.alertBloodForAllClasses, bool -> Dungeons.alertBloodForAllClasses = bool));
+        dungeons.add(new ConfigBool(Component.literal("Block \"convert pet to item\""), () -> Dungeons.blockRemovingPet, bool -> Dungeons.blockRemovingPet = bool));
         return dungeons;
     }
 

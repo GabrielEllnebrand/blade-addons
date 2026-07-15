@@ -130,5 +130,6 @@ public class Bladeaddons implements ModInitializer {
         ReaperDisplay.init();
         StormLBTimer.init();
         //DeathMessage.init(); TODO finish this
+        BlockPetMenu.init();
     }
 }

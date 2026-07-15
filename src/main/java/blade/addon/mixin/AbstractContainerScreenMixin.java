@@ -36,7 +36,7 @@ public abstract class AbstractContainerScreenMixin<T extends AbstractContainerMe
         super(title);
     }
 
-    @Inject(method = "render", at=@At("TAIL"))
+    @Inject(method = "render", at = @At("TAIL"))
     private static void render(GuiGraphics context, int mouseX, int mouseY, float deltaTicks, CallbackInfo ci) {
         SearchBar.render(context, mouseX, mouseY, deltaTicks);
     }
@@ -57,18 +57,18 @@ public abstract class AbstractContainerScreenMixin<T extends AbstractContainerMe
         DrawEvents.INVENTORY_SLOT_AFTER.invoke(event -> event.draw(context, stack, x, y));
     }
 
-    @Inject(method = "keyPressed", at=@At("HEAD"), cancellable = true)
+    @Inject(method = "keyPressed", at = @At("HEAD"), cancellable = true)
     private void keyPressed(KeyEvent input, CallbackInfoReturnable<Boolean> cir) {
         if (SearchBar.keyPressed(input)) cir.setReturnValue(false);
     }
 
-    @Inject(method = "mouseClicked", at=@At("HEAD"))
+    @Inject(method = "mouseClicked", at = @At("HEAD"))
     private void onMouseClick(MouseButtonEvent click, boolean doubled, CallbackInfoReturnable<Boolean> cir) {
         SearchBar.onMouseClick(click);
     }
 
-    @Inject(method ="slotClicked(Lnet/minecraft/world/inventory/Slot;IILnet/minecraft/world/inventory/ClickType;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/inventory/AbstractContainerScreen;onMouseClickAction(Lnet/minecraft/world/inventory/Slot;Lnet/minecraft/world/inventory/ClickType;)V"), cancellable = true)
-    public void protectItem(Slot slot, int slotId, int button, ClickType actionType, CallbackInfo ci){
+    @Inject(method = "slotClicked(Lnet/minecraft/world/inventory/Slot;IILnet/minecraft/world/inventory/ClickType;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/inventory/AbstractContainerScreen;onMouseClickAction(Lnet/minecraft/world/inventory/Slot;Lnet/minecraft/world/inventory/ClickType;)V"), cancellable = true)
+    public void protectItem(Slot slot, int slotId, int button, ClickType actionType, CallbackInfo ci) {
 
         ItemStack held = menu.getCarried();
 
@@ -92,12 +92,14 @@ public abstract class AbstractContainerScreenMixin<T extends AbstractContainerMe
         }
     }
 
-    @Inject(method = "slotClicked", at=@At("HEAD"))
-    public void slotClicked(Slot slot, int i, int button, ClickType clickType, CallbackInfo ci) {
-        Events.ON_SLOT_CLICKED.invoke(slotEvent -> slotEvent.onSlot(slot, button, clickType));
+    @Inject(method = "slotClicked", at = @At("HEAD"), cancellable = true)
+    public void slotClicked(Slot slot, int slotId, int button, ClickType clickType, CallbackInfo ci) {
+        if (Events.ON_SLOT_CLICKED.invoke(slotEvent -> slotEvent.onSlot(slot, slotId, button, clickType))) {
+            ci.cancel();
+        }
     }
 
-    @Inject(method = "init", at=@At("HEAD"))
+    @Inject(method = "init", at = @At("HEAD"))
     public void init(CallbackInfo ci) {
         Events.ON_SCREEN.invoke(screenEvent -> screenEvent.onScreen(this));
     }

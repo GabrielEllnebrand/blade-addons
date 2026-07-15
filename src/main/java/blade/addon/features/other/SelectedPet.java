@@ -113,7 +113,7 @@ public class SelectedPet {
             return false;
         });
 
-        Events.ON_SLOT_CLICKED.register((slot, button,clickType) -> {
+        Events.ON_SLOT_CLICKED.register((slot, slotId,button,clickType) -> {
             if (!inLoadout || button != 0) return false;
 
             Component component = ItemUtil.findLore(slot.getItem(), "Pet: ");
