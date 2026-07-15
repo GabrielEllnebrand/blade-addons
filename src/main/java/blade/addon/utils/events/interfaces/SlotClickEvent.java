@@ -4,5 +4,5 @@ import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.inventory.Slot;
 
 public interface SlotClickEvent {
-    boolean onSlot(Slot slot, int button, ContainerInput containerInput);
+    boolean onSlot(Slot slot, int slotId, int button, ContainerInput containerInput);
 }

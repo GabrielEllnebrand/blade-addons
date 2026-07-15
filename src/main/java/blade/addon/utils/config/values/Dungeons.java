@@ -154,4 +154,7 @@ public class Dungeons {
 
     @ConfigValue
     public static String deathMessage = "";
+
+    @ConfigValue
+    public static boolean blockRemovingPet = false;
 }

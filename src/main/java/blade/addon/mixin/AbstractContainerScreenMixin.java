@@ -36,7 +36,7 @@ public abstract class AbstractContainerScreenMixin<T extends AbstractContainerMe
         super(title);
     }
 
-    @Inject(method = "extractRenderState", at=@At("TAIL"))
+    @Inject(method = "extractRenderState", at = @At("TAIL"))
     private static void render(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float deltaTicks, CallbackInfo ci) {
         SearchBar.render(graphics, mouseX, mouseY, deltaTicks);
     }
@@ -58,17 +58,18 @@ public abstract class AbstractContainerScreenMixin<T extends AbstractContainerMe
         DrawEvents.INVENTORY_SLOT_AFTER.invoke(event -> event.draw(graphics, stack, x, y));
     }
 
-    @Inject(method = "keyPressed", at=@At("HEAD"), cancellable = true)
+    @Inject(method = "keyPressed", at = @At("HEAD"), cancellable = true)
     private void keyPressed(KeyEvent input, CallbackInfoReturnable<Boolean> cir) {
         if (SearchBar.keyPressed(input)) cir.setReturnValue(false);
     }
 
-    @Inject(method = "mouseClicked", at=@At("HEAD"))
+    @Inject(method = "mouseClicked", at = @At("HEAD"))
     private void onMouseClick(MouseButtonEvent click, boolean doubled, CallbackInfoReturnable<Boolean> cir) {
         SearchBar.onMouseClick(click);
     }
-    @Inject(method ="slotClicked", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/inventory/AbstractContainerScreen;onMouseClickAction(Lnet/minecraft/world/inventory/Slot;Lnet/minecraft/world/inventory/ContainerInput;)V"), cancellable = true)
-    public void protectItem(Slot slot, int slotId, int buttonNum, ContainerInput containerInput, CallbackInfo ci){
+
+    @Inject(method = "slotClicked", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/inventory/AbstractContainerScreen;onMouseClickAction(Lnet/minecraft/world/inventory/Slot;Lnet/minecraft/world/inventory/ContainerInput;)V"), cancellable = true)
+    public void protectItem(Slot slot, int slotId, int buttonNum, ContainerInput containerInput, CallbackInfo ci) {
 
         ItemStack held = menu.getCarried();
 
@@ -92,12 +93,14 @@ public abstract class AbstractContainerScreenMixin<T extends AbstractContainerMe
         }
     }
 
-    @Inject(method = "slotClicked", at=@At("HEAD"))
+    @Inject(method = "slotClicked", at = @At("HEAD"), cancellable = true)
     public void slotClicked(Slot slot, int slotId, int buttonNum, ContainerInput containerInput, CallbackInfo ci) {
-        Events.ON_SLOT_CLICKED.invoke(slotEvent -> slotEvent.onSlot(slot, buttonNum, containerInput));
+        if (Events.ON_SLOT_CLICKED.invoke(slotEvent -> slotEvent.onSlot(slot, slotId, buttonNum, containerInput))) {
+            ci.cancel();
+        }
     }
 
-    @Inject(method = "init", at=@At("HEAD"))
+    @Inject(method = "init", at = @At("HEAD"))
     public void init(CallbackInfo ci) {
         Events.ON_SCREEN.invoke(screenEvent -> screenEvent.onScreen(this));
     }
