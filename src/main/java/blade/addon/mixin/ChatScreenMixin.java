@@ -34,8 +34,8 @@ public class ChatScreenMixin {
 
         if (hudAccessor.width() + 4 < click.x()) return;
 
-        final int n = (int) (9 * (mc.options.chatLineSpacing().get() + 1.0));
-        int index = (int) (Mth.floor((mc.getWindow().getGuiScaledHeight() - 40) / hudAccessor.scale()) - click.y()) / n + hudAccessor.getScrolledLines();
+        final int n = (int) (9 * (mc.options.chatLineSpacing().get() + 1.0) * hudAccessor.scale());
+        int index = (int) (Mth.floor(mc.getWindow().getGuiScaledHeight() - 40) - click.y()) / n + hudAccessor.getScrolledLines();
 
         List<GuiMessage.Line> messages = hudAccessor.getVisibleMessages();
         if (index < 0 || index >= messages.size()) return;
