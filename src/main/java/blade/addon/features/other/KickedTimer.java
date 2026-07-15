@@ -17,7 +17,7 @@ public class KickedTimer {
             String string = text.getString();
             if (string == null) return false;
 
-            if (string.equals("You were kicked while joining that server!")) {
+            if (string.equals("You were kicked while joining that server!") || string.equals("You are no longer allowed to access this instance!")) {
                 kickedTime = System.currentTimeMillis();
                 isKicked = true;
             }
