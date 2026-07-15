@@ -41,7 +41,7 @@ public class ChatScreenMixin {
         if (index < 0 || index >= messages.size()) return;
 
         String string;
-        if (ExtraOptions.copyLineOnly) {
+        if (ExtraOptions.copyLineOnly || click.hasShiftDown()) {
             GuiMessage.Line msg = messages.get(index);
             string = TextUtil.orderedTextToString(msg.content());
         } else {
