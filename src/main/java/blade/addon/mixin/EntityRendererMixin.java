@@ -21,7 +21,7 @@ public class EntityRendererMixin<T extends Entity, S extends EntityRenderState> 
     @Inject(method = "extractRenderState", at = @At("TAIL"))
     public void hideFire(T entity, S state, float tickProgress, CallbackInfo ci) {
 
-        if (Dungeons.hideBlazeNameTag && state.nameTag != null) {
+        if (Dungeons.hideBlazeNameTag && state.nameTag != null && Location.inDungeon()) {
             if (state.nameTag.getString().contains("Blaze")) {
                 state.nameTag = null;
             }
