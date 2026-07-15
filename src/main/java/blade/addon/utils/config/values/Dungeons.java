@@ -157,4 +157,7 @@ public class Dungeons {
 
     @ConfigValue
     public static boolean blockRemovingPet = false;
+
+    @ConfigValue
+    public static boolean dontHighlightVisibleTeammates = false;
 }

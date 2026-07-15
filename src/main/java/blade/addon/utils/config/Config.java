@@ -107,7 +107,8 @@ public class Config {
         hidePlayers.add(new ConfigBool(Component.literal("SS only hides before terms"), () -> Dungeons.hideBeforeTermsOnly, bool -> Dungeons.hideBeforeTermsOnly = bool));
         hidePlayers.add(new ConfigBool(Component.literal("Hide players in range"), () -> Dungeons.hidePlayersInRange, bool -> Dungeons.hidePlayersInRange = bool));
         hidePlayers.add(new ConfigDouble(Component.literal("Hiding range"), () -> Dungeons.hidePlayerRange, num -> Dungeons.hidePlayerRange = num, 1, 0, 7));
-        hidePlayers.add(new ConfigBool(Component.literal("Hide teammate highlight"), () -> Dungeons.dontHighlightHiddenTeammates, bool -> Dungeons.dontHighlightHiddenTeammates = bool));
+        hidePlayers.add(new ConfigBool(Component.literal("Hide hidden teammate's highlight"), () -> Dungeons.dontHighlightHiddenTeammates, bool -> Dungeons.dontHighlightHiddenTeammates = bool));
+        hidePlayers.add(new ConfigBool(Component.literal("Hide visible teammate's highlight"), () -> Dungeons.dontHighlightVisibleTeammates, bool -> Dungeons.dontHighlightVisibleTeammates = bool));
 
 
         dungeons.add(hidePlayers);
