@@ -3,16 +3,16 @@
   "package": "blade.addon.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "LevelChunkMixin",
-    "ConnectionMixin",
+    "ArrowLayerMixin",
     "ClientPacketListenerMixin",
+    "ConnectionMixin",
     "EnderPearlItemMixin",
     "EntityMixin",
-    "ItemStackMixin",
-    "LivingEntityMixin",
     "InventoryMixin",
-    "ShovelItemMixin",
-    "ArrowLayerMixin"
+    "ItemStackMixin",
+    "LevelChunkMixin",
+    "LivingEntityMixin",
+    "ShovelItemMixin"
   ],
   "injectors": {
     "defaultRequire": 1
@@ -21,24 +21,25 @@
     "requireAnnotations": true
   },
   "client": [
+    "AbstractContainerScreenMixin",
     "BossHealthOverlayMixin",
     "ChatComponentMixin",
     "ChatScreenMixin",
-    "LocalPlayerMixin",
     "ClientPacketListenerMixin",
-    "GuiGraphicsMixin",
-    "EntityRendererMixin",
+    "EffectsInInventoryMixin",
     "EntityRenderDispatcherMixin",
-    "AbstractContainerScreenMixin",
-    "HeldItemRendererMixin",
+    "EntityRendererMixin",
+    "GuiGraphicsMixin",
     "GuiMixin",
+    "HeldItemRendererMixin",
     "InventoryScreenMixin",
     "KeyboardHandlerMixin",
+    "LocalPlayerMixin",
     "MinecraftMixin",
     "MouseHandlerMixin",
-    "RecipeBookScreenMixin",
+    "MultiPlayerGameModeMixin",
     "RecipeBookComponentMixin",
-    "SkullBlockRendererMixin",
-    "EffectsInInventoryMixin"
+    "RecipeBookScreenMixin",
+    "SkullBlockRendererMixin"
   ]
 }
