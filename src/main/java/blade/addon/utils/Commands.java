@@ -44,6 +44,9 @@ public class Commands {
 
                             .then(ClientCommands.literal("ij").executes(context -> FillHelper.fillItem(FillHelper.INFLATABLE_JERRY, 64, 64, false)))
 
+                            .then(ClientCommands.literal("sp").executes(context -> FillHelper.fillItem(FillHelper.SPRIT_LEAP, 16, 16, false)))
+
+
                             .then(ClientCommands.literal("refill")
                                     .executes(
                                             context -> {

@@ -12,6 +12,7 @@ public class FillHelper {
     public static final String SUPERBOOM_TNT = "Superboom TNT";
     public static final String INFLATABLE_JERRY = "Inflatable Jerry";
     public static final String DECOY = "Decoy";
+    public static final String SPRIT_LEAP = "Spirit Leap";
 
     /**
      * @param itemName Name of item

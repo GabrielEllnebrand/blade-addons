@@ -160,4 +160,7 @@ public class Dungeons {
 
     @ConfigValue
     public static boolean dontHighlightVisibleTeammates = false;
+
+    @ConfigValue
+    public static String customLeapMessage = "Leaped to <player>!";
 }

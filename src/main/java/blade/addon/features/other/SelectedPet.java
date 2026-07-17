@@ -17,6 +17,9 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.Identifier;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ContainerInput;
 
 import java.util.List;
 import java.util.regex.Matcher;
@@ -77,6 +80,7 @@ public class SelectedPet {
 
                 summonPet(name, Component.literal(textName), getLevel(unformattedLine), true);
             }
+
             return false;
         });
 
@@ -113,28 +117,32 @@ public class SelectedPet {
             return false;
         });
 
-        Events.ON_SLOT_CLICKED.register((slot, slotId, button,clickType) -> {
-            if (!inLoadout || button != 0) return false;
-
-            Component component = ItemUtil.findLore(slot.getItem(), "Pet: ");
-            if (component == null) return false;
-
-            String string = component.getString();
-            Matcher matcher = TAB_PET_PATTERN.matcher(string);
-            if (matcher.find()) {
-                String petName = matcher.group(1).replace(" ✦", "");
-                Style style = getStyle(component, petName);
-                summonPet(petName, Component.literal(petName).setStyle(style), getLevel(string), false);
-            }
-
-
-            return false;
-        });
-
         ClientTickEvents.END_LEVEL_TICK.register((world -> {
             tick = Math.max(tick - 1, 0);
         }));
 
+    }
+
+    public static void testLoadoutClick(int container, int slotId, int button, ContainerInput containerInput, Player player) {
+        if (!inLoadout || button != 0 || player == null) return;
+
+        AbstractContainerMenu containerMenu = player.containerMenu;
+        if (containerMenu == null) {
+            Misc.addChatMessage(Component.literal("container is null"));
+            return;
+        }
+
+        Component component = ItemUtil.findLore(containerMenu.getSlot(slotId).getItem(), "Pet: ");
+        if (component == null) return;
+
+
+        String string = component.getString();
+        Matcher matcher = TAB_PET_PATTERN.matcher(string);
+        if (matcher.find()) {
+            String petName = matcher.group(1).replace(" ✦", "");
+            Style style = getStyle(component, petName);
+            summonPet(petName, Component.literal(petName).setStyle(style), getLevel(string), false);
+        }
     }
 
     private static void despawnPet() {

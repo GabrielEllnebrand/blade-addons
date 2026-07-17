@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 public class CustomEvents {
 
     private static final Pattern PARTY_PATTERN = Pattern.compile("^§9Party §8>");
-    private static final Pattern LEAP_PATTERN = Pattern.compile("^You have teleported to .*!$");
+    private static final Pattern LEAP_PATTERN = Pattern.compile("^You have teleported to (.*)!$");
 
     private static final int PARTY_MSG_OFFSET = 11;
 
@@ -49,7 +49,7 @@ public class CustomEvents {
                 Matcher matcher = LEAP_PATTERN.matcher(string);
                 if (!matcher.find()) return;
 
-                Events.ON_LEAP.invoke(leapEvent -> leapEvent.onLeap(message));
+                Events.ON_LEAP.invoke(leapEvent -> leapEvent.onLeap(matcher.group(1)));
             }
         });
     }
