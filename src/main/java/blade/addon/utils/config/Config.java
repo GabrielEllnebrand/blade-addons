@@ -77,7 +77,7 @@ public class Config {
 
         ConfigSection deathMessage = new ConfigSection(Component.literal("Death message"));
         deathMessage.add(new ConfigBool(Component.literal("Send death message"), () -> Dungeons.sendDeathMessage, bool -> Dungeons.sendDeathMessage = bool));
-        deathMessage.add(new ConfigString(Component.literal("Message sent (<player> replaces with the players name) "), () -> Dungeons.deathMessage, str -> Dungeons.deathMessage = str));
+        deathMessage.add(new ConfigString(Component.literal("Message sent (<player> gets replaced with the players name) "), () -> Dungeons.deathMessage, str -> Dungeons.deathMessage = str));
         dungeons.add(deathMessage);
 
         ConfigSection invincibility = new ConfigSection(Component.literal("Invincibility Timer"));
@@ -121,6 +121,7 @@ public class Config {
 
         dungeons.add(chests);
         dungeons.add(new ConfigBool(Component.literal("Leap message"), () -> Dungeons.enableLeapMessages, bool -> Dungeons.enableLeapMessages = bool));
+        dungeons.add(new ConfigString(Component.literal("Custom leap message, (<player> gets replaced with the players name)"), () -> Dungeons.customLeapMessage, str -> Dungeons.customLeapMessage = str));
         dungeons.add(new ConfigBool(Component.literal("Auto requeue"), () -> Dungeons.enableAutoRequeue, bool -> Dungeons.enableAutoRequeue = bool));
 
         ConfigSection expo = new ConfigSection(Component.literal("Explosive shot"));
