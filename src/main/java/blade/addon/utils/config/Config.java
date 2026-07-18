@@ -88,6 +88,9 @@ public class Config {
         invincibility.add(new ConfigBool(Component.literal("Invincibility duration"), () -> Dungeons.InvincibilityDuration, bool -> Dungeons.InvincibilityDuration = bool));
         invincibility.add(new ConfigBool(Component.literal("Duration changing color"), () -> Dungeons.useStatusColorForInvincibility, bool -> Dungeons.useStatusColorForInvincibility = bool));
         invincibility.add(new ConfigBool(Component.literal("Remove \"Mask\" in the text"), () -> Dungeons.removeMaskPart, bool -> Dungeons.removeMaskPart = bool));
+        invincibility.add(new ConfigSound(Component.literal("Proc sound"), Dungeons.invincibilitySound));
+
+
         dungeons.add(invincibility);
 
         ConfigSection classColors = new ConfigSection(Component.literal("Class Colors"));
@@ -329,6 +332,7 @@ public class Config {
         extra.add(new ConfigBool(Component.literal("Display selected arrow"), () -> ExtraOptions.displayCurrentArrow, bool -> ExtraOptions.displayCurrentArrow = bool));
         extra.add(new ConfigBool(Component.literal("Title on arrow swap"), () -> ExtraOptions.arrowSwapNotification, bool -> ExtraOptions.arrowSwapNotification = bool));
         extra.add(new ConfigBool(Component.literal("Toggleable searchbar (ctrl + f)"), () -> ExtraOptions.toggleableSearchBar, bool -> ExtraOptions.toggleableSearchBar = bool));
+        extra.add(new ConfigBool(Component.literal("Format math results"), () -> ExtraOptions.formatMathResult, bool -> ExtraOptions.formatMathResult = bool));
         extra.add(new ConfigColor(Component.literal("Searchbar miss color"), () -> ExtraOptions.searchbarMissColor, color -> ExtraOptions.searchbarMissColor = color, "search-bar-miss-color", true));
         extra.add(new ConfigBool(Component.literal("Disable protect item (resets on launch)"), () -> ProtectItem.stopProtectItem, bool -> ProtectItem.stopProtectItem = bool));
         extra.add(new ConfigBool(Component.literal("Display reaper duration"), () -> ExtraOptions.enableReaperDisplay, bool -> ExtraOptions.enableReaperDisplay = bool));

@@ -25,8 +25,8 @@ public class LeapNotification {
     private static final AABB[] REGIONS = {
             new AABB(91, 105, 46, 111, 127, 123),
             new AABB(17, 106, 121, 108, 145, 143),
-            new AABB(-2, 106, 51, 20, 145, 142),
-            new AABB(-1, 26, 29, 191, 145, 58),
+            new AABB(-2, 106, 51, 20, 145, 128),
+            new AABB( 20, 26, 29, 191, 145, 58),
             new AABB(3, 5, 0, 128, 48, 140)
     };
 

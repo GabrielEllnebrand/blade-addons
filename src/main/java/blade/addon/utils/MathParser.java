@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
 public class MathParser {
 
     private static final Pattern NUMBER_PATTERN = Pattern.compile("^(?<num>-?\\d+)(?<decimal>\\.\\d+)?(?<unit>[bBmMkK])?");
-    private static final Pattern TOKEN_PATTERN = Pattern.compile("[()+\\-*/^]");
+    private static final Pattern TOKEN_PATTERN = Pattern.compile("[()+\\-*x/^]");
 
     /**
      * Parses an expression and returns the value.
@@ -291,6 +291,7 @@ public class MathParser {
                 int index = copiedString.indexOf(token);
                 if (index == 0) {
                     copiedString = copiedString.substring(token.length());
+                    if (token.equals("x")) token = "*";
                     output.add(token);
                     wasPrevNum = false;
                     continue;

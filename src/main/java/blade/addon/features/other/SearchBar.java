@@ -50,7 +50,7 @@ public class SearchBar {
         searchBar.render(context, mouseX, mouseY, deltaTicks);
 
         if (!Double.isNaN(parsedValue)) {
-            String expression = "  §e= §2" + RenderUtils.formatNumber((float) parsedValue);
+            String expression = "  §e= §2" + (ExtraOptions.formatMathResult ? RenderUtils.formatNumber((float) parsedValue) : (long)parsedValue);
             Font textRenderer = Minecraft.getInstance().font;
             if (textRenderer == null) return;
 

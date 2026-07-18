@@ -27,8 +27,12 @@ public class FolderUtility {
             }
         }
 
-        ProtectItem.itemManager.load();
-        PersonalBests.pbManager.load();
+        try {
+            ProtectItem.itemManager.load();
+            PersonalBests.pbManager.load();
+        } catch (NullPointerException err) {
+            Debug.LOGGER.error("Failed to load protected item data or personal best data");
+        }
     }
 
 }
