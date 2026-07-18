@@ -291,6 +291,7 @@ public class MathParser {
                 int index = copiedString.indexOf(token);
                 if (index == 0) {
                     copiedString = copiedString.substring(token.length());
+                    if (token.equals("x")) token = "*";
                     output.add(token);
                     wasPrevNum = false;
                     continue;

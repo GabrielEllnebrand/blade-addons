@@ -51,7 +51,9 @@ public class Bladeaddons implements ModInitializer {
         FolderUtility.init();
         Components.init();
         Buttons.init();
-        Config.manager.load();
+        try {
+            Config.manager.load();
+        }catch (NullPointerException err) {}
         Keybinds.init();
         CustomEvents.init();
         Commands.init();

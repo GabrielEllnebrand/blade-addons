@@ -189,4 +189,7 @@ public class Floor7 {
 
     @ConfigValue
     public static int lbTickOffset = 10;
+
+    @ConfigValue
+    public static boolean displayDistanceOnAllClasses = false;
 }

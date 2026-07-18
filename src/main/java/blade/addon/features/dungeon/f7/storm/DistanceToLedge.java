@@ -33,10 +33,19 @@ public class DistanceToLedge {
         return YELLOW_PAD.contains(player.position());
     }
 
+    public static boolean isPYClass() {
+        if (Floor7.displayDistanceOnAllClasses) return true;
+        if (Phase.isInMasterMode()) {
+            return DungeonClass.isClass(DungeonClass.MAGE) || DungeonClass.isClass(DungeonClass.ARCHER);
+        } else {
+            return DungeonClass.isClass(DungeonClass.TANK) || DungeonClass.isClass(DungeonClass.ARCHER);
+        }
+    }
+
     public static boolean display() {
         if (!Floor7.displayDistanceToLedge || !Location.inDungeon()) return false;
         if (Floor7.showDistanceAtYellowOnly && !isAtYellow()) return false;
-        return Phase.inP2() && !Phase.stormDead() && (DungeonClass.isClass(DungeonClass.MAGE) || DungeonClass.isClass(DungeonClass.ARCHER));
+        return Phase.inP2() && !Phase.stormDead() && isPYClass();
     }
 
     public static void render(HUDComponent component, GuiGraphicsExtractor graphics) {

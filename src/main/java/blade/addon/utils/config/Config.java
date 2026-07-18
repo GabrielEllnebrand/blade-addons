@@ -88,6 +88,7 @@ public class Config {
         invincibility.add(new ConfigBool(Component.literal("Invincibility duration"), () -> Dungeons.InvincibilityDuration, bool -> Dungeons.InvincibilityDuration = bool));
         invincibility.add(new ConfigBool(Component.literal("Duration changing color"), () -> Dungeons.useStatusColorForInvincibility, bool -> Dungeons.useStatusColorForInvincibility = bool));
         invincibility.add(new ConfigBool(Component.literal("Remove \"Mask\" in the text"), () -> Dungeons.removeMaskPart, bool -> Dungeons.removeMaskPart = bool));
+        invincibility.add(new ConfigSound(Component.literal("Proc sound"), Dungeons.invincibilitySound));
         dungeons.add(invincibility);
 
         ConfigSection classColors = new ConfigSection(Component.literal("Class Colors"));
@@ -183,6 +184,7 @@ public class Config {
         storm.add(new ConfigBool(Component.literal("First Death time"), () -> Floor7.enableStormDeathTime, bool -> Floor7.enableStormDeathTime = bool));
         storm.add(new ConfigBool(Component.literal("Distance to ledge"), () -> Floor7.displayDistanceToLedge, bool -> Floor7.displayDistanceToLedge = bool));
         storm.add(new ConfigBool(Component.literal("Only display distance at yellow"), () -> Floor7.showDistanceAtYellowOnly, bool -> Floor7.showDistanceAtYellowOnly = bool));
+        storm.add(new ConfigBool(Component.literal("Display distance on all classes"), () -> Floor7.displayDistanceOnAllClasses, bool -> Floor7.displayDistanceOnAllClasses = bool));
         storm.add(new ConfigBool(Component.literal("Warn if spirit mask is used"), () -> Floor7.notifyUsedSpiritMask, bool -> Floor7.notifyUsedSpiritMask = bool));
         storm.add(new ConfigBool(Component.literal("Pillar explode timer"), () -> Floor7.timePillarExplosion, bool -> Floor7.timePillarExplosion = bool));
         storm.add(new ConfigBool(Component.literal("Storm crushed notification"), () -> Floor7.notifyStormCrush, bool -> Floor7.notifyStormCrush = bool));

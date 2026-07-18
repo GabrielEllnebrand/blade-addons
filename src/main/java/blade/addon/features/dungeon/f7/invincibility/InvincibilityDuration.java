@@ -1,5 +1,6 @@
 package blade.addon.features.dungeon.f7.invincibility;
 
+import blade.addon.utils.Misc;
 import blade.addon.utils.config.values.Dungeons;
 import blade.addon.utils.events.Events;
 import blade.addon.utils.rendering.RenderUtils;
@@ -20,10 +21,11 @@ public class InvincibilityDuration {
 
     public static void proc() {
         ticks = MAX_DURATION;
+        Misc.sendSound(Dungeons.invincibilitySound);
     }
 
     public static boolean display() {
-        return  ticks > 0 && Dungeons.InvincibilityDuration;
+        return ticks > 0 && Dungeons.InvincibilityDuration;
     }
 
     public static void render(HUDComponent component, GuiGraphicsExtractor graphics) {

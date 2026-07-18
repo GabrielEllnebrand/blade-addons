@@ -1,7 +1,9 @@
 package blade.addon.utils.config.values;
 
 import blade.addon.features.dungeon.f7.invincibility.InvincibilityTimer;
+import config.practical.data.SoundData;
 import config.practical.manager.ConfigValue;
+import net.minecraft.sounds.SoundEvents;
 
 public class Dungeons {
 
@@ -163,4 +165,7 @@ public class Dungeons {
 
     @ConfigValue
     public static String customLeapMessage = "Leaped to <player>!";
+
+    @ConfigValue
+    public static SoundData invincibilitySound =  new SoundData(SoundEvents.NOTE_BLOCK_PLING.value(), 0, 1);
 }

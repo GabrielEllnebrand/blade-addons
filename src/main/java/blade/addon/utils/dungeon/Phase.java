@@ -10,10 +10,12 @@ import blade.addon.utils.events.interfaces.PhaseEvent;
 import blade.addon.utils.events.interfaces.RunEndEvent;
 import config.practical.hud.HUDComponent;
 import config.practical.manager.ConfigValue;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.Component;
@@ -34,6 +36,7 @@ public class Phase {
     private static int currentPhase = -1;
     private static String floor = "";
 
+    private static boolean inMasterMode = false;
     private static boolean inFloor7 = false;
     private static boolean stormDead = false;
     private static boolean runOver = false;
@@ -85,6 +88,7 @@ public class Phase {
         }
         if (floor != null) {
             if (floor.contains("7")) inFloor7 = true;
+            if (floor.contains("M")) inMasterMode = true;
         }
 
         return false;
@@ -95,6 +99,7 @@ public class Phase {
         floor = null;
         currentPhase = -1;
         inFloor7 = false;
+        inMasterMode = false;
         stormDead = false;
         runOver = false;
     }
@@ -172,6 +177,10 @@ public class Phase {
         return inFloor7;
     }
 
+    public static boolean isInMasterMode() {
+        return inMasterMode;
+    }
+
     public static boolean runStarted() {
         return currentPhase >= 0;
     }
@@ -209,7 +218,7 @@ public class Phase {
     }
 
     public static boolean inP5() {
-        return currentPhase == 9 && inFloor7;
+        return currentPhase == 9 && inFloor7 && inMasterMode;
     }
 
     public static boolean runOver() {
@@ -218,7 +227,7 @@ public class Phase {
 
 
     public static double getPhaseTime(int index) {
-        if (index < 0 ||index >= currentSplits.size()) return 0;
+        if (index < 0 || index >= currentSplits.size()) return 0;
         return currentSplits.get(index).getRealTime();
     }
 

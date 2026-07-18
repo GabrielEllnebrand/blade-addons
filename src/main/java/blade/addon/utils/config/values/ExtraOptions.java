@@ -141,4 +141,7 @@ public class ExtraOptions {
 
     @ConfigValue
     public static int searchbarMissColor = 0xaa111111;
+
+    @ConfigValue
+    public static boolean formatMathResult = true;
 }
