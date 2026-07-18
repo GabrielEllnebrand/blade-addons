@@ -55,4 +55,10 @@ public class Visual {
     @ConfigValue
     public static boolean circularRarityBackground = false;
 
+    @ConfigValue
+    public static boolean itemQuality = false;
+
+    @ConfigValue
+    public static boolean petCandy = false;
+
 }

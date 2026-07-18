@@ -6,7 +6,6 @@ import blade.addon.utils.config.values.Dungeons;
 import blade.addon.utils.config.values.Floor7;
 import blade.addon.utils.data.EntityUtil;
 import blade.addon.utils.events.Events;
-import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 
@@ -38,14 +37,16 @@ public enum DungeonClass {
             return false;
         });
 
-        ClientReceiveMessageEvents.GAME.register((message, overlay) -> {
-            if (!Phase.runStarted() && currentClass != null) return;
+        Events.ON_GAME_MESSAGE.register(message -> {
+            if (!Phase.runStarted() && currentClass != null) return false;
 
             Matcher matcher = PATTERN.matcher(message.getString());
             if (matcher.find()) {
                 String dungeonClass = matcher.group(1);
                 currentClass = parseClass(dungeonClass);
             }
+
+            return false;
         });
 
         Events.ON_PLAYER_ENTRY.register(receivedEntry -> {

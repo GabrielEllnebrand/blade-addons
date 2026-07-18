@@ -21,6 +21,13 @@ public class ItemUtil {
         return compound.getStringOr("id", null);
     }
 
+    public static CompoundTag getNbt(ItemStack item) {
+        CustomData nbt = item.get(DataComponents.CUSTOM_DATA);
+        if (nbt == null) return null;
+
+        return nbt.copyTag();
+    }
+
     public static String getUuid(ItemStack item) {
         CustomData nbt = item.get(DataComponents.CUSTOM_DATA);
         if (nbt == null) return null;

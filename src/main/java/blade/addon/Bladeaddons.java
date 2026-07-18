@@ -133,5 +133,6 @@ public class Bladeaddons implements ModInitializer {
         StormLBTimer.init();
         DeathMessage.init();
         BlockPetMenu.init();
+        ToolTip.init();
     }
 }

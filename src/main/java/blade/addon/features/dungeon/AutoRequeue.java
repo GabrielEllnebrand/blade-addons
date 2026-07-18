@@ -4,8 +4,8 @@ import blade.addon.utils.Location;
 import blade.addon.utils.Misc;
 import blade.addon.utils.config.values.Dungeons;
 import blade.addon.utils.events.Events;
-import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 import net.minecraft.network.chat.Component;
+
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -35,13 +35,14 @@ public class AutoRequeue {
             return false;
         });
 
-        ClientReceiveMessageEvents.GAME.register((message, overlay) -> {
-            if (!Location.inDungeon() && !Dungeons.enableAutoRequeue) return;
+        Events.ON_GAME_MESSAGE.register(message -> {
+            if (!Location.inDungeon() && !Dungeons.enableAutoRequeue) return false;
             String string = message.getString();
             Matcher matcher = LEFT_PATTERN.matcher(string);
             if (matcher.find()) {
                 someoneLeft = true;
             }
+            return false;
         });
 
         Events.ON_RUN_END.register(() -> {
