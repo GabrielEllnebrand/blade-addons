@@ -72,7 +72,7 @@ public class ToolTip {
         String candies = matcher.group(1);
         if (candies.equals("0")) return;
 
-        lines.add(Component.literal("§6Candies : " + candies + "/10"));
+        lines.add(Component.literal("§aCandies : (" + candies + "/10)"));
 
 
     }
