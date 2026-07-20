@@ -30,6 +30,13 @@ public class ItemUtil {
         return compound.getStringOr("uuid", null);
     }
 
+    public static CompoundTag getNbt(ItemStack item) {
+        CustomData nbt = item.get(DataComponents.CUSTOM_DATA);
+        if (nbt == null) return null;
+
+        return nbt.copyTag();
+    }
+
     public static boolean isHolding(String name) {
         LocalPlayer player = Minecraft.getInstance().player;
         if (player == null) return false;

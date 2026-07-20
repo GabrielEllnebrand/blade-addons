@@ -1,8 +1,7 @@
 package blade.addon.utils.events;
 
-import blade.addon.utils.debug.Debug;
 import blade.addon.utils.Location;
-import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
+import blade.addon.utils.debug.Debug;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -16,20 +15,20 @@ public class CustomEvents {
 
     public static void init() {
         //party event
-        ClientReceiveMessageEvents.GAME.register((message, overlay) -> {
+        Events.ON_GAME_MESSAGE.register(message -> {
             String string = message.getString();
 
             Matcher matcher = PARTY_PATTERN.matcher(string);
-            if (!matcher.find()) return;
+            if (!matcher.find()) return false;
 
             int index = string.indexOf(":");
             if (index < PARTY_MSG_OFFSET) {
                 Debug.LOGGER.error("{} had bad index", string);
-                return;
+                return false;
             }
 
             String tempUsername = string.substring(PARTY_MSG_OFFSET, index).replaceAll("§.", "");
-            if (index + 2 >= string.length()) return;
+            if (index + 2 >= string.length()) return false;
             String sentMessage = string.substring(index + 2).strip();
 
             index = tempUsername.indexOf("]") + 2;
@@ -39,18 +38,22 @@ public class CustomEvents {
 
             String username = tempUsername;
             Events.ON_PARTY_MESSAGE.invoke(partyMessageEvent -> partyMessageEvent.sentMessage(username, sentMessage));
+
+            return false;
         });
 
         //leap event
-        ClientReceiveMessageEvents.GAME.register((message, overlay) -> {
+        Events.ON_GAME_MESSAGE.register(message -> {
             if (Location.inDungeon()) {
                 String string = message.getString();
 
                 Matcher matcher = LEAP_PATTERN.matcher(string);
-                if (!matcher.find()) return;
+                if (!matcher.find()) return false;
 
                 Events.ON_LEAP.invoke(leapEvent -> leapEvent.onLeap(matcher.group(1)));
             }
+
+            return false;
         });
     }
 }

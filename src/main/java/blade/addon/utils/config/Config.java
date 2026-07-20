@@ -413,6 +413,12 @@ public class Config {
         visual.add(new ConfigBool(Component.literal("1.8.9 like fishing bobber"), () -> Visual.oldFishingRod, bool -> Visual.oldFishingRod = bool));
         visual.add(new ConfigBool(Component.literal("Stop shovel swing when flattening dirt"), () -> Visual.stopShovelFlattening, bool -> Visual.stopShovelFlattening = bool));
         visual.add(new ConfigBool(Component.literal("Stop swinging when throwing a pearl"), () -> Visual.stopPearlSwing, bool -> Visual.stopPearlSwing = bool));
+
+        ConfigSection toolTip = new ConfigSection(Component.literal("ToolTips"));
+        toolTip.add(new ConfigBool(Component.literal("Item quality"), () -> Visual.itemQuality, bool -> Visual.itemQuality = bool));
+        toolTip.add(new ConfigBool(Component.literal("Pet candy"), () -> Visual.petCandy, bool -> Visual.petCandy = bool));
+        visual.add(toolTip);
+
         return visual;
     }
 

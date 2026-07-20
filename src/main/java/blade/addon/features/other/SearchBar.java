@@ -17,19 +17,27 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import org.lwjgl.glfw.GLFW;
 
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
+
 public class SearchBar {
 
     private static final int SEARCH_Y = 20;
     private static final int SEARCH_WIDTH = 150;
     private static final int SEARCH_HEIGHT = 20;
+
     private static EditBox searchBar;
     private static boolean shouldDisplay = false;
-    private static String searchTerm = "";
+
     private static double parsedValue = Double.NaN;
+    private static String writtenString = "";
+    private static CopyOnWriteArrayList<String> searchTerms = new CopyOnWriteArrayList<>();
+
+    private static final ConcurrentHashMap<ItemStack, Boolean> parsedData = new ConcurrentHashMap<>();
 
     public static void init() {
         DrawEvents.INVENTORY_SLOT_AFTER.register((context, item, x, y) -> {
-            if (shouldDisplay() && !searchTerm.isEmpty() && ExtraOptions.toggleableSearchBar && Double.isNaN(parsedValue)) {
+            if (shouldDisplay() && !writtenString.isEmpty() && ExtraOptions.toggleableSearchBar && Double.isNaN(parsedValue)) {
                 if (!matches(item)) {
                     context.fill(x, y, x + 16, y + 16, ExtraOptions.searchbarMissColor);
                 }
@@ -39,10 +47,18 @@ public class SearchBar {
     }
 
     private static boolean matches(ItemStack item) {
+        if (parsedData.containsKey(item)) return parsedData.get(item);
+
         String name = item.getHoverName().getString().toLowerCase();
         if (name.equals("air")) return false;
 
-        return (name.contains(searchTerm) || ItemUtil.containsIgnoreCaseLore(item, searchTerm));
+        for (String term : searchTerms) {
+            if (name.contains(term) || ItemUtil.containsIgnoreCaseLore(item, term)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public static void render(GuiGraphicsExtractor context, int mouseX, int mouseY, float deltaTicks) {
@@ -54,7 +70,7 @@ public class SearchBar {
             Font textRenderer = Minecraft.getInstance().font;
             if (textRenderer == null) return;
 
-            int textX = searchBar.getX() + textRenderer.width(searchTerm) + 4;
+            int textX = searchBar.getX() + textRenderer.width(writtenString) + 4;
             int textY = searchBar.getY() + (searchBar.getHeight() - 8) / 2;
             context.text(textRenderer, expression, textX, textY, 0xffffffff, true);
         }
@@ -106,9 +122,21 @@ public class SearchBar {
         if (window == null || textRenderer == null) return false;
 
         searchBar = new EditBox(textRenderer, (window.getGuiScaledWidth() - SEARCH_WIDTH) / 2, SEARCH_Y, SEARCH_WIDTH, SEARCH_HEIGHT, Component.literal(""));
+        searchBar.setMaxLength(100);
         searchBar.setResponder(string -> {
-            searchTerm = string.toLowerCase();
-            parsedValue = MathParser.parseExpression(searchTerm);
+
+
+            writtenString = string.toLowerCase();
+            parsedValue = MathParser.parseExpression(writtenString);
+            if (Double.isNaN(parsedValue)) {
+                parsedData.clear();
+            }
+
+            String[] terms = writtenString.split(",");
+            searchTerms.clear();
+            for (String term: terms) {
+                searchTerms.add(term.strip());
+            }
         });
         return true;
     }

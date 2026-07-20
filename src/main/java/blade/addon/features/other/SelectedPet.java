@@ -95,6 +95,9 @@ public class SelectedPet {
                 return false;
             }
 
+            int correctionCheck = string.indexOf("[");
+            if (correctionCheck != 1) return false;
+
             Matcher matcher = TAB_PET_PATTERN.matcher(string);
             if (matcher.find()) {
                 String petName = matcher.group(1).replace(" ✦", "");
