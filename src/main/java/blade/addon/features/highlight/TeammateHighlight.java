@@ -44,29 +44,45 @@ public class TeammateHighlight {
         ClientTickEvents.END_CLIENT_TICK.register(client -> teammates.removeIf(Entity::isRemoved));
 
         RenderingEvents.LINE_NO_DEPTH.register(TeammateHighlight::renderOutline);
+        RenderingEvents.TEXT.register(TeammateHighlight::renderText);
+    }
+
+    private static boolean shouldRender(Player player) {
+        if (Dungeons.dontHighlightHiddenTeammates && HidePlayers.shouldHidePlayers(player)) return false;
+        if (Dungeons.dontHighlightVisibleTeammates && !HidePlayers.shouldHidePlayers(player)) return false;
+        return true;
     }
 
     private static void renderOutline(LevelRenderContext context, PoseStack matrixStack, VertexConsumer consumer) {
-        if (!Dungeons.highlightTeammates && !Dungeons.renderClassName) return;
+        if (!Dungeons.highlightTeammates) return;
 
         teammates.forEach(player -> {
-            if (Dungeons.dontHighlightHiddenTeammates && HidePlayers.shouldHidePlayers(player)) return;
-            if (Dungeons.dontHighlightVisibleTeammates && !HidePlayers.shouldHidePlayers(player)) return;
+            if (!shouldRender(player)) return;
             DungeonClass clazz = DungeonClass.getClass(player);
             if (clazz == null) return;
 
             int color = DungeonClass.getColor(clazz);
 
-            if (Dungeons.highlightTeammates) {
-                float[] rgba = RenderUtils.toFloats(color);
-                RenderUtils.renderOutlinedBox(matrixStack, consumer,EntityUtil.getBox(player), rgba);
-            }
+            float[] rgba = RenderUtils.toFloats(color);
+            RenderUtils.renderOutlinedBox(matrixStack, consumer, EntityUtil.getBox(player), rgba);
 
-            if (Dungeons.renderClassName) {
-                Component text = Component.literal(player.getName().getString()).withColor(color).append(Component.literal(" [" + DungeonClass.getChar(clazz) + "]").withColor(Constants.YELLOW));
-                Vec3 pos = EntityUtil.getLerpedPos(player);
-                RenderUtils.renderText(context, matrixStack, text, pos.x(), pos.y() + 2.75, pos.z(), 2);
-            }
+        });
+    }
+
+    private static void renderText(LevelRenderContext context, PoseStack matrixStack, VertexConsumer consumer) {
+        if (!Dungeons.renderClassName) return;
+
+        teammates.forEach(player -> {
+            if (!shouldRender(player)) return;
+            DungeonClass clazz = DungeonClass.getClass(player);
+            if (clazz == null) return;
+
+            int color = DungeonClass.getColor(clazz);
+
+            Component text = Component.literal(player.getName().getString()).withColor(color).append(Component.literal(" [" + DungeonClass.getChar(clazz) + "]").withColor(Constants.YELLOW));
+            Vec3 pos = EntityUtil.getLerpedPos(player);
+            RenderUtils.renderText(context, matrixStack, text, pos.x(), pos.y() + 2.75, pos.z(), 2);
+
         });
     }
 

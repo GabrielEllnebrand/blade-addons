@@ -29,8 +29,9 @@ public enum Location {
     JERRYS_WORKSHOP("Jerry's Workshop"),
     MINESHAFT("Mineshaft"),
     DARK_AUCTION("Dark Auction"),
-    KUUDRA("Kuudra"),;
-
+    KUUDRA("Kuudra"),
+    TORRHUS_CANYON("Torrhus Canyon"),
+    SAFARI("Safari");
     final String name;
 
     Location(String name) {
@@ -51,7 +52,7 @@ public enum Location {
                 ServerType serverType = packet.getServerType().get();
                 inSkyblock = serverType.getName().equals("SkyBlock");
             }
-
+            Debug.sendDebugMessage(Component.literal("Parsing location: " + locationName));
             changeLocation(getLocation(locationName));
         }));
 

@@ -48,4 +48,9 @@ public class RenderPipelines {
             .withDepthStencilState(new DepthStencilState(CompareOp.ALWAYS_PASS, false))
             .build());
 
+    public static final RenderPipeline TEXT = net.minecraft.client.renderer.RenderPipelines.register(RenderPipeline.builder(net.minecraft.client.renderer.RenderPipelines.LINES_SNIPPET)
+            .withLocation(Identifier.fromNamespaceAndPath(blade.addon.utils.Constants.NAMESPACE, "text-pipe"))
+            .withVertexFormat(DefaultVertexFormat.POSITION_COLOR_NORMAL_LINE_WIDTH, VertexFormat.Mode.LINES)
+            .withDepthStencilState(new DepthStencilState(CompareOp.ALWAYS_PASS, false))
+            .build());
 }

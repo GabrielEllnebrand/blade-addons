@@ -25,5 +25,7 @@ public class RenderLayers {
     public static final RenderType LINE_NO_DEPTH =
             RenderType.create("line-no-depth-layer", RenderSetup.builder(RenderPipelines.LINE_NO_DEPTH).setOutline(RenderSetup.OutlineProperty.IS_OUTLINE).setLayeringTransform(LayeringTransform.VIEW_OFFSET_Z_LAYERING).createRenderSetup());
 
+    public static final RenderType TEXT =
+            RenderType.create("text-layer", RenderSetup.builder(RenderPipelines.TEXT).setOutline(RenderSetup.OutlineProperty.IS_OUTLINE).setLayeringTransform(LayeringTransform.VIEW_OFFSET_Z_LAYERING).createRenderSetup());
 
 }

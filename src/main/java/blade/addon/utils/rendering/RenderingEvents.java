@@ -10,6 +10,7 @@ public class RenderingEvents {
     public static RenderHandler LINE = new RenderHandler(RenderLayers.LINE);
     public static RenderHandler FILLED_NO_DEPTH = new RenderHandler(RenderLayers.FILLED_NO_DEPTH);
     public static RenderHandler LINE_NO_DEPTH = new RenderHandler(RenderLayers.LINE_NO_DEPTH);
+    public static RenderHandler TEXT = new RenderHandler(RenderLayers.TEXT);
 
 
     public static void init() {
@@ -19,5 +20,6 @@ public class RenderingEvents {
         LevelRenderEvents.AFTER_TRANSLUCENT_FEATURES.register(LINE::init);
         LevelRenderEvents.AFTER_TRANSLUCENT_FEATURES.register(FILLED_NO_DEPTH::init);
         LevelRenderEvents.AFTER_TRANSLUCENT_FEATURES.register(LINE_NO_DEPTH::init);
+        LevelRenderEvents.AFTER_TRANSLUCENT_FEATURES.register(TEXT::init);
     }
 }
