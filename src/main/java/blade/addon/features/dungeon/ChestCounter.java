@@ -8,16 +8,19 @@ import blade.addon.utils.config.values.Dungeons;
 import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.events.Events;
 import blade.addon.utils.rendering.RenderUtils;
+import config.practical.hud.HUDCategory;
 import config.practical.hud.HUDComponent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
+import org.jspecify.annotations.NonNull;
 
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class ChestCounter {
+public class ChestCounter extends HUDComponent {
 
     private static final Pattern PATTERN = Pattern.compile("^ Unclaimed chests: (\\d+)$");
 
@@ -25,8 +28,12 @@ public class ChestCounter {
     private static int countedChests = 0;
     private static boolean hasUpdatedData = false;
 
-    public static void init() {
-        Events.ON_LOCATION_CHANGE.register(newLocation -> {
+    public ChestCounter() {
+        super("Chest count");
+    }
+
+    public void init() {
+        Events.ON_LOCATION_CHANGE.register(_ -> {
             if (Location.in(Location.DUNGEON_HUB)) {
                 hasUpdatedData = false;
             }
@@ -62,19 +69,41 @@ public class ChestCounter {
         });
     }
 
-    public static boolean display() {
+    @Override
+    public int getWidth() {
+        return 110;
+    }
+
+    @Override
+    public int getHeight() {
+        return 10;
+    }
+
+    @Override
+    public boolean editable() {
+        return Dungeons.displayChestCount;
+    }
+
+    @Override
+    public boolean shouldRender() {
         if ((Dungeons.onlyAfterRunOver && !Phase.runOver())) return false;
         return Dungeons.displayChestCount && Location.inDungeon();
     }
 
-    public static void render(HUDComponent component, GuiGraphicsExtractor graphics) {
-        int x = component.getScaledX();
-        int y = component.getScaledY();
+    @Override
+    public List<HUDCategory> categories() {
+        return null;
+    }
+
+    @Override
+    public void render(@NonNull GuiGraphicsExtractor guiGraphicsExtractor) {
+        int x = getScaledX();
+        int y = getScaledY();
 
         if (hasUpdatedData) {
-            RenderUtils.drawPrefixedText(component, graphics, "Chests", Math.min(chestDisplayCount + countedChests, 60) + "");
+            RenderUtils.drawPrefixedText(this, guiGraphicsExtractor, "Chests", Math.min(chestDisplayCount + countedChests, 60) + "");
         } else {
-            graphics.text(Minecraft.getInstance().font, Component.literal("go to the dungeon hub"), x, y, Constants.RED, true);
+            guiGraphicsExtractor.text(Minecraft.getInstance().font, Component.literal("go to the dungeon hub"), x, y, Constants.RED, true);
 
         }
     }

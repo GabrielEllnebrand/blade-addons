@@ -8,6 +8,7 @@ import blade.addon.utils.debug.Debug;
 import blade.addon.utils.events.Events;
 import blade.addon.utils.events.interfaces.SectionEvent;
 import config.practical.hud.HUDComponent;
+import config.practical.hud.SimpleHUDComponent;
 import config.practical.manager.ConfigValue;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -57,7 +58,7 @@ public class Section {
 
     public static void init() {
         Events.ON_GAME_MESSAGE.register(Section::parseMessage);
-        Events.ON_LOCATION_CHANGE.register(newLocation -> {
+        Events.ON_LOCATION_CHANGE.register(_ -> {
             reset();
             return false;
         });
@@ -256,5 +257,5 @@ public class Section {
     }
 
     @ConfigValue
-    public static HUDComponent terminalSplits = new HUDComponent(0, 0, SPLIT_LENGTH, 50, 1, "Term splits", Section::display, Section::render, () -> enableTerminalSplits);
+    public static HUDComponent terminalSplits = new SimpleHUDComponent(0, 0, SPLIT_LENGTH, 50, 1, "Term splits", Section::display, Section::render, () -> enableTerminalSplits);
 }

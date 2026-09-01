@@ -1,6 +1,6 @@
 package blade.addon.features.dungeon;
 
-import blade.addon.features.dungeon.f7.terms.DeviceNotifier;
+import blade.addon.features.dungeon.f7.terms.device.DeviceNotifier;
 import blade.addon.utils.Location;
 import blade.addon.utils.config.values.Dungeons;
 import blade.addon.utils.data.EntityUtil;
@@ -19,7 +19,7 @@ public class HidePlayers {
 
 
     public static void init() {
-        Events.ON_LEAP.register(message -> {
+        Events.ON_LEAP.register(_ -> {
             justLeapt = true;
             startTime = System.currentTimeMillis();
             return false;
@@ -57,7 +57,7 @@ public class HidePlayers {
     }
 
     public static boolean shouldHidePlayers(Player player) {
-        if (!Location.inDungeon() || !EntityUtil.isARealPlayer(player) || EntityUtil.isClientPlayer(player)) return false;
+        if (!Location.inDungeon() || !EntityUtil.isARealPlayer(player) || EntityUtil.isClientPlayer(player) || Phase.runStarted()) return false;
 
         if (testHideAtLeap()) {
             return true;

@@ -1,14 +1,11 @@
-package blade.addon.features.dungeon.f7.terms;
+package blade.addon.features.dungeon.f7.terms.device;
 
 import blade.addon.utils.Scheduler;
 import blade.addon.utils.config.values.Floor7;
 import blade.addon.utils.data.EntityUtil;
 import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.events.Events;
-import blade.addon.utils.rendering.RenderUtils;
-import config.practical.hud.HUDComponent;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
@@ -23,16 +20,14 @@ public class DeviceNotifier {
     private static final double DISTANCE = 3;
 
     private static long completedTime = 0;
-    private static boolean showNotification = false;
 
 
     public static void init() {
-        Events.ON_TERMINAL.register((name, action, objective, current, total) -> {
+        Events.ON_TERMINAL.register((name, _, objective, _, _) -> {
             if (!objective.equals("device") || !EntityUtil.isClientPlayer(name)) return false;
 
             if ((Floor7.notifyPre4Completion && at4thDev()) || (Floor7.notifySSCompletion && atSS())) {
                 completedTime = System.currentTimeMillis();
-                showNotification = true;
                 Scheduler.scheduleSound(SoundEvents.NOTE_BLOCK_PLING.value(), 1, 1);
             }
 
@@ -70,12 +65,7 @@ public class DeviceNotifier {
 
     }
 
-    public static boolean display() {
-        return showNotification;
-    }
-
-    public static void render(HUDComponent component, GuiGraphicsExtractor graphics) {
-        if (System.currentTimeMillis() - completedTime >= TOTAL_DURATION) showNotification = false;
-        RenderUtils.drawCenteredText(graphics, component, Component.literal("§aDevice Completed!"));
+    public static boolean shouldDisplay() {
+        return System.currentTimeMillis() - completedTime <= TOTAL_DURATION;
     }
 }

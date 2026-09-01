@@ -5,16 +5,13 @@ import blade.addon.utils.config.FolderUtility;
 import blade.addon.utils.config.values.ExtraOptions;
 import blade.addon.utils.debug.Debug;
 import blade.addon.utils.events.Events;
-import blade.addon.utils.rendering.RenderUtils;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import config.practical.data.SoundData;
-import config.practical.hud.HUDComponent;
 import config.practical.manager.ConfigValue;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 
@@ -33,7 +30,7 @@ public class Notifications {
     @ConfigValue
     public static CopyOnWriteArrayList<Notification> notifications;
 
-    private static double tick = 0;
+    static double tick = 0;
     private static String message;
 
     public static void init() {
@@ -57,7 +54,7 @@ public class Notifications {
             return false;
         });
 
-        ClientTickEvents.END_CLIENT_TICK.register(event -> tick = Math.max(tick - 1, 0));
+        ClientTickEvents.END_CLIENT_TICK.register(_ -> tick = Math.max(tick - 1, 0));
     }
 
     public static void addNotification(Notification notification) {
@@ -74,19 +71,14 @@ public class Notifications {
         return notifications;
     }
 
-    public static boolean display() {
-        return tick > 0;
-    }
-
-    public static void render(HUDComponent component, GuiGraphicsExtractor graphics) {
-        Component text = Component.literal(message != null ? message : "Some notification");
-        RenderUtils.drawCenteredText(graphics, component, text);
-    }
-
     public static void setNotification(Notification notification) {
         if (notifications == null) return;
         tick = notification.getTicks();
         message = notification.getNotificationString();
+    }
+
+    public static String getMessage() {
+        return message;
     }
 
     public static void save() {

@@ -1,159 +1,162 @@
 package blade.addon.utils.config.components;
 
 import blade.addon.features.dungeon.*;
-import blade.addon.features.dungeon.f7.RelicTimer;
+import blade.addon.features.dungeon.f7.dragons.DragonSpawnTimer;
+import blade.addon.features.dungeon.f7.invincibility.InvincibilityDisplay;
+import blade.addon.features.dungeon.f7.maxor.crystals.CrystalNotification;
+import blade.addon.features.dungeon.f7.relic.RelicProgressBar;
 import blade.addon.features.dungeon.f7.StormLBTimer;
-import blade.addon.features.dungeon.f7.dragons.DragSpawnTimer;
 import blade.addon.features.dungeon.f7.invincibility.InvincibilityDuration;
-import blade.addon.features.dungeon.f7.invincibility.InvincibilityTimer;
 import blade.addon.features.dungeon.f7.location.LocationNotifier;
-import blade.addon.features.dungeon.f7.maxor.CrystalSpawn;
 import blade.addon.features.dungeon.f7.maxor.MaxorStun;
 import blade.addon.features.dungeon.f7.maxor.MaxorTickTimer;
-import blade.addon.features.dungeon.f7.storm.DistanceToLedge;
-import blade.addon.features.dungeon.f7.storm.PillarExplode;
-import blade.addon.features.dungeon.f7.storm.StormTickTimer;
+import blade.addon.features.dungeon.f7.maxor.crystals.CrystalTimer;
+import blade.addon.features.dungeon.f7.relic.RelicTimer;
+import blade.addon.features.dungeon.f7.storm.*;
+import blade.addon.features.dungeon.f7.storm.pillar.PillarExplodeTimer;
+import blade.addon.features.dungeon.f7.storm.pillar.PillarNotification;
 import blade.addon.features.dungeon.f7.terms.*;
+import blade.addon.features.dungeon.f7.terms.device.DeviceNotification;
 import blade.addon.features.item.HeldItemToolTip;
-import blade.addon.features.notifications.Notifications;
+import blade.addon.features.notifications.NotificationDisplay;
 import blade.addon.features.other.*;
-import blade.addon.utils.config.values.Dungeons;
-import blade.addon.utils.config.values.ExtraOptions;
-import blade.addon.utils.config.values.Floor7;
+import blade.addon.features.other.arrow.ArrowDisplay;
+import blade.addon.features.other.arrow.ArrowNotification;
+import blade.addon.features.other.pet.PetDisplay;
+import blade.addon.features.other.pet.PetNotification;
 import config.practical.hud.HUDComponent;
 import config.practical.manager.ConfigValue;
 
 public class Components {
 
-    private static final int TICK_TIMER_WIDTH = 30;
-    private static final int NOTIFICATION_WIDTH = 130;
-
-    public static void init() {
-    }
+    public static void init() {}
 
     @ConfigValue
-    public static HUDComponent invincibilityTimer = new HUDComponent(0, 0, 110, 28, 1, "Invincibility timer", InvincibilityTimer::display, InvincibilityTimer::render, () -> Dungeons.displayInvincibilityTimer);
+    public static HUDComponent invincibilityTimer = new InvincibilityDisplay();
+    @ConfigValue
+    public static HUDComponent chestCounter = new ChestCounter();
 
     @ConfigValue
-    public static HUDComponent chestCounter = new HUDComponent(0, 0, 110, 10, 1, "Chest count", ChestCounter::display, ChestCounter::render, () -> Dungeons.displayChestCount);
+    public static HUDComponent secretSpawnTimer = new SecretSpawnTimer();
 
     @ConfigValue
-    public static HUDComponent keyNotifierDisplay = new HUDComponent(0, 0, NOTIFICATION_WIDTH, 10, 1, "", KeyNotifier::display, KeyNotifier::render, () -> Dungeons.enableKeyNotifier && !Dungeons.combineScreenNotifications);
+    public static HUDComponent warpCoolDown = new WarpCooldown();
 
     @ConfigValue
-    public static HUDComponent duplicateClassDisplay = new HUDComponent(0, 0, NOTIFICATION_WIDTH, 10, 1, "", RunStartValidator::display, RunStartValidator::render, () -> (Dungeons.detectDuplicateClass || Dungeons.detectPlayerCount) && !Dungeons.combineScreenNotifications);
+    public static HUDComponent stormDeathTime = new StormDeathTime();
 
     @ConfigValue
-    public static HUDComponent secretSpawnTimer = new HUDComponent(0, 0, 20, 10, 1, "Secret spawn timer", SecretSpawnTimer::display, SecretSpawnTimer::render, () -> Dungeons.enableSecretSpawnTimer);
+    public static HUDComponent distanceToLedgeComponent = new DistanceToLedge();
 
     @ConfigValue
-    public static HUDComponent warpCoolDown = new HUDComponent(0, 0, 110, 10, 0.75f, "Warp cooldown", WarpCooldown::display, WarpCooldown::render, () -> Dungeons.enableWarpCooldown);
+    public static CombineableTickTimer crystalSpawnTime = new CrystalTimer();
 
     @ConfigValue
-    public static HUDComponent crystalSpawnTime = new HUDComponent(0, 0, TICK_TIMER_WIDTH, 10, 1, "Crystal Spawn Time", CrystalSpawn::display, CrystalSpawn::render, () -> Floor7.enableCrystalSpawnTime && !Floor7.combineTickTimers);
+    public static CombineableTickTimer stormTickTimer = new StormTickTimer();
 
     @ConfigValue
-    public static HUDComponent stormTickTimer = new HUDComponent(0, 0, TICK_TIMER_WIDTH, 10, 1, "Storm Tick Timer", StormTickTimer::display, StormTickTimer::render, () -> Floor7.enableStormTickTimer && !Floor7.combineTickTimers);
+    public static CombineableTickTimer termStartTimer = new TermStartTimer();
 
     @ConfigValue
-    public static HUDComponent stormDeathTime = new HUDComponent(0, 0, 30, 10, 1, "Storm Death Time", StormTickTimer::displayDeathTime, StormTickTimer::renderDeathTime, () -> Floor7.enableStormDeathTime);
+    public static CombineableTickTimer goldorTickTimer = new GoldorTickTimer();
 
     @ConfigValue
-    public static HUDComponent distanceToLedgeComponent = new HUDComponent(0, 0, 30, 10, 1, "Distance to ledge", DistanceToLedge::display, DistanceToLedge::render, () -> Floor7.displayDistanceToLedge);
+    public static CombineableTickTimer relicSpawnTimer = new RelicTimer();
 
     @ConfigValue
-    public static HUDComponent goldorTickTimer = new HUDComponent(0, 0, TICK_TIMER_WIDTH, 10, 1, "Goldor Tick Timer", GoldorTickTimer::display, GoldorTickTimer::render, () -> Floor7.enableGoldorTickTimer && !Floor7.combineTickTimers);
+    public static HUDComponent combinedTickTimer = new CombinedTickTimer(crystalSpawnTime, stormTickTimer, termStartTimer, goldorTickTimer, relicSpawnTimer);
 
     @ConfigValue
-    public static HUDComponent termStartTimer = new HUDComponent(0, 0, TICK_TIMER_WIDTH, 10, 1, "Term Start Timer", TermStartTimer::display, TermStartTimer::render, () -> Floor7.enableTermStartTimer && !Floor7.combineTickTimers);
+    public static CombineableNotification duplicateClassDisplay = new RunStartValidator();
 
     @ConfigValue
-    public static HUDComponent relicSpawnTimer = new HUDComponent(0, 0, TICK_TIMER_WIDTH, 10, 1, "Relic Spawn Timer", RelicTimer::display, RelicTimer::render, () -> Floor7.enableRelicStartTimer && !Floor7.combineTickTimers && !Floor7.replaceWithProgressBar);
+    public static CombineableNotification keyNotifierDisplay = new KeyNotification();
 
     @ConfigValue
-    public static HUDComponent relicProgressBar = new HUDComponent(0, 0, 110, 10, 1, "Relic progressbar", RelicTimer::displayProgressBar, RelicTimer::renderProgressBar, () -> Floor7.enableRelicStartTimer && Floor7.replaceWithProgressBar);
+    public static CombineableNotification pre4Notification = new DeviceNotification();
 
     @ConfigValue
-    public static HUDComponent combinedTickTimer = new HUDComponent(0, 0, TICK_TIMER_WIDTH, 10, 1, "Combined Tick timer", CombinedTickTimer::display, CombinedTickTimer::render, () -> Floor7.combineTickTimers);
+    public static CombineableNotification melodyNotification = new MelodyNotification();
 
     @ConfigValue
-    public static HUDComponent combinedNotifications = new HUDComponent(0, 0, NOTIFICATION_WIDTH, 10, 1, "Combined Notifications", CombinedScreenNotifications::display, CombinedScreenNotifications::render, () -> Dungeons.combineScreenNotifications);
+    public static CombineableNotification stormCrushNotification = new PillarNotification();
 
     @ConfigValue
-    public static HUDComponent dragSpawnTimer = new HUDComponent(0, 0, TICK_TIMER_WIDTH, 10, 1, "Dragon spawn timer", DragSpawnTimer::display, DragSpawnTimer::render, () -> Floor7.dragSpawnTimers);
+    public static CombineableNotification crystalReminderNotification = new CrystalNotification();
 
     @ConfigValue
-    public static HUDComponent petDisplay = new HUDComponent(0, 0, 100, 16, 1, "Selected pet display", SelectedPet::display, SelectedPet::render, () -> ExtraOptions.drawPetHUD);
+    public static CombineableNotification chatNotification = new NotificationDisplay();
 
     @ConfigValue
-    public static HUDComponent atNotificationDisplay = new HUDComponent(0, 0, 200, 16, 1, "At location display", LocationNotifier::display, LocationNotifier::render, () -> Floor7.displayLocationNotification);
+    public static CombineableNotification petTitleNotification = new PetNotification();
 
     @ConfigValue
-    public static HUDComponent kickedTimer = new HUDComponent(0, 0, 100, 10, 1, "Kicked timer", KickedTimer::display, KickedTimer::render, () -> ExtraOptions.enableKickedTimer);
+    public static CombineableNotification arrowSwapDisplay = new ArrowNotification();
 
     @ConfigValue
-    public static HUDComponent pre4Notification = new HUDComponent(0, 0, NOTIFICATION_WIDTH, 10, 1, "Device done notification", DeviceNotifier::display, DeviceNotifier::render, () -> Floor7.notifyPre4Completion && !Dungeons.combineScreenNotifications);
+    public static CombineableNotification sectionCompletionDisplay = new SectionCompleteNotification();
 
     @ConfigValue
-    public static HUDComponent pillarExplodeTimer = new HUDComponent(0, 0, TICK_TIMER_WIDTH, 10, 1, "Pillar explode timer", PillarExplode::displayTimer, PillarExplode::renderTimer, () -> Floor7.timePillarExplosion);
+    public static CombineableNotification bloodNotificationDisplay = new BloodNotification();
 
     @ConfigValue
-    public static HUDComponent stormCrushNotification = new HUDComponent(0, 0, NOTIFICATION_WIDTH, 10, 1, "Pillar explode timer", PillarExplode::display, PillarExplode::render, () -> Floor7.notifyStormCrush && !Dungeons.combineScreenNotifications);
+    public static HUDComponent combinedNotifications = new CombinedNotification(
+            duplicateClassDisplay, keyNotifierDisplay, pre4Notification,
+            melodyNotification, stormCrushNotification, crystalReminderNotification,
+            chatNotification, petTitleNotification, arrowSwapDisplay,
+            sectionCompletionDisplay, bloodNotificationDisplay);
 
     @ConfigValue
-    public static HUDComponent melodyNotification = new HUDComponent(0, 0, NOTIFICATION_WIDTH, 10, 1, "melody warning notification", MelodyWarning::display, MelodyWarning::render, () -> Floor7.notifiyMelody && !Dungeons.combineScreenNotifications);
+    public static HUDComponent relicProgressBar = new RelicProgressBar();
 
     @ConfigValue
-    public static HUDComponent ragDisplay = new HUDComponent(0, 0, TICK_TIMER_WIDTH, 10, 1, "Rag axe display", RagDisplay::display, RagDisplay::render, () -> ExtraOptions.enableRagaxeDisplay);
+    public static HUDComponent dragSpawnTimer = new DragonSpawnTimer();
 
     @ConfigValue
-    public static HUDComponent leapedDisplay = new HUDComponent(0, 0, 110, 10, 1, "Leaped displayed", LeapNotification::display, LeapNotification::render, () -> Floor7.leapNotifications);
+    public static HUDComponent petDisplay = new PetDisplay();
 
     @ConfigValue
-    public static HUDComponent chatNotification = new HUDComponent(0, 0, NOTIFICATION_WIDTH, 10, 1, "Chat notification", Notifications::display, Notifications::render, () -> !Dungeons.combineScreenNotifications);
+    public static LocationNotifier atNotificationDisplay = new LocationNotifier();
 
     @ConfigValue
-    public static HUDComponent toolTipDisplay = new HUDComponent(0, 0, 110, 10, 1, "Tool Tip", HeldItemToolTip::display, HeldItemToolTip::render, () -> ExtraOptions.moveToolTip);
+    public static HUDComponent kickedTimer = new KickedTimer();
 
     @ConfigValue
-    public static HUDComponent invincibilityDurationDisplay = new HUDComponent(0, 0, TICK_TIMER_WIDTH, 10, 1, "Invincibility duration", InvincibilityDuration::display, InvincibilityDuration::render, () -> Dungeons.InvincibilityDuration);
+    public static HUDComponent pillarExplodeTimer = new PillarExplodeTimer();
 
     @ConfigValue
-    public static HUDComponent petTitleNotification = new HUDComponent(0, 0, NOTIFICATION_WIDTH, 10, 1, "Pet swap notification", SelectedPet::displayNotification, SelectedPet::renderNotification, () -> ExtraOptions.sendPetSwapNotification && !Dungeons.combineScreenNotifications);
+    public static HUDComponent ragDisplay = new RagDisplay();
 
     @ConfigValue
-    public static HUDComponent crystalReminderNotification = new HUDComponent(0, 0, NOTIFICATION_WIDTH, 10, 1, "Crystal reminder notification", CrystalSpawn::displayNotification,CrystalSpawn::renderNotification, () -> Floor7.crystalPlaceReminder && !Dungeons.combineScreenNotifications);
+    public static HUDComponent leapedDisplay = new LeapDisplay();
 
     @ConfigValue
-    public static HUDComponent sectionProgressDisplay = new HUDComponent(0, 0, 30, 10, 1, "Section progress", SectionProgress::display,  SectionProgress::render, () -> Floor7.showSectionProgress);
+    public static HeldItemToolTip toolTipDisplay = new HeldItemToolTip();
 
     @ConfigValue
-    public static HUDComponent quizTimerDisplay = new HUDComponent(0, 0, 80, 10, 1, "Quiz timer", QuizTimer::display,  QuizTimer::render, () -> Dungeons.quizTimer);
+    public static InvincibilityDuration invincibilityDurationDisplay = new InvincibilityDuration();
 
     @ConfigValue
-    public static HUDComponent maxorStunDisplay = new HUDComponent(0, 0, 70, 10, 1, "Maxor stun display", MaxorStun::display,  MaxorStun::render, () -> Floor7.maxorStunDuration);
+    public static HUDComponent sectionProgressDisplay = new SectionProgress();
 
     @ConfigValue
-    public static HUDComponent selectedArrowDisplay = new HUDComponent(0, 0, 100, 10, 1, "Selected arrow display", ArrowSwapper::display,  ArrowSwapper::render, () -> ExtraOptions.displayCurrentArrow);
+    public static HUDComponent quizTimerDisplay = new QuizTimer();
 
     @ConfigValue
-    public static HUDComponent arrowSwapDisplay = new HUDComponent(0, 0, 100, 10, 1, "Selected arrow title", ArrowSwapper::displayNotification,  ArrowSwapper::renderNotification, () -> ExtraOptions.arrowSwapNotification &&  !Dungeons.combineScreenNotifications);
+    public static HUDComponent maxorStunDisplay = new MaxorStun();
 
     @ConfigValue
-    public static HUDComponent sectionCompletionDisplay = new HUDComponent(0, 0, NOTIFICATION_WIDTH, 10, 1, "Section completion", SectionCompletion::display,  SectionCompletion::render, () -> Floor7.sectionCompletionNotification &&  !Dungeons.combineScreenNotifications);
+    public static HUDComponent selectedArrowDisplay = new ArrowDisplay();
 
     @ConfigValue
-    public static HUDComponent maxorTickTimer = new HUDComponent(0, 0, TICK_TIMER_WIDTH, 10, 1, "Maxor Tick Timer", MaxorTickTimer::display, MaxorTickTimer::render, () -> Floor7.enableMaxorTickTimer);
+    public static HUDComponent maxorTickTimer = new MaxorTickTimer();
 
     @ConfigValue
-    public static HUDComponent bloodNotificationDisplay = new HUDComponent(0, 0, NOTIFICATION_WIDTH, 10, 1, "blood notification", BloodNotifier::display,  BloodNotifier::render, () -> Dungeons.alertBloodSpawns &&  !Dungeons.combineScreenNotifications);
+    public static HUDComponent currentSectionDisplay = new CurrentSection();
 
     @ConfigValue
-    public static HUDComponent currentSectionDisplay = new HUDComponent(0, 0, 50, 10, 1, "Current section", CurrentSection::display,  CurrentSection::render, () -> Floor7.showCurrentSection);
+    public static HUDComponent reaperDisplay = new ReaperDisplay();
 
     @ConfigValue
-    public static HUDComponent reaperDisplay = new HUDComponent(0, 0, TICK_TIMER_WIDTH, 10, 1, "reaper display", ReaperDisplay::display, ReaperDisplay::render, () -> ExtraOptions.enableReaperDisplay);
-
-    @ConfigValue
-    public static HUDComponent stormLbTimer = new HUDComponent(0, 0, TICK_TIMER_WIDTH, 10, 1, "Storm lb timer", StormLBTimer::display, StormLBTimer::render, () -> Floor7.showLBTimer);
+    public static HUDComponent stormLbTimer = new StormLBTimer();
 }

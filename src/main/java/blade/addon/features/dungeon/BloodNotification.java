@@ -1,23 +1,27 @@
 package blade.addon.features.dungeon;
 
-import blade.addon.utils.Constants;
 import blade.addon.utils.Location;
 import blade.addon.utils.Misc;
+import blade.addon.utils.config.components.CombineableNotification;
 import blade.addon.utils.config.values.Dungeons;
 import blade.addon.utils.dungeon.DungeonClass;
 import blade.addon.utils.events.Events;
-import blade.addon.utils.rendering.RenderUtils;
-import config.practical.hud.HUDComponent;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import config.practical.hud.HUDCategory;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 
-public class BloodNotifier {
+import java.util.List;
 
-    private static boolean detected = false;
-    private static long prevTime = 0;
+public class BloodNotification extends CombineableNotification {
 
-    public static void init() {
+    private boolean detected = false;
+    private long prevTime = 0;
+
+    public BloodNotification() {
+        super("blood notification");
+    }
+
+    public void init() {
 
         Events.ON_GAME_MESSAGE.register(message -> {
             if (detected || !Location.inDungeon()) return false;
@@ -35,26 +39,37 @@ public class BloodNotifier {
             return false;
         });
 
-        Events.ON_LOCATION_CHANGE.register(newLocation -> {
-            reset();
+        Events.ON_LOCATION_CHANGE.register(_ -> {
+            resetDetection();
             return false;
         });
     }
 
-    private static void reset() {
-        detected = false;
-    }
-
-    private static boolean correctClass() {
-        return Dungeons.alertBloodForAllClasses || DungeonClass.isClass(DungeonClass.MAGE);
-    }
-
-    public static boolean display() {
+    @Override
+    public boolean shouldRender() {
         return Dungeons.alertBloodSpawns && System.currentTimeMillis() - prevTime < 2000 && correctClass();
     }
 
-    public static void render(HUDComponent component, GuiGraphicsExtractor graphics) {
-        RenderUtils.drawCenteredText(graphics, component, Component.literal("First four mobs spawned!"), Constants.RED);
+    @Override
+    public List<HUDCategory> categories() {
+        return List.of();
     }
 
+    private void resetDetection() {
+        detected = false;
+    }
+
+    private boolean correctClass() {
+        return Dungeons.alertBloodForAllClasses || DungeonClass.isClass(DungeonClass.MAGE);
+    }
+
+    @Override
+    public boolean enabled() {
+        return Dungeons.alertBloodSpawns;
+    }
+
+    @Override
+    public Component getText() {
+        return Component.literal("First four mobs spawned!");
+    }
 }

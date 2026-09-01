@@ -13,7 +13,7 @@ public enum Location {
     DUNGEON_HUB("Dungeon Hub"),
     PRIVATE_ISLAND("Private Island"),
     HUB("Hub"),
-    GALATEA("Galatea"),
+    MOONGLADE_MARSH("Moonglade Marsh"),
     THE_PARK("The Park"),
     THE_FARMING_ISLANDS("The Farming Islands"),
     GOLD_MINE("Gold Mine"),

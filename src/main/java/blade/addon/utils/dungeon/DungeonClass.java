@@ -1,6 +1,6 @@
 package blade.addon.utils.dungeon;
 
-import blade.addon.features.dungeon.f7.dragons.DragSpawnTimer;
+import blade.addon.features.dungeon.f7.dragons.DragonSpawn;
 import blade.addon.utils.Misc;
 import blade.addon.utils.config.values.Dungeons;
 import blade.addon.utils.config.values.Floor7;
@@ -143,11 +143,11 @@ public enum DungeonClass {
     }
 
     public static boolean isArchTeam() {
-        return currentClass == DungeonClass.ARCHER || currentClass == DungeonClass.TANK || (currentClass == DungeonClass.HEALER && Floor7.healerTeam == DragSpawnTimer.Team.ARCHER_TEAM);
+        return currentClass == DungeonClass.ARCHER || currentClass == DungeonClass.TANK || (currentClass == DungeonClass.HEALER && Floor7.healerTeam == DragonSpawn.Team.ARCHER_TEAM);
     }
 
     public static boolean isBersTeam() {
-        return currentClass == DungeonClass.BERSERK || currentClass == DungeonClass.MAGE || (currentClass == DungeonClass.HEALER && Floor7.healerTeam == DragSpawnTimer.Team.BERS_TEAM);
+        return currentClass == DungeonClass.BERSERK || currentClass == DungeonClass.MAGE || (currentClass == DungeonClass.HEALER && Floor7.healerTeam == DragonSpawn.Team.BERS_TEAM);
     }
 
     private static void reset() {

@@ -2,38 +2,59 @@ package blade.addon.features.dungeon.f7.terms;
 
 import blade.addon.utils.Constants;
 import blade.addon.utils.Location;
+import blade.addon.utils.config.components.Categories;
+import blade.addon.utils.config.components.CombineableTickTimer;
 import blade.addon.utils.config.values.Floor7;
 import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.events.Events;
-import blade.addon.utils.rendering.RenderUtils;
-import config.practical.hud.HUDComponent;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
-import net.minecraft.network.chat.Component;
+import config.practical.hud.HUDCategory;
 
-public class TermStartTimer {
+import java.util.List;
+
+public class TermStartTimer extends CombineableTickTimer {
 
     private static final int TOTAL_TICKS = 100;
 
-    private static int tick = TOTAL_TICKS;
+    private int tick = TOTAL_TICKS;
 
-    public static void init() {
+    public TermStartTimer() {
+        super("Term Start Timer");
+    }
+
+    public void init() {
         Events.ON_SERVER_TICK.register(() -> {
             if (Location.inDungeon() && Phase.inP2() && Phase.stormDead()) tick--;
             return false;
         });
 
-        Events.ON_LOCATION_CHANGE.register(newLocation -> {
+        Events.ON_LOCATION_CHANGE.register(_ -> {
            tick = TOTAL_TICKS;
             return false;
         });
     }
 
-    public static boolean display() {
+    @Override
+    public boolean shouldRender() {
         return Floor7.enableTermStartTimer && Location.inDungeon() && Phase.inP2() && Phase.stormDead();
     }
 
-    public static void render(HUDComponent component, GuiGraphicsExtractor graphics) {
-        double num = tick * Constants.TICK_DURATION;
-        RenderUtils.drawCenteredText(graphics, component, Component.literal(Constants.DECIMAL_FORMAT.format(num)), Constants.YELLOW);
+    @Override
+    public List<HUDCategory> categories() {
+        return List.of(Categories.P2, Categories.P3);
+    }
+
+    @Override
+    public boolean enabled() {
+        return Floor7.enableTermStartTimer;
+    }
+
+    @Override
+    public int getColor() {
+        return  Constants.YELLOW;
+    }
+
+    @Override
+    public double getTime() {
+        return tick * Constants.TICK_DURATION;
     }
 }

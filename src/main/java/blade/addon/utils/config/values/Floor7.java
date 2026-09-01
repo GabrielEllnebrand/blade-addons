@@ -1,6 +1,6 @@
 package blade.addon.utils.config.values;
 
-import blade.addon.features.dungeon.f7.dragons.DragSpawnTimer;
+import blade.addon.features.dungeon.f7.dragons.DragonSpawn;
 import config.practical.data.SoundData;
 import config.practical.manager.ConfigValue;
 import net.minecraft.sounds.SoundEvents;
@@ -80,7 +80,7 @@ public class Floor7 {
     public static boolean sendSoundOnDragSpawn = false;
 
     @ConfigValue
-    public static DragSpawnTimer.Team healerTeam = DragSpawnTimer.Team.ARCHER_TEAM;
+    public static DragonSpawn.Team healerTeam = DragonSpawn.Team.ARCHER_TEAM;
 
     @ConfigValue
     public static boolean displayLocationNotification = false;

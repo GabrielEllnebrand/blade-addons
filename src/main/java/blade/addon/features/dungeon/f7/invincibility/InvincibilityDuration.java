@@ -4,35 +4,66 @@ import blade.addon.utils.Misc;
 import blade.addon.utils.config.values.Dungeons;
 import blade.addon.utils.events.Events;
 import blade.addon.utils.rendering.RenderUtils;
+import config.practical.hud.HUDCategory;
 import config.practical.hud.HUDComponent;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
+import org.jspecify.annotations.NonNull;
 
-public class InvincibilityDuration {
+import java.util.List;
+
+public class InvincibilityDuration extends HUDComponent {
 
     private static final int MAX_DURATION = 3 * 20;
-    private static int ticks = 0;
+    private int ticks = 0;
 
-    public static void init() {
+    public InvincibilityDuration() {
+        super("Invincibility duration");
+    }
+
+    public void init() {
         Events.ON_SERVER_TICK.register(() -> {
             ticks = Math.max(0, ticks - 1);
             return false;
         });
     }
 
-    public static void proc() {
-        ticks = MAX_DURATION;
-        Misc.sendSound(Dungeons.invincibilitySound);
+    @Override
+    public int getWidth() {
+        return 30;
     }
 
-    public static boolean display() {
+    @Override
+    public int getHeight() {
+        return 10;
+    }
+
+    @Override
+    public boolean editable() {
+        return Dungeons.InvincibilityDuration;
+    }
+
+    @Override
+    public boolean shouldRender() {
         return ticks > 0 && Dungeons.InvincibilityDuration;
     }
 
-    public static void render(HUDComponent component, GuiGraphicsExtractor graphics) {
+    @Override
+    public List<HUDCategory> categories() {
+        return null;
+    }
+
+    @Override
+    public void render(@NonNull GuiGraphicsExtractor guiGraphicsExtractor) {
         int color = 0xffffffff;
         if (Dungeons.useStatusColorForInvincibility) {
             color = RenderUtils.getStatusColor(40, 20, ticks);
         }
-        RenderUtils.drawTimer(component, graphics, ticks, color);
+        RenderUtils.drawTimer(this, guiGraphicsExtractor, ticks, color);
     }
+
+    public void proc() {
+        ticks = MAX_DURATION;
+        Misc.sendSound(Dungeons.invincibilitySound);
+    }
+
 }

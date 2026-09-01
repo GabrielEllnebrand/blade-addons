@@ -1,4 +1,4 @@
-package blade.addon.features.dungeon.f7;
+package blade.addon.features.dungeon.f7.relic;
 
 import blade.addon.utils.Location;
 import blade.addon.utils.Misc;
@@ -14,12 +14,9 @@ import blade.addon.utils.rendering.RenderingEvents;
 import blade.addon.utils.times.PersonalBests;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import config.practical.hud.HUDComponent;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.level.LevelRenderContext;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gizmos.GizmoStyle;
 import net.minecraft.gizmos.Gizmos;
@@ -35,7 +32,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class RelicTimer {
+public class RelicSpawn {
 
     public enum Relic {
         GREEN(new AABB(49, 7, 44, 50, 8, 45), 0xff55ff55, "§cRed"),
@@ -56,10 +53,6 @@ public class RelicTimer {
         }
     }
 
-
-    private static final int GREEN_COLOR = 0xff00ff00;
-    private static final int RED_COLOR = 0xffff0000;
-
     private static final Pattern PATTERN = Pattern.compile("^(.+) picked the Corrupted (Red|Purple|Orange|Green|Blue) Relic!$");
 
     private static long phaseStartTime;
@@ -69,19 +62,12 @@ public class RelicTimer {
     private static int placeTick = 0;
     private static boolean sentRelicTimes = false;
 
-    //only here to test the relic progress bar
-    private static boolean forceGUI = false;
-
     public static void init() {
         Events.ON_SERVER_TICK.register(() -> {
-            if (!forceGUI) {
-                if (!Location.inDungeon() || !Phase.inP5()) return false;
-            }
-            tick = Math.max(tick - 1, -1);
 
-            if (tick == -1) {
-                forceGUI = false;
-            }
+            if (!Location.inDungeon() || !Phase.inP5()) return false;
+
+            tick = Math.max(tick - 1, -1);
 
             if (Phase.inP5()) {
                 placeTick++;
@@ -115,7 +101,7 @@ public class RelicTimer {
                 String relicString = matcher.group(2);
 
                 if (EntityUtil.isClientPlayer(name)) {
-                    pickedupRelic = Relic.valueOf(relicString.toUpperCase());
+                    pickedupRelic = RelicSpawn.Relic.valueOf(relicString.toUpperCase());
                     Debug.sendDebugMessage(Component.literal("Picked up relic " + relicString));
                 }
             }
@@ -139,7 +125,7 @@ public class RelicTimer {
                     double ax = armorStand.getX();
                     double az = armorStand.getZ();
 
-                    for (Relic relic : Relic.values()) {
+                    for (Relic relic : RelicSpawn.Relic.values()) {
                         if (relic.placedTick != 0 && Misc.getDistance(relic.box.maxX, relic.box.maxZ, ax, az) < 1.5) {
                             relic.placedTick = placeTick;
                             Debug.sendDebugMessage(Component.literal("Set" + relic.name + " time to " + relic.placedTick + ", item id is " + id));
@@ -149,7 +135,7 @@ public class RelicTimer {
             }
 
             if (allRelicsPlaced()) {
-                for (Relic relic : Relic.values()) {
+                for (Relic relic : RelicSpawn.Relic.values()) {
                     Misc.addChatMessage(Component.literal(relic.name + " &aRelic placed in &e" + TextUtil.formatTicks(relic.placedTick) + "s&a."));
                     sentRelicTimes = true;
                 }
@@ -157,8 +143,8 @@ public class RelicTimer {
         });
 
 
-        Events.ON_BLOCK_INTERACTION.register(RelicTimer::blockInteraction);
-        RenderingEvents.FILLED.register(RelicTimer::worldRender);
+        Events.ON_BLOCK_INTERACTION.register(RelicSpawn::blockInteraction);
+        RenderingEvents.FILLED.register(RelicSpawn::worldRender);
 
     }
 
@@ -210,7 +196,7 @@ public class RelicTimer {
 
     private static boolean isARelicPos(BlockPos pos) {
         try {
-            for (Relic relic : Relic.values()) {
+            for (Relic relic : RelicSpawn.Relic.values()) {
                 if (clickedRelic(relic, pos)) return true;
             }
         } catch (Exception e) {
@@ -227,7 +213,7 @@ public class RelicTimer {
     private static void reset() {
         tick = Floor7.relicSpawnTicks;
         pickedupRelic = null;
-        for (Relic relic : Relic.values()) {
+        for (Relic relic : RelicSpawn.Relic.values()) {
             relic.placedTick = 0;
         }
         sentRelicTimes = false;
@@ -235,20 +221,15 @@ public class RelicTimer {
     }
 
     private static boolean allRelicsPlaced() {
-        for (Relic relic : Relic.values()) {
+        for (Relic relic : RelicSpawn.Relic.values()) {
             if (relic.placedTick == 0) return false;
         }
         return true;
     }
 
-    public static void testRelicGUI() {
-        forceGUI = true;
-        tick = Floor7.relicSpawnTicks;
-    }
-
     public static boolean testSetRelic(String name) {
         try {
-            pickedupRelic = RelicTimer.Relic.valueOf(name);
+            pickedupRelic = RelicSpawn.Relic.valueOf(name);
             Misc.addChatMessage(Component.literal("Relic is now: " + name));
             return true;
         } catch (IllegalArgumentException e) {
@@ -268,47 +249,7 @@ public class RelicTimer {
         Gizmos.cuboid(box, GizmoStyle.fill(ARGB.colorFromFloat(color[3], color[0], color[1], color[2])));
     }
 
-    public static boolean display() {
-        return Floor7.enableRelicStartTimer && Location.inDungeon() && Phase.inP5() && tick > -1 && !Floor7.replaceWithProgressBar;
-    }
-
-    public static void render(HUDComponent component, GuiGraphicsExtractor graphics) {
-        int color = tick > 7 ? GREEN_COLOR : RED_COLOR;
-        RenderUtils.drawTimer(component, graphics, tick, color);
-    }
-
-    public static boolean displayProgressBar() {
-        if (forceGUI) return true;
-        return Floor7.enableRelicStartTimer && Location.inDungeon() && Phase.inP5() && tick > -1 && Floor7.replaceWithProgressBar;
-    }
-
-    public static void renderProgressBar(HUDComponent component, GuiGraphicsExtractor graphics) {
-        int x = component.getScaledX();
-        int y = component.getScaledY();
-
-        //from valleyAddons
-        StringBuilder message = new StringBuilder("§8[");
-
-        if (Floor7.useValleyBar) {
-            for (int i = 0; i < Floor7.relicSpawnTicks; ++i) {
-                if (i < tick) {
-                    if (tick > 2) message.append("§a|");
-                    else message.append("§c|");
-                } else message.append("§7|");
-            }
-            message.append("§8]");
-        } else {
-            int diff = Floor7.relicSpawnTicks - tick;
-            for (int i = 0; i < Floor7.relicSpawnTicks; i++) {
-                if (i < diff) {
-                    if (tick < 2) message.append("§a|");
-                    else message.append("§c|");
-                } else message.append("§7|");
-            }
-            message.append("§8]");
-        }
-
-        RenderUtils.drawCenteredText(graphics, Minecraft.getInstance().font, Component.literal(message.toString()), x, y, component.getWidth(), 0xffffffff);
-
+    public static int getTick() {
+        return tick;
     }
 }

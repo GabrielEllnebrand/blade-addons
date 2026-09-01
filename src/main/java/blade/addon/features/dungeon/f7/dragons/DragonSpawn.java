@@ -4,15 +4,12 @@ import blade.addon.utils.Misc;
 import blade.addon.utils.config.values.Floor7;
 import blade.addon.utils.debug.Debug;
 import blade.addon.utils.events.Events;
-import blade.addon.utils.rendering.RenderUtils;
-import config.practical.hud.HUDComponent;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundLevelParticlesPacket;
 import net.minecraft.sounds.SoundEvents;
 
-public class DragSpawnTimer {
+public class DragonSpawn {
 
     public enum Team {
         ARCHER_TEAM("Archer team"), BERS_TEAM("Bers team");
@@ -52,8 +49,8 @@ public class DragSpawnTimer {
             return false;
         });
 
-        Events.ON_LOCATION_CHANGE.register(newLocation -> {
-            reset();
+        Events.ON_LOCATION_CHANGE.register(_ -> {
+            resetInfo();
             return false;
         });
     }
@@ -89,17 +86,13 @@ public class DragSpawnTimer {
         return true;
     }
 
-    private static void reset() {
+    private static void resetInfo() {
         hasDoneSplit = false;
         currentDragon = Dragon.NONE;
         tick = 0;
     }
 
-    public static boolean display() {
-        return Floor7.dragSpawnTimers && currentDragon != Dragon.NONE;
-    }
-
-    public static void render(HUDComponent component, GuiGraphicsExtractor graphics) {
-        RenderUtils.drawTimer(component, graphics, tick, currentDragon.color);
+    public static int getTick() {
+        return tick;
     }
 }

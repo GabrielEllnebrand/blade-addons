@@ -1,21 +1,16 @@
-package blade.addon.features.dungeon.f7.storm;
+package blade.addon.features.dungeon.f7.storm.pillar;
 
-import blade.addon.utils.Constants;
 import blade.addon.utils.Location;
 import blade.addon.utils.Scheduler;
 import blade.addon.utils.config.values.Floor7;
 import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.events.Events;
-import blade.addon.utils.rendering.RenderUtils;
-import config.practical.hud.HUDComponent;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
-import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 
 public class PillarExplode {
 
     private static final int TOTAL_TICKS = 20;
-    private static int tick = 0;
+    static int tick = 0;
 
     public static void init() {
         Events.ON_GAME_MESSAGE.register(text -> {
@@ -37,22 +32,5 @@ public class PillarExplode {
             tick = Math.max(tick - 1, 0);
             return false;
         });
-    }
-
-    public static boolean displayTimer() {
-        return Floor7.timePillarExplosion && tick > 0;
-    }
-
-    public static void renderTimer(HUDComponent component, GuiGraphicsExtractor graphics) {
-        int color = tick < 6 ? Constants.GREEN : Constants.RED;
-        RenderUtils.drawTimer(component, graphics, tick, color);
-    }
-
-    public static boolean display() {
-        return Floor7.notifyStormCrush && tick > 0;
-    }
-
-    public static void render(HUDComponent component, GuiGraphicsExtractor graphics) {
-        RenderUtils.drawCenteredText(graphics, component, Component.literal("§6||| §bStorm crushed! §6|||"));
     }
 }

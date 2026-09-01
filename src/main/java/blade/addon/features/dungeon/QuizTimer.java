@@ -2,25 +2,34 @@ package blade.addon.features.dungeon;
 
 import blade.addon.utils.Constants;
 import blade.addon.utils.Location;
+import blade.addon.utils.config.components.Categories;
 import blade.addon.utils.config.values.Dungeons;
 import blade.addon.utils.config.values.ExtraOptions;
 import blade.addon.utils.events.Events;
 import blade.addon.utils.rendering.RenderUtils;
+import config.practical.hud.HUDCategory;
 import config.practical.hud.HUDComponent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
+import org.jspecify.annotations.NonNull;
 
-public class QuizTimer {
+import java.util.List;
+
+public class QuizTimer extends HUDComponent {
 
     private static final int START_DURATION = 220;
     private static final int QUESTION_DURATION = 100;
 
-    private static int tick = 0;
-    private static int stage = 0;
+    private int tick = 0;
+    private int stage = 0;
 
-    public static void init() {
+    public QuizTimer() {
+        super("Quiz timer");
+    }
+
+    public void init() {
 
         Events.ON_GAME_MESSAGE.register(text -> {
             if (!Location.inDungeon()) return false;
@@ -45,18 +54,40 @@ public class QuizTimer {
             return false;
         });
 
-        Events.ON_LOCATION_CHANGE.register(newLocation -> {
+        Events.ON_LOCATION_CHANGE.register(_ -> {
             tick = 0;
             stage = 0;
             return false;
         });
     }
 
-    public static boolean display() {
+    @Override
+    public int getWidth() {
+        return 80;
+    }
+
+    @Override
+    public int getHeight() {
+        return 10;
+    }
+
+    @Override
+    public boolean editable() {
+        return Dungeons.quizTimer;
+    }
+
+    @Override
+    public boolean shouldRender() {
         return Dungeons.quizTimer && tick > 0;
     }
 
-    public static void render(HUDComponent component, GuiGraphicsExtractor graphics) {
+    @Override
+    public List<HUDCategory> categories() {
+        return List.of(Categories.CLEAR);
+    }
+
+    @Override
+    public void render(@NonNull GuiGraphicsExtractor guiGraphicsExtractor) {
         Font textRenderer = Minecraft.getInstance().font;
         if (textRenderer == null) return;
 
@@ -65,9 +96,9 @@ public class QuizTimer {
                     .append(Component.literal(stage + "/3").withColor(0xffffffff)
                             .append(Component.literal("): ").withColor(ExtraOptions.timerPrefixColor))
                             .append(Component.literal(Constants.DECIMAL_FORMAT.format(tick * Constants.TICK_DURATION) + "s").withColor(0xffffffff)));
-            graphics.text(textRenderer, drawnText, component.getScaledX(), component.getScaledY(), 0xffffffff, true);
+            guiGraphicsExtractor.text(textRenderer, drawnText, getScaledX(), getScaledY(), 0xffffffff, true);
         } else {
-            RenderUtils.drawPrefixedTimer(component, graphics, "Quiz", tick);
+            RenderUtils.drawPrefixedTimer(this, guiGraphicsExtractor, "Quiz", tick);
         }
     }
 

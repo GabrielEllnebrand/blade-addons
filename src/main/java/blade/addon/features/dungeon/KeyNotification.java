@@ -2,15 +2,14 @@ package blade.addon.features.dungeon;
 
 import blade.addon.utils.Location;
 import blade.addon.utils.Scheduler;
+import blade.addon.utils.config.components.Categories;
+import blade.addon.utils.config.components.CombineableNotification;
 import blade.addon.utils.config.values.Dungeons;
 import blade.addon.utils.dungeon.DungeonClass;
 import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.events.Events;
-import blade.addon.utils.rendering.RenderUtils;
-import config.practical.hud.HUDComponent;
+import config.practical.hud.HUDCategory;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
@@ -20,11 +19,12 @@ import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ResolvableProfile;
 
+import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class KeyNotifier {
+public class KeyNotification extends CombineableNotification {
 
     private final static Component BLOOD_KEY = Component.literal("§l§cBlood Key Dropped");
     private final static Component WITHER_KEY = Component.literal("§l§7Wither Key Dropped");
@@ -36,12 +36,16 @@ public class KeyNotifier {
     private final static Pattern AUTOMATIC_PICKUP_PATTERN = Pattern.compile("A (Wither|Blood) Key was picked up!");
     private final static Pattern NORMAL_PICKUP_PATTERN = Pattern.compile("has obtained (Wither|Blood) Key!");
 
-    private final static CopyOnWriteArrayList<Entity> foundKeys = new CopyOnWriteArrayList<>();
+    private final CopyOnWriteArrayList<Entity> foundKeys = new CopyOnWriteArrayList<>();
 
-    private static boolean hasKey = false;
-    private static boolean isBloodKey = false;
+    private boolean hasKey = false;
+    private boolean isBloodKey = false;
 
-    public static void init() {
+    public KeyNotification() {
+        super("Key notifier");
+    }
+
+    public void init() {
         ClientTickEvents.END_LEVEL_TICK.register((world) -> {
             if (!Location.inDungeon() || hasKey || !Dungeons.enableKeyNotifier || Phase.inBoss()) return;
 
@@ -96,7 +100,7 @@ public class KeyNotifier {
             return false;
         });
 
-        Events.ON_LOCATION_CHANGE.register(locations -> {
+        Events.ON_LOCATION_CHANGE.register(_ -> {
             if (Location.inDungeon()) {
                 isBloodKey = false;
                 hasKey = false;
@@ -106,19 +110,27 @@ public class KeyNotifier {
         });
     }
 
-    private static boolean isValidClass() {
-       return (Dungeons.displayKeyForAllClasses || DungeonClass.isClass(DungeonClass.ARCHER) || DungeonClass.isClass(DungeonClass.MAGE) && Dungeons.enableKeyNotifier);
-    }
-
-    public static boolean display() {
+    @Override
+    public boolean shouldRender() {
         return Location.inDungeon() && hasKey && isValidClass() && !Phase.inBoss();
     }
 
-    public static void render(HUDComponent component, GuiGraphicsExtractor graphics) {
-        int x = component.getScaledX();
-        int y = component.getScaledY();
+    @Override
+    public List<HUDCategory> categories() {
+        return List.of(Categories.CLEAR);
+    }
 
-        Component text = isBloodKey ? BLOOD_KEY : WITHER_KEY;
-        RenderUtils.drawCenteredText(graphics, Minecraft.getInstance().font, text, x, y, component.getWidth(), 0xffffffff);
+    @Override
+    public boolean enabled() {
+        return Dungeons.enableKeyNotifier;
+    }
+
+    @Override
+    public Component getText() {
+        return isBloodKey ? BLOOD_KEY : WITHER_KEY;
+    }
+
+    private boolean isValidClass() {
+       return (Dungeons.displayKeyForAllClasses || DungeonClass.isClass(DungeonClass.ARCHER) || DungeonClass.isClass(DungeonClass.MAGE) && Dungeons.enableKeyNotifier);
     }
 }

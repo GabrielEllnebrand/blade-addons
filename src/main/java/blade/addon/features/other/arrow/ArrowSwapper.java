@@ -1,13 +1,10 @@
-package blade.addon.features.other;
+package blade.addon.features.other.arrow;
 
 import blade.addon.utils.config.values.ExtraOptions;
 import blade.addon.utils.data.ItemUtil;
 import blade.addon.utils.events.Events;
-import blade.addon.utils.rendering.RenderUtils;
-import config.practical.hud.HUDComponent;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.component.ItemLore;
@@ -23,11 +20,11 @@ public class ArrowSwapper {
     private static final Pattern ARROW_PATTERN = Pattern.compile("^You set your selected arrow type to (.+)!$");
     private static final Component NOT_SCANNED_TEXT = Component.literal("Cant find arrow").withStyle(ChatFormatting.RED);
 
-    private static Component displayedText = NOT_SCANNED_TEXT;
+    static Component displayedText = NOT_SCANNED_TEXT;
     private static int tick = 0;
 
     public static void init() {
-        ClientTickEvents.END_LEVEL_TICK.register(world -> {
+        ClientTickEvents.END_LEVEL_TICK.register(_ -> {
             tick = Math.max(0, tick - 1);
         });
 
@@ -44,7 +41,7 @@ public class ArrowSwapper {
             return false;
         });
 
-        Events.ON_SLOT_CHANGE.register((slot, item) -> {
+        Events.ON_SLOT_CHANGE.register((_, item) -> {
             if (displayedText != NOT_SCANNED_TEXT) return false;
             if (!ItemUtil.itemHasName(item, "Arrow Swapper")) return false;
 
@@ -77,19 +74,7 @@ public class ArrowSwapper {
         displayedText = text;
     }
 
-    public static boolean display() {
-        return ExtraOptions.displayCurrentArrow;
-    }
-
-    public static void render(HUDComponent component, GuiGraphicsExtractor graphics) {
-        RenderUtils.drawText(graphics, component, displayedText, 0xffffffff);
-    }
-
     public static boolean displayNotification() {
         return ExtraOptions.arrowSwapNotification && tick > 0;
-    }
-
-    public static void renderNotification(HUDComponent component, GuiGraphicsExtractor graphics) {
-        RenderUtils.drawCenteredText(graphics, component, displayedText, 0xffffffff);
     }
 }

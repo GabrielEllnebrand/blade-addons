@@ -1,4 +1,4 @@
-package blade.addon.features.other;
+package blade.addon.features.other.pet;
 
 import blade.addon.utils.Constants;
 import blade.addon.utils.Misc;
@@ -6,13 +6,7 @@ import blade.addon.utils.config.values.ExtraOptions;
 import blade.addon.utils.data.ItemUtil;
 import blade.addon.utils.debug.Debug;
 import blade.addon.utils.events.Events;
-import blade.addon.utils.rendering.RenderUtils;
-import config.practical.hud.HUDComponent;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
-import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
@@ -39,13 +33,13 @@ public class SelectedPet {
 
     private static final int TOTAL_TICKS = 20;
 
-    private static final MutableComponent NO_PET = Component.literal("§cNo pet");
+    static final MutableComponent NO_PET = Component.literal("§cNo pet");
     private static final String identifierPrefix = "pets/";
 
-    private static MutableComponent currentPetText = NO_PET;
-    private static int currentPetLevel = -1;
-    private static String currentPetString = "";
-    private static Identifier spriteId = null;
+    static MutableComponent currentPetText = NO_PET;
+    static int currentPetLevel = -1;
+    static String currentPetString = "";
+    static Identifier spriteId = null;
     private static int tick = 0;
 
     private static boolean inLoadout = false;
@@ -120,7 +114,7 @@ public class SelectedPet {
             return false;
         });
 
-        ClientTickEvents.END_LEVEL_TICK.register((world -> {
+        ClientTickEvents.END_LEVEL_TICK.register((_ -> {
             tick = Math.max(tick - 1, 0);
         }));
 
@@ -171,8 +165,8 @@ public class SelectedPet {
 
         if (sendSound && ExtraOptions.sendOnPetSound) {
             Misc.sendSound(ExtraOptions.petSound);
-            tick = TOTAL_TICKS;
         }
+        tick = TOTAL_TICKS;
     }
 
     private static Style getStyle(Component text, String name) {
@@ -210,37 +204,8 @@ public class SelectedPet {
         }
     }
 
-    public static boolean display() {
-        return ExtraOptions.drawPetHUD;
-    }
-
-    public static void render(HUDComponent component, GuiGraphicsExtractor context) {
-        int x = component.getScaledX();
-        int y = component.getScaledY();
-
-        if (spriteId != null && ExtraOptions.includePetSprite) {
-            context.blitSprite(RenderPipelines.GUI_TEXTURED, spriteId, x, y, 16, 16, 0xffffffff);
-        }
-
-        Font textRenderer = Minecraft.getInstance().font;
-
-        int textX = x + (ExtraOptions.includePetSprite ? 18 : 0);
-        int textY = y + component.getHeight() - textRenderer.lineHeight;
-
-        if (ExtraOptions.displayPetLevel && currentPetText != NO_PET) {
-            context.text(textRenderer, Component.literal("§7[Lvl " + (currentPetLevel != -1 ? currentPetLevel : "???") + "]"), textX, textY, 0xffffffff, true);
-            textY -= textRenderer.lineHeight;
-        }
-
-        context.text(textRenderer, currentPetText, textX, textY, 0xffffffff, true);
-    }
-
     public static boolean displayNotification() {
         return ExtraOptions.sendPetSwapNotification && tick > 0;
-    }
-
-    public static void renderNotification(HUDComponent component, GuiGraphicsExtractor graphics) {
-        RenderUtils.drawCenteredText(graphics, component, currentPetText);
     }
 
 }

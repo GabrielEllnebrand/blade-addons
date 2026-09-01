@@ -1,6 +1,6 @@
 package blade.addon.mixin;
 
-import blade.addon.features.other.SelectedPet;
+import blade.addon.features.other.pet.SelectedPet;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ContainerInput;

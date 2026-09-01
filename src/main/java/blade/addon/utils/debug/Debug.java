@@ -1,10 +1,10 @@
 package blade.addon.utils.debug;
 
-import blade.addon.features.dungeon.f7.RelicTimer;
-import blade.addon.features.dungeon.f7.location.LocationNotifier;
+import blade.addon.features.dungeon.f7.relic.RelicSpawn;
 import blade.addon.utils.Constants;
 import blade.addon.utils.Location;
 import blade.addon.utils.Misc;
+import blade.addon.utils.config.components.Components;
 import blade.addon.utils.dungeon.DungeonClass;
 import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.dungeon.Section;
@@ -37,24 +37,24 @@ public class Debug {
                                          CommandBuildContext registryAccess) {
 
         dispatcher.register(ClientCommands.literal("badev")
-                .then(ClientCommands.literal("runInfo").executes(context -> {
+                .then(ClientCommands.literal("runInfo").executes(_ -> {
                     sendRunInfo();
                     return Constants.SUCCESS;
                 }))
 
-                .then(ClientCommands.literal("debug").executes(context -> {
+                .then(ClientCommands.literal("debug").executes(_ -> {
                     sendDebug = !sendDebug;
                     Misc.addChatMessage(Component.literal("Send debug: ").append(Misc.getStatusText(sendDebug)));
                     return Constants.SUCCESS;
                 }))
 
-                .then(ClientCommands.literal("sound").executes(context -> {
+                .then(ClientCommands.literal("sound").executes(_ -> {
                     sendSound = !sendSound;
                     Misc.addChatMessage(Component.literal("Send Sound: ").append(Misc.getStatusText(sendSound)));
                     return Constants.SUCCESS;
                 }))
 
-                .then(ClientCommands.literal("termInfo").executes(context -> {
+                .then(ClientCommands.literal("termInfo").executes(_ -> {
                     termInfo = !termInfo;
                     Misc.addChatMessage(Component.literal("Terminal info: ").append(Misc.getStatusText(termInfo)));
                     return Constants.SUCCESS;
@@ -62,11 +62,11 @@ public class Debug {
 
                 .then(ClientCommands.literal("sendNotification").then(ClientCommands.argument("message", StringArgumentType.string()).executes(context -> {
                     String message = StringArgumentType.getString(context, "message");
-                    LocationNotifier.startNotification("Someone", message);
+                    Components.atNotificationDisplay.startNotification("Someone", message);
                     return Constants.SUCCESS;
                 })))
 
-                .then(ClientCommands.literal("drawPositionBoxes").executes(context -> {
+                .then(ClientCommands.literal("drawPositionBoxes").executes(_ -> {
                     renderPositions = !renderPositions;
                     Misc.addChatMessage(Component.literal("Render positons: ").append(Misc.getStatusText(renderPositions)));
                     return Constants.SUCCESS;
@@ -83,7 +83,7 @@ public class Debug {
                                 .then(ClientCommands.argument("name", StringArgumentType.string())
                                         .executes(context -> {
                                             String name = StringArgumentType.getString(context, "name").toUpperCase();
-                                            if (RelicTimer.testSetRelic(name)) {
+                                            if (RelicSpawn.testSetRelic(name)) {
                                                 return Constants.SUCCESS;
                                             }
                                             return Constants.FAIL;
@@ -91,13 +91,8 @@ public class Debug {
                                 )
                         )
 
-                        .then(ClientCommands.literal("testRelicGUI").executes(context -> {
-                            RelicTimer.testRelicGUI();
-                            return Constants.SUCCESS;
-                        }))
-
-                        .then(ClientCommands.literal("getRelic").executes(context -> {
-                            RelicTimer.printRelic();
+                        .then(ClientCommands.literal("getRelic").executes(_ -> {
+                            RelicSpawn.printRelic();
                             return Constants.SUCCESS;
                         }))
 
@@ -105,7 +100,7 @@ public class Debug {
 
                 .then(ClientCommands.literal("location")
                         .then(ClientCommands.literal("current")
-                                .executes(context -> {
+                                .executes(_ -> {
                                     Misc.addChatMessage(Component.literal(Location.getCurrentLocation().toString()));
                                     return Constants.SUCCESS;
                                         }))
@@ -125,7 +120,7 @@ public class Debug {
 
                 .then(ClientCommands.literal("chatNoti")
                         .then(ClientCommands.literal("sendDebug")
-                                .executes(context -> {
+                                .executes(_ -> {
                                     sendNotiDebug = !sendNotiDebug;
                                     Misc.addChatMessage(Component.literal("Send notification debug: ").append(Misc.getStatusText(sendNotiDebug)));
                                     return Constants.SUCCESS;
@@ -135,13 +130,13 @@ public class Debug {
                 )
 
                 .then(ClientCommands.literal("classes")
-                        .executes(context -> {
+                        .executes(_ -> {
                             DungeonClass.printClasses();
                             return Constants.SUCCESS;
                         })
                 )
                 .then(ClientCommands.literal("currentClass")
-                        .executes(context -> {
+                        .executes(_ -> {
                             Misc.addChatMessage(Component.literal("Current class: " + DungeonClass.currentClass));
                             return Constants.SUCCESS;
                         })

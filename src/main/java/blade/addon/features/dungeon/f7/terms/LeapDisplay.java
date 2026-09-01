@@ -1,10 +1,12 @@
 package blade.addon.features.dungeon.f7.terms;
 
 import blade.addon.utils.Location;
+import blade.addon.utils.config.components.Categories;
 import blade.addon.utils.config.values.Floor7;
 import blade.addon.utils.data.EntityUtil;
 import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.rendering.RenderUtils;
+import config.practical.hud.HUDCategory;
 import config.practical.hud.HUDComponent;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -14,6 +16,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import org.jspecify.annotations.NonNull;
 
 import java.util.List;
 
@@ -21,13 +24,13 @@ import java.util.List;
  * Ported from valley with minimal changes
  */
 
-public class LeapNotification {
+public class LeapDisplay extends HUDComponent {
 
     private static final AABB[] REGIONS = {
             new AABB(91, 105, 46, 111, 127, 123),
             new AABB(17, 106, 121, 108, 145, 143),
             new AABB(-2, 106, 51, 20, 145, 128),
-            new AABB( 20, 26, 29, 191, 145, 58),
+            new AABB(20, 26, 29, 191, 145, 58),
             new AABB(3, 5, 0, 128, 48, 140)
     };
 
@@ -40,11 +43,15 @@ public class LeapNotification {
     private static final AABB RELIC_BOX = new AABB(51.5, 3, 73.5, 57.5, 8, 79.5);
 
 
-    private static int count = 0;
-    private static int currentSpot = -1;
-    private static boolean inBounds = false;
+    private int count = 0;
+    private int currentSpot = -1;
+    private boolean inBounds = false;
 
-    public static void init() {
+    public LeapDisplay() {
+        super("Leap display");
+    }
+
+    public void init() {
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             if (!Floor7.leapNotifications || !Phase.isInFloor7() || !Location.inDungeon() || !Phase.inBoss()) {
                 inBounds = false;
@@ -69,7 +76,42 @@ public class LeapNotification {
         });
     }
 
-    private static int getCount(ClientLevel world, LocalPlayer player, AABB box) {
+    @Override
+    public int getWidth() {
+        return 110;
+    }
+
+    @Override
+    public int getHeight() {
+        return 10;
+    }
+
+    @Override
+    public boolean editable() {
+        return Floor7.leapNotifications;
+    }
+
+    @Override
+    public boolean shouldRender() {
+        return Floor7.leapNotifications && inBounds && Phase.inBoss() && Location.inDungeon();
+    }
+
+    @Override
+    public List<HUDCategory> categories() {
+        return List.of(Categories.P3);
+    }
+
+    @Override
+    public void render(@NonNull GuiGraphicsExtractor guiGraphicsExtractor) {
+        int maxCount = getMaxCount();
+
+        String startFormat;
+        startFormat = (maxCount - count <= 1 ? "§9" : "§4");
+
+        RenderUtils.drawCenteredText(guiGraphicsExtractor, this, Component.literal(startFormat + count + "§9/" + maxCount + " Players Leaped"));
+    }
+
+    private int getCount(ClientLevel world, LocalPlayer player, AABB box) {
         List<Entity> entities = world.getEntities(player, box);
         int currentCount = 0;
         for (Entity entity : entities) {
@@ -81,7 +123,7 @@ public class LeapNotification {
         return currentCount;
     }
 
-    private static int getSpot(LocalPlayer player) {
+    private int getSpot(LocalPlayer player) {
         Vec3 pos = player.position();
         if (HEE2_BOX.contains(pos)) return 2;
         if (EE2_BOX.contains(pos)) return 2;
@@ -91,22 +133,9 @@ public class LeapNotification {
         else return -1;
     }
 
-    private static int getMaxCount() {
+    private int getMaxCount() {
         if (currentSpot == 2 && Floor7.assumeSplitEE2) return 3;
         if (currentSpot == 3 && Floor7.assumeCore) return 3;
         return 4;
-    }
-
-    public static boolean display() {
-        return Floor7.leapNotifications && inBounds && Phase.inBoss() && Location.inDungeon();
-    }
-
-    public static void render(HUDComponent component, GuiGraphicsExtractor graphics) {
-        int maxCount = getMaxCount();
-
-        String startFormat;
-        startFormat = (maxCount - count <= 1? "§9" : "§4");
-
-        RenderUtils.drawCenteredText(graphics, component, Component.literal(startFormat + count + "§9/" + maxCount + " Players Leaped"));
     }
 }

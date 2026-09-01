@@ -9,6 +9,7 @@ import blade.addon.utils.events.Events;
 import blade.addon.utils.events.interfaces.PhaseEvent;
 import blade.addon.utils.events.interfaces.RunEndEvent;
 import config.practical.hud.HUDComponent;
+import config.practical.hud.SimpleHUDComponent;
 import config.practical.manager.ConfigValue;
 
 import java.util.ArrayList;
@@ -62,7 +63,7 @@ public class Phase {
             return false;
         });
 
-        Events.ON_LOCATION_CHANGE.register(newLocation -> {
+        Events.ON_LOCATION_CHANGE.register(_ -> {
             reset();
             return false;
         });
@@ -232,7 +233,7 @@ public class Phase {
     }
 
     @ConfigValue
-    public static HUDComponent splitTimer = new HUDComponent(0, 0, SPLIT_LENGTH, 100, 1, "Splits",
+    public static HUDComponent splitTimer = new SimpleHUDComponent(0, 0, SPLIT_LENGTH, 100, 1, "Splits",
             () -> Location.inDungeon() && enableSplits && Phase.runStarted(),
             ((hudComponent, drawContext) -> {
                 int x = hudComponent.getScaledX();

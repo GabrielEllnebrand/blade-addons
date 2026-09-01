@@ -1,17 +1,13 @@
-package blade.addon.features.dungeon.f7.maxor;
+package blade.addon.features.dungeon.f7.maxor.crystals;
 
-import blade.addon.utils.Constants;
 import blade.addon.utils.Location;
 import blade.addon.utils.Misc;
 import blade.addon.utils.config.values.Floor7;
 import blade.addon.utils.data.EntityUtil;
 import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.events.Events;
-import blade.addon.utils.rendering.RenderUtils;
 import blade.addon.utils.times.PersonalBests;
-import config.practical.hud.HUDComponent;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.boss.enderdragon.EndCrystal;
@@ -68,14 +64,14 @@ public class CrystalSpawn {
             return false;
         });
 
-        Events.ON_LOCATION_CHANGE.register(newLocation -> {
+        Events.ON_LOCATION_CHANGE.register(_ -> {
             tick = 0;
             tickSincePicked = 0;
             pickedUp = false;
             return false;
         });
 
-        Events.ON_ENTITY_SPAWNED.register((entity, world) -> {
+        Events.ON_ENTITY_SPAWNED.register((entity, _) -> {
             if (!pickedUp || !Location.inDungeon() || !Floor7.enableCrystalSpawnTime || !Phase.inP1()) return false;
 
             if (entity instanceof EndCrystal crystal) {
@@ -95,21 +91,12 @@ public class CrystalSpawn {
         });
     }
 
-    public static boolean display() {
-        return tick > 0 && Location.inDungeon() && Phase.inP1() && Floor7.enableCrystalSpawnTime;
-    }
-
-    public static void render(HUDComponent component, GuiGraphicsExtractor graphics) {
-        RenderUtils.drawTimer(component, graphics, tick, Constants.LIGHT_PURPLE);
+    public static int getTick() {
+        return tick;
     }
 
     public static boolean displayNotification() {
         return (Floor7.instantlyDisplayCrystalReminder || tickSincePicked > REMINDER_TICK) && Location.inDungeon() && Phase.inP1() && Floor7.crystalPlaceReminder && pickedUp;
     }
-
-    public static void renderNotification(HUDComponent component, GuiGraphicsExtractor graphics) {
-        RenderUtils.drawCenteredText(graphics, component, Component.literal("§bPlace Crystal!"));
-    }
-
 
 }

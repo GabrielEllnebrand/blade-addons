@@ -6,22 +6,30 @@ import blade.addon.utils.config.values.ExtraOptions;
 import blade.addon.utils.data.ItemUtil;
 import blade.addon.utils.events.Events;
 import blade.addon.utils.rendering.RenderUtils;
+import config.practical.hud.HUDCategory;
 import config.practical.hud.HUDComponent;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.animal.wolf.WolfSoundVariants;
+import org.jspecify.annotations.NonNull;
 
-public class RagDisplay {
+import java.util.List;
+
+public class RagDisplay extends HUDComponent {
 
     private static final SoundEvent SOUND = SoundEvents.WOLF_SOUNDS.get(WolfSoundVariants.SoundSet.CLASSIC).adultSounds().deathSound().value();
     private static final SoundEvent OLD_RAG_SOUND = SoundEvent.createVariableRangeEvent(Identifier.fromNamespaceAndPath(Constants.NAMESPACE, "wolf-howl"));
     private static final int TOTAL_TICKS = 200;
 
-    private static int tick = 0;
+    private int tick = 0;
 
-    public static void init() {
+    public RagDisplay() {
+        super("Rag axe display");
+    }
+
+    public void init() {
         Events.ON_SOUND.register((soundEvent, volume, pitch) -> {
             if (!ExtraOptions.enableRagaxeDisplay && !ExtraOptions.useCustomRagSound && !ExtraOptions.useOldRagSound)
                 return false;
@@ -49,12 +57,34 @@ public class RagDisplay {
         });
     }
 
-    public static boolean display() {
+    @Override
+    public int getWidth() {
+        return 30;
+    }
+
+    @Override
+    public int getHeight() {
+        return 10;
+    }
+
+    @Override
+    public boolean editable() {
+        return ExtraOptions.enableRagaxeDisplay;
+    }
+
+    @Override
+    public boolean shouldRender() {
         return tick > 0;
     }
 
-    public static void render(HUDComponent component, GuiGraphicsExtractor graphics) {
-        RenderUtils.drawTimer(component, graphics, tick, Constants.YELLOW);
+    @Override
+    public List<HUDCategory> categories() {
+        return null;
+    }
+
+    @Override
+    public void render(@NonNull GuiGraphicsExtractor guiGraphicsExtractor) {
+        RenderUtils.drawTimer(this, guiGraphicsExtractor, tick, Constants.YELLOW);
     }
 
 }

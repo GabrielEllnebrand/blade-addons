@@ -16,8 +16,8 @@ public class DragonTracer {
     private static void render(LevelRenderContext context, PoseStack matrixStack, VertexConsumer consumer) {
         if (!Floor7.dragonTracer) return;
 
-        Dragon dragon = DragSpawnTimer.currentDragon;
-        if (dragon == null || dragon == Dragon.NONE || !DragSpawnTimer.hasDoneSplit) return;
+        Dragon dragon = DragonSpawn.currentDragon;
+        if (dragon == null || dragon == Dragon.NONE || !DragonSpawn.hasDoneSplit) return;
 
         RenderUtils.renderLineTo(context, dragon.spawnPos, dragon.color);
     }

@@ -1,8 +1,8 @@
 package blade.addon.mixin;
 
-import blade.addon.features.dungeon.f7.terms.DeviceNotifier;
 import blade.addon.features.dungeon.f7.terms.TitleHider;
-import blade.addon.features.item.HeldItemToolTip;
+import blade.addon.features.dungeon.f7.terms.device.DeviceNotifier;
+import blade.addon.utils.config.components.Components;
 import blade.addon.utils.config.values.ExtraOptions;
 import blade.addon.utils.config.values.Visual;
 import blade.addon.utils.interfaces.GameHud;
@@ -74,15 +74,15 @@ public class GuiMixin implements GameHud {
     @Inject(method = "extractSelectedItemName", at=@At("HEAD"))
     private void getFadeDuration(GuiGraphicsExtractor graphics, CallbackInfo ci) {
         if (!ExtraOptions.moveToolTip) return;
-        HeldItemToolTip.setFade(toolHighlightTimer);
+        Components.toolTipDisplay.setFade(toolHighlightTimer);
     }
 
     @Inject(method = "extractSelectedItemName", at= @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphicsExtractor;textWithBackdrop(Lnet/minecraft/client/gui/Font;Lnet/minecraft/network/chat/Component;IIII)V"), cancellable = true)
     private void renderHeldItemTooltip(GuiGraphicsExtractor graphics, CallbackInfo ci, @Local(name = "str") MutableComponent mutableText, @Local(name = "alpha") int color) {
         if (!ExtraOptions.moveToolTip) return;
         ci.cancel();
-        HeldItemToolTip.setText(mutableText);
-        HeldItemToolTip.setColor(color);
+        Components.toolTipDisplay.setText(mutableText);
+        Components.toolTipDisplay.setColor(color);
         Profiler.get().pop();
     }
 

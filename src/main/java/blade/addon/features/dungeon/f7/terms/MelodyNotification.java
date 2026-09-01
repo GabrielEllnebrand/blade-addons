@@ -2,35 +2,40 @@ package blade.addon.features.dungeon.f7.terms;
 
 import blade.addon.utils.Constants;
 import blade.addon.utils.Location;
+import blade.addon.utils.config.components.Categories;
+import blade.addon.utils.config.components.CombineableNotification;
 import blade.addon.utils.config.values.Dungeons;
 import blade.addon.utils.config.values.Floor7;
 import blade.addon.utils.data.EntityUtil;
 import blade.addon.utils.dungeon.DungeonClass;
 import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.events.Events;
-import blade.addon.utils.rendering.RenderUtils;
-import config.practical.hud.HUDComponent;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import config.practical.hud.HUDCategory;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 
+import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class MelodyWarning {
+public class MelodyNotification extends CombineableNotification {
 
     private static final Pattern PATTERN = Pattern.compile("(\\d+)%");
 
-    private static final CopyOnWriteArrayList<String> names = new CopyOnWriteArrayList<>();
+    private final CopyOnWriteArrayList<String> names = new CopyOnWriteArrayList<>();
 
-    private static boolean melodyStarted = false;
-    private static boolean ownUsername = false;
-    private static String name;
-    private static int furthestProgress = 0;
+    private  boolean melodyStarted = false;
+    private  boolean ownUsername = false;
+    private  String name;
+    private  int furthestProgress = 0;
 
-    public static void init() {
+    public MelodyNotification() {
+        super("melody warning notification");
+    }
+
+    public void init() {
         Events.ON_PARTY_MESSAGE.register((username, message) -> {
             if (!Floor7.notifiyMelody) return false;
             if (!Location.inDungeon() || !Phase.inTerminals()) return false;
@@ -51,25 +56,25 @@ public class MelodyWarning {
             return false;
         });
 
-        Events.ON_TERMINAL.register((formattedName, action, objective, current, total) -> {
+        Events.ON_TERMINAL.register((formattedName, _, objective, _, _) -> {
             if (names.contains(formattedName) && objective.equals("terminal")) {
-                reset();
+                resetProgress();
             }
             return false;
         });
 
         Events.ON_SECTION_CHANGE.register(() -> {
-            reset();
+            resetProgress();
             return false;
         });
 
-        Events.ON_LOCATION_CHANGE.register(newLocation -> {
-           reset();
+        Events.ON_LOCATION_CHANGE.register(_ -> {
+            resetProgress();
             return false;
         });
     }
 
-    private static void reset() {
+    private  void resetProgress() {
         names.clear();
         furthestProgress = 0;
         name = "";
@@ -77,11 +82,23 @@ public class MelodyWarning {
         ownUsername = false;
     }
 
-    public static boolean display() {
+    @Override
+    public boolean shouldRender() {
         return melodyStarted && Floor7.notifiyMelody && !ownUsername;
     }
 
-    public static void render(HUDComponent component, GuiGraphicsExtractor graphics) {
+    @Override
+    public List<HUDCategory> categories() {
+        return List.of(Categories.P3);
+    }
+
+    @Override
+    public boolean enabled() {
+        return Floor7.notifiyMelody;
+    }
+
+    @Override
+    public Component getText() {
         DungeonClass dungeonClass = DungeonClass.getClass(name);
         int num = Math.min(furthestProgress / 25, 3);
 
@@ -95,7 +112,6 @@ public class MelodyWarning {
 
         Component text = nameText.append(infoText);
 
-        RenderUtils.drawCenteredText(graphics, component, text);
+        return text;
     }
-
 }

@@ -1,50 +1,78 @@
 package blade.addon.utils.config.components;
 
-import blade.addon.features.dungeon.f7.RelicTimer;
-import blade.addon.features.dungeon.f7.maxor.CrystalSpawn;
-import blade.addon.features.dungeon.f7.storm.StormTickTimer;
-import blade.addon.features.dungeon.f7.terms.GoldorTickTimer;
-import blade.addon.features.dungeon.f7.terms.TermStartTimer;
 import blade.addon.utils.Constants;
 import blade.addon.utils.config.values.Floor7;
 import blade.addon.utils.rendering.RenderUtils;
+import config.practical.hud.HUDCategory;
 import config.practical.hud.HUDComponent;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
+import org.jspecify.annotations.NonNull;
 
-public class CombinedTickTimer {
+import java.util.ArrayList;
+import java.util.List;
 
-    public static boolean display() {
-        if (!Floor7.combineTickTimers) return false;
+public class CombinedTickTimer extends HUDComponent {
 
-        if (CrystalSpawn.display()) {
-            return true;
-        } else if (StormTickTimer.display()) {
-            return true;
-        } else if (TermStartTimer.display()) {
-            return true;
-        } else if (GoldorTickTimer.display()) {
-            return true;
-        } else if (RelicTimer.display()) {
-            return true;
+    private final CombineableTickTimer[] timers;
+
+    public CombinedTickTimer(CombineableTickTimer... timers) {
+        super("Combined tick timer");
+        this.timers = timers;
+    }
+
+    @Override
+    public int getWidth() {
+        return 30;
+    }
+
+    @Override
+    public int getHeight() {
+        return 10;
+    }
+
+    @Override
+    public boolean editable() {
+        return Floor7.combineTickTimers;
+    }
+
+    @Override
+    public boolean shouldRender() {
+        for (CombineableTickTimer timer: timers) {
+            if (timer.shouldRender()) {
+                return true;
+            }
         }
         return false;
     }
 
-    public static void render(HUDComponent component, GuiGraphicsExtractor graphics) {
-        if (CrystalSpawn.display()) {
-            CrystalSpawn.render(component, graphics);
-        } else if (StormTickTimer.display()) {
-            StormTickTimer.render(component, graphics);
-        } else if (TermStartTimer.display()) {
-          TermStartTimer.render(component, graphics);
-        } else if (GoldorTickTimer.display()) {
-            GoldorTickTimer.render(component, graphics);
-        } else if (RelicTimer.display()) {
-            RelicTimer.render(component, graphics);
-        } else {
-            RenderUtils.drawCenteredText(graphics, component, Component.literal(Constants.DECIMAL_FORMAT.format(0.0)));
+    @Override
+    public List<HUDCategory> categories() {
+        List<HUDCategory> categories = new ArrayList<>();
+
+        for (CombineableTickTimer timer: timers) {
+            if (timer.enabled()) {
+                categories.addAll(timer.categories());
+            }
         }
+
+        return categories;
+    }
+
+    @Override
+    public void render(@NonNull GuiGraphicsExtractor guiGraphicsExtractor) {
+        for (CombineableTickTimer timer: timers) {
+            if (timer.shouldRender()) {
+                timer.draw(guiGraphicsExtractor, getScaledX(), getScaledY());
+                return;
+            }
+        }
+    }
+
+    @Override
+    public void renderEditTemplate(@NonNull GuiGraphicsExtractor graphics) {
+        RenderUtils.drawCenteredText(graphics, Minecraft.getInstance().font, Component.literal(Constants.DECIMAL_FORMAT.format(0.0)), getScaledX(), getScaledY(), 30, 0xffffffff);
 
     }
 }

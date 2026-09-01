@@ -1,25 +1,38 @@
 package blade.addon.features.dungeon.f7.terms;
 
+import blade.addon.utils.config.components.Categories;
 import blade.addon.utils.config.values.Floor7;
 import blade.addon.utils.data.TextUtil;
 import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.dungeon.Section;
 import blade.addon.utils.events.Events;
 import blade.addon.utils.rendering.RenderUtils;
+import config.practical.hud.HUDCategory;
 import config.practical.hud.HUDComponent;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
+import org.jspecify.annotations.NonNull;
 
-public class SectionProgress {
+import java.util.List;
 
-    private static int completed = 0;
-    private static int sectionTotal = 7;
-    private static String prevObjective = "";
+public class SectionProgress extends HUDComponent {
 
-    private static String completedFormat = "";
-    private static String objectiveFormat = "";
+    private int completed = 0;
+    private int sectionTotal = 7;
+    private String prevObjective = "";
 
-    public static void init() {
+    private String completedFormat = "";
+    private String objectiveFormat = "";
+
+    public SectionProgress() {
+        super("Section progress");
+    }
+
+    public void init() {
+
+        prevObjective = "";
+        completedFormat = "";
+        objectiveFormat = "";
 
         updateObjectiveFormat();
         updateProgressFormat();
@@ -31,9 +44,7 @@ public class SectionProgress {
             if (string.equals("The gate has been destroyed!")) {
                 prevObjective = "Gate Destroyed";
                 updateObjectiveFormat();
-            }
-
-            else if (string.equals("The gate will open in 5 seconds!")) {
+            } else if (string.equals("The gate will open in 5 seconds!")) {
                 prevObjective = "Break Gate";
                 updateObjectiveFormat();
             }
@@ -41,7 +52,7 @@ public class SectionProgress {
             return false;
         });
 
-        Events.ON_TERMINAL.register((formattedName, action, objective, current, total) -> {
+        Events.ON_TERMINAL.register((_, _, objective, current, total) -> {
             completed = current;
             sectionTotal = total;
             prevObjective = TextUtil.capitaliseFirst(objective);
@@ -59,7 +70,7 @@ public class SectionProgress {
             return false;
         });
 
-        Events.ON_LOCATION_CHANGE.register(newLocation -> {
+        Events.ON_LOCATION_CHANGE.register(_ -> {
             completed = 0;
             sectionTotal = 7;
             return false;
@@ -67,7 +78,41 @@ public class SectionProgress {
 
     }
 
-    private static void updateObjectiveFormat() {
+    @Override
+    public int getWidth() {
+        return 30;
+    }
+
+    @Override
+    public int getHeight() {
+        return 10;
+    }
+
+    @Override
+    public boolean editable() {
+        return Floor7.showSectionProgress;
+    }
+
+    @Override
+    public boolean shouldRender() {
+        return Floor7.showSectionProgress && Phase.inTerminals();
+    }
+
+    @Override
+    public List<HUDCategory> categories() {
+        return List.of(Categories.P3);
+    }
+
+    @Override
+    public void render(@NonNull GuiGraphicsExtractor guiGraphicsExtractor) {
+        if (Floor7.sectionPrevObjective) {
+            RenderUtils.drawCenteredText(guiGraphicsExtractor, this, Component.literal(objectiveFormat + prevObjective + " ").append(getProgressText()));
+        } else {
+            RenderUtils.drawCenteredText(guiGraphicsExtractor, this, getProgressText());
+        }
+    }
+
+    private void updateObjectiveFormat() {
         objectiveFormat = switch (prevObjective) {
             case "Lever", "Gate Destroyed" -> "§c";
             case "Device" -> "§d";
@@ -77,18 +122,18 @@ public class SectionProgress {
         };
     }
 
-    private static void updateProgressFormat() {
+    private void updateProgressFormat() {
         if (completed >= sectionTotal) completedFormat = "§6§l";
         else if (sectionTotal - completed == 1 || (completed == 7 && sectionTotal == 8)) completedFormat = "§a";
         else if (completed >= 3) completedFormat = "§e";
         else completedFormat = "§c";
     }
 
-    private static int getTotal() {
+    private int getTotal() {
         return Section.getSection() != 2 ? 7 : 8;
     }
 
-    private static Component getProgressText() {
+    private Component getProgressText() {
         if (Floor7.sectionColorProgress) {
             return Component.literal("§f(" + completedFormat + completed + "§f/§a" + sectionTotal + "§f)");
         } else {
@@ -96,17 +141,6 @@ public class SectionProgress {
         }
     }
 
-    public static boolean display() {
-        return Floor7.showSectionProgress && Phase.inTerminals();
-    }
 
-    public static void render(HUDComponent component, GuiGraphicsExtractor graphics) {
-        if (Floor7.sectionPrevObjective) {
-            RenderUtils.drawCenteredText(graphics, component, Component.literal(objectiveFormat + prevObjective + " ").append(getProgressText()));
-        } else {
-            RenderUtils.drawCenteredText(graphics, component, getProgressText());
-        }
-
-    }
 
 }

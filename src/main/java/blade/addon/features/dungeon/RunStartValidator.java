@@ -2,14 +2,14 @@ package blade.addon.features.dungeon;
 
 import blade.addon.utils.Location;
 import blade.addon.utils.Scheduler;
+import blade.addon.utils.config.components.Categories;
+import blade.addon.utils.config.components.CombineableNotification;
 import blade.addon.utils.config.values.Dungeons;
 import blade.addon.utils.data.PartyUtil;
 import blade.addon.utils.dungeon.Phase;
 import blade.addon.utils.events.Events;
-import blade.addon.utils.rendering.RenderUtils;
-import config.practical.hud.HUDComponent;
+import config.practical.hud.HUDCategory;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
@@ -18,11 +18,12 @@ import net.minecraft.world.scores.PlayerTeam;
 import net.minecraft.world.scores.Scoreboard;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class RunStartValidator {
+public class RunStartValidator extends CombineableNotification {
 
     private static final Pattern STARTING_PATTERN = Pattern.compile("^Starting in \\d second(s)?");
     private static final Pattern CLASS_PATTERN = Pattern.compile("\\[([ABHMT])]");
@@ -35,7 +36,11 @@ public class RunStartValidator {
 
     private static boolean hasTicked = false;
 
-    public static void init() {
+    public RunStartValidator() {
+        super("Run start validator");
+    }
+
+    public void init() {
         Events.ON_GAME_MESSAGE.register(message -> {
             if (!Location.inDungeon() || Phase.runStarted() || !Dungeons.detectDuplicateClass) return false;
 
@@ -49,16 +54,16 @@ public class RunStartValidator {
             return false;
         });
 
-        Events.ON_LOCATION_CHANGE.register(location -> {
+        Events.ON_LOCATION_CHANGE.register(_ -> {
             if (Location.inDungeon()) {
                 PartyUtil.sendPacket();
-                reset();
+                resetInfo();
             }
 
             return false;
         });
 
-        Events.ON_PLAYER_ENTRY.register(receivedEntry -> {
+        Events.ON_PLAYER_ENTRY.register(_ -> {
             //will only check after the first game message in case of false positives
             if (!hasTicked) return false;
             if (!Location.inDungeon() || Phase.runStarted() || (!Dungeons.detectDuplicateClass && !Dungeons.detectPlayerCount))
@@ -68,7 +73,30 @@ public class RunStartValidator {
         });
     }
 
-    private static boolean validate() {
+    @Override
+    public boolean shouldRender() {
+        return Location.inDungeon() && !Phase.runStarted() && (hasDupeClasses || notEnoughPlayers);
+    }
+
+    @Override
+    public List<HUDCategory> categories() {
+        return List.of(Categories.CLEAR);
+    }
+
+    @Override
+    public boolean enabled() {
+        return (Dungeons.detectDuplicateClass || Dungeons.detectPlayerCount);
+
+    }
+
+    @Override
+    public Component getText() {
+        if (hasDupeClasses) return DUPE_CLASS_TEXT;
+        else if (notEnoughPlayers) return PLAYER_COUNT_TEXT;
+        else return Component.literal("§cSome warning text");
+    }
+
+    private boolean validate() {
         ClientLevel world = Minecraft.getInstance().level;
         LocalPlayer player = Minecraft.getInstance().player;
         if (world == null || player == null) return false;
@@ -81,7 +109,7 @@ public class RunStartValidator {
         return hasDupeClasses || notEnoughPlayers;
     }
 
-    private static void checkDuplicateClasses(HashMap<String, Integer> map) {
+    private void checkDuplicateClasses(HashMap<String, Integer> map) {
         for (Map.Entry<String, Integer> entry : map.entrySet()) {
             String clazz = entry.getKey();
             Integer count = entry.getValue();
@@ -96,7 +124,7 @@ public class RunStartValidator {
         hasDupeClasses = false;
     }
 
-    private static void checkPlayerCount(HashMap<String, Integer> map) {
+    private void checkPlayerCount(HashMap<String, Integer> map) {
         if (!Dungeons.detectPlayerCount) {
             notEnoughPlayers = false;
             return;
@@ -109,13 +137,13 @@ public class RunStartValidator {
         notEnoughPlayers = count < PartyUtil.getPlayerCount();
     }
 
-    private static void reset() {
+    private void resetInfo() {
         hasDupeClasses = false;
         notEnoughPlayers = false;
         hasTicked = false;
     }
 
-    private static HashMap<String, Integer> readScoreBoard(Scoreboard scoreboard) {
+    private HashMap<String, Integer> readScoreBoard(Scoreboard scoreboard) {
         HashMap<String, Integer> map = new HashMap<>();
 
         for (PlayerTeam team : scoreboard.getPlayerTeams()) {
@@ -129,19 +157,5 @@ public class RunStartValidator {
             map.put(clazz, count + 1);
         }
         return map;
-    }
-
-    public static boolean display() {
-        return Location.inDungeon() && !Phase.runStarted() && (hasDupeClasses || notEnoughPlayers);
-    }
-
-    public static void render(HUDComponent component, GuiGraphicsExtractor graphics) {
-        if (hasDupeClasses) {
-            RenderUtils.drawCenteredText(graphics, component, DUPE_CLASS_TEXT);
-        } else if (notEnoughPlayers) {
-            RenderUtils.drawCenteredText(graphics, component, PLAYER_COUNT_TEXT);
-        } else {
-            RenderUtils.drawCenteredText(graphics, component, Component.literal("§cSome warning text"));
-        }
     }
 }
