@@ -47,11 +47,13 @@ public class PracticeSS {
     private static final int UNLUCKY_DURATION = 36;
     private static final int START_WAIT_DURATION = 6;
 
+    private static final int PHASES = 4;
+
     private static boolean started = false;
     private static boolean showingPattern = false;
 
     private static int currentIndex = 0;
-    private static int endIndex = 4;
+    private static int endIndex = 3;
 
     private static int ticksLeft = 0;
     private static int totalTicks = 0;
@@ -68,7 +70,7 @@ public class PracticeSS {
 
     public static void init() {
 
-        Events.ON_BLOCK_INTERACTION.register((BlockHitResult result, ItemStack item) -> {
+        Events.ON_BLOCK_INTERACTION.register((BlockHitResult result, ItemStack _) -> {
             if (!ExtraOptions.practiceSSAnywhere && !Location.in(Location.PRIVATE_ISLAND)) return false;
             ClientLevel world = Minecraft.getInstance().level;
             if (world == null) return false;
@@ -113,7 +115,7 @@ public class PracticeSS {
         });
 
         RenderingEvents.FILLED.register(PracticeSS::render);
-        Events.ON_LOCATION_CHANGE.register(location -> {
+        Events.ON_LOCATION_CHANGE.register(_ -> {
             reset();
             return false;
         });
@@ -154,7 +156,7 @@ public class PracticeSS {
             Misc.sendSound(ExtraOptions.ssSound);
 
 
-            if (currentIndex == 5) {
+            if (currentIndex == PHASES) {
                 recordTime();
             } else if (currentIndex == endIndex) {
                 incStage();

@@ -57,7 +57,7 @@ public class HidePlayers {
     }
 
     public static boolean shouldHidePlayers(Player player) {
-        if (!Location.inDungeon() || !EntityUtil.isARealPlayer(player) || EntityUtil.isClientPlayer(player) || Phase.runStarted()) return false;
+        if (!Location.inDungeon() || !EntityUtil.isARealPlayer(player) || EntityUtil.isClientPlayer(player)) return false;
 
         if (testHideAtLeap()) {
             return true;

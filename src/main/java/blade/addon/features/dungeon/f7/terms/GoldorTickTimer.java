@@ -50,7 +50,7 @@ public class GoldorTickTimer extends CombineableTickTimer {
 
     @Override
     public int getColor() {
-        double mod = getTime();
+        double mod = getTime() % 3;
         return  (mod < 1 ? Constants.GREEN : mod < 2 ? Constants.GOLD : Constants.RED);
     }
 
