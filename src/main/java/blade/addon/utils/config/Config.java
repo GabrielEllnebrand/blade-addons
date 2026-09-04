@@ -20,6 +20,7 @@ import config.practical.widgets.*;
 import config.practical.widgets.color.ConfigColor;
 import config.practical.widgets.options.ConfigOptions;
 import config.practical.widgets.sliders.ConfigDouble;
+import config.practical.widgets.sliders.ConfigFloat;
 import config.practical.widgets.sliders.ConfigInt;
 import config.practical.widgets.sound.ConfigSound;
 import net.minecraft.client.Minecraft;
@@ -417,6 +418,7 @@ public class Config {
         ConfigSection toolTip = new ConfigSection(Component.literal("ToolTips"));
         toolTip.add(new ConfigBool(Component.literal("Item quality"), () -> Visual.itemQuality, bool -> Visual.itemQuality = bool));
         toolTip.add(new ConfigBool(Component.literal("Pet candy"), () -> Visual.petCandy, bool -> Visual.petCandy = bool));
+        toolTip.add(new ConfigFloat(Component.literal("Tooltip size"), () -> Visual.tooltipSize, num -> Visual.tooltipSize = num, 0.1f, 0.5f, 2));
         visual.add(toolTip);
 
         return visual;

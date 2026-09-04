@@ -1,18 +1,27 @@
 package blade.addon.mixin;
 
 import blade.addon.utils.config.values.Visual;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipPositioner;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.joml.Matrix3x2fStack;
+import org.jspecify.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyArgs;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
+
+import java.util.List;
 
 @Mixin(GuiGraphicsExtractor.class)
 public class GuiGraphicsExtractorMixin {
@@ -20,8 +29,7 @@ public class GuiGraphicsExtractorMixin {
     @Final
     @Shadow
     private Matrix3x2fStack pose;
-
-
+    
     @ModifyVariable(method = "itemCooldown", at=@At("STORE"), ordinal = 0)
     private float noCooldown(float f) {
         return Visual.hideCooldown? 0: f;
@@ -44,6 +52,38 @@ public class GuiGraphicsExtractorMixin {
         if (Visual.oldPlayerHead && stack.getItem() == Items.PLAYER_HEAD) {
             pose.popMatrix();
         }
+    }
+
+    @Inject(method = "tooltip", at= @At(value = "INVOKE", target = "Lorg/joml/Matrix3x2fStack;pushMatrix()Lorg/joml/Matrix3x2fStack;"))
+    private void scaleUpTooltip_head(Font font, List<ClientTooltipComponent> lines, int xo, int yo, ClientTooltipPositioner positioner, @Nullable Identifier style, CallbackInfo ci) {
+        pose.scale(Visual.tooltipSize);
+    }
+
+    @ModifyArgs(method = "tooltip", at= @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/inventory/tooltip/ClientTooltipPositioner;positionTooltip(IIIIII)Lorg/joml/Vector2ic;"))
+    private void scaleUpTooltip(Args args) {
+
+        //Yeah, this is a bad way to do this, but I'm lazy
+
+        int sw = args.get(0);
+        int sh = args.get(1);
+        int x = args.get(2);
+        int y = args.get(3);
+        int w = args.get(4);
+        int h = args.get(5);
+
+        float scaledSW = (float)sw / Visual.tooltipSize;
+        float scaledSH = (float)sh / Visual.tooltipSize;
+        float scaledX = (float)x / Visual.tooltipSize;
+        float scaledY = (float)y / Visual.tooltipSize;
+        float scaledW = (float)w / Visual.tooltipSize;
+        float scaledH = (float)h / Visual.tooltipSize;
+
+        args.set(0, (int)scaledSW);
+        args.set(1, (int)scaledSH);
+        args.set(2, (int)scaledX);
+        args.set(3, (int)scaledY);
+        args.set(4, (int)scaledW);
+        args.set(5, (int)scaledH);
     }
 
 }

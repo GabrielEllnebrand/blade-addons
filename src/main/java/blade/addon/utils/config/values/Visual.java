@@ -61,4 +61,7 @@ public class Visual {
     @ConfigValue
     public static boolean petCandy = false;
 
+    @ConfigValue
+    public static float tooltipSize = 1;
+
 }
