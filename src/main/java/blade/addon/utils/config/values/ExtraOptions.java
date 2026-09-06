@@ -144,4 +144,14 @@ public class ExtraOptions {
 
     @ConfigValue
     public static boolean formatMathResult = true;
+
+    @ConfigValue
+    public static boolean enableLoadoutDisplay = false;
+
+    @ConfigValue
+    public static boolean enableLoadoutNotification = false;
+
+    @ConfigValue
+    public static SoundData loadoutSound = new SoundData(SoundEvents.NOTE_BLOCK_PLING.value(), 0, 1);
+
 }

@@ -22,6 +22,8 @@ import blade.addon.features.notifications.NotificationDisplay;
 import blade.addon.features.other.*;
 import blade.addon.features.other.arrow.ArrowDisplay;
 import blade.addon.features.other.arrow.ArrowNotification;
+import blade.addon.features.other.loadout.LoadoutDisplay;
+import blade.addon.features.other.loadout.LoadoutNotification;
 import blade.addon.features.other.pet.PetDisplay;
 import blade.addon.features.other.pet.PetNotification;
 import config.practical.hud.HUDComponent;
@@ -100,11 +102,14 @@ public class Components {
     public static CombineableNotification bloodNotificationDisplay = new BloodNotification();
 
     @ConfigValue
+    public static CombineableNotification loadoutNotification = new LoadoutNotification();
+
+    @ConfigValue
     public static HUDComponent combinedNotifications = new CombinedNotification(
             duplicateClassDisplay, keyNotifierDisplay, pre4Notification,
             melodyNotification, stormCrushNotification, crystalReminderNotification,
             chatNotification, petTitleNotification, arrowSwapDisplay,
-            sectionCompletionDisplay, bloodNotificationDisplay);
+            sectionCompletionDisplay, bloodNotificationDisplay, loadoutNotification);
 
     @ConfigValue
     public static HUDComponent relicProgressBar = new RelicProgressBar();
@@ -159,4 +164,7 @@ public class Components {
 
     @ConfigValue
     public static HUDComponent stormLbTimer = new StormLBTimer();
+
+    @ConfigValue
+    public static HUDComponent LoadoutDisplay = new LoadoutDisplay();
 }

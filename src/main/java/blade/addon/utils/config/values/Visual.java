@@ -64,4 +64,13 @@ public class Visual {
     @ConfigValue
     public static float tooltipSize = 1;
 
+    @ConfigValue
+    public static boolean hideNoneCrits = false;
+
+    @ConfigValue
+    public static boolean hideCrits = false;
+
+    @ConfigValue
+    public static boolean compactDamage = false;
+
 }

@@ -390,8 +390,14 @@ public class Config {
         ss.add(new ConfigDouble(Component.literal("Lucky button rng (0.1)"), () -> ExtraOptions.luckyButtonRng, num -> ExtraOptions.luckyButtonRng = num, 0.01, 0, 1));
         ss.add(new ConfigColor(Component.literal("Lucky button color"), () -> ExtraOptions.luckyButtonColor, color -> ExtraOptions.luckyButtonColor = color, "lucky-button-color", true));
         ss.add(new ConfigSound(Component.literal("Button sound"), ExtraOptions.ssSound));
-
         extra.add(ss);
+
+        ConfigSection loadout = new ConfigSection(Component.literal("Loadout"));
+        loadout.add(new ConfigBool(Component.literal("Enable display"), () -> ExtraOptions.enableLoadoutDisplay, bool -> ExtraOptions.enableLoadoutDisplay = bool));
+        loadout.add(new ConfigBool(Component.literal("Enable notification"), () -> ExtraOptions.enableLoadoutNotification, bool -> ExtraOptions.enableLoadoutNotification = bool));
+        loadout.add(new ConfigSound(Component.literal("Loadout swap sound"), ExtraOptions.loadoutSound));
+        extra.add(loadout);
+
         return extra;
     }
 
@@ -420,6 +426,10 @@ public class Config {
         toolTip.add(new ConfigBool(Component.literal("Pet candy"), () -> Visual.petCandy, bool -> Visual.petCandy = bool));
         toolTip.add(new ConfigFloat(Component.literal("Tooltip size"), () -> Visual.tooltipSize, num -> Visual.tooltipSize = num, 0.1f, 0.5f, 2));
         visual.add(toolTip);
+
+        visual.add(new ConfigBool(Component.literal("Hide non crits"), () -> Visual.hideNoneCrits, bool -> Visual.hideNoneCrits = bool));
+        visual.add(new ConfigBool(Component.literal("Hide crits"), () -> Visual.hideCrits, bool -> Visual.hideCrits = bool));
+        visual.add(new ConfigBool(Component.literal("Compact damage numbers"), () -> Visual.compactDamage, bool -> Visual.compactDamage = bool));
 
         return visual;
     }

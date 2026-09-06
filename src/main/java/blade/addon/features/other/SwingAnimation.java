@@ -20,7 +20,6 @@ public class SwingAnimation {
     public static void consumeSwing() {
         if (ignoreCount > 0) {
             ignoreCount--;
-            System.out.println("Consumed a swing, now at count: " + ignoreCount);
         }
     }
 

@@ -20,6 +20,7 @@ import blade.addon.features.item.*;
 import blade.addon.features.notifications.Notifications;
 import blade.addon.features.other.*;
 import blade.addon.features.other.arrow.ArrowSwapper;
+import blade.addon.features.other.loadout.LoadoutData;
 import blade.addon.features.other.pet.SelectedPet;
 import blade.addon.features.sound.BonzoSound;
 import blade.addon.features.sound.TubaSound;
@@ -109,5 +110,7 @@ public class Bladeaddons implements ModInitializer {
         DeathMessage.init();
         BlockPetMenu.init();
         ToolTip.init();
+        CompactDamageNumbers.init();
+        LoadoutData.init();
     }
 }
