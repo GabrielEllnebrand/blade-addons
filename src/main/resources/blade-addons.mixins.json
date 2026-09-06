@@ -39,7 +39,6 @@
     "MouseHandlerMixin",
     "MultiPlayerGameModeMixin",
     "RecipeBookComponentMixin",
-    "RecipeBookScreenMixin",
-    "SkullBlockRendererMixin"
+    "RecipeBookScreenMixin"
   ]
 }

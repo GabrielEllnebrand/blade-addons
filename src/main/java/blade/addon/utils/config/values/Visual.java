@@ -41,9 +41,6 @@ public class Visual {
     public static boolean oldPlayerHead = false;
 
     @ConfigValue
-    public static boolean fixWitherEssence = false;
-
-    @ConfigValue
     public static boolean oldFishingRod = false;
 
     @ConfigValue

@@ -416,7 +416,6 @@ public class Config {
         visual.add(new ConfigBool(Component.literal("Compact hoppity messages"), () -> Visual.compactHoppityMsgs, bool -> Visual.compactHoppityMsgs = bool));
         visual.add(new ConfigBool(Component.literal("Hide cooldown"), () -> Visual.hideCooldown, bool -> Visual.hideCooldown = bool));
         visual.add(new ConfigBool(Component.literal("Old player head size"), () -> Visual.oldPlayerHead, bool -> Visual.oldPlayerHead = bool));
-        visual.add(new ConfigBool(Component.literal("Fix wither essence"), () -> Visual.fixWitherEssence, bool -> Visual.fixWitherEssence = bool));
         visual.add(new ConfigBool(Component.literal("1.8.9 like fishing bobber"), () -> Visual.oldFishingRod, bool -> Visual.oldFishingRod = bool));
         visual.add(new ConfigBool(Component.literal("Stop shovel swing when flattening dirt"), () -> Visual.stopShovelFlattening, bool -> Visual.stopShovelFlattening = bool));
         visual.add(new ConfigBool(Component.literal("Stop swinging when throwing a pearl"), () -> Visual.stopPearlSwing, bool -> Visual.stopPearlSwing = bool));

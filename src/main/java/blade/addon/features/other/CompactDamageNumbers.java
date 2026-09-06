@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
 
 public class CompactDamageNumbers {
 
-    private static final Pattern DAMAGE_PATTERN = Pattern.compile("^✧?((?:\\d+,?)*)✧?❤?$");
+    private static final Pattern DAMAGE_PATTERN = Pattern.compile("^✧?✯?((?:\\d+,?)*)✧?✯?❤?$");
 
     private static final String[] CRIT_COLORS = {"§e", "§f", "§c", "§6"};
 
@@ -33,7 +33,7 @@ public class CompactDamageNumbers {
                 if (!matcher.find()) return false;
 
                 String numFound = matcher.group(1);
-                boolean isCrit = name.contains("✧");
+                boolean isCrit = name.contains("✧") || name.contains("✯");
                 boolean loveHit = name.contains("❤");
 
                 if ((isCrit && Visual.hideCrits) || (!isCrit && Visual.hideNoneCrits)) {
@@ -44,7 +44,8 @@ public class CompactDamageNumbers {
                     String formatted = compact(numFound);
 
                     if (isCrit) {
-                        formatted = "✧ " + formatted + " ✧";
+                        char symbol = name.charAt(0);
+                        formatted = symbol + " " + formatted + " " + symbol;
                         formatted = styleCrit(formatted);
                         if (loveHit) formatted += " §d❤";
                         target.setCustomName(Component.literal(formatted));

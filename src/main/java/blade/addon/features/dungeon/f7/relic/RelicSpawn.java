@@ -76,7 +76,7 @@ public class RelicSpawn {
             return false;
         });
 
-        Events.ON_LOCATION_CHANGE.register(newLocation -> {
+        Events.ON_LOCATION_CHANGE.register(_ -> {
             if (Location.inDungeon()) {
                 reset();
             }
@@ -158,7 +158,7 @@ public class RelicSpawn {
         if (!isARelicPos(pos)) return false;
 
         //skyblock menu check is there incase the item doesnt get updated
-        if (!ItemUtil.itemHasName(itemStack, "Relic") && !ItemUtil.itemHasName(itemStack, "Skyblock Menu")) {
+        if (!ItemUtil.itemHasName(itemStack, "Relic") && !ItemUtil.itemHasName(itemStack, "Skyblock Menu") && !ItemUtil.itemHasName(itemStack, "Arrow")) {
             if (Floor7.blockIncorrectRelicPlace) {
                 Debug.sendDebugMessage(Component.literal("Name: " + itemStack.getHoverName() + " Item: " + itemStack));
                 Misc.addChatMessage(Component.literal("Blocked a weird click"));
