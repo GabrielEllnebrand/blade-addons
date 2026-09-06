@@ -168,4 +168,7 @@ public class Dungeons {
 
     @ConfigValue
     public static SoundData invincibilitySound =  new SoundData(SoundEvents.NOTE_BLOCK_PLING.value(), 0, 1);
+
+    @ConfigValue
+    public static boolean blockExpensiveRerolls = false;
 }

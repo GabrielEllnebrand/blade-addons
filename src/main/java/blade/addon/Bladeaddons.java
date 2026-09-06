@@ -112,5 +112,6 @@ public class Bladeaddons implements ModInitializer {
         ToolTip.init();
         CompactDamageNumbers.init();
         LoadoutData.init();
+        RerollBlocker.init();
     }
 }

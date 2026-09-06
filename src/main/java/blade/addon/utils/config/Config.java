@@ -119,6 +119,7 @@ public class Config {
         chests.add(new ConfigBool(Component.literal("Only display after run is over"), () -> Dungeons.onlyAfterRunOver, bool -> Dungeons.onlyAfterRunOver = bool));
         chests.add(new ConfigBool(Component.literal("Send chest count warning"), () -> Dungeons.sendChestWarning, bool -> Dungeons.sendChestWarning = bool));
         chests.add(new ConfigInt(Component.literal("Warning at chest"), () -> Dungeons.chestWarningCount, num -> Dungeons.chestWarningCount = num, 1, 1, 60));
+        chests.add(new ConfigBool(Component.literal("Block expensive rerolls"), () -> Dungeons.blockExpensiveRerolls, bool -> Dungeons.blockExpensiveRerolls = bool));
 
         dungeons.add(chests);
         dungeons.add(new ConfigBool(Component.literal("Leap message"), () -> Dungeons.enableLeapMessages, bool -> Dungeons.enableLeapMessages = bool));
