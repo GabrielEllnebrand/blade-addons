@@ -1,19 +1,22 @@
 package blade.addon.features.dungeon;
 
 import blade.addon.utils.Location;
+import blade.addon.utils.Misc;
 import blade.addon.utils.config.values.Dungeons;
 import blade.addon.utils.events.Events;
 import net.minecraft.client.gui.screens.inventory.ContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
 import net.minecraft.world.inventory.ChestMenu;
+import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
 public class RerollBlocker {
 
+    //,"Emerald", "Diamond", "Gold", "Wood"
     private static final String[] CHESTS = {"Bedrock", "Obsidian"};
-    private static final String[] BLOCKED_REROLLS = {"Wither Shield", "Implosion", "Shadow Warp", "Necron's Handle", "Wither Helmet"};
+    private static final String[] BLOCKED_REROLLS = {"Wither Shield", "Implosion", "Shadow Warp", "Necron's Handle", "Star", "Claymore"};
 
     private static boolean blockClick = false;
     private static int containerId = Integer.MIN_VALUE;
@@ -50,14 +53,20 @@ public class RerollBlocker {
                 Component component = itemStack.getCustomName();
                 if (component == null) return false;
 
-                if (isBlockedReroll(component.getString())) blockClick = true;
+                String blocked = getBlockedItem(component.getString());
+                if (blocked != null) {
+                    blockClick = true;
+                    Misc.addChatMessage(Component.literal("Blocked reroll {name: " + blocked + "} {Item name: " + component.getString() + "}"));
+                }
+
             }
 
             return false;
         });
 
-        Events.ON_SLOT_CLICKED.register((slot, slotId, _, _) -> {
+        Events.ON_SLOT_CLICKED.register((slot, slotId, _, containerInput) -> {
             if (!Dungeons.blockExpensiveRerolls || !Location.in(Location.DUNGEON_HUB)) return false;
+            if (containerInput == ContainerInput.QUICK_MOVE) return false;
             if (slotId != 50 || slot.getItem().getItem() != Items.FEATHER) return false;
 
             ItemStack itemStack = slot.getItem();
@@ -78,11 +87,11 @@ public class RerollBlocker {
         return false;
     }
 
-    private static boolean isBlockedReroll(String itemName) {
+    private static String getBlockedItem(String itemName) {
         for (String name : BLOCKED_REROLLS) {
-            if (name.contains(itemName)) return true;
+            if (name.contains(itemName)) return name;
         }
-        return false;
+        return null;
     }
 
 }
