@@ -29,17 +29,17 @@ public class GuiGraphicsExtractorMixin {
     @Final
     @Shadow
     private Matrix3x2fStack pose;
-    
-    @ModifyVariable(method = "itemCooldown", at=@At("STORE"), ordinal = 0)
+
+    @ModifyVariable(method = "itemCooldown", at = @At("STORE"), ordinal = 0)
     private float noCooldown(float f) {
-        return Visual.hideCooldown? 0: f;
+        return Visual.hideCooldown ? 0 : f;
     }
 
-    @Inject(method = "item(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/item/ItemStack;III)V", at=@At("HEAD"))
+    @Inject(method = "item(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/item/ItemStack;III)V", at = @At("HEAD"))
     private void scaleUp(LivingEntity owner, ItemStack stack, int x, int y, int seed, CallbackInfo ci) {
         if (Visual.oldPlayerHead && stack.getItem() == Items.PLAYER_HEAD) {
             float scale = 0.875f;
-            int offset = (16 - (int)(scale * 16)) / 2;
+            int offset = (16 - (int) (scale * 16)) / 2;
 
             pose.pushMatrix();
             pose.translate(x * (1 - scale) + offset, y * (1 - scale) + offset);
@@ -47,43 +47,34 @@ public class GuiGraphicsExtractorMixin {
         }
     }
 
-    @Inject(method = "item(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/item/ItemStack;III)V", at=@At("TAIL"))
+    @Inject(method = "item(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/item/ItemStack;III)V", at = @At("TAIL"))
     private void scaleDown(LivingEntity owner, ItemStack stack, int x, int y, int seed, CallbackInfo ci) {
         if (Visual.oldPlayerHead && stack.getItem() == Items.PLAYER_HEAD) {
             pose.popMatrix();
         }
     }
 
-    @Inject(method = "tooltip", at= @At(value = "INVOKE", target = "Lorg/joml/Matrix3x2fStack;pushMatrix()Lorg/joml/Matrix3x2fStack;"))
+    @Inject(method = "tooltip", at = @At(value = "INVOKE", target = "Lorg/joml/Matrix3x2fStack;pushMatrix()Lorg/joml/Matrix3x2fStack;"))
     private void scaleUpTooltip_head(Font font, List<ClientTooltipComponent> lines, int xo, int yo, ClientTooltipPositioner positioner, @Nullable Identifier style, CallbackInfo ci) {
+
+        float scaledX = xo - (float) xo * Visual.tooltipSize;
+        float scaledY = yo - (float) yo * Visual.tooltipSize;
+
+        pose.translate(scaledX, scaledY);
         pose.scale(Visual.tooltipSize);
     }
 
-    @ModifyArgs(method = "tooltip", at= @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/inventory/tooltip/ClientTooltipPositioner;positionTooltip(IIIIII)Lorg/joml/Vector2ic;"))
+    @ModifyArgs(method = "tooltip", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/inventory/tooltip/ClientTooltipPositioner;positionTooltip(IIIIII)Lorg/joml/Vector2ic;"))
     private void scaleUpTooltip(Args args) {
 
-        //Yeah, this is a bad way to do this, but I'm lazy
-
-        int sw = args.get(0);
-        int sh = args.get(1);
-        int x = args.get(2);
-        int y = args.get(3);
         int w = args.get(4);
         int h = args.get(5);
 
-        float scaledSW = (float)sw / Visual.tooltipSize;
-        float scaledSH = (float)sh / Visual.tooltipSize;
-        float scaledX = (float)x / Visual.tooltipSize;
-        float scaledY = (float)y / Visual.tooltipSize;
-        float scaledW = (float)w / Visual.tooltipSize;
-        float scaledH = (float)h / Visual.tooltipSize;
+        float scaledW = (float) w * Visual.tooltipSize;
+        float scaledH = (float) h * Visual.tooltipSize;
 
-        args.set(0, (int)scaledSW);
-        args.set(1, (int)scaledSH);
-        args.set(2, (int)scaledX);
-        args.set(3, (int)scaledY);
-        args.set(4, (int)scaledW);
-        args.set(5, (int)scaledH);
+        args.set(4, (int) scaledW);
+        args.set(5, (int) scaledH);
     }
 
 }
