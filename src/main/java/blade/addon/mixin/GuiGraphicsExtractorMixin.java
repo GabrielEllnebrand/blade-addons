@@ -1,6 +1,8 @@
 package blade.addon.mixin;
 
 import blade.addon.utils.config.values.Visual;
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
@@ -16,19 +18,20 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyArgs;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
 import java.util.List;
 
 @Mixin(GuiGraphicsExtractor.class)
-public class GuiGraphicsExtractorMixin {
+public abstract class GuiGraphicsExtractorMixin {
 
     @Final
     @Shadow
     private Matrix3x2fStack pose;
+
+    @Shadow
+    public abstract int guiHeight();
 
     @ModifyVariable(method = "itemCooldown", at = @At("STORE"), ordinal = 0)
     private float noCooldown(float f) {
@@ -54,27 +57,35 @@ public class GuiGraphicsExtractorMixin {
         }
     }
 
-    @Inject(method = "tooltip", at = @At(value = "INVOKE", target = "Lorg/joml/Matrix3x2fStack;pushMatrix()Lorg/joml/Matrix3x2fStack;"))
-    private void scaleUpTooltip_head(Font font, List<ClientTooltipComponent> lines, int xo, int yo, ClientTooltipPositioner positioner, @Nullable Identifier style, CallbackInfo ci) {
-
-        float scaledX = xo - (float) xo * Visual.tooltipSize;
-        float scaledY = yo - (float) yo * Visual.tooltipSize;
-
-        pose.translate(scaledX, scaledY);
-        pose.scale(Visual.tooltipSize);
+    @ModifyExpressionValue(method = "tooltip", at = @At(value = "INVOKE", target = "Lorg/joml/Vector2ic;x()I"))
+    private int modifyTooltipX(int x) {
+        if (Visual.tooltipSize == 1) return x;
+        return 0;
     }
 
-    @ModifyArgs(method = "tooltip", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/inventory/tooltip/ClientTooltipPositioner;positionTooltip(IIIIII)Lorg/joml/Vector2ic;"))
-    private void scaleUpTooltip(Args args) {
+    @ModifyExpressionValue(method = "tooltip", at = @At(value = "INVOKE", target = "Lorg/joml/Vector2ic;y()I"))
+    private int modifyTooltipY(int y) {
+        if (Visual.tooltipSize == 1) return y;
+        return 0;
+    }
 
-        int w = args.get(4);
-        int h = args.get(5);
+    @Inject(method = "tooltip", at = @At(value = "INVOKE", target = "Lorg/joml/Matrix3x2fStack;pushMatrix()Lorg/joml/Matrix3x2fStack;"))
+    private void scaleUpTooltip_head(Font font, List<ClientTooltipComponent> lines, int xo, int yo, ClientTooltipPositioner positioner,
+                                     @Nullable Identifier style, CallbackInfo ci, @Local(name = "h") int h) {
+        if (Visual.tooltipSize == 1) return;
+        float newX = xo + 6;
+        float newY = yo - ((float) h / 2) * Visual.tooltipSize + 4;
 
-        float scaledW = (float) w * Visual.tooltipSize;
-        float scaledH = (float) h * Visual.tooltipSize;
+        if ((h + newY) * Visual.tooltipSize > this.guiHeight()) {
+            newY = this.guiHeight() - h - 4;
+        }
 
-        args.set(4, (int) scaledW);
-        args.set(5, (int) scaledH);
+        //remove top and left overflow
+        if (newX < 0) newX = 6;
+        if (newY < 0) newY = 4;
+
+        pose.translate(newX, newY);
+        pose.scale(Visual.tooltipSize);
     }
 
 }

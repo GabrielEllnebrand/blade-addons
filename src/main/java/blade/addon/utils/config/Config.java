@@ -424,7 +424,7 @@ public class Config {
         ConfigSection toolTip = new ConfigSection(Component.literal("ToolTips"));
         toolTip.add(new ConfigBool(Component.literal("Item quality"), () -> Visual.itemQuality, bool -> Visual.itemQuality = bool));
         toolTip.add(new ConfigBool(Component.literal("Pet candy"), () -> Visual.petCandy, bool -> Visual.petCandy = bool));
-        toolTip.add(new ConfigFloat(Component.literal("Tooltip size"), () -> Visual.tooltipSize, num -> Visual.tooltipSize = num, 0.01f, 0.25f, 2));
+        toolTip.add(new ConfigFloat(Component.literal("Tooltip size"), () -> Visual.tooltipSize, num -> Visual.tooltipSize = num, 0.01f, 0.25f, 1));
         visual.add(toolTip);
 
         visual.add(new ConfigBool(Component.literal("Hide non crits"), () -> Visual.hideNoneCrits, bool -> Visual.hideNoneCrits = bool));
