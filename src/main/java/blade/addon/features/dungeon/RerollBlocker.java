@@ -16,7 +16,7 @@ public class RerollBlocker {
 
     //,"Emerald", "Diamond", "Gold", "Wood"
     private static final String[] CHESTS = {"Bedrock", "Obsidian"};
-    private static final String[] BLOCKED_REROLLS = {"Recombobulator ", "Wither Shield", "Implosion", "Shadow Warp", "Necron's Handle", "Star", "Dark Claymore", "Dye", "Giant's Sword", "Shadow fury"};
+    private static final String[] BLOCKED_REROLLS = {"Recombobulator", "Wither Shield", "Implosion", "Shadow Warp", "Necron's Handle", "Star", "Dark Claymore", "Dye", "Giant's Sword", "Shadow fury"};
 
     private static boolean blockClick = false;
     private static int containerId = Integer.MIN_VALUE;
@@ -66,14 +66,15 @@ public class RerollBlocker {
         });
 
         Events.ON_SLOT_CLICKED.register((slot, slotId, _, containerInput) -> {
+            Misc.addChatMessage(Component.literal(slotId + " " + containerInput));
             if (!Dungeons.blockExpensiveRerolls || !Location.in(Location.DUNGEON_HUB)) return false;
             if (containerInput == ContainerInput.THROW) return false;
+            Misc.addChatMessage(Component.literal(slot.getItem().getItem().toString()));
             if (slotId != 50 || slot.getItem().getItem() != Items.FEATHER) return false;
-
             ItemStack itemStack = slot.getItem();
             Component customName = itemStack.getCustomName();
             if (customName == null) return false;
-
+            Misc.addChatMessage(customName);
             if (!customName.getString().contains("Reroll Chest")) return false;
 
             return blockClick;
