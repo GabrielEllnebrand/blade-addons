@@ -16,7 +16,7 @@ public class RerollBlocker {
 
     //,"Emerald", "Diamond", "Gold", "Wood"
     private static final String[] CHESTS = {"Bedrock", "Obsidian"};
-    private static final String[] BLOCKED_REROLLS = {"Wither Shield", "Implosion", "Shadow Warp", "Necron's Handle", "Star", "Dark Claymore", "Dye", "Giant's Sword", "Shadow fury"};
+    private static final String[] BLOCKED_REROLLS = {"Recombobulator 3000", "Wither Shield", "Implosion", "Shadow Warp", "Necron's Handle", "Star", "Dark Claymore", "Dye", "Giant's Sword", "Shadow fury"};
 
     private static boolean blockClick = false;
     private static int containerId = Integer.MIN_VALUE;
@@ -48,6 +48,7 @@ public class RerollBlocker {
             if (blockClick) return false;
             if (packet instanceof ClientboundContainerSetSlotPacket containerSetSlotPacket) {
                 if (containerSetSlotPacket.getContainerId() != containerId) return false;
+                if (containerSetSlotPacket.getSlot() >= 54) return false;
 
                 ItemStack itemStack = containerSetSlotPacket.getItem();
                 Component component = itemStack.getCustomName();
@@ -66,7 +67,7 @@ public class RerollBlocker {
 
         Events.ON_SLOT_CLICKED.register((slot, slotId, _, containerInput) -> {
             if (!Dungeons.blockExpensiveRerolls || !Location.in(Location.DUNGEON_HUB)) return false;
-            if (containerInput == ContainerInput.QUICK_MOVE) return false;
+            if (containerInput == ContainerInput.THROW) return false;
             if (slotId != 50 || slot.getItem().getItem() != Items.FEATHER) return false;
 
             ItemStack itemStack = slot.getItem();

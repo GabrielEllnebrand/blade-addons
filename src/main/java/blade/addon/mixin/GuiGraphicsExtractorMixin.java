@@ -76,6 +76,7 @@ public abstract class GuiGraphicsExtractorMixin {
         float newX = xo + 6;
         float newY = yo - ((float) h / 2) * Visual.tooltipSize + 4;
 
+        //remove bottom overflow hopefully
         if ((h + newY) * Visual.tooltipSize > this.guiHeight()) {
             newY = this.guiHeight() - h - 4;
         }
