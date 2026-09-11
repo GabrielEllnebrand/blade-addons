@@ -16,7 +16,7 @@ public class RerollBlocker {
 
     //,"Emerald", "Diamond", "Gold", "Wood"
     private static final String[] CHESTS = {"Bedrock", "Obsidian"};
-    private static final String[] BLOCKED_REROLLS = {"Recombobulator 3000", "Wither Shield", "Implosion", "Shadow Warp", "Necron's Handle", "Star", "Dark Claymore", "Dye", "Giant's Sword", "Shadow fury"};
+    private static final String[] BLOCKED_REROLLS = {"Recombobulator", "Wither Shield", "Implosion", "Shadow Warp", "Necron's Handle", "Star", "Dark Claymore", "Dye", "Giant's Sword", "Shadow fury"};
 
     private static boolean blockClick = false;
     private static int containerId = Integer.MIN_VALUE;
